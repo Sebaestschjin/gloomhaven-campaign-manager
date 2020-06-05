@@ -1,0 +1,77 @@
+--- Referemces to other objects
+map_script = nil
+SAVE_FILE_NAME = "Savefile"
+
+scenario_loader = nil
+achievement_loader = nil
+
+function onLoad(save_state)
+  self.createButton({
+    click_function = "load_save",
+    function_owner = self,
+    label          = "",
+    position       = {0,0.05,0},
+    color          = {0, 0, 0, 0},
+    width          = 2400,
+    height         = 600,
+    tooltip        = ""
+  })
+
+  map_script = getObjectFromGUID("9cc037")
+
+  scenario_loader = getObjectFromGUID("5d7fff")
+  achievement_loader = getObjectFromGUID("916439")
+end
+
+
+function load_save()
+  save_file = find_save_file()
+  if not save_file then
+    print("No notebook found containing the save file! Please add a notebook named " .. SAVE_FILE_NAME)
+    return
+  end
+  content = JSON.decode(save_file)
+
+  load_global(content)
+end
+
+
+function find_save_file()
+  for _, notebook in pairs(Notes.getNotebookTabs()) do
+    if notebook.title == SAVE_FILE_NAME then
+      return notebook.body
+    end
+  end
+end
+
+
+function load_global(content)
+  local global = content.global
+
+  -- load_scenarios(global)
+  load_achievements(global)
+  -- load_prosperity(global)
+end
+
+
+function load_scenarios(content)
+  if content.scenarios then
+    scenario_loader.call("load_scenarios", content.scenarios)
+  end
+end
+
+
+function load_achievements(content)
+  if content.achievements then
+    achievement_loader.call("load_achievements", content.achievements)
+  end
+end
+
+
+function load_prosperity(content)
+  local prosperity = content.prosperity
+
+  for i = 1, prosperity do
+    map_script.call("clickedPros", i)
+  end
+end

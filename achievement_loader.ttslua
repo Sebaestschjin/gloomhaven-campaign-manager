@@ -1,0 +1,90 @@
+self_achievements = {}
+
+map_script = nil
+
+function onLoad(save_state)
+  self.createButton({
+    click_function = "__load_achievements_clicked",
+    function_owner = self,
+    label          = "",
+    position       = {0,0.05,0},
+    color          = {0, 0, 0, 0},
+    width          = 2400,
+    height         = 600,
+    tooltip        = ""
+  })
+
+  map_script = getObjectFromGUID("9cc037")
+end
+
+function __load_achievements_clicked()
+  load_achievements(self_achievements)
+end
+
+
+function load_achievements(achievements)
+  print("Loading Achievements")
+
+  self_achievements = achievements
+
+  startLuaCoroutine(self, "__load_achievements_coroutine")
+end
+
+
+function __load_achievements_coroutine()
+  for _, achievement in pairs(self_achievements) do
+    local board = __get_achievement_board()
+    local index = __find_achievement_index(board, achievement)
+    __load_achievement(index, achievement)
+  end
+
+  return 1
+end
+
+
+function __load_achievement(index, achievement)
+  local count = 1
+  if achievement.count then
+    count = achievement.count
+  end
+
+  for i=1, count do
+    local board = __get_achievement_board()
+    print("Doing at " .. index)
+    print(board)
+    print(achievement)
+    board.call("clicked", index)
+    __wait_frames(30)
+  end
+end
+
+
+function __get_achievement_board()
+  local board = getObjectFromGUID("43d5b8")
+  if not board then
+    map_script.call("addAchiev", {})
+    __wait_frames(120)
+    return getObjectFromGUID("43d5b8")
+  end
+
+  return board
+end
+
+
+function __find_achievement_index(board, achievement)
+  local achievement_info = board.getTable("flags")
+
+  for i, flag in pairs(achievement_info) do
+    if flag.name == achievement.name then
+      -- TODO check if count is actually available
+      return i
+    end
+  end
+end
+
+
+function __wait_frames(count)
+  for i=1, count do
+    coroutine.yield(0)
+  end
+end

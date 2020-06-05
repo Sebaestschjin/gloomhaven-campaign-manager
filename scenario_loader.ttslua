@@ -1,0 +1,59 @@
+self_scenarios = {}
+
+map_script = nil
+
+function onLoad(save_state)
+  self.createButton({
+    click_function = "__load_scenarios_clicked",
+    function_owner = self,
+    label          = "",
+    position       = {0,0.05,0},
+    color          = {0, 0, 0, 0},
+    width          = 2400,
+    height         = 600,
+    tooltip        = ""
+  })
+
+  map_script = getObjectFromGUID("9cc037")
+end
+
+function __load_scenarios_clicked()
+  load_scenarios(self_scenarios)
+end
+
+function load_scenarios(scenarios)
+  print("Loading scenarios")
+
+  self_scenarios = scenarios
+  local scenario_info = map_script.getTable("tableML")
+
+  for number, state in pairs(scenarios) do
+    local guid = __find_scenario_info(scenario_info, tonumber(number))
+    Wait.time(function() load_scenario(guid, state) end, 1.1, 1)
+  end
+end
+
+
+function load_scenario(guid, state)
+  if state == OPEN then
+    map_script.call("clickedML", guid)
+  elseif state == DONE then
+    map_script.call("clickedML", guid)
+    map_script.call("clickedML", guid)
+  elseif state == LOCKED then
+    map_script.call("clickedML", guid)
+    map_script.call("clickedML", guid)
+    map_script.call("clickedML", guid)
+  else
+  end
+end
+
+
+function __find_scenario_info(scenarios, number)
+  for guid, info in pairs(scenarios) do
+    print(guid .. info.number)
+    if info.number == number then
+      return guid
+    end
+  end
+end
