@@ -1,3 +1,6 @@
+ZONE = "49a4e0" -- Zone 1
+PLAYER = "Red" -- Player 1
+
 self_characters = {}
 
 
@@ -31,13 +34,15 @@ function __read_character(character)
   character_box.takeObject({
     position = player_mat.getPosition()
   })
+
   setup_character(character)
+  setup_abilities(character)
 end
 
 
 function setup_character(character)
   __wait_frames(200) -- wait till all the stuff is on the table
-  local character_sheet = __find_object_in_zone("49a4e0", "Character Sheet")
+  local character_sheet = __find_object_in_zone(ZONE, "Character Sheet")
 
   if character.name then
     character_sheet.UI.setAttribute("Name", "text", character.name)
@@ -73,9 +78,29 @@ function setup_character(character)
 end
 
 
+function setup_abilities(character)
+  if character.abilities then
+    local ability_deck = __find_object_in_zone(ZONE, "Advanced Abilities")
+
+    for i, ability in pairs(character.abilities) do
+      local ability_card = __find_card_in_deck(ability_deck, ability)
+      ability_deck.takeObject({
+        position = vector(-43 + (i * 3), 2, -85),
+        guid = ability_card.guid,
+        callback_function = function(object) move_to_hand(object, 2) end
+      })
+    end
+  end
+end
+
+function move_to_hand(object, number)
+  object.deal(1, PLAYER, number)
+end
+
+
 function __get_player_mat()
   -- TODO make generic
-  local player_mat = __find_object_in_zone("49a4e0", "Player Mat") -- Zone 1
+  local player_mat = __find_object_in_zone(ZONE, "Player Mat")
   if not player_mat then
     getObjectFromGUID("3f0cda").call("addPlayer") -- add first player
     __wait_frames(10)
@@ -98,6 +123,15 @@ function __find_object_in_zone(guid, name)
   for _, object in pairs(zone.getObjects()) do
     if object.getName():find(name) then
       return object
+    end
+  end
+end
+
+
+function __find_card_in_deck(deck, name)
+  for _, card in pairs(deck.getObjects()) do
+    if card.name:find(name) then
+      return card
     end
   end
 end

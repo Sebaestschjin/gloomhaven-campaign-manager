@@ -1,0 +1,38 @@
+{
+    "party": {
+        "name": "Devil's advocates",
+        "reputation": -10,
+        "location": "Gloomhaven",
+        "notes": [
+            "Some notes",
+            "More notes"
+        ],
+        "achievements": [
+            "First Steps",
+            "Jerkserah's Plans"
+        ],
+        "characters": [
+        {
+            "class": "Brute",
+            "name": "Rambo",
+            "xp": 100,
+            "gold": 42,
+            "checkmarks": 4,
+            "perks": [
+              1, 3, 6
+            ],
+            "items": [
+              "Poison Dagger",
+              "Hide Armor"
+            ],
+            "abilities": [
+              "Juggernaut",
+              "Hook and Chain"
+            ],
+            "notes": [
+              "My Note",
+              "More notes"
+            ]
+        }]
+    }
+}

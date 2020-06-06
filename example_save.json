@@ -13,6 +13,12 @@
             "8": "O"
         }
     },
+    "unlocked": {
+      "classes": [
+        "Diviner",
+        "Berserker"
+      ]
+    },
     "party": {
         "name": "Devil's advocates",
         "reputation": -10,
@@ -25,12 +31,36 @@
             "First Steps",
             "Jerkserah's Plans"
         ],
-        "characters": {
+        "characters": [{
             "class": "Brute",
             "name": "Rambo",
             "xp": 100,
             "gold": 42,
-            "checkmarks": 4
-        }
-    }
+            "checkmarks": 4,
+            "perks": [
+              1, 3, 6
+            ],
+            "abilities": [
+              "Juggernaut",
+              "Hook and Chain"
+            ],
+            "items": [
+              "Poison Dagger",
+              "Hide Armor"
+            ],
+            "notes": [
+              "My Note",
+              "More notes"
+            ]
+        }]
+    },
+    "retired": [
+      {
+        "player": "Bob",
+        "character": "Big Boss",
+        "class": "Brute",
+        "level": 4,
+        "perks": 1
+      }
+    ]
 }
