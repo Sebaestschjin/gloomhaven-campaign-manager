@@ -5,11 +5,13 @@ PARTY_SHEET_GUID = "6d3de2"
 
 SCENARIO_READER_GUID = "5d7fff"
 ACHIEVEMENT_READER_GUID = "916439"
+UNLOCKED_CLASSES_READER_GUID = "0a0c7a"
 CHARACTER_READER_GUID = "64ef03"
 
 map_script = nil
 scenario_reader = nil
 achievement_reader = nil
+unlocked_classes_reader = nil
 character_reader = nil
 
 function onLoad(save_state)
@@ -31,6 +33,7 @@ function setup()
 
     scenario_reader = getObjectFromGUID(SCENARIO_READER_GUID)
     achievement_reader = getObjectFromGUID(ACHIEVEMENT_READER_GUID)
+    unlocked_classes_reader = getObjectFromGUID(UNLOCKED_CLASSES_READER_GUID)
     character_reader = getObjectFromGUID(CHARACTER_READER_GUID)
 end
 
@@ -46,6 +49,7 @@ function read_save()
   content = JSON.decode(save_file)
 
   read_global(content)
+  read_unlocked(content)
   read_party(content)
 end
 
@@ -61,9 +65,7 @@ end
 
 function read_global(content)
   local global = content.global
-  if not global then
-    return global
-  end
+  if not global then return end
 
   read_scenarios(global)
   read_achievements(global)
@@ -71,25 +73,23 @@ function read_global(content)
 end
 
 
-function read_scenarios(content)
-  if content.scenarios then
-    scenario_reader.call("read_scenarios", content.scenarios)
+function read_scenarios(global)
+  if global.scenarios then
+    scenario_reader.call("read_scenarios", global.scenarios)
   end
 end
 
 
-function read_achievements(content)
-  if content.achievements then
-    achievement_reader.call("read_achievements", content.achievements)
+function read_achievements(global)
+  if global.achievements then
+    achievement_reader.call("read_achievements", global.achievements)
   end
 end
 
 
-function read_prosperity(content)
-  local prosperity = content.prosperity
-  if not prosperity then
-    return
-  end
+function read_prosperity(global)
+  local prosperity = global.prosperity
+  if not prosperity then return end
 
   for i = 1, prosperity do
     map_script.call("clickedPros", i)
@@ -97,11 +97,24 @@ function read_prosperity(content)
 end
 
 
+function read_unlocked(content)
+  local unlocked = content.unlocked
+  if not unlocked then return end
+
+  read_unlocked_classes(unlocked)
+end
+
+
+function read_unlocked_classes(unlocked)
+  if unlocked.classes then
+    unlocked_classes_reader.call("read_unlocked_classes", unlocked.classes)
+  end
+end
+
+
 function read_party(content)
   local party = content.party
-  if not party then
-    return
-  end
+  if not party then return end
 
   read_party_base(party)
   read_characters(party)

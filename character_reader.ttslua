@@ -85,7 +85,7 @@ function setup_abilities(character)
     for i, ability in pairs(character.abilities) do
       local ability_card = __find_card_in_deck(ability_deck, ability)
       ability_deck.takeObject({
-        position = vector(-43 + (i * 3), 2, -85),
+        position = get_safe_position(i),
         guid = ability_card.guid,
         callback_function = function(object) move_to_hand(object, 2) end
       })
@@ -141,4 +141,9 @@ function __wait_frames(count)
   for i=1, count do
     coroutine.yield(0)
   end
+end
+
+
+function get_safe_position(number)
+  return vector(-43 + (number * 3), 2, -85)
 end
