@@ -1,13 +1,15 @@
---- Referemces to other objects
-map_script = nil
 SAVE_FILE_NAME = "Savefile"
+MAP_GUID = "9cc037"
+SCENARIO_READER_GUID = "5d7fff"
+ACHIEVEMENT_READER_GUID = "916439"
 
-scenario_loader = nil
-achievement_loader = nil
+map_script = nil
+scenario_reader = nil
+achievement_reader = nil
 
 function onLoad(save_state)
   self.createButton({
-    click_function = "load_save",
+    click_function = "read_save",
     function_owner = self,
     label          = "",
     position       = {0,0.05,0},
@@ -17,14 +19,14 @@ function onLoad(save_state)
     tooltip        = ""
   })
 
-  map_script = getObjectFromGUID("9cc037")
+  map_script = getObjectFromGUID(MAP_GUID)
 
-  scenario_loader = getObjectFromGUID("5d7fff")
-  achievement_loader = getObjectFromGUID("916439")
+  scenario_reader = getObjectFromGUID(SCENARIO_READER_GUID)
+  achievement_reader = getObjectFromGUID(ACHIEVEMENT_READER_GUID)
 end
 
 
-function load_save()
+function read_save()
   save_file = find_save_file()
   if not save_file then
     print("No notebook found containing the save file! Please add a notebook named " .. SAVE_FILE_NAME)
@@ -32,7 +34,7 @@ function load_save()
   end
   content = JSON.decode(save_file)
 
-  load_global(content)
+  read_global(content)
 end
 
 
@@ -45,30 +47,30 @@ function find_save_file()
 end
 
 
-function load_global(content)
+function read_global(content)
   local global = content.global
 
-  -- load_scenarios(global)
-  load_achievements(global)
-  -- load_prosperity(global)
+  read_scenarios(global)
+  read_achievements(global)
+  read_prosperity(global)
 end
 
 
-function load_scenarios(content)
+function read_scenarios(content)
   if content.scenarios then
-    scenario_loader.call("load_scenarios", content.scenarios)
+    scenario_reader.call("read_scenarios", content.scenarios)
   end
 end
 
 
-function load_achievements(content)
+function read_achievements(content)
   if content.achievements then
-    achievement_loader.call("load_achievements", content.achievements)
+    achievement_reader.call("read_achievements", content.achievements)
   end
 end
 
 
-function load_prosperity(content)
+function read_prosperity(content)
   local prosperity = content.prosperity
 
   for i = 1, prosperity do
