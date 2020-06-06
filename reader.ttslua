@@ -18,15 +18,12 @@ function onLoad(save_state)
     height         = 600,
     tooltip        = ""
   })
-
-  map_script = getObjectFromGUID(MAP_GUID)
-
-  scenario_reader = getObjectFromGUID(SCENARIO_READER_GUID)
-  achievement_reader = getObjectFromGUID(ACHIEVEMENT_READER_GUID)
 end
 
 
 function read_save()
+  setup()
+
   save_file = find_save_file()
   if not save_file then
     print("No notebook found containing the save file! Please add a notebook named " .. SAVE_FILE_NAME)
@@ -35,6 +32,14 @@ function read_save()
   content = JSON.decode(save_file)
 
   read_global(content)
+end
+
+
+function setup()
+    map_script = getObjectFromGUID(MAP_GUID)
+
+    scenario_reader = getObjectFromGUID(SCENARIO_READER_GUID)
+    achievement_reader = getObjectFromGUID(ACHIEVEMENT_READER_GUID)
 end
 
 
