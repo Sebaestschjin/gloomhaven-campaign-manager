@@ -6,17 +6,100 @@ function read_characters(characters)
   setup()
 
   self_characters = characters
-end
 
-
-function do_test(first, second)
-  print("Doing test")
-  print(first)
-  print(second)
+  startLuaCoroutine(self, "__read_characters_coroutine")
 end
 
 
 function setup()
+end
+
+
+function __read_characters_coroutine(characters)
+  for _, character in pairs(self_characters) do
+    __read_character(character)
+  end
+
+  return 1
+end
+
+
+function __read_character(character)
+  local player_mat = __get_player_mat()
+  local character_box = __get_character_box(character.class)
+
+  character_box.takeObject({
+    position = player_mat.getPosition()
+  })
+  setup_character(character)
+end
+
+
+function setup_character(character)
+  __wait_frames(200) -- wait till all the stuff is on the table
+  local character_sheet = __find_object_in_zone("49a4e0", "Character Sheet")
+
+  if character.name then
+    character_sheet.UI.setAttribute("Name", "text", character.name)
+  end
+
+  if character.gold then -- set before XP TODO why?
+    character_sheet.call('addEx', {name='gold', amount=character.gold})
+  end
+
+  if character.xp then
+    character_sheet.call('addEx', {name='xp', amount=character.xp})
+  end
+
+  if character.checkmarks then
+    for i=1, character.checkmarks do
+      character_sheet.call('clickedToggle', "notes"..tostring(i))
+    end
+  end
+
+  if character.perks then
+    for _, perk in pairs(character.perks) do
+      character_sheet.call('clickedToggle', "perk"..tostring(perk))
+    end
+  end
+
+  if character.items then
+    character_sheet.UI.setAttribute("Items", "text", table.concat(character.items, "\n"))
+  end
+
+  if character.notes then
+    character_sheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
+  end
+end
+
+
+function __get_player_mat()
+  -- TODO make generic
+  local player_mat = __find_object_in_zone("49a4e0", "Player Mat") -- Zone 1
+  if not player_mat then
+    getObjectFromGUID("3f0cda").call("addPlayer") -- add first player
+    __wait_frames(10)
+
+    return __get_player_mat()
+  end
+
+  return player_mat
+end
+
+
+function __get_character_box(class)
+  -- TODO make generic
+  return getObjectFromGUID("697f18") -- Brute
+end
+
+
+function __find_object_in_zone(guid, name)
+  local zone = getObjectFromGUID(guid)
+  for _, object in pairs(zone.getObjects()) do
+    if object.getName():find(name) then
+      return object
+    end
+  end
 end
 
 

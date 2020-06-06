@@ -1,0 +1,2 @@
+- setting scenarios to done doesn't work yet
+- setting the party levels on the party sheet
