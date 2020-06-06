@@ -1,0 +1,36 @@
+{
+    "global": {
+        "prosperity": 5,
+        "achievements": [
+            { "name": "City Rule: Militaristic" },
+            { "name": "The Dead Invade" },
+            { "name": "Ancient Technology", "count": 2 }
+        ],
+        "scenarios": {
+            "1": "D",
+            "2": "O",
+            "3": "L",
+            "8": "O"
+        }
+    },
+    "party": {
+        "name": "Devil's advocates",
+        "reputation": -10,
+        "location": "Gloomhaven",
+        "notes": [
+            "Some notes",
+            "More notes"
+        ],
+        "achievements": [
+            "First Steps",
+            "Jerkserah's Plans"
+        ],
+        "characters": {
+            "class": "Brute",
+            "name": "Rambo",
+            "xp": 100,
+            "gold": 42,
+            "checkmarks": 4
+        }
+    }
+}
