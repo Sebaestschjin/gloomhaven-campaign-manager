@@ -50,9 +50,6 @@ function __load_achievement(index, achievement)
 
   for i=1, count do
     local board = __get_achievement_board()
-    print("Doing at " .. index)
-    print(board)
-    print(achievement)
     board.call("clicked", index)
     __wait_frames(30)
   end
