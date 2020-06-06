@@ -1,0 +1,27 @@
+self_characters = {}
+
+
+function read_characters(characters)
+  print("Reading Characters")
+  setup()
+
+  self_characters = characters
+end
+
+
+function do_test(first, second)
+  print("Doing test")
+  print(first)
+  print(second)
+end
+
+
+function setup()
+end
+
+
+function __wait_frames(count)
+  for i=1, count do
+    coroutine.yield(0)
+  end
+end

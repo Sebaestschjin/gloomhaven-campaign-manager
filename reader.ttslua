@@ -1,11 +1,16 @@
 SAVE_FILE_NAME = "Savefile"
+
 MAP_GUID = "9cc037"
+PARTY_SHEET_GUID = "6d3de2"
+
 SCENARIO_READER_GUID = "5d7fff"
 ACHIEVEMENT_READER_GUID = "916439"
+CHARACTER_READER_GUID = "64ef03"
 
 map_script = nil
 scenario_reader = nil
 achievement_reader = nil
+character_reader = nil
 
 function onLoad(save_state)
   self.createButton({
@@ -21,6 +26,15 @@ function onLoad(save_state)
 end
 
 
+function setup()
+    map_script = getObjectFromGUID(MAP_GUID)
+
+    scenario_reader = getObjectFromGUID(SCENARIO_READER_GUID)
+    achievement_reader = getObjectFromGUID(ACHIEVEMENT_READER_GUID)
+    character_reader = getObjectFromGUID(CHARACTER_READER_GUID)
+end
+
+
 function read_save()
   setup()
 
@@ -32,14 +46,7 @@ function read_save()
   content = JSON.decode(save_file)
 
   read_global(content)
-end
-
-
-function setup()
-    map_script = getObjectFromGUID(MAP_GUID)
-
-    scenario_reader = getObjectFromGUID(SCENARIO_READER_GUID)
-    achievement_reader = getObjectFromGUID(ACHIEVEMENT_READER_GUID)
+  read_party(content)
 end
 
 
@@ -54,6 +61,9 @@ end
 
 function read_global(content)
   local global = content.global
+  if not global then
+    return global
+  end
 
   read_scenarios(global)
   read_achievements(global)
@@ -77,8 +87,51 @@ end
 
 function read_prosperity(content)
   local prosperity = content.prosperity
+  if not prosperity then
+    return
+  end
 
   for i = 1, prosperity do
     map_script.call("clickedPros", i)
+  end
+end
+
+
+function read_party(content)
+  local party = content.party
+  if not party then
+    return
+  end
+
+  read_party_base(party)
+  read_characters(party)
+end
+
+
+function read_party_base(party)
+  party_sheet = getObjectFromGUID(PARTY_SHEET_GUID)
+
+  if party.name then
+    party_sheet.UI.setAttribute("partyName", "text", party.name)
+    party_sheet.setName(party.name)
+  end
+  if party.location then
+    party_sheet.UI.setAttribute("location", "text", party.location)
+  end
+  if party.notes then
+    party_sheet.UI.setAttribute("notes", "text", table.concat(party.notes, "\n"))
+  end
+  if party.achievements then
+    party_sheet.UI.setAttribute("partyAchiev", "text", table.concat(party.achievements, "\n"))
+  end
+  if party.reputation then
+    party_sheet.call("addSub", {"partyReputation", party.reputation})
+  end
+end
+
+
+function read_characters(party)
+  if party.characters then
+    character_reader.call("read_characters", party.characters)
   end
 end
