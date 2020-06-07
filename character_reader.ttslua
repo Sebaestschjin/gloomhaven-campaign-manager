@@ -1,7 +1,11 @@
+INFO_GUID = "d11e24"
+
 ZONE = "49a4e0" -- Zone 1
 PLAYER = "Red" -- Player 1
+GOAL_DECK_GUID = "73a423"
 
 self_characters = {}
+class_info = {}
 
 
 function read_characters(characters)
@@ -15,6 +19,7 @@ end
 
 
 function setup()
+  class_info = getObjectFromGUID(INFO_GUID).getTable("CLASS_INFO")
 end
 
 
@@ -37,6 +42,7 @@ function __read_character(character)
 
   setup_character(character)
   setup_abilities(character)
+  setup_goal(character)
 end
 
 
@@ -48,7 +54,7 @@ function setup_character(character)
     character_sheet.UI.setAttribute("Name", "text", character.name)
   end
 
-  if character.gold then -- set before XP TODO why?
+  if character.gold then
     character_sheet.call('addEx', {name='gold', amount=character.gold})
   end
 
@@ -93,7 +99,39 @@ function setup_abilities(character)
   end
 end
 
+
+function setup_goal(character)
+  -- TODO ensure that the goals deck is full to make index access easier
+  if character.goal then
+    local goal_index = get_goal_index(character.goal)
+    local goal_deck = getObjectFromGUID(GOAL_DECK_GUID)
+    goal_deck.takeObject({
+      position = get_safe_position(1),
+      index = goal_index - 1,
+      callback_function = function(object) move_to_hand(object, 2) end
+    })
+  end
+end
+
+
+function get_goal_index(goal)
+  local goal_info = getObjectFromGUID(INFO_GUID).getTable("GOAL_INFO")
+
+  local goal_by_name = goal_info[goal]
+  if goal_by_name then
+    return goal_by_name.index
+  end
+
+  for _, g in pairs(goal_info) do
+    if g.number == character.goal then
+      return g.index
+    end
+  end
+end
+
+
 function move_to_hand(object, number)
+  if not number then number = 1 end
   object.deal(1, PLAYER, number)
 end
 
@@ -113,8 +151,7 @@ end
 
 
 function __get_character_box(class)
-  -- TODO make generic
-  return getObjectFromGUID("697f18") -- Brute
+  return getObjectFromGUID(class_info[class].box_guid)
 end
 
 

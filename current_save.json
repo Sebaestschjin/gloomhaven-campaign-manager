@@ -1,8 +1,23 @@
 {
-  "unlocked": {
-    "classes": [
-      "Diviner",
-      "Berserker"
-    ]
-  }
+    "party": {
+        "characters": [{
+            "class": "Brute",
+            "name": "Rambo",
+            "goal": "Finding the Cure",
+            "xp": 100,
+            "gold": 42,
+            "checkmarks": 4,
+            "perks": [
+              1, 3, 6
+            ],
+            "items": [
+              "Poison Dagger",
+              "Hide Armor"
+            ],
+            "notes": [
+              "My Note",
+              "More notes"
+            ]
+        }]
+    }
 }

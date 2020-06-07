@@ -1,18 +1,12 @@
+INFO_GUID = "d11e24"
+
 GAMEBOX_GUID = "346ed5"
 CHARACTER_BOXES_GUID = "1e6549"
-LAST_BOX_GUID = "fdef02" -- the tinkerer
-BEFORE_LAST_BOX_GUID = "ec1d2a" -- the cragheart
+LAST_BOX_GUID = "fdef02" -- tinkerer
+BEFORE_LAST_BOX_GUID = "ec1d2a" -- cragheart
 
 self_classes = {}
-
-CLASS_INFO = {
-  Berserker = {
-    box_name = "Lightnings"
-  },
-  Elementalist = {
-    box_name = "Triangles"
-  }
-}
+class_info = {}
 
 function read_unlocked_classes(classes)
   print("Reading unlocked classes")
@@ -25,6 +19,7 @@ end
 
 
 function setup()
+  class_info = getObjectFromGUID(INFO_GUID).getTable("CLASS_INFO")
 end
 
 
@@ -42,13 +37,7 @@ function __read_unlocked_class(number, class)
   local last_box = getObjectFromGUID(LAST_BOX_GUID)
   local before_last_box = getObjectFromGUID(BEFORE_LAST_BOX_GUID)
   local delta = (last_box.getPosition() - before_last_box.getPosition()) * number
-
-  local class_guid
-  if class == "Diviner" then
-    class_guid = "21d7e7"
-  else
-    class_guid = "7ff6c4"
-  end
+  local class_guid = class_info[class].box_guid
 
   character_boxes.takeObject({
     position = last_box.getPosition() + delta,

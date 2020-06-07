@@ -1,4 +1,8 @@
 {
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
     "global": {
         "prosperity": 5,
         "achievements": [
@@ -7,15 +11,14 @@
             { "name": "Ancient Technology", "count": 2 }
         ],
         "scenarios": {
-            "1": "D",
-            "2": "O",
-            "3": "L",
-            "8": "O"
+            "1": "Done",
+            "2": "Open",
+            "3": "Locked",
+            "8": "Open"
         }
     },
     "unlocked": {
       "classes": [
-        "Diviner",
         "Berserker"
       ]
     },
@@ -34,6 +37,7 @@
         "characters": [{
             "class": "Brute",
             "name": "Rambo",
+            "goal": "Finding the Cure",
             "xp": 100,
             "gold": 42,
             "checkmarks": 4,
@@ -54,13 +58,12 @@
             ]
         }]
     },
-    "retired": [
-      {
+    "retired": [{
         "player": "Bob",
         "character": "Big Boss",
         "class": "Brute",
+        "goal": "Pounds of Flesh",
         "level": 4,
         "perks": 1
-      }
-    ]
+    }]
 }

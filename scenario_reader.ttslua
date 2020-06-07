@@ -1,6 +1,6 @@
-DONE = "D"
-OPEN = "O"
-LOCKED = "L"
+DONE = "Done"
+OPEN = "Open"
+LOCKED = "Locked"
 
 self_scenarios = {}
 
