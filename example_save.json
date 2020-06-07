@@ -37,7 +37,7 @@
         "characters": [{
             "class": "Brute",
             "name": "Rambo",
-            "goal": "Finding the Cure",
+            "quest": "Finding the Cure",
             "xp": 100,
             "gold": 42,
             "checkmarks": 4,
@@ -56,13 +56,25 @@
               "My Note",
               "More notes"
             ]
+        }, {
+            "class": "Tinkerer",
+            "name": "Dave",
+            "quest": "Elemental Samples",
+            "xp": 50,
+            "gold": 42,
+            "perks": [
+              1
+            ],
+            "abilities": [
+              "Stamina Booster"
+            ]
         }]
     },
     "retired": [{
         "player": "Bob",
         "character": "Big Boss",
         "class": "Brute",
-        "goal": "Pounds of Flesh",
+        "quest": "Pounds of Flesh",
         "level": 4,
         "perks": 1
     }]

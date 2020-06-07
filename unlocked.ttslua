@@ -1,0 +1,30 @@
+unlocked = {}
+
+function unlocked.read_classes(classes)
+  utils.wait_for_object(guids.LOCKED_CLASSES, function() unlocked.__read_classes_start(classes) end)
+end
+
+
+function unlocked.__read_classes_start(classes)
+  print("Reading unlocked classes")
+  for number, class in pairs(classes) do
+    unlocked.__read_class(number, class)
+  end
+end
+
+
+function unlocked.__read_class(number, class)
+  local character_boxes = getObjectFromGUID(guids.LOCKED_CLASSES)
+  local last_box = getObjectFromGUID(guids.LAST_BOX)
+  local before_last_box = getObjectFromGUID(guids.BEFORE_LAST_BOX)
+  local delta = (last_box.getPosition() - before_last_box.getPosition()) * number
+  local class_guid = info.CLASSES[class].box_guid
+
+  character_boxes.takeObject({
+    position = last_box.getPosition() + delta,
+    rotation = last_box.getRotation(),
+    smooth = false,
+    guid = class_guid,
+    callback_function = function(o) utils.set_locked(o) end
+  })
+end

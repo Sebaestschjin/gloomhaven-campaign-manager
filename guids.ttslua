@@ -1,0 +1,15 @@
+guids = {}
+
+guids.GAMEBOX = "346ed5"
+guids.LOCKED_CLASSES = "1e6549"
+
+guids.MAP = "9cc037"
+guids.PARTY_SHEET = "6d3de2"
+
+guids.LAST_BOX = "fdef02" -- tinkerer
+guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
+
+guids.QUESTS = "73a423"
+
+guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}
+guids.ADD_PLAYERS = {"3f0cda", "4d61da", "f98ff8", "d0f661"}

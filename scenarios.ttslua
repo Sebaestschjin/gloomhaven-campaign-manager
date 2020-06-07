@@ -1,0 +1,42 @@
+scenarios = {}
+
+scenarios.OPEN = "Open"
+scenarios.DONE = "Done"
+scenarios.LOCKED = "Locked"
+
+function scenarios.read_all(content)
+  print("Reading Scenarios")
+
+  local scenario_info = getObjectFromGUID(guids.MAP).getTable("tableML")
+
+  for number, state in pairs(content) do
+    local guid = scenarios.__find_guid(scenario_info, tonumber(number))
+    Wait.time(function() scenarios.read(guid, state) end, 1.1, 1)
+  end
+end
+
+
+function scenarios.read(guid, state)
+  local map_script = getObjectFromGUID(guids.MAP)
+  if state == scenarios.OPEN then
+    map_script.call("clickedML", guid)
+  elseif state == scenarios.DONE then
+    map_script.call("clickedML", guid)
+    map_script.call("oneClick", { guid })
+  elseif state == scenarios.LOCKED then
+    map_script.call("clickedML", guid)
+    map_script.call("triClick", { guid })
+  else
+    print("Unknown state: " .. tostring(state))
+  end
+end
+
+
+function scenarios.__find_guid(scenario_info, number)
+  for guid, info in pairs(scenario_info) do
+    if info.number == number then
+      return guid
+    end
+  end
+  return nil
+end

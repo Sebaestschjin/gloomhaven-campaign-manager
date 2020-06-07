@@ -1,15 +1,15 @@
 # ToDo
 ## Bugs
-- setting scenarios to done doesn't work
+- reading achievements doesn't work with the module structure
 
 ## General
+- restructure repo, so that commons is part of the repo
 - error handling
 - logging
 - version information in save file
 - save file creation
 - consistent coding style
-- empty the game box before everything, so it's easier for following functions to find the required components
-- make the waiting for stuff cleaner and consistent
+- make the waiting for stuff cleaner and consistent (e.g. callback chaining)
 - (optional) support YAML reading
 
 ## Unlocks

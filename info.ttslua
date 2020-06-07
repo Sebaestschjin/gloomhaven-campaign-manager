@@ -1,4 +1,13 @@
-CLASS_INFO = {
+info = {}
+
+info.PLAYERS = {
+  [guids.ZONES[1]] = "Red",
+  [guids.ZONES[2]] = "White",
+  [guids.ZONES[3]] = "Blue",
+  [guids.ZONES[4]] = "Green"
+}
+
+info.CLASSES = {
   Brute = {
     box_guid = "697f18"
   },
@@ -56,7 +65,7 @@ CLASS_INFO = {
 }
 
 -- indices are 1 based here
-GOAL_INFO = {
+info.QUESTS = {
   ["Seeker of Xorn"] = {
     index = 17,
     number = 510
