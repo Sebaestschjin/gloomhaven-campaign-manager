@@ -3,7 +3,6 @@
 - reading achievements doesn't work with the module structure
 
 ## General
-- restructure repo, so that commons is part of the repo
 - error handling
 - logging
 - version information in save file

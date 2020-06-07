@@ -1,0 +1,49 @@
+utils = {}
+
+--- Reads the body of the notebook with the given name.
+function utils.read_notebook(name)
+  for _, notebook in pairs(Notes.getNotebookTabs()) do
+    if notebook.title == name then
+      return notebook.body
+    end
+  end
+  return nil
+end
+
+
+function utils.set_locked(object)
+  object.setLock(true)
+end
+
+
+function utils.move_to_hand(object, player, number)
+  if not number then number = 1 end
+  object.deal(1, player, number)
+end
+
+
+function utils.wait_for_object(guid, callback, timeout, timeout_callback)
+  local waiter = function() return getObjectFromGUID(guid) ~= nil end
+  Wait.condition(callback, waiter, timeout, timeout_callback)
+end
+
+
+function utils.find_object_in_zone(zone_guid, name)
+  local zone = getObjectFromGUID(zone_guid)
+  for _, object in pairs(zone.getObjects()) do
+    if object.getName():find(name) then
+      return object
+    end
+  end
+  return nil
+end
+
+
+function utils.find_object_info_in_stack(stack, name)
+  for _, object_info in pairs(stack.getObjects()) do
+    if object_info.name:find(name) then
+      return object_info
+    end
+  end
+  return nil
+end
