@@ -28,8 +28,8 @@ end
 
 
 function save_handler.start_reading(content)
-  -- save_handler.read_global(content.global)
-  -- save_handler.read_unlocked(content.unlocked)
+  save_handler.read_global(content.global)
+  save_handler.read_unlocked(content.unlocked)
   save_handler.read_party(content.party)
 end
 

@@ -1,3 +1,6 @@
+# Beware!
+This code contains mild spoilers for Gloomhaven. The names and perks of all available classes are listed in the `info.ttslua` file (and maybe somewhere else), so don't look there if that's a problem for you. :-)
+
 # How To Use
 There's not a Workshop mod yet, so here's how to set this up:
 - requires Atom and the TTS plugin for Atom
@@ -31,55 +34,68 @@ end
 - insert the save file you want to load into the notebook
 - the object now has a button, hit that and the save loades
 
-# ToDo
-## Bugs
-- reading achievements doesn't work with the module structure
+# Features
+## World Map
+- ✓ Unlocked/Done/Locked scenarios
+- ✓ Prosperity
+- ✓ Global Achievements (currently broken)
+
+## Party sheet
+- ✓ Name
+- ✓ Reputation
+- ✓ Achievements
+- ✓ Notes
+- ✘ Party level
+
+## Characters
+- ✓ Name
+- ✓ Class
+- ✓ XP/Gold
+- ✘ Adjust HP to level
+- ✓ Notes/Item Notes
+- ✓ Modify attack modifiers according to unlocked perks
+- ✘ Hand out item cards
+- ✓ Hand out Personal Quest card
+- ✓ Hand out unlocked abilities
+- ✘ Enhancements
+- ✘ Retirement
+- ✘ Notes on the back of the characters sheet
+
+## Items/Loot
+- ✘ Build shop from prosperity
+- ✘ Move found items to the shop
+- ✘ Remove found item designs/scenarios from their decks
+- ✘ Remove looted treasure from the loot deck
+
+## Events
+- ✘ City Events
+- ✘ Road Events
+
+## Locked content
+- ✓ New character classes
+  - Not all features might be supported for all new classes. I haven't unlocked them, so they might have content I'm not aware of yet.
+- ✘ Special conditions
+- ✘ Town Records
+- ✘ Envelopes
+- ✘ Forgotten Circle expansion
+
+# Known Bugs
+- Reading achievements is currently broken
 - Removing the last card from the modifier deck doesn't work, as the deck says it doesn't have any objects left. So having all perks on one character will not work.
 - quest cards are not drawn to the correct player hand
 
+# ToDo
 ## General
-- error handling
-- logging
-- version information in save file
-- save file creation
-- consistent coding style
-- make the waiting for stuff cleaner and consistent (e.g. callback chaining)
-- (optional) support YAML reading
-
-## Unlocks
-- character boxes
-- checkmarks on sheet
-- envelopes
-- Forgotten Circle expansion
-
-## Party
-- setting the party levels on the party sheet
-
-## Characters
-- support all character boxes
-- add item cards
-- add personal quest
-- attack modifiers
-- health bar from level up
-- enhancements
-- retirements
-- notes at back of card
-
-## Events
-- city events
-- road events
-- rift events
-
-## Shop
-- from prosperity
-- from unlocks
-
-## Treasure
-- remove looted treasure
-- remove found random designs
-- remove found random scenario
+- Error handling
+- Logging
+- Comments...
+- How to handle different version?
+- Save file creation from current save
+- Consistent coding style
+- Make the waiting for stuff cleaner and consistent (e.g. callback chaining)
+- (optional) Support YAML reading
 
 ## Other
-- timer
-- rulebook
-- scenario book
+- Timer
+- Rulebook
+- Scenario book
