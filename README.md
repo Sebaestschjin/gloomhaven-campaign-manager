@@ -36,48 +36,48 @@ end
 
 # Features
 ## World Map
-- ✓ Unlocked/Done/Locked scenarios
-- ✓ Prosperity
-- ✓ Global Achievements (currently broken)
+- ✔️ Unlocked/Done/Locked scenarios
+- ✔️ Prosperity
+- ✔️ Global Achievements (currently broken)
 
 ## Party sheet
-- ✓ Name
-- ✓ Reputation
-- ✓ Achievements
-- ✓ Notes
-- ✘ Party level
+- ✔️ Name
+- ✔️ Reputation
+- ✔️ Achievements
+- ✔️ Notes
+- ❌ Party level
 
 ## Characters
-- ✓ Name
-- ✓ Class
-- ✓ XP/Gold
-- ✘ Adjust HP to level
-- ✓ Notes/Item Notes
-- ✓ Modify attack modifiers according to unlocked perks
-- ✘ Hand out item cards
-- ✓ Hand out Personal Quest card
-- ✓ Hand out unlocked abilities
-- ✘ Enhancements
-- ✘ Retirement
-- ✘ Notes on the back of the characters sheet
+- ✔️ Name
+- ✔️ Class
+- ✔️ XP/Gold
+- ❌ Adjust HP to level
+- ✔️ Notes/Item Notes
+- ✔️ Modify attack modifiers according to unlocked perks
+- ❌ Hand out item cards
+- ✔️ Hand out Personal Quest card
+- ✔️ Hand out unlocked abilities
+- ❌ Enhancements
+- ❌ Retirement
+- ❌ Notes on the back of the characters sheet
 
 ## Items/Loot
-- ✘ Build shop from prosperity
-- ✘ Move found items to the shop
-- ✘ Remove found item designs/scenarios from their decks
-- ✘ Remove looted treasure from the loot deck
+- ❌ Build shop from prosperity
+- ❌ Move found items to the shop
+- ❌ Remove found item designs/scenarios from their decks
+- ❌ Remove looted treasure from the loot deck
 
 ## Events
-- ✘ City Events
-- ✘ Road Events
+- ❌ City Events
+- ❌ Road Events
 
 ## Locked content
-- ✓ New character classes
+- ✔️ New character classes
   - Not all features might be supported for all new classes. I haven't unlocked them, so they might have content I'm not aware of yet.
-- ✘ Special conditions
-- ✘ Town Records
-- ✘ Envelopes
-- ✘ Forgotten Circle expansion
+- ❌ Special conditions
+- ❌ Town Records
+- ❌ Envelopes
+- ❌ Forgotten Circle expansion
 
 # Known Bugs
 - Reading achievements is currently broken
