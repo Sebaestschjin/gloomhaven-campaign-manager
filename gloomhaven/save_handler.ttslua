@@ -2,6 +2,8 @@ save_handler = {}
 
 #include !/common/utils
 #include guids
+#include names
+#include positions
 #include info
 #include preparation
 #include scenarios

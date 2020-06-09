@@ -1,0 +1,3 @@
+positions = {}
+
+positions.REMOVED = vector(-60, 2, -71)

@@ -28,10 +28,25 @@ function utils.wait_for_object(guid, callback, timeout, timeout_callback)
 end
 
 
-function utils.find_object_in_zone(zone_guid, name)
+-- TODO this looks quite ugly now...
+function utils.find_object_in_zone(zone_guid, search)
   local zone = getObjectFromGUID(zone_guid)
+  local plain = search.plain
+  if not plain then plain = false end
+
+  local tester
+  if search.func then
+    tester = search.func
+  else
+    tester = function(object)
+               return utils.find_non_empty(object.getGUID(), search.guid, plain)
+                      and utils.find_non_empty(object.getName(), search.name, plain)
+                      and utils.find_non_empty(object.getDescription(), search.description, plain)
+               end
+  end
+
   for _, object in pairs(zone.getObjects()) do
-    if object.getName():find(name) then
+    if tester(object) then
       return object
     end
   end
@@ -39,11 +54,27 @@ function utils.find_object_in_zone(zone_guid, name)
 end
 
 
-function utils.find_object_info_in_stack(stack, name)
+function utils.find_object_info_in_stack(stack, search)
+  local plain = search.plain
+  if not plain then plain = false end
+
   for _, object_info in pairs(stack.getObjects()) do
-    if object_info.name:find(name) then
+    if utils.find_non_empty(object_info.guid, search.guid, plain)
+       and utils.find_non_empty(object_info.name, search.name, plain)
+       and utils.find_non_empty(object_info.description, search.description, plain)
+    then
       return object_info
     end
   end
   return nil
+end
+
+
+function utils.find_non_empty(value, pattern, plain)
+  return pattern == nil or value:find(pattern, nil, plain)
+end
+
+
+function utils.escape_pattern(text)
+  return text:gsub("([-+()%[%]])", "%%%1")
 end

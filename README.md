@@ -1,6 +1,7 @@
 # ToDo
 ## Bugs
 - reading achievements doesn't work with the module structure
+- Removing the last card from the modifier deck doesn't work, as the deck says it doesn't have any objects left. So having all perks on one character will not work.
 
 ## General
 - error handling

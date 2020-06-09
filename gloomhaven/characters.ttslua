@@ -23,7 +23,7 @@ end
 
 
 function characters.read(player_zone, character)
-  local player_mat = utils.find_object_in_zone(player_zone, "Player Mat")
+  local player_mat = utils.find_object_in_zone(player_zone, {name = names.PLAYER_MAT})
   local character_box = getObjectFromGUID(info.CLASSES[character.class].box_guid)
 
   character_box.takeObject({
@@ -46,7 +46,7 @@ end
 
 
 function characters.setup_character_sheet(player_zone, character)
-  local character_sheet = utils.find_object_in_zone(player_zone, "Character Sheet")
+  local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
 
   if character.name then
     character_sheet.UI.setAttribute("Name", "text", character.name)
@@ -67,9 +67,7 @@ function characters.setup_character_sheet(player_zone, character)
   end
 
   if character.perks then
-    for _, perk in pairs(character.perks) do
-      character_sheet.call('clickedToggle', "perk"..tostring(perk))
-    end
+    characters.setup_perks(player_zone, character)
   end
 
   if character.items then
@@ -84,10 +82,10 @@ end
 
 function characters.setup_abilities(player_zone, character)
   if character.abilities then
-    local ability_deck = utils.find_object_in_zone(player_zone, "Advanced Abilities")
+    local ability_deck = utils.find_object_in_zone(player_zone, {name = names.ABILITY_DECK})
 
     for _, ability in pairs(character.abilities) do
-      local ability_card = utils.find_object_info_in_stack(ability_deck, ability)
+      local ability_card = utils.find_object_info_in_stack(ability_deck, {name=ability})
       ability_deck.takeObject({
         position = characters.get_safe_position(),
         guid = ability_card.guid,
@@ -111,14 +109,69 @@ function characters.setup_quest(player_zone, character)
   end
 end
 
+
+function characters.setup_perks(player_zone, character)
+  local perk_info = info.CLASSES[character.class].perks
+  local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
+  local modifier_deck = utils.find_object_in_zone(player_zone, {name=names.MODIFIER_DECK, description="Player"})
+  local other_deck = function(obj) return obj.getName():find(names.MODIFIER_DECK) and obj.getGUID() ~= modifier_deck.getGUID() end
+  local additional_deck = utils.find_object_in_zone(player_zone, {func=other_deck})
+
+  for _, perk in pairs(character.perks) do
+    character_sheet.call('clickedToggle', "perk"..tostring(perk))
+    characters.modify_deck(modifier_deck, additional_deck, perk_info[perk])
+  end
+
+  modifier_deck.shuffle()
+end
+
+
+function characters.modify_deck(modifier_deck, additional_deck, info)
+  if info.add then
+    for _, card in pairs(info.add) do
+      print("Adding: " .. card)
+      local found_card = characters.find_modifier_card(additional_deck, card)
+      additional_deck.takeObject({
+        guid = found_card.guid,
+        position = characters.get_safe_position(),
+        smooth = false,
+        callback_function = function(obj) obj.putObject(modifier_deck) end
+      })
+    end
+  end
+
+  if info.remove then
+    for _, card in pairs(info.remove) do
+      print("Removing: " .. card)
+      local found_card = characters.find_modifier_card(modifier_deck, card)
+      modifier_deck.takeObject({
+        guid=found_card.guid,
+        position=positions.REMOVED,
+        smooth=false,
+        callback_function = function(obj) obj.destruct() end})
+    end
+  end
+
+  if info.ignore then
+    print("Ignoring: " .. info.ignore)
+  end
+end
+
+
+function characters.find_modifier_card(deck, name)
+  local search_pattern = "^" .. names.ATTACK_MODIFIER .. " " .. utils.escape_pattern(name) .. "$"
+  return utils.find_object_info_in_stack(deck, {name=search_pattern})
+end
+
+
 -- TODO this could be a generic function like wait_for_object
 function characters.check_player_mat(zone_guid)
-  return utils.find_object_in_zone(zone_guid, "Player Mat") ~= nil
+  return utils.find_object_in_zone(zone_guid, {name = names.PLAYER_MAT}) ~= nil
 end
 
 
 function characters.check_character_sheet(zone_guid)
-  return utils.find_object_in_zone(zone_guid, "Character Sheet") ~= nil
+  return utils.find_object_in_zone(zone_guid, {name = names.CHARACTER_SHEET}) ~= nil
 end
 
 -- TODO this should be in a more generic module

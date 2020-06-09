@@ -1,0 +1,9 @@
+names = {}
+
+names.CHARACTER_SHEET = "Character Sheet"
+names.PLAYER_MAT = "Player Mat"
+
+names.ABILITY_DECK = "Advanced Abilities"
+names.MODIFIER_DECK = "Attack Modifiers"
+
+names.ATTACK_MODIFIER = "Attack Modifier"
