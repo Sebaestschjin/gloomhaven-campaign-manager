@@ -5,6 +5,7 @@ guids.LOCKED_CLASSES = "1e6549"
 
 guids.MAP = "9cc037"
 guids.PARTY_SHEET = "6d3de2"
+guids.ACHIEVEMENT_BOARD = "43d5b8"
 
 guids.LAST_BOX = "fdef02" -- tinkerer
 guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart

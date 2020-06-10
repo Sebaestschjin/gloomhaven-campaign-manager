@@ -38,7 +38,7 @@ end
 ## World Map
 - ✔️ Unlocked/Done/Locked scenarios
 - ✔️ Prosperity
-- ✔️ Global Achievements (currently broken)
+- ✔️ Global Achievements
 
 ## Party sheet
 - ✔️ Name
@@ -73,7 +73,6 @@ end
 
 ## Locked content
 - ✔️ New character classes
-  - Not all features might be supported for all new classes. I haven't unlocked them, so they might have content I'm not aware of yet.
 - ❌ Special conditions
 - ❌ Town Records
 - ❌ Envelopes
@@ -83,6 +82,7 @@ end
 - Reading achievements is currently broken
 - Removing the last card from the modifier deck doesn't work, as the deck says it doesn't have any objects left. So having all perks on one character will not work.
 - quest cards are not drawn to the correct player hand
+- drawing quests for multiple characters won't work, as the index is wrong
 
 # ToDo
 ## General

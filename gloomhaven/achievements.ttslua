@@ -1,63 +1,47 @@
 achievements = {}
 
-achievements.current = {}
-
 function achievements.read_all(content)
   print("Reading Achievements")
-  print(content)
-  achievements.current = content
 
-  -- FIXME use regular waits with conditions instead of the crappy wait_frames as this doesn't seem
-  -- to work with the module structure (or I'm doing it wrong :-))
-  startLuaCoroutine(self, "__read_all_coroutine")
+  local callbacks = {}
+  for _, achievement in pairs(content) do
+    local count = 1
+    if achievement.count then count = achievement.count end
+    for i=1, count do
+      table.insert(callbacks, function(cb) achievements.read(cb, achievement) end)
+    end
+  end
+
+  achievements.start(callbacks)
 end
 
 
-function achievements.__read_all_coroutine()
-  print("Here we go achievements!")
-  print(achievements.current)
-  for _, achievement in pairs(achievements.current) do
-    local board = achievements.__get_achievement_board()
-    local index = achievements.__find_achievement_index(board, achievement)
-    achievements.__read_achievement(index, achievement)
-  end
+function achievements.read(callbacks, achievement)
+  log(achievement, "Loading achievement")
+  local board = getObjectFromGUID(guids.ACHIEVEMENT_BOARD)
+  local index = achievements.find_achievement_index(board, achievement)
+  board.call("clicked", index)
 
-  return 1
+  Wait.time(function() achievements.start(callbacks) end, 2)
 end
 
 
-function achievements.__read_achievement(index, achievement)
-  local count = 1
-  if achievement.count then
-    count = achievement.count
+function achievements.start(callbacks)
+  local next_callback = table.remove(callbacks)
+  if next_callback == nil then
+    return
   end
 
-  for i=1, count do
-    local board = achievements.__get_achievement_board()
-    board.call("clicked", index)
-    utils.wait_frames(30)
-  end
+  getObjectFromGUID(guids.MAP).call("addAchiev", {})
+  utils.wait_for_object(guids.ACHIEVEMENT_BOARD, function() next_callback(callbacks) end)
 end
 
 
-function achievements.__get_achievement_board()
-  local board = getObjectFromGUID("43d5b8")
-  if not board then
-    map_script.call("addAchiev", {})
-    utils.wait_frames(120)
-    return getObjectFromGUID("43d5b8")
-  end
-
-  return board
-end
-
-
-function achievements.__find_achievement_index(board, achievement)
+function achievements.find_achievement_index(board, achievement)
   local achievement_info = board.getTable("flags")
 
   for i, flag in pairs(achievement_info) do
     if flag.name == achievement.name then
-      -- TODO check if count is actually available
       return i
     end
   end
