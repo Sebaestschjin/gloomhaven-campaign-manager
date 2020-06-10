@@ -1,5 +1,8 @@
+-- Contains information about different parts of the Gloomhaven mod and Gloomhaven components (e.g.
+-- all classes and their perks).
 info = {}
 
+-- Mapping from a player's scripting zone GUID to PlayerColor
 info.PLAYERS = {
   [guids.ZONES[1]] = "Red",
   [guids.ZONES[2]] = "White",
@@ -7,10 +10,17 @@ info.PLAYERS = {
   [guids.ZONES[4]] = "Green"
 }
 
+info.HP = {
+  LOW = {6, 7, 8, 9, 10, 11, 12, 13, 14},
+  MEDIUM =  {8, 9, 11, 12, 14, 15, 17, 18, 20},
+  HIGH = {10, 12, 14, 16, 18, 20, 22, 24, 26}
+}
+
+-- Information about all character classes. Contains their name, components GUIDs, perks and HP.
 info.CLASSES = {
   Brute = {
     box_guid = "697f18",
-    hp = {10, 12, 14, 16, 18, 20, 22, 24, 26},
+    hp = info.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { add = {"(+1)"}, remove = {"(-1)"} },
@@ -31,7 +41,7 @@ info.CLASSES = {
   },
   Scoundrel = {
     box_guid = "66309d",
-    hp = {8, 9, 11, 12, 14, 15, 17, 18, 20},
+    hp = info.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -52,7 +62,7 @@ info.CLASSES = {
   },
   Spellweaver = {
     box_guid = "0507cf",
-    hp = {6, 7, 8, 9, 10, 11, 12, 13, 14},
+    hp = info.HP.LOW,
     perks = {
       [1] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"} },
@@ -73,7 +83,7 @@ info.CLASSES = {
   },
   Mindthief = {
     box_guid = "8c1ca4",
-    hp = {6, 7, 8, 9, 10, 11, 12, 13, 14},
+    hp = info.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -94,7 +104,7 @@ info.CLASSES = {
   },
   Cragheart = {
     box_guid = "ec1d2a",
-    hp = {10, 12, 14, 16, 18, 20, 22, 24, 26},
+    hp = info.HP.HIGH,
     perk = {
       [1] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"}},
@@ -115,7 +125,7 @@ info.CLASSES = {
   },
   Tinkerer = {
     box_guid = "fdef02",
-    hp = {8, 9, 11, 12, 14, 15, 17, 18, 20},
+    hp = info.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -136,7 +146,7 @@ info.CLASSES = {
   },
   Berserker = {
     box_guid = "7ff6c4",
-    hp = {10, 12, 14, 16, 18, 20, 22, 24, 26},
+    hp = info.HP.HIGH,,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
@@ -157,11 +167,29 @@ info.CLASSES = {
     }
   },
   Elementalist = {
-    box_guid = "21d7e7"
+    box_guid = "21d7e7",
+    info.HP.LOW,
+    perks = {
+      [1] = { remove = {"(-1)", "(-1)"} },
+      [2] = { remove = {"(-1)", "(-1)"} },
+      [3] = { remove = {"(-1)"}, add = {"(+1)"} },
+      [4] = { remove = {"(+0)"}, add = {"(+2)"} },
+      [5] = { remove = {"(+0)"}, add = {"(+2)"} },
+      [6] = { add = {"(Fire)", "(Fire)", "(Fire)"} },
+      [7] = { add = {"(Ice)", "(Ice)", "(Ice)"} },
+      [8] = { add = {"(Air)", "(Air)", "(Air)"} },
+      [9] = { add = {"(Earth)", "(Earth)", "(Earth)"} },
+      [10] = { remove = {"(+0)", "(+0)"}, add = {"(Fire)", "(Earth)"}},
+      [11] = { remove = {"(+0)", "(+0)"}, add = {"(Ice)", "(Air)"}},
+      [12] = { add = {"(+1) (Push 1)", "(+1) (Push 1)"} },
+      [13] = { add = {"(+1) (Wound)"} },
+      [14] = { add = {"(Stun)"} },
+      [15] = { add = {"(Add Target)"} }
+    }
   },
   Quartermaster = {
     box_guid = "d221fc",
-    hp = {10, 12, 14, 16, 18, 20, 22, 24, 26},
+    hp = info.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -182,8 +210,8 @@ info.CLASSES = {
   },
   ["Beast Tyrant"] = {
     box_guid = "89bec7",
-    hp = {6, 7, 8, 9, 10, 11, 12, 13, 14},
-    hp_2 = {10, 12, 14, 16, 18, 20, 22, 24, 26},
+    hp = info.HP.LOW,
+    hp_2 = info.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"} },
@@ -204,7 +232,7 @@ info.CLASSES = {
   },
   Soothsinger = {
     box_guid = "732351",
-    hp = {6, 7, 8, 9, 10, 11, 12, 13, 14},
+    hp = info.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -224,25 +252,153 @@ info.CLASSES = {
     }
   },
   Plagueherald = {
-    box_guid = "10b86a"
+    box_guid = "10b86a",
+    hp = info.HP.LOW,
+    perks = {
+      [1] = { remove = {"(-2)"}, add = {"(+0)"} },
+      [2] = { remove = {"(-1)"}, add = {"(+1)"} },
+      [3] = { remove = {"(-1)"}, add = {"(+1)"} },
+      [4] = { remove = {"(+0)"}, add = {"(+2)"}},
+      [5] = { remove = {"(+0)"}, add = {"(+2)"}},
+      [6] = { add = {"(+1)", "(+1)"} },
+      [7] = { add = {"(+1) (Air)"} },
+      [8] = { add = {"(+1) (Air)"} },
+      [9] = { add = {"(+1) (Air)"} },
+      [10] = { add = {"(Poison) (Rolling)", "(Poison) (Rolling)", "(Poison) (Rolling)"} },
+      [11] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"} },
+      [12] = { add = {"(Immobilize) (Rolling)", "(Immobilize) (Rolling)"} },
+      [13] = { add = {"(Stun) (Rolling)"} },
+      [14] = { add = {"(Stun) (Rolling)"} },
+      [15] = { ignore = "S", add = {"(+1)"} }
+    }
   },
   Nightshroud = {
-    box_guid = "8f7455"
+    box_guid = "8f7455",
+    hp = info.HP.MEDIUM,
+    perks = {
+      [1] = { remove = {"(-1)", "(-1)"} },
+      [2] = { remove = {"(-1)", "(-1)"} },
+      [3] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
+      [4] = { add = {"(-1) (Dark)"} },
+      [5] = { add = {"(-1) (Dark)"} },
+      [6] = { remove = {"(-1) (Dark)"}, add = {"(+1) (Dark)"} },
+      [7] = { remove = {"(-1) (Dark)"}, add = {"(+1) (Dark)"} },
+      [8] = { add = {"(+1) (Invisible)"} },
+      [9] = { add = {"(+1) (Invisible)"} },
+      [10] = { add = {"(Muddle) (Rolling)", "(Muddle) (Rolling)", "(Muddle) (Rolling)"} },
+      [11] = { add = {"(Muddle) (Rolling)", "(Muddle) (Rolling)", "(Muddle) (Rolling)"} },
+      [12] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
+      [13] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"} },
+      [14] = { add = {"(Add Target) (Rolling)"} },
+      [15] = { ignore = "S", add = {"(+1)", "(+1)"} }
+
+    }
   },
   Sawbones = {
-    box_guid = "e5148c"
+    box_guid = "e5148c",
+    info.HP.MEDIUM,
+    perk = {
+      [1] = { remove = {"(-1)", "(-1)"} },
+      [2] = { remove = {"(-1)", "(-1)"} },
+      [3] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
+      [4] = { remove = {"(+0)"}, add = {"(+2)"} },
+      [5] = { remove = {"(+0)"}, add = {"(+2)"} },
+      [6] = { add = {"(+2) (Rolling)"} },
+      [7] = { add = {"(+2) (Rolling)"} },
+      [8] = { add = {"(+1) (Immobilize)"} },
+      [9] = { add = {"(+1) (Immobilize)"} },
+      [10] = { add = {"(Wound) (Rolling)", "(Wound) (Rolling)"} },
+      [11] = { add = {"(Wound) (Rolling)", "(Wound) (Rolling)"} },
+      [12] = { add = {"(Stun) (Rolling)"} },
+      [13] = { add = {"(Heal 3 Self) (Rolling)"} },
+      [14] = { add = {"(Heal 3 Self) (Rolling)"} },
+      [15] = { add = {"(Refresh)"} }
+    }
   },
   Sunkeeper = {
-    box_guid = "bfe08d"
+    box_guid = "bfe08d",
+    info.HP.HIGH,
+    perks = {
+      [1] = { remove = {"(-1)", "(-1)"} },
+      [2] = { remove = {"(-1)", "(-1)"} },
+      [3] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
+      [4] = { remove = {"(-2)"}, add = {"(+0)"} },
+      [5] = { remove = {"(+0)"}, add = {"(+2)"} },
+      [6] = { add = {"(+1) (Rolling)", "(+1) (Rolling)"} },
+      [7] = { add = {"(+1) (Rolling)", "(+1) (Rolling)"} },
+      [8] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
+      [9] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
+      [10] = { add = {"(Stun) (Rolling)"} },
+      [11] = { add = {"(Light) (Rolling)", "(Light) (Rolling)"} },
+      [12] = { add = {"(Light) (Rolling)", "(Light) (Rolling)"} },
+      [13] = { add = {"(Shield 1 Self) (Rolling)", "(Shield 1 Self) (Rolling)"} },
+      [14] = { ignore = "I", add = {"(+1)", "(+1)"} },
+      [15] = { ignore = "S" }
+
+    }
   },
   Summoner = {
-    box_guid = "0f9847"
+    box_guid = "0f9847",
+    info.HP.MEDIUM,
+    perks = {
+      [1] = { remove = {"(-1)", "(-1)"} },
+      [2] = { remove = {"(-2)"}, add = {"(+0)"} },
+      [3] = { remove = {"(-1)"}, add = {"(+1)"} },
+      [4] = { remove = {"(-1)"}, add = {"(+1)"} },
+      [5] = { remove = {"(-1)"}, add = {"(+1)"} },
+      [6] = { add = {"(+2)"} },
+      [7] = { add = {"(+2)"} },
+      [8] = { add = {"(Wound) (Rolling)", "(Wound) (Rolling)"} },
+      [9] = { add = {"(Poison) (Rolling)", "(Poison) (Rolling)"} },
+      [10] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
+      [11] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
+      [12] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
+      [13] = { add = {"(Fire) (Rolling)", "(Air) (Rolling)"} },
+      [14] = { add = {"(Dark) (Rolling)", "(Earth) (Rolling)"} },
+      [15] = { ignore = "S", add = {"(+1)", "(+1)"} }
+    }
   },
   Doomstalker = {
-    box_guid = "b7fe6d"
+    box_guid = "b7fe6d",
+    info.HP.MEDIUM,
+    perks = {
+      [1] = { remove = {"(-1)", "(-1)"} },
+      [2] = { remove = {"(-1)", "(-1)"} },
+      [3] = { remove = {"(+0)", "(+0)"}, add = {"(+1)", "(+1)"} },
+      [4] = { remove = {"(+0)", "(+0)"}, add = {"(+1)", "(+1)"} },
+      [5] = { remove = {"(+0)", "(+0)"}, add = {"(+1)", "(+1)"} },
+      [6] = { add = {"(+1) (Rolling)", "(+1) (Rolling)"} },
+      [7] = { add = {"(+1) (Rolling)", "(+1) (Rolling)"} },
+      [8] = { add = {"(+2) (Muddle)"} },
+      [9] = { add = {"(+1) (Poison)"} },
+      [10] = { add = {"(+1) (Wound)"} },
+      [11] = { add = {"(+1) (Immobilize)"} },
+      [12] = { add = {"(Stun)"} },
+      [13] = { add = {"(Add Target) (Rolling)"} },
+      [14] = { add = {"(Add Target) (Rolling)"} },
+      [15] = { ignore = "S" }
+    }
   },
   Diviner = {
-    box_guid = "ae2ea4"
+    box_guid = "ae2ea4",
+    hp = info.HP.LOW,
+    perks = {
+      [1] = { remove = {"(-1)", "(-1)"} },
+      [2] = { remove = {"(-1)", "(-1)"} },
+      [3] = { remove = {"(-2)"} },
+      [4] = { remove = {"(+1)", "(+1)"}, add = {"(+3) (Shield 1 Self)"} },
+      [5] = { remove = {"(+1)", "(+1)"}, add = {"(+3) (Shield 1 Self)"} },
+      [6] = { remove = {"(+0)"}, add = {"(+1) (Shield 1 Ally)"} },
+      [7] = { remove = {"(+0)"}, add = {"(+2) (Dark)"} },
+      [8] = { remove = {"(+0)"}, add = {"(+2) (Light)"} },
+      [9] = { remove = {"(+0)"}, add = {"(+3) (Muddle)"} },
+      [10] = { remove = {"(+0)"}, add = {"(+2) (Curse)"} },
+      [11] = { remove = {"(+0)"}, add = {"(+2) (Regenerate Self)"} },
+      [12] = { remove = {"(+0)"}, add = {"(+1) (Heal 2 Ally)"} },
+      [13] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
+      [14] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"}},
+      [15] = { ignore = "S", add = {"(+1)", "(+1)"}}
+    }
   }
 }
 
