@@ -1,0 +1,3 @@
+rotations = {}
+
+rotations.UP = vector(0, 180, 180)

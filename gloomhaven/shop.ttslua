@@ -1,0 +1,22 @@
+shop = {}
+
+
+function shop.get_item(name, position)
+  local city_mat = getObjectFromGUID(guids.CITY_MAT)
+  for i = 1, 13 do
+    local pos = city_mat.positionToWorld(positions.CITY_DECK + positions.CITY_GAP * i)
+    local deck = city_mat.call('checkForDeck', pos)
+    for _, item in pairs(deck.getObjects()) do
+      if item.name == name then
+        deck.takeObject({
+          guid = item.guid,
+          smooth = false,
+          rotation = rotations.UP,
+          callback_function = function(obj) obj.setPosition(position) end,
+          flip = true
+        })
+        break
+      end
+    end
+  end
+end

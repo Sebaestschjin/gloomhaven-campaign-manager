@@ -1,15 +1,19 @@
 save_handler = {}
 
 #include !/common/utils
+#include !/common/rotations
+
 #include guids
 #include names
 #include positions
 #include info
+
 #include preparation
 #include scenarios
 #include achievements
 #include unlocked
 #include characters
+#include shop
 
 save_handler.SAVE_FILE = "Savefile"
 

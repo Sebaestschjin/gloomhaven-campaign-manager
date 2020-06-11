@@ -71,7 +71,7 @@ function characters.setup_character_sheet(player_zone, character)
   end
 
   if character.items then
-    character_sheet.UI.setAttribute("Items", "text", table.concat(character.items, "\n"))
+    characters.setup_items(player_zone, character)
   end
 
   if character.notes then
@@ -102,9 +102,10 @@ function characters.setup_quest(player_zone, character)
     local quest_index = characters.get_quest_index(character.quest)
     local quest_deck = getObjectFromGUID(guids.QUESTS)
     quest_deck.takeObject({
-      position = characters.get_safe_position(),
       index = quest_index - 1,
-      callback_function = function(o) characters.move_to_hand(o, player_zone, 2) end
+      smooth = false,
+      rotation = rotations.UP,
+      callback_function = function(obj) characters.move_to_position(obj, player_zone, positions.QUEST) end
     })
   end
 end
@@ -123,6 +124,16 @@ function characters.setup_perks(player_zone, character)
   end
 
   modifier_deck.shuffle()
+end
+
+
+function characters.setup_items(player_zone, character)
+  local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
+  character_sheet.UI.setAttribute("Items", "text", table.concat(character.items, "\n"))
+
+  for _, item in pairs(character.items) do
+    shop.get_item(item, positions.relative_to_zone(player_zone, positions.ITEM))
+  end
 end
 
 
@@ -172,6 +183,11 @@ end
 
 function characters.check_character_sheet(zone_guid)
   return utils.find_object_in_zone(zone_guid, {name = names.CHARACTER_SHEET}) ~= nil
+end
+
+
+function characters.move_to_position(object, player_zone, position)
+  object.setPosition(positions.relative_to_zone(player_zone, position))
 end
 
 -- TODO this should be in a more generic module

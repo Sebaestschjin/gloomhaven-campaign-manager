@@ -32,7 +32,7 @@ end
 ```
 - hit Ctrl+Shift+S in Atom
 - insert the save file you want to load into the notebook
-- the object now has a button, hit that and the save loades
+- the object now has a button, hit that and the save loads
 
 # Features
 ## World Map
@@ -54,7 +54,7 @@ end
 - ❌ Adjust HP to level
 - ✔️ Notes/Item Notes
 - ✔️ Modify attack modifiers according to unlocked perks
-- ❌ Hand out item cards
+- ✔️ Hand out item cards
 - ✔️ Hand out Personal Quest card
 - ✔️ Hand out unlocked abilities
 - ❌ Enhancements
@@ -79,9 +79,7 @@ end
 - ❌ Forgotten Circle expansion
 
 # Known Bugs
-- Reading achievements is currently broken
 - Removing the last card from the modifier deck doesn't work, as the deck says it doesn't have any objects left. So having all perks on one character will not work.
-- quest cards are not drawn to the correct player hand
 - drawing quests for multiple characters won't work, as the index is wrong
 
 # ToDo

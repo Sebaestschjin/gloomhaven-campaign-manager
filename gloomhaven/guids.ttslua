@@ -4,6 +4,7 @@ guids.GAMEBOX = "346ed5"
 guids.LOCKED_CLASSES = "1e6549"
 
 guids.MAP = "9cc037"
+guids.CITY_MAT = "f3ffb7"
 guids.PARTY_SHEET = "6d3de2"
 guids.ACHIEVEMENT_BOARD = "43d5b8"
 
