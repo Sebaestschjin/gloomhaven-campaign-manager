@@ -4,7 +4,9 @@ function characters.read_all(content)
   print("Reading characters")
 
   for i, character in pairs(content) do
-    characters.add_player(i, character)
+    if next(character) != nil then
+        characters.add_player(i, character)
+    end
   end
 end
 
