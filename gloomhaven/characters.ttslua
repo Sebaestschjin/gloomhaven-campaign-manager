@@ -6,8 +6,10 @@ function characters.read_all(content)
   for i, character in pairs(content) do
     if next(character) != nil then
         characters.add_player(i, character)
+        characters.setPartySheetParty(i, character)
     end
   end
+  characters.setPartySheetAverageLevel(content)
 end
 
 
@@ -228,4 +230,33 @@ function characters.get_quest_index(quest)
       return g.index
     end
   end
+end
+
+
+function characters.setPartySheetParty(position, character)
+  local partySheetAttributeName = {"playerone","playertwo","playerthree","playerfour"}
+  local party_sheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local attributeName = partySheetAttributeName[position]
+  local attributeLvlName = attributeName..'lvl'
+  local level = utils.getLevel(character.xp)
+
+  party_sheet.UI.setAttribute(attributeName, "text", character.name)
+  party_sheet.UI.setAttribute(attributeLvlName, "text", level)
+end
+
+-- TODO It should be easier than this. :()
+function characters.setPartySheetAverageLevel(content)
+  local party_sheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local sum = 0
+  local numPlayers = 0
+  for i, character in pairs(content) do
+    if next(character) != nil then
+        sum = sum + utils.getLevel(character.xp)
+        numPlayers = numPlayers + 1
+    end
+  end
+  local average = sum / numPlayers
+  local scenarioLevel = math.ceil(average / 2)
+  party_sheet.UI.setAttribute("averageLevel", "text", tonumber(string.format("%.2f", average)))
+  party_sheet.UI.setAttribute("scenarioLevel", "text", tonumber(string.format("%d", scenarioLevel)))
 end
