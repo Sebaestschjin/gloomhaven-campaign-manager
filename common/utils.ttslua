@@ -78,3 +78,12 @@ end
 function utils.escape_pattern(text)
   return text:gsub("([-+()%[%]])", "%%%1")
 end
+
+function utils.getLevel(curXP)
+  for i, xp in pairs(info.XPLevel) do
+    if curXP < xp then
+      return i-1
+    end
+  end
+  return 9
+end
