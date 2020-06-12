@@ -14,6 +14,20 @@ positions.SCENARIO_BOOK = vector(63.88, 2, 33.34)
 positions.RULE_BOOK = vector(78.75, 2, 33.34)
 positions.TOWN_RECORDS = {59.94, 2, 46.22}
 
+snaps = {}
+snaps.Head = 15
+snaps.Armor = 16
+snaps.HandLeft = 17
+snaps.HandRight = 18
+snaps.Boots = 19
+snaps.Bag1 = 12
+snaps.Bag2 = 13
+snaps.Bag3 = 14
+snaps.Active1 = 6
+snaps.Active2 = 7
+snaps.Active3 = 8
+snaps.Active4 = 9
+
 
 function positions.relative_to_zone(zone_guid, position)
   return getObjectFromGUID(zone_guid).getPosition() + position

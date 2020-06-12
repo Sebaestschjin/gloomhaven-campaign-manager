@@ -59,7 +59,7 @@ function characters.setup_character_maxHP(player_zone, character)
 
   -- This should probably be added to utils.
   for _, object in pairs(zone.getObjects()) do
-    if object.getName() == character.class and object.name == "Custom_Model" then
+    if object.getName() == character.class and object.tag == "Figurine" then
       figure = object
     end
     if object.name == "Custom_Token" and string.find(object.getName(), "hp") then
@@ -156,11 +156,22 @@ end
 
 function characters.setup_items(player_zone, character)
   local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
-  character_sheet.UI.setAttribute("Items", "text", table.concat(character.items, "\n"))
+  local player_mat = utils.find_object_in_zone(player_zone, {name = names.PLAYER_MAT})
 
+  local items_text = ""
   for _, item in pairs(character.items) do
-    shop.get_item(item, positions.relative_to_zone(player_zone, positions.ITEM))
+    local item_position
+    if item.position then
+      local snap_point = snaps[item.position]
+      local snap_position = player_mat.getSnapPoints()[snap_point].position
+      item_position = player_mat.positionToWorld(snap_position)
+    else
+      item_position = positions.relative_to_zone(player_zone, positions.ITEM)
+    end
+    shop.get_item(item.name, item_position)
+    items_text = items_text .. "\n" .. item.name
   end
+  character_sheet.UI.setAttribute("Items", "text", items_text)
 end
 
 
