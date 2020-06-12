@@ -1,3 +1,10 @@
 rotations = {}
 
-rotations.UP = vector(0, 180, 0)
+rotations.NORTH = vector(0, 180, 0)
+rotations.NORTH_FLIPPED = vector(0, 180, 180)
+rotations.EAST = vector(0, 270, 0)
+rotations.EAST_FLIPPED = vector(0, 270, 180)
+rotations.SOUTH = vector(0, 0, 0)
+rotations.SOUTH_FLIPPED = vector(0, 0, 180)
+rotations.WEST = vector(0, 90, 0)
+rotations.WEST_FLIPPED = vector(0, 90, 180)

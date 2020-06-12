@@ -22,7 +22,7 @@ function preparation.reveal_opening_conditions(callback)
     guid = guids.OPENING_CONDITIONS,
     smooth = false,
     position = positions.OPENING_CONDITIONS,
-    rotation = rotations.UP,
+    rotation = rotations.NORTH,
     callback_function = function() preparation.reveal_retirement_sheet(callback) end
   })
 end
@@ -33,7 +33,7 @@ function preparation.reveal_retirement_sheet(callback)
     guid = guids.RETIREMENT_SHEET,
     smooth = false,
     position = positions.RETIREMENT_SHEET,
-    rotation = rotations.UP,
+    rotation = rotations.NORTH,
     callback_function = function() preparation.finish(callback) end
   })
 end

@@ -11,7 +11,7 @@ function shop.get_item(name, position)
         deck.takeObject({
           guid = item.guid,
           smooth = false,
-          rotation = rotations.UP,
+          rotation = rotations.NORTH,
           callback_function = function(obj) obj.setPosition(position) end,
           flip = true
         })
