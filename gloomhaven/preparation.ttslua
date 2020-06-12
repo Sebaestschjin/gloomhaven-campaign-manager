@@ -1,30 +1,44 @@
 preparation = {}
 
 -- TODO this is also needed in the end as a finishing step to return this stuff
+-- TODO why did I decide to put this in this class? XD Better of put that into the relevant parts
 
 function preparation.start(callback)
-  print("Preparing...")
-  preparation.__reveal_locked_characters(callback)
+  preparation.reveal_locked_characters(callback)
 end
 
 
-function preparation.__reveal_locked_characters(callback)
-  local locked_classes_box = getObjectFromGUID(guids.LOCKED_CLASSES)
-  if not locked_classes_box then
-    print("... Getting character boxes ...")
-    local gamebox = getObjectFromGUID(guids.GAMEBOX)
-    gamebox.takeObject({
-      guid = guids.LOCKED_CLASSES,
-      smooth = false,
-      callback_function = function() preparation.__finish(callback) end
-    })
-  else
-    preparation.__finish(callback)
-  end
+function preparation.reveal_locked_characters(callback)
+  getObjectFromGUID(guids.GAMEBOX).takeObject({
+    guid = guids.LOCKED_CLASSES,
+    smooth = false,
+    callback_function = function() preparation.reveal_opening_conditions(callback) end
+  })
 end
 
 
-function preparation.__finish(callback)
-    print("... Done")
+function preparation.reveal_opening_conditions(callback)
+  getObjectFromGUID(guids.GAMEBOX).takeObject({
+    guid = guids.OPENING_CONDITIONS,
+    smooth = false,
+    position = positions.OPENING_CONDITIONS,
+    rotation = rotations.UP,
+    callback_function = function() preparation.reveal_retirement_sheet(callback) end
+  })
+end
+
+
+function preparation.reveal_retirement_sheet(callback)
+  getObjectFromGUID(guids.GAMEBOX).takeObject({
+    guid = guids.RETIREMENT_SHEET,
+    smooth = false,
+    position = positions.RETIREMENT_SHEET,
+    rotation = rotations.UP,
+    callback_function = function() preparation.finish(callback) end
+  })
+end
+
+
+function preparation.finish(callback)
     callback()
 end

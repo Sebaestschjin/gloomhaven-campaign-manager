@@ -56,7 +56,8 @@
               "My Note",
               "More notes"
             ]
-        }, {
+        },
+        {
             "class": "Tinkerer",
             "name": "Dave",
             "quest": "Elemental Samples",
@@ -70,7 +71,16 @@
             ]
         }]
     },
-    "retired": [{
+    "retired": [
+      {
+          "player": "Alice",
+          "character": "Random Elf Name",
+          "class": "Spellweaver",
+          "quest": "Seeker of Xorn",
+          "level": 3,
+          "perks": 0
+      },
+      {
         "player": "Bob",
         "character": "Big Boss",
         "class": "Brute",

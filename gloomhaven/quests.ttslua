@@ -1,0 +1,37 @@
+quests = {}
+
+quests.removed = {}
+
+function quests.take(quest, callback)
+  local quest_index = quests.get_index(quest)
+  local deck = getObjectFromGUID(guids.QUESTS)
+
+  deck.takeObject({
+    index = quest_index - 1,
+    smooth = false,
+    rotation = rotations.UP,
+    callback_function = callback
+  })
+end
+
+
+function quests.get_index(quest)
+  local raw_index = quests.get_raw_index(quests)
+  return raw_index
+end
+
+
+function quests.get_raw_index(quest)
+  local quest_by_name = info.QUESTS[quest]
+  if quest_by_name then
+    return quest_by_name.index
+  end
+
+  for _, g in pairs(info.QUESTS) do
+    if g.number == quest then
+      return g.index
+    end
+  end
+
+  return nil
+end

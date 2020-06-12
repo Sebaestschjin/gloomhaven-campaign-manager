@@ -99,14 +99,8 @@ end
 function characters.setup_quest(player_zone, character)
   -- TODO ensure that the quests deck is full to make index access easier
   if character.quest then
-    local quest_index = characters.get_quest_index(character.quest)
-    local quest_deck = getObjectFromGUID(guids.QUESTS)
-    quest_deck.takeObject({
-      index = quest_index - 1,
-      smooth = false,
-      rotation = rotations.UP,
-      callback_function = function(obj) characters.move_to_position(obj, player_zone, positions.QUEST) end
-    })
+    local callback = function(obj) characters.move_to_position(obj, player_zone, positions.QUEST) end
+    quests.take(character.quest, callback)
   end
 end
 
@@ -203,18 +197,4 @@ characters.positions = 0
 function characters.get_safe_position()
   characters.positions = characters.positions + 1
   return vector(-43 + (characters.positions * 3), 2, -85)
-end
-
-
-function characters.get_quest_index(quest)
-  local quest_by_name = info.QUESTS[quest]
-  if quest_by_name then
-    return quest_by_name.index
-  end
-
-  for _, g in pairs(info.QUESTS) do
-    if g.number == quest then
-      return g.index
-    end
-  end
 end

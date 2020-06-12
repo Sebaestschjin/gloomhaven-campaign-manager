@@ -14,6 +14,8 @@ save_handler = {}
 #include unlocked
 #include characters
 #include shop
+#include retirements
+#include quests
 
 save_handler.SAVE_FILE = "Savefile"
 
@@ -35,6 +37,7 @@ function save_handler.start_reading(content)
   save_handler.read_global(content.global)
   save_handler.read_unlocked(content.unlocked)
   save_handler.read_party(content.party)
+  save_handler.read_retirements(content.retired)
 end
 
 
@@ -104,5 +107,12 @@ end
 function save_handler.read_characters(party)
   if party.characters then
     characters.read_all(party.characters)
+  end
+end
+
+
+function save_handler.read_retirements(retired)
+  if retired then
+    retirements.read_all(retired)
   end
 end

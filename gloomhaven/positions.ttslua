@@ -8,6 +8,9 @@ positions.CITY_GAP = vector(-1.2, 0, 0)
 positions.QUEST = vector(1, 2, -19)
 positions.ITEM = vector(-7, 2, -7)
 
+positions.OPENING_CONDITIONS = vector(65.19, 1.70, -29.55)
+positions.RETIREMENT_SHEET = vector(77.88, 1.70, -33.34)
+
 
 function positions.relative_to_zone(zone_guid, position)
   return getObjectFromGUID(zone_guid).getPosition() + position
