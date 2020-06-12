@@ -16,6 +16,8 @@ info.HP = {
   HIGH = {10, 12, 14, 16, 18, 20, 22, 24, 26}
 }
 
+info.XPLevel = {0, 45, 95, 150, 210, 275, 345, 420, 500}
+
 -- Information about all character classes. Contains their name, components GUIDs, perks and HP.
 info.CLASSES = {
   Brute = {
