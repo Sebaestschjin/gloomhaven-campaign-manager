@@ -45,20 +45,20 @@ end
 - ✔️ Reputation
 - ✔️ Achievements
 - ✔️ Notes
-- ❌ Party level
+- ✔️ Party level
 
 ## Characters
 - ✔️ Name
 - ✔️ Class
 - ✔️ XP/Gold
-- ❌ Adjust HP to level
+- ✔️ Adjust HP to level
 - ✔️ Notes/Item Notes
 - ✔️ Modify attack modifiers according to unlocked perks
 - ✔️ Hand out item cards
 - ✔️ Hand out Personal Quest card
 - ✔️ Hand out unlocked abilities
 - ❌ Enhancements
-- ❌ Retirement
+- ✔️ Retirement
 - ❌ Notes on the back of the characters sheet
 
 ## Items/Loot
@@ -80,7 +80,6 @@ end
 
 # Known Bugs
 - Removing the last card from the modifier deck doesn't work, as the deck says it doesn't have any objects left. So having all perks on one character will not work.
-- drawing quests for multiple characters won't work, as the index is wrong
 
 # ToDo
 ## General

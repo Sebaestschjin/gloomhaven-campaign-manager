@@ -239,7 +239,7 @@ end
 
 
 function characters.setPartySheetParty(position, character)
-  local partySheetAttributeName = {"playerone","playertwo","playerthree","playerfour"}
+  local partySheetAttributeName = {"playerone", "playertwo", "playerthree", "playerfour"}
   local party_sheet = getObjectFromGUID(guids.PARTY_SHEET)
   local attributeName = partySheetAttributeName[position]
   local attributeLvlName = attributeName..'lvl'
