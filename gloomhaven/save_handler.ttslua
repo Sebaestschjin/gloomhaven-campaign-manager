@@ -9,6 +9,7 @@ save_handler = {}
 #include info
 
 #include preparation
+#include prosperity
 #include scenarios
 #include achievements
 #include unlocked
@@ -38,6 +39,7 @@ function save_handler.start_reading(content)
   save_handler.read_unlocked(content.unlocked)
   save_handler.read_party(content.party)
   save_handler.read_retirements(content.retired)
+  save_handler.read_shop()
 end
 
 
@@ -50,17 +52,8 @@ function save_handler.read_global(content)
   if content.achievements then
     achievements.read_all(content.achievements)
   end
-  save_handler.__read_prosperity(content)
-end
-
-
-function save_handler.__read_prosperity(content)
   if content.prosperity then
-    print("Reading prosperity.")
-    local map_script = getObjectFromGUID(guids.MAP)
-    for i = 1, content.prosperity do
-      map_script.call("clickedPros", i)
-    end
+    prosperity.read_all(content.prosperity)
   end
 end
 
@@ -113,4 +106,9 @@ function save_handler.read_retirements(retired)
   if retired then
     retirements.read_all(retired)
   end
+end
+
+
+function save_handler.read_shop()
+  shop.read_all()
 end

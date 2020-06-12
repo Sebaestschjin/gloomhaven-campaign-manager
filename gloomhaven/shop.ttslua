@@ -1,21 +1,34 @@
 shop = {}
 
 
+function shop.read_all()
+  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+
+  for i=1, prosperity.getLevel() do
+    cityMat.call("layOut", i)
+  end
+  cityMat.call("layOut", 0)
+end
+
+
+
 function shop.get_item(name, position)
   local city_mat = getObjectFromGUID(guids.CITY_MAT)
-  for i = 1, 13 do
+  for i=0, 13 do
     local pos = city_mat.positionToWorld(positions.CITY_DECK + positions.CITY_GAP * i)
     local deck = city_mat.call('checkForDeck', pos)
-    for _, item in pairs(deck.getObjects()) do
-      if item.name == name then
-        deck.takeObject({
-          guid = item.guid,
-          smooth = false,
-          rotation = rotations.NORTH,
-          callback_function = function(obj) obj.setPosition(position) end,
-          flip = true
-        })
-        break
+    if deck then
+      for _, item in pairs(deck.getObjects()) do
+        if item.name == name then
+          deck.takeObject({
+            guid = item.guid,
+            smooth = false,
+            rotation = rotations.NORTH,
+            callback_function = function(obj) obj.setPosition(position) end,
+            flip = true
+          })
+          break
+        end
       end
     end
   end
