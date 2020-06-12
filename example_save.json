@@ -20,7 +20,17 @@
     "unlocked": {
       "classes": [
         "Berserker"
-      ]
+      ],
+      "special_conditions": {
+        "ancient_technology": true,
+        "drake_aided": true,
+        "donations": 10,
+        "low_reputation": true,
+        "lowest_reputation": true,
+        "high_reputation": true,
+        "highest_reputation": true,
+        "retired": true
+      }
     },
     "party": {
         "name": "Devil's advocates",

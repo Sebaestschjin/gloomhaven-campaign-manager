@@ -12,6 +12,7 @@ positions.OPENING_CONDITIONS = vector(65.19, 1.70, -29.55)
 positions.RETIREMENT_SHEET = vector(77.88, 1.70, -33.34)
 positions.SCENARIO_BOOK = vector(63.88, 2, 33.34)
 positions.RULE_BOOK = vector(78.75, 2, 33.34)
+positions.TOWN_RECORDS = {59.94, 2, 46.22}
 
 
 function positions.relative_to_zone(zone_guid, position)

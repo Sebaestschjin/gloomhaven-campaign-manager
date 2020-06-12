@@ -1,7 +1,52 @@
 unlocked = {}
 
+function unlocked.read_all(content)
+  if content.classes then
+    unlocked.read_classes(content.classes)
+  end
+
+  if content.special_conditions then
+    utils.wait_for_object(guids.OPENING_CONDITIONS, function() unlocked.read_special_conditions(content.special_conditions) end)
+  end
+end
+
 function unlocked.read_classes(classes)
   utils.wait_for_object(guids.LOCKED_CLASSES, function() unlocked.__read_classes_start(classes) end)
+end
+
+
+function unlocked.read_special_conditions(special_conditions)
+  unlocked.set_special_condition(special_conditions.ancient_technology, "Ancient")
+  unlocked.set_special_condition(special_conditions.drake_aided, "Drake")
+  unlocked.set_special_condition(special_conditions.low_reputation, "RepN10")
+  unlocked.set_special_condition(special_conditions.lowest_reputation, "RepN20")
+  unlocked.set_special_condition(special_conditions.high_reputation, "Rep10")
+  unlocked.set_special_condition(special_conditions.highest_reputation, "Rep20")
+
+  if special_conditions.retired then
+    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", "Retire")
+    getObjectFromGUID(guids.GAMEBOX).takeObject({
+      guid = guids.TOWN_RECORDS,
+      position = positions.TOWN_RECORDS,
+      rotation = rotations.NORTH,
+      smooth = false
+    })
+  end
+
+  if special_conditions.donations then
+    for i=1, special_conditions.donations do
+      unlocked.set_special_condition(true, "Donation"..i)
+    end
+    if special_conditions.donations >= 10 then
+      unlocked.set_special_condition(true, "DonationFull")
+    end
+  end
+end
+
+function unlocked.set_special_condition(condition, name)
+  if condition then
+    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", name)
+  end
 end
 
 

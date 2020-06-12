@@ -73,7 +73,7 @@ end
 
 ## Locked content
 - ✔️ New character classes
-- ❌ Special conditions
+- ✔️ Special conditions
 - ❌ Town Records
 - ❌ Envelopes
 - ❌ Forgotten Circle expansion
@@ -94,6 +94,7 @@ end
 - Save file creation from current save
 - Consistent coding style
 - Make the waiting for stuff cleaner and consistent (e.g. callback chaining)
+- Some special conditions can be deduced from other components and don't have to be included in the save file
 - (optional) Support YAML reading
 
 ## Other

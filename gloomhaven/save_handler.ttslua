@@ -68,9 +68,7 @@ end
 function save_handler.read_unlocked(content)
   if not content then return end
 
-  if content.classes then
-    unlocked.read_classes(content.classes)
-  end
+  unlocked.read_all(content)
 end
 
 
