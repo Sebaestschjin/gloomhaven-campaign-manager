@@ -17,6 +17,7 @@ save_handler = {}
 #include shop
 #include retirements
 #include quests
+#include sanctuary
 
 save_handler.SAVE_FILE = "Savefile"
 
@@ -54,6 +55,9 @@ function save_handler.read_global(content)
   end
   if content.prosperity then
     prosperity.read_all(content.prosperity)
+  end
+  if content.sanctuary then
+    sanctuary.read_all(content.sanctuary)
   end
 end
 
