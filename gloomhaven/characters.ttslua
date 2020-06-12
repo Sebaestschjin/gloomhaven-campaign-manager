@@ -106,6 +106,10 @@ function characters.setup_character_sheet(player_zone, character)
   if character.notes then
     character_sheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
   end
+
+  if character.hidden_notes then
+    character_sheet.UI.setAttribute("Notes", "text", table.concat(character.notes, "\n"))
+  end
 end
 
 

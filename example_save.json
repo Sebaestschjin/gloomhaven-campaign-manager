@@ -55,6 +55,10 @@
             "notes": [
               "My Note",
               "More notes"
+            ],
+            "hidden_notes": [
+              "Don't look!",
+              "This is secret!"
             ]
         },
         {

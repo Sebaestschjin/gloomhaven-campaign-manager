@@ -59,7 +59,7 @@ end
 - ✔️ Hand out unlocked abilities
 - ❌ Enhancements
 - ✔️ Retirement
-- ❌ Notes on the back of the characters sheet
+- ✔️ Notes on the back of the characters sheet
 
 ## Items/Loot
 - ❌ Build shop from prosperity
