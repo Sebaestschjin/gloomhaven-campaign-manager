@@ -5,6 +5,18 @@ preparation = {}
 
 function preparation.start(callback)
   preparation.reveal_locked_characters(callback)
+  getObjectFromGUID(guids.GAMEBOX).takeObject({
+    guid = guids.SCENARIO_BOOK,
+    smooth = false,
+    position = positions.SCENARIO_BOOK,
+    rotation = rotations.NORTH
+  })
+  getObjectFromGUID(guids.GAMEBOX).takeObject({
+    guid = guids.RULE_BOOK,
+    smooth = false,
+    position = positions.RULE_BOOK,
+    rotation = rotations.NORTH
+  })
 end
 
 

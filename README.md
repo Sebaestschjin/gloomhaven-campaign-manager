@@ -78,6 +78,10 @@ end
 - ❌ Envelopes
 - ❌ Forgotten Circle expansion
 
+## Other
+- ❌ Make positions (e.g. rule book) customizable
+- ❌ Allow the inclusion of the custom battle goals
+
 # Known Bugs
 - Removing the last card from the modifier deck doesn't work, as the deck says it doesn't have any objects left. So having all perks on one character will not work.
 
@@ -94,5 +98,3 @@ end
 
 ## Other
 - Timer
-- Rulebook
-- Scenario book

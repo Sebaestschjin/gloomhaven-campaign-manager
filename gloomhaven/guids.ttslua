@@ -2,6 +2,8 @@ guids = {}
 
 guids.GAMEBOX = "346ed5"
 guids.LOCKED_CLASSES = "1e6549"
+guids.SCENARIO_BOOK = "f3404a"
+guids.RULE_BOOK = "c9d3f5"
 
 guids.MAP = "9cc037"
 guids.DECK_MAT = "a75fcd"
