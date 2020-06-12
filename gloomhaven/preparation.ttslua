@@ -24,7 +24,18 @@ function preparation.reveal_locked_characters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.LOCKED_CLASSES,
     smooth = false,
-    callback_function = function() preparation.reveal_opening_conditions(callback) end
+    callback_function = function(obj)
+      preparation.put_divinier_into_box(obj)
+      preparation.reveal_opening_conditions(callback) end
+  })
+end
+
+
+function preparation.put_divinier_into_box(classes)
+  getObjectFromGUID(guids.EXPANSION_BOX).takeObject({
+    guid = info.CLASSES.Diviner.box_guid,
+    smooth = false,
+    callback_function = function(obj) classes.putObject(obj) end
   })
 end
 

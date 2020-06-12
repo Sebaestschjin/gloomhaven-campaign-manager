@@ -34,68 +34,47 @@ end
 - insert the save file you want to load into the notebook
 - the object now has a button, hit that and the save loads
 
-# Features
-## World Map
-- ✔️ Unlocked/Done/Locked scenarios
-- ✔️ Prosperity
-- ✔️ Global Achievements
+# Features/Roadmap
+| General Features                    | Read | Write |
+| ----------------------------------- | :--: | :---: |
+| Scenarios                           | ✔️    | ❌   |
+| Prosperity                          | ✔️    | ❌   |
+| Achievements                        | ✔️    | ❌   |
+| Party Sheet                         | ✔️    | ❌   |
+| Character classes                   | ✔️    | ❌   |
+| Character sheets                    | ✔️    | ❌   |
+| Character attack modifiers          | ✔️    | ❌   |
+| Character item cards                | ✔️    | ❌   |
+| Unlocked abilities                  | ✔️    | ❌   |
+| Personal quests                     | ✔️    | ❌   |
+| Enhancements                        | ❌   | ❌   |
+| Current character deck              | ❌   | ❌   |
+| Retired characters                  | ✔️    | ❌   |
+| Shop                                | ❌   | ❌   |
+| Looted Items                        | ❌   | ❌   |
+| Events                              | ❌   | ❌   |
+| Unlocked character classes          | ✔️    | ❌   |
+| Unlocked special conditions         | ✔️    | ❌   |
+| Unlocked envelopes                  | ❌   | ❌   |
+| Forgotten Circle expansion          | ❌   | ❌   |
 
-## Party sheet
-- ✔️ Name
-- ✔️ Reputation
-- ✔️ Achievements
-- ✔️ Notes
-- ✔️ Party level
 
-## Characters
-- ✔️ Name
-- ✔️ Class
-- ✔️ XP/Gold
-- ✔️ Adjust HP to level
-- ✔️ Notes/Item Notes
-- ✔️ Modify attack modifiers according to unlocked perks
-- ✔️ Hand out item cards
-- ✔️ Hand out Personal Quest card
-- ✔️ Hand out unlocked abilities
-- ❌ Enhancements
-- ✔️ Retirement
-- ✔️ Notes on the back of the characters sheet
+| Customizable Features               | Done |
+| ----------------------------------- | :--: |
+| Customizable component positions    | ❌  |
+| Include extended battle goals       | ❌  |
+| Additional components (e.g. Timer)  | ❌  |
 
-## Items/Loot
-- ❌ Build shop from prosperity
-- ❌ Move found items to the shop
-- ❌ Remove found item designs/scenarios from their decks
-- ❌ Remove looted treasure from the loot deck
-
-## Events
-- ❌ City Events
-- ❌ Road Events
-
-## Locked content
-- ✔️ New character classes
-- ✔️ Special conditions
-- ❌ Town Records
-- ❌ Envelopes
-- ❌ Forgotten Circle expansion
-
-## Other
-- ❌ Make positions (e.g. rule book) customizable
-- ❌ Allow the inclusion of the custom battle goals
 
 # Known Bugs
 - Removing the last card from the modifier deck doesn't work, as the deck says it doesn't have any objects left. So having all perks on one character will not work.
 
 # ToDo
-## General
-- Error handling
-- Logging
-- Comments...
-- How to handle different version?
-- Save file creation from current save
-- Consistent coding style
-- Make the waiting for stuff cleaner and consistent (e.g. callback chaining)
-- Some special conditions can be deduced from other components and don't have to be included in the save file
-- (optional) Support YAML reading
-
-## Other
-- Timer
+- [ ] Error handling
+- [ ] Logging
+- [ ] Code documentation
+- [ ] Usage documentation
+- [ ] Handle diffrent versions of save file and game
+- [ ] Clean code Roundhouse kick
+- [ ] Make waiting easier to use and more obvious
+- [ ] (optional) Support YAML file
