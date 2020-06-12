@@ -78,3 +78,8 @@ end
 function utils.escape_pattern(text)
   return text:gsub("([-+()%[%]])", "%%%1")
 end
+
+
+function utils.getSnapPosition(object, snapPoint)
+  return object.positionToWorld(object.getSnapPoints()[snapPoint].position)
+end

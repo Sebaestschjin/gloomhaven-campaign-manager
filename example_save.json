@@ -21,6 +21,10 @@
       "classes": [
         "Berserker"
       ],
+      "items": [
+        "Power Core",
+        "Wand of Infernos"
+      ],
       "special_conditions": {
         "ancient_technology": true,
         "drake_aided": true,

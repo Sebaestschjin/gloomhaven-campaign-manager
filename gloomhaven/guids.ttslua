@@ -19,6 +19,10 @@ guids.TOWN_RECORDS = "a6c771"
 guids.LAST_BOX = "fdef02" -- tinkerer
 guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
 
+guids.RANDOM_RED_DECK = "fb9bd4"
+guids.RANDOM_BLUE_DECK = "e18733"
+guids.REWARDS_DECK = "900a8d"
+
 guids.QUESTS = "73a423"
 
 guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}

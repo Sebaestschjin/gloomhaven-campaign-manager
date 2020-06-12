@@ -5,6 +5,8 @@ function unlocked.read_all(content)
     unlocked.read_classes(content.classes)
   end
 
+  unlocked.read_items(content.items)
+
   if content.special_conditions then
     utils.wait_for_object(guids.OPENING_CONDITIONS, function() unlocked.read_special_conditions(content.special_conditions) end)
   end
@@ -12,6 +14,18 @@ end
 
 function unlocked.read_classes(classes)
   utils.wait_for_object(guids.LOCKED_CLASSES, function() unlocked.__read_classes_start(classes) end)
+end
+
+
+function unlocked.read_items(items)
+  if not items then return end
+
+  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  local shopPosition = utils.getSnapPosition(cityMat, snaps.SHOP)
+
+  for _, item in pairs(items) do
+    shop.get_reward(item, shopPosition)
+  end
 end
 
 

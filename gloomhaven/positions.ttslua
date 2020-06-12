@@ -28,6 +28,8 @@ snaps.Active2 = 7
 snaps.Active3 = 8
 snaps.Active4 = 9
 
+snaps.SHOP = 1
+
 
 function positions.relative_to_zone(zone_guid, position)
   return getObjectFromGUID(zone_guid).getPosition() + position

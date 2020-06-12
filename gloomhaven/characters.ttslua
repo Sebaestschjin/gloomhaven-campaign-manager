@@ -162,9 +162,7 @@ function characters.setup_items(player_zone, character)
   for _, item in pairs(character.items) do
     local item_position
     if item.position then
-      local snap_point = snaps[item.position]
-      local snap_position = player_mat.getSnapPoints()[snap_point].position
-      item_position = player_mat.positionToWorld(snap_position)
+      item_position = utils.getSnapPosition(player_mat, snaps[item.position])
     else
       item_position = positions.relative_to_zone(player_zone, positions.ITEM)
     end

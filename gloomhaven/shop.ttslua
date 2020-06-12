@@ -11,6 +11,23 @@ function shop.read_all()
 end
 
 
+function shop.get_reward(name, position)
+  local decks = {getObjectFromGUID(guids.RANDOM_RED_DECK),
+                 getObjectFromGUID(guids.RANDOM_BLUE_DECK),
+                 getObjectFromGUID(guids.REWARDS_DECK)}
+
+  for _, deck in pairs(decks) do
+      local item = utils.find_object_info_in_stack(deck, {name=name})
+      if item then
+        deck.takeObject({
+          guid = item.guid,
+          position = position,
+          smooth = false
+        })
+      end
+  end
+end
+
 
 function shop.get_item(name, position)
   local city_mat = getObjectFromGUID(guids.CITY_MAT)
