@@ -13,3 +13,12 @@ function sanctuary.read_sanctuary(sanctuaryContent)
     sanctuary_sticker.call("clickedPros", i)
   end
 end
+
+function sanctuary.get_value()
+  local sanctuary = getObjectFromGUID(guids.SANCTUARY_STICKER).getTable("Pros")
+  local total = 0
+  for i,j in pairs(sanctuary) do
+    if j then total = total + 1 end
+  end
+  return total
+end
