@@ -5,6 +5,7 @@
     },
     "global": {
         "prosperity": 5,
+        "sanctuary": 18,
         "achievements": [
             { "name": "City Rule: Militaristic" },
             { "name": "The Dead Invade" },
