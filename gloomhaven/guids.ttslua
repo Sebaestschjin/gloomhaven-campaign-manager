@@ -10,6 +10,7 @@ guids.RULE_BOOK = "c9d3f5"
 guids.MAP = "9cc037"
 guids.DECK_MAT = "a75fcd"
 guids.CITY_MAT = "f3ffb7"
+guids.EVENTS_MAT = "b53fb2"
 guids.PARTY_SHEET = "6d3de2"
 guids.ACHIEVEMENT_BOARD = "43d5b8"
 guids.OPENING_CONDITIONS = "30ae8e"
@@ -22,6 +23,11 @@ guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
 guids.RANDOM_RED_DECK = "fb9bd4"
 guids.RANDOM_BLUE_DECK = "e18733"
 guids.REWARDS_DECK = "900a8d"
+
+guids.CITY_EVENTS_FIRST = "759349"
+guids.CITY_EVENTS = "f13efd"
+guids.ROAD_EVENTS_FIRST = "83de73"
+guids.ROAD_EVENTS = "f08b69"
 
 guids.QUESTS = "73a423"
 

@@ -47,16 +47,16 @@ end
 | Character item cards                | ✔️    | ❌   |
 | Unlocked abilities                  | ✔️    | ❌   |
 | Personal quests                     | ✔️    | ❌   |
-| Enhancements                        | ❌   | ❌   |
-| Current character deck              | ❌   | ❌   |
 | Retired characters                  | ✔️    | ❌   |
-| Shop                                | ❌   | ❌   |
-| Looted Items                        | ❌   | ❌   |
-| Events                              | ❌   | ❌   |
+| Shop                                | ✔️    | ❌   |
+| Looted Items                        | ✔️    | ❌   |
 | Unlocked character classes          | ✔️    | ❌   |
 | Unlocked special conditions         | ✔️    | ❌   |
+| Events                              | ✔️    | ❌   |
+| Current character deck              | ❌   | ❌   |
 | Unlocked envelopes                  | ❌   | ❌   |
 | Forgotten Circle expansion          | ❌   | ❌   |
+| Enhancements                        | ❌   | ❌   |
 
 
 | Customizable Features               | Done |
@@ -78,3 +78,5 @@ end
 - [ ] Clean code Roundhouse kick
 - [ ] Make waiting easier to use and more obvious
 - [ ] (optional) Support YAML file
+- [ ] put the locked characters back into the game box
+- [ ] 🐍 ➡️ 🐫

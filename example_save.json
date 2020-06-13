@@ -114,5 +114,9 @@
         "quest": "Pounds of Flesh",
         "level": 4,
         "perks": 1
-    }]
+    }],
+    "events": {
+      "city": [18, 3, 56, 7, 12, 33],
+      "road": [1, 2, 3, 4, 55, 6]
+    }
 }

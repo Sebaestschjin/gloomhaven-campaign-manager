@@ -1,0 +1,28 @@
+events = {}
+
+function events.read_all(values)
+  Wait.time(function() events.read(values.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS) end, 4)
+  Wait.time(function() events.read(values.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS) end, 8)
+end
+
+
+function events.read(values, firstDeckGuid, deckGuid, snapPoint)
+  if not values then return end
+
+  deck = getObjectFromGUID(deckGuid)
+  deck.putObject(getObjectFromGUID(firstDeckGuid))
+
+  local eventPosition = utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPoint)
+  local eventsToTake = {}
+
+  for i, event in pairs(values) do
+    local eventName = string.format("%02d", event)
+    local eventCard = utils.find_object_info_in_stack(deck, {name=eventName})
+    deck.takeObject({
+      guid = eventCard.guid,
+      position = eventPosition + vector(0, i * 0.3, 0),
+      rotation = rotations.NORTH,
+      smooth = false
+    })
+  end
+end

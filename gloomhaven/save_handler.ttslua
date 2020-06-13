@@ -17,6 +17,7 @@ save_handler = {}
 #include shop
 #include retirements
 #include quests
+#include events
 
 save_handler.SAVE_FILE = "Savefile"
 
@@ -40,6 +41,7 @@ function save_handler.start_reading(content)
   save_handler.read_party(content.party)
   save_handler.read_retirements(content.retired)
   save_handler.read_shop()
+  save_handler.read_events(content)
 end
 
 
@@ -111,4 +113,10 @@ end
 
 function save_handler.read_shop()
   shop.read_all()
+end
+
+
+function save_handler.read_events(content)
+  if not content.events then return end
+  events.read_all(content.events)
 end
