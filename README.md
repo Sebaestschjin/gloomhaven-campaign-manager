@@ -18,7 +18,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 # Features/Roadmap
 | General Features                    | Read | Write |
 | ----------------------------------- | :--: | :---: |
-| Scenarios                           | ✔️    | ❌   |
+| Scenarios                           | ✔️    | ✔️    |
 | Prosperity                          | ✔️    | ✔️    |
 | Achievements                        | ✔️    | ❌   |
 | Party Sheet                         | ✔️    | ✔️    |

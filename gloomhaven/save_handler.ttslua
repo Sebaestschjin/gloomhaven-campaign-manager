@@ -59,7 +59,7 @@ function saveHandler.read_global(content)
   if not content then return end
 
   if content.scenarios then
-    scenarios.read_all(content.scenarios)
+    scenarios.load(content.scenarios)
   end
   if content.achievements then
     achievements.read_all(content.achievements)
@@ -128,14 +128,12 @@ function saveHandler.saveGlobal(saveFile)
 
   global.prosperity = prosperity.save()
   global.sanctuary = sanctuary.save()
+  global.scenarios = scenarios.save()
 
   saveFile.global = global
 end
 
 
 function saveHandler.saveParty(saveFile)
-  local partyContent = party.save()
-  if partyContent then
-    saveFile.party = partyContent
-  end
+  saveFile.party = party.save()
 end
