@@ -13,6 +13,7 @@ saveHandler = {}
 #include scenarios
 #include achievements
 #include unlocked
+#include party
 #include characters
 #include shop
 #include retirements
@@ -33,6 +34,14 @@ function saveHandler.read()
   local content = JSON.decode(save_file)
 
   preparation.start(function() saveHandler.start_reading(content) end)
+end
+
+
+function saveHandler.save()
+  local saveFile = saveHandler.createSaveFile()
+  local content = JSON.encode_pretty(saveFile)
+
+  Notes.addNotebookTab({ title = "New Savefile", body = content })
 end
 
 
@@ -74,30 +83,8 @@ end
 function saveHandler.read_party(content)
   if not content then return end
 
-  saveHandler.read_party_base(content)
+  party.load(content)
   saveHandler.read_characters(content)
-end
-
-
-function saveHandler.read_party_base(party)
-  local party_sheet = getObjectFromGUID(guids.PARTY_SHEET)
-
-  if party.name then
-    party_sheet.UI.setAttribute("partyName", "text", party.name)
-    party_sheet.setName(party.name)
-  end
-  if party.location then
-    party_sheet.UI.setAttribute("location", "text", party.location)
-  end
-  if party.notes then
-    party_sheet.UI.setAttribute("notes", "text", table.concat(party.notes, "\n"))
-  end
-  if party.achievements then
-    party_sheet.UI.setAttribute("partyAchiev", "text", table.concat(party.achievements, "\n"))
-  end
-  if party.reputation then
-    party_sheet.call("addSub", {"partyReputation", party.reputation})
-  end
 end
 
 
@@ -123,4 +110,21 @@ end
 function saveHandler.read_events(content)
   if not content.events then return end
   events.read_all(content.events)
+end
+
+
+function saveHandler.createSaveFile()
+  local saveFile = {}
+
+  saveHandler.saveParty(saveFile)
+
+  return saveFile
+end
+
+
+function saveHandler.saveParty(saveFile)
+  local partyContent = party.save()
+  if partyContent then
+    saveFile.party = partyContent
+  end
 end
