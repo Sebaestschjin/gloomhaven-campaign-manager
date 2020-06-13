@@ -19,9 +19,9 @@ There's not a Workshop mod yet, so here's how to set this up:
 | General Features                    | Read | Write |
 | ----------------------------------- | :--: | :---: |
 | Scenarios                           | ✔️    | ❌   |
-| Prosperity                          | ✔️    | ❌   |
+| Prosperity                          | ✔️    | ✔️    |
 | Achievements                        | ✔️    | ❌   |
-| Party Sheet                         | ✔️    | ❌   |
+| Party Sheet                         | ✔️    | ✔️    |
 | Character classes                   | ✔️    | ❌   |
 | Character sheets                    | ✔️    | ❌   |
 | Character attack modifiers          | ✔️    | ❌   |

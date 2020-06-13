@@ -1,22 +1,24 @@
 prosperity = {}
 
-function prosperity.read_all(prosperity)
-  local map_script = getObjectFromGUID(guids.MAP)
-  for i = 1, prosperity do
-    map_script.call("clickedPros", i)
+function prosperity.load(value)
+  local map = getObjectFromGUID(guids.MAP)
+  for i = 1, value do
+    map.call("clickedPros", i)
   end
 end
 
 
-function prosperity.get_value()
-  local prosperity = getObjectFromGUID(guids.MAP).getTable("Pros")
-  local total = 0
-  for i = 0, 63 do
-    if prosperity[tostring(i)] then total = total + 1 end
+function prosperity.save()
+  local checkmarks = getObjectFromGUID(guids.MAP).getTable("Pros")
+  local maxValue = -1
+  for i, checked in pairs(checkmarks) do
+    if checked and tonumber(i) > maxValue then
+      maxValue = tonumber(i)
+    end
   end
-  return total
-end
 
+  return maxValue + 1
+end
 
 
 function prosperity.getLevel()

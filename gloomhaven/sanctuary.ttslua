@@ -1,24 +1,28 @@
 sanctuary = {}
 
-function sanctuary.read_all(sanctuaryContent)
-
-  local map_script = getObjectFromGUID(guids.MAP)
-  map_script.call('unseal')
+function sanctuary.load(value)
+  local map = getObjectFromGUID(guids.MAP)
+  script.call('unseal')
   utils.wait_for_object(guids.SANCTUARY_STICKER, function() sanctuary.read_sanctuary(sanctuaryContent) end)
 end
+
+
+function sanctuary.save()
+  local checkmarks = getObjectFromGUID(guids.SANCTUARY_STICKER).getTable("Pros")
+  local maxValue = -1
+  for i, checked in pairs(checkmarks) do
+    if checked and tonumber(i) > maxValue then
+      maxValue = tonumber(i)
+    end
+  end
+
+  return maxValue + 1
+end
+
 
 function sanctuary.read_sanctuary(sanctuaryContent)
   local sanctuary_sticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
   for i = 0, sanctuaryContent-1 do
     sanctuary_sticker.call("clickedPros", i)
   end
-end
-
-function sanctuary.get_value()
-  local sanctuary = getObjectFromGUID(guids.SANCTUARY_STICKER).getTable("Pros")
-  local total = 0
-  for i,j in pairs(sanctuary) do
-    if j then total = total + 1 end
-  end
-  return total
 end

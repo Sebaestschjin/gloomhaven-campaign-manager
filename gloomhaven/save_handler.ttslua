@@ -65,7 +65,7 @@ function saveHandler.read_global(content)
     achievements.read_all(content.achievements)
   end
   if content.prosperity then
-    prosperity.read_all(content.prosperity)
+    prosperity.load(content.prosperity)
   end
   if content.sanctuary then
     sanctuary.read_all(content.sanctuary)
@@ -116,9 +116,20 @@ end
 function saveHandler.createSaveFile()
   local saveFile = {}
 
+  saveHandler.saveGlobal(saveFile)
   saveHandler.saveParty(saveFile)
 
   return saveFile
+end
+
+
+function saveHandler.saveGlobal(saveFile)
+  local global = {}
+
+  global.prosperity = prosperity.save()
+  global.sanctuary = sanctuary.save()
+
+  saveFile.global = global
 end
 
 
