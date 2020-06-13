@@ -1,4 +1,4 @@
-save_handler = {}
+saveHandler = {}
 
 #include !/common/utils
 #include !/common/rotations
@@ -20,33 +20,33 @@ save_handler = {}
 #include events
 #include sanctuary
 
-save_handler.SAVE_FILE = "Savefile"
+saveHandler.SAVE_FILE = "Savefile"
 
-function save_handler.read()
-  local save_file = utils.read_notebook(save_handler.SAVE_FILE)
+function saveHandler.read()
+  local save_file = utils.read_notebook(saveHandler.SAVE_FILE)
 
   if not save_file then
-    print("No notebook found containing the save file! Please add a notebook named " .. save_handler.SAVE_FILE)
+    print("No notebook found containing the save file! Please add a notebook named " .. saveHandler.SAVE_FILE)
     return
   end
 
   local content = JSON.decode(save_file)
 
-  preparation.start(function() save_handler.start_reading(content) end)
+  preparation.start(function() saveHandler.start_reading(content) end)
 end
 
 
-function save_handler.start_reading(content)
-  save_handler.read_global(content.global)
-  save_handler.read_unlocked(content.unlocked)
-  save_handler.read_party(content.party)
-  save_handler.read_retirements(content.retired)
-  save_handler.read_shop()
-  save_handler.read_events(content)
+function saveHandler.start_reading(content)
+  saveHandler.read_global(content.global)
+  saveHandler.read_unlocked(content.unlocked)
+  saveHandler.read_party(content.party)
+  saveHandler.read_retirements(content.retired)
+  saveHandler.read_shop()
+  saveHandler.read_events(content)
 end
 
 
-function save_handler.read_global(content)
+function saveHandler.read_global(content)
   if not content then return end
 
   if content.scenarios then
@@ -64,22 +64,22 @@ function save_handler.read_global(content)
 end
 
 
-function save_handler.read_unlocked(content)
+function saveHandler.read_unlocked(content)
   if not content then return end
 
   unlocked.read_all(content)
 end
 
 
-function save_handler.read_party(content)
+function saveHandler.read_party(content)
   if not content then return end
 
-  save_handler.read_party_base(content)
-  save_handler.read_characters(content)
+  saveHandler.read_party_base(content)
+  saveHandler.read_characters(content)
 end
 
 
-function save_handler.read_party_base(party)
+function saveHandler.read_party_base(party)
   local party_sheet = getObjectFromGUID(guids.PARTY_SHEET)
 
   if party.name then
@@ -101,26 +101,26 @@ function save_handler.read_party_base(party)
 end
 
 
-function save_handler.read_characters(party)
+function saveHandler.read_characters(party)
   if party.characters then
     characters.read_all(party.characters)
   end
 end
 
 
-function save_handler.read_retirements(retired)
+function saveHandler.read_retirements(retired)
   if retired then
     retirements.read_all(retired)
   end
 end
 
 
-function save_handler.read_shop()
+function saveHandler.read_shop()
   shop.read_all()
 end
 
 
-function save_handler.read_events(content)
+function saveHandler.read_events(content)
   if not content.events then return end
   events.read_all(content.events)
 end
