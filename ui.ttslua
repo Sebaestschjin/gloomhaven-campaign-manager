@@ -1,0 +1,42 @@
+-- This is the code that goes onto the ui component
+#include gloomhaven/save_handler
+
+
+function onLoad(save_state)
+  self.createButton({
+    click_function = "load",
+    function_owner = self,
+    label = "Load",
+    position = {0, 0.1, -0.9},
+    scale = {1.5, 1.5, 1.5},
+    width = 1200,
+    height = 400,
+    font_size = 200,
+    color = {0.5, 0.5, 0.5, 1},
+    font_color = {1, 1, 1, 1},
+    tooltip = "Loads the save file from the notebook 'Savefile'"
+  })
+
+  self.createButton({
+    click_function = "save",
+    function_owner = self,
+    label = "Save",
+    position = {0, 0.1, 0.9},
+    scale = {1.5, 1.5, 1.5},
+    width = 1200,
+    height = 400,
+    font_size = 200,
+    color = {0.5, 0.5, 0.5, 1},
+    font_color = {1, 1, 1, 1},
+    tooltip = "Saves the current game progress into the notebook 'Savefile'"
+  })
+end
+
+
+function load()
+  save_handler.read()
+end
+
+function save()
+  save_handler.save()
+end
