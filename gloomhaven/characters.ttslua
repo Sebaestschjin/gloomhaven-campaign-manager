@@ -44,7 +44,7 @@ end
 function characters.setup(player_zone, character)
   -- still need more waiting to init the UI of the sheet :-(
   Wait.time(function() characters.setup_character_sheet(player_zone, character) end, 1)
-  Wait.time(function() characters.setup_character_maxHP(player_zone, character) end, 1)
+  Wait.time(function() characters.setup_character_maxHP(player_zone, character) end, 5)
   characters.setup_abilities(player_zone, character)
   characters.setup_quest(player_zone, character)
 end
