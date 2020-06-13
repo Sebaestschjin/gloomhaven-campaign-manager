@@ -16,6 +16,7 @@ guids.ACHIEVEMENT_BOARD = "43d5b8"
 guids.OPENING_CONDITIONS = "30ae8e"
 guids.RETIREMENT_SHEET = "a30c94"
 guids.TOWN_RECORDS = "a6c771"
+guids.SANCTUARY_STICKER = "800847"
 
 guids.LAST_BOX = "fdef02" -- tinkerer
 guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart

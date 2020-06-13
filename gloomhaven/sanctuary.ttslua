@@ -1,0 +1,15 @@
+sanctuary = {}
+
+function sanctuary.read_all(sanctuaryContent)
+
+  local map_script = getObjectFromGUID(guids.MAP)
+  map_script.call('unseal')
+  utils.wait_for_object(guids.SANCTUARY_STICKER, function() sanctuary.read_sanctuary(sanctuaryContent) end)
+end
+
+function sanctuary.read_sanctuary(sanctuaryContent)
+  local sanctuary_sticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
+  for i = 0, sanctuaryContent-1 do
+    sanctuary_sticker.call("clickedPros", i)
+  end
+end
