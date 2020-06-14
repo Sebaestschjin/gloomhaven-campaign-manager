@@ -1,7 +1,7 @@
 shop = {}
 
 
-function shop.read_all()
+function shop.load()
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
 
   for i=1, prosperity.getLevel() do
@@ -11,7 +11,34 @@ function shop.read_all()
 end
 
 
-function shop.get_reward(name, position)
+function shop.save()
+  -- TODO this also has to take character items into account
+  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  local shopPosition = cityMat.positionToWorld(positions.CITY_DECK)
+  local shopDeck = cityMat.call('checkForDeck', shopPosition)
+  local itemSet = {}
+
+  for _, item in pairs(shopDeck.getObjects()) do
+    local description = item.description
+    description = string.gsub(description, "red", "")
+    description = string.gsub(description, "blue", "")
+
+    local itemNumber = tonumber(description)
+    if itemNumber > 70 then
+      itemSet[itemNumber] = true
+    end
+  end
+
+  items = {}
+  for item, _ in pairs(itemSet) do
+    table.insert(items, item)
+  end
+
+  return items
+end
+
+
+function shop.getReward(name, position)
   local decks = {getObjectFromGUID(guids.RANDOM_RED_DECK),
                  getObjectFromGUID(guids.RANDOM_BLUE_DECK),
                  getObjectFromGUID(guids.REWARDS_DECK)}
@@ -29,11 +56,11 @@ function shop.get_reward(name, position)
 end
 
 
-function shop.get_item(name, position)
-  local city_mat = getObjectFromGUID(guids.CITY_MAT)
+function shop.getItem(name, position)
+  local cityMat = getObjectFromGUID(guids.CITY_MAT)
   for i=0, 13 do
-    local pos = city_mat.positionToWorld(positions.CITY_DECK + positions.CITY_GAP * i)
-    local deck = city_mat.call('checkForDeck', pos)
+    local pos = cityMat.positionToWorld(positions.CITY_DECK + positions.CITY_GAP * i)
+    local deck = cityMat.call('checkForDeck', pos)
     if deck then
       for _, item in pairs(deck.getObjects()) do
         if item.name == name then

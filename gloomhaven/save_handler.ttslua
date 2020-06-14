@@ -97,13 +97,13 @@ end
 
 function saveHandler.read_retirements(retired)
   if retired then
-    retirements.read_all(retired)
+    retirements.load(retired)
   end
 end
 
 
 function saveHandler.read_shop()
-  shop.read_all()
+  shop.load()
 end
 
 
@@ -117,7 +117,9 @@ function saveHandler.createSaveFile()
   local saveFile = {}
 
   saveHandler.saveGlobal(saveFile)
+  saveHandler.saveUnlocked(saveFile)
   saveHandler.saveParty(saveFile)
+  saveHandler.saveRetirements(saveFile)
 
   return saveFile
 end
@@ -134,6 +136,20 @@ function saveHandler.saveGlobal(saveFile)
 end
 
 
+function saveHandler.saveUnlocked(saveFile)
+  local unlocked = {}
+
+  unlocked.items = shop.save()
+
+  saveFile.unlocked = unlocked
+end
+
+
 function saveHandler.saveParty(saveFile)
   saveFile.party = party.save()
+end
+
+
+function saveHandler.saveRetirements(saveFile)
+  saveFile.retired = retirements.save()
 end
