@@ -1,8 +1,4 @@
 {
-    "version": {
-      "major": 1,
-      "minor": 0
-    },
     "global": {
         "prosperity": 5,
         "sanctuary": 18,

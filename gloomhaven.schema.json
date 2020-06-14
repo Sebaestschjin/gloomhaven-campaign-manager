@@ -1,0 +1,360 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "title": "Gloomhaven Campaign",
+  "description": "Information about a campaign for the boardgame Gloomhaven",
+  "type": "object",
+  "properties": {
+    "global": {
+      "title": "Global Information",
+      "type": "object",
+      "properties": {
+        "prosperity": {
+          "title": "Prosperity",
+          "description": "The number of checked boxes on the prosperity track",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "sanctuary": {
+          "title": "Sanctuary Level",
+          "description": "The number of checked boxes on the sanctuary track. If not included the sanctuary will not be loaded.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 70
+        },
+        "achievements": {
+          "title": "Achievements",
+          "description": "The list of global achievements.",
+          "type": "array",
+          "format": "table",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "title": "Achievement",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "title": "Name",
+                "description": "The name of the achievement",
+                "type": "string"
+              },
+              "count": {
+                "title": "Count",
+                "description": "Some achievements can be gotten multiple times.",
+                "type": "integer",
+                "maximum": 5,
+                "default": 1
+              }
+            }
+          }
+        },
+        "scenarios": {
+          "title": "Available Scenarios",
+          "description": "The list of available scenarios. Locked scenarios are the ones that currently can't be started e.g. because a global achievement prevents that.",
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^\\d+$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["Open", "Done", "Locked"]
+          },
+          "maxProperties": 115
+        }
+      }
+    },
+    "unlocked": {
+      "title": "Unlocked content",
+      "type": "object",
+      "properties": {
+        "classes": {
+          "title": "Character classes",
+          "description": "The list of unlocked character classes. If a member of the party uses an unlockable class it MUST also be provided here.",
+          "type": "array",
+          "items": {
+            "title": "Class",
+            "type": "string"
+          }
+        },
+        "items": {
+          "title": "Reward items",
+          "description": "The names of reward items unlocked. Those will be added to the store. The item can come from the rewards deck or the item design deck.",
+          "type": "array",
+          "items": {
+            "title": "Item",
+            "type": "string"
+          }
+        },
+        "special_conditions": {
+          "title": "Special conditions",
+          "description": "Track of special conditions that must be met to unlock certain game components",
+          "type": "object",
+          "properties": {
+            "ancient_technology": {
+              "title": "Ancient Technology",
+              "description": "",
+              "type": "boolean",
+              "default": false
+            },
+            "drake_aided": {
+              "title": "Drake Aided",
+              "description": "",
+              "type": "boolean",
+              "default": false
+            },
+            "donations": {
+              "title": "Sanctuary Donations",
+              "description": "",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10,
+              "default": 0
+            },
+            "low_reputation": {
+              "title": "Low Reputation",
+              "description": "",
+              "type": "boolean",
+              "default": false
+            },
+            "lowest_reputation": {
+              "title": "Lowest Reputation",
+              "description": "",
+              "type": "boolean",
+              "default": false
+            },
+            "high_reputation": {
+              "title": "Hight Reputation",
+              "description": "",
+              "type": "boolean",
+              "default": false
+            },
+            "highest_reputation": {
+              "title": "Highest Reputation",
+              "description": "",
+              "type": "boolean",
+              "default": false
+            },
+            "retired": {
+              "title": "Retired a character",
+              "description": "",
+              "type": "boolean",
+              "default": false
+            }
+          }
+        }
+      }
+    },
+    "party": {
+      "title": "Party",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "location": {
+          "title": "Location",
+          "type": "string"
+        },
+        "reputation": {
+          "title": "Reputation",
+          "type": "integer",
+          "minimum": -20,
+          "maximum": 20
+        },
+        "notes": {
+          "title": "Notes",
+          "description": "",
+          "type": "array",
+          "items": {
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "achievements": {
+          "title": "Achievements",
+          "description": "",
+          "type": "array",
+          "items": {
+            "title": "Achievement",
+            "type": "string"
+          }
+        },
+        "characters": {
+          "title": "Characters",
+          "description": "",
+          "type": "array",
+          "items": {
+            "title": "Character",
+            "type": "object",
+            "properties": {
+              "class": {
+                "title": "Class",
+                "type": "string"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "xp": {
+                "title": "Experience",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 450
+              },
+              "gold": {
+                "title": "Gold",
+                "type": "integer",
+                "minimum": 0
+              },
+              "checkmarks": {
+                "title": "Checkmarks",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18
+              },
+              "perks": {
+                "title": "Unlocked Perks",
+                "description": "",
+                "type": "array",
+                "items": {
+                  "title": "Perk",
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 15
+                }
+              },
+              "quest": {
+                "title": "Personal Quest",
+                "description": "",
+                "oneOf": [
+                  { "type": "string" },
+                  { "type": "integer" }
+                ]
+              },
+              "abilities": {
+                "title": "Unlocked Abilities",
+                "description": "",
+                "type": "array",
+                "items": {
+                  "title": "Ability",
+                  "type": "string"
+                }
+              },
+              "items": {
+                "title": "Items",
+                "description": "",
+                "type": "array",
+                "items": {
+                  "title": "Item",
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "title": "Name",
+                      "type": "string"
+                    },
+                    "position": {
+                      "title": "Position",
+                      "description": "",
+                      "type": "string",
+                      "enum": ["Head", "Armor", "HandLeft", "HandRight", "Boots", "Bag1", "Bag2", "Bag3", "Unequipped", "Active1", "Active2", "Active3", "Active4"]
+                    }
+                  }
+                }
+              },
+              "notes": {
+                "title": "Notes",
+                "description": "",
+                "type": "array",
+                "items": {
+                  "title": "Note",
+                  "type": "string"
+                }
+              },
+              "hidden_notes": {
+                "title": "Hidden Notes",
+                "description": "",
+                "type": "array",
+                "items": {
+                  "title": "Note",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "retired": {
+      "title": "Retired Characters",
+      "description": "",
+      "type": "array",
+      "items": {
+        "title": "Character",
+        "type": "object",
+        "properties": {
+          "player": {
+            "title": "Player name",
+            "type": "string"
+          },
+          "character": {
+            "title": "Character name",
+            "type": "string"
+          },
+          "class": {
+            "title": "Character class",
+            "type": "string"
+          },
+          "quest": {
+            "title": "Personal Quest",
+            "description": "",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "integer" }
+            ]
+          },
+          "level": {
+            "title": "Level",
+            "description": "",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9
+          },
+          "perks": {
+            "title": "Perks",
+            "description": "",
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "events": {
+      "title": "Event decks",
+      "description": "",
+      "type": "object",
+      "properties": {
+        "city": {
+          "title": "City Events",
+          "description": "",
+          "type": "array",
+          "items": {
+            "title": "Event",
+            "type": "integer"
+          }
+        },
+        "road": {
+          "title": "Road Events",
+          "description": "",
+          "type": "array",
+          "items": {
+            "title": "Event",
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
