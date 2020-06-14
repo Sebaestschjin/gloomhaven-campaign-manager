@@ -68,7 +68,7 @@ function saveHandler.read_global(content)
     prosperity.load(content.prosperity)
   end
   if content.sanctuary then
-    sanctuary.read_all(content.sanctuary)
+    sanctuary.load(content.sanctuary)
   end
 end
 
