@@ -69,11 +69,29 @@ function shop.getItem(name, position)
   end
 end
 
+--- Returns true if the given object is an item card.
+function shop.isItem(object)
+  return object.tag == "Card"
+         and shop.isItemDescription(object.getDescription())
+end
 
+--- Returns true if the given object info (from getObjects()) is an item card.
+function shop.isItemInfo(objectInfo)
+  return shop.isItemDescription(objectInfo.description)
+end
+
+--- Returns true if the given item card object is an item from the rewards or item design deck.
 function shop.isRewardItem(item)
   local description = item.description
   description = string.gsub(description, "red", "")
   description = string.gsub(description, "blue", "")
 
   return tonumber(description) > 70
+end
+
+--- Returns true if the given object description is a possible item card's description.
+function shop.isItemDescription(description)
+  return description:find("^%d+$")
+         or description:find("^%d+ red$")
+         or description:find("^%d+ blue$")
 end

@@ -16,8 +16,8 @@ end
 function characters.save()
   characterList = {}
 
-  for _, guid in pairs(guids.ZONES) do
-    table.insert(characterList, characters.getSave(guid))
+  for _, zoneGuid in pairs(guids.ZONES) do
+    table.insert(characterList, characters.saveCharacter(zoneGuid))
   end
 
   return characterList
@@ -301,7 +301,7 @@ function characters.setPartySheetAverageLevel(content)
 end
 
 
-function characters.getSave(playerZone)
+function characters.saveCharacter(playerZone)
   local characterMat = utils.find_object_in_zone(playerZone, {name=names.CHARACTER_MAT})
   if not characterMat then
     return {}
@@ -334,5 +334,42 @@ function characters.getSave(playerZone)
     end
   end
 
+  character.items = characters.saveItems(playerZone)
+
   return character
+end
+
+
+function characters.saveItems(playerZone)
+  local playerMat = utils.find_object_in_zone(playerZone, {name=names.PLAYER_MAT})
+  local items = {}
+  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+    if shop.isItem(object) then
+      local item = {name=object.getName(), position=characters.getItemPosition(playerMat, object)}
+      table.insert(items, item)
+    elseif object.tag == "Deck" then
+      for _, card in pairs(object.getObjects()) do
+        if shop.isItemInfo(card) then
+          local item = {name=card.name, position=characters.getItemPosition(playerMat, object)}
+          table.insert(items, item)
+        end
+      end
+    end
+  end
+
+  return items
+end
+
+
+function characters.getItemPosition(playerMat, object)
+  -- TODO The snap module is used for all snap points not only player mat snaps. So this currently
+  -- only works, because the player mat snaps are defined first. This should be changed, so that it
+  -- works regardless of definition order
+  for name, snap in pairs(snaps) do
+    if utils.getSnapPosition(playerMat, snap) == object.getPosition() then
+      return name
+    end
+  end
+
+  return "Unequipped"
 end
