@@ -16,8 +16,8 @@ There's not a Workshop mod yet, so here's how to set this up:
 - the object now has a button, hit that and the save loads
 
 # Features/Roadmap
-| General Features                    | Read | Write |
-| ----------------------------------- | :--: | :---: |
+| General Features                    | Load | Save |
+| ----------------------------------- | :--: | :--: |
 | Scenarios                           | ✔️    | ✔️    |
 | Prosperity                          | ✔️    | ✔️    |
 | Achievements                        | ✔️    | ❌   |
@@ -28,7 +28,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 | Character item cards                | ✔️    | ❌   |
 | Unlocked abilities                  | ✔️    | ❌   |
 | Personal quests                     | ✔️    | ❌   |
-| Retired characters                  | ✔️    | ❌   |
+| Retired characters                  | ✔️    | ✔️    |
 | Shop                                | ✔️    | ❌   |
 | Looted Items                        | ✔️    | ❌   |
 | Unlocked character classes          | ✔️    | ❌   |
@@ -60,4 +60,5 @@ There's not a Workshop mod yet, so here's how to set this up:
 - [ ] Make waiting easier to use and more obvious
 - [ ] (optional) Support YAML file
 - [ ] put the locked characters back into the game box
+- [ ] encode the quest for retired character into the sheet, so that it can be returned while saving
 - [ ] 🐍 ➡️ 🐫

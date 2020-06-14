@@ -2,28 +2,68 @@ retirements = {}
 
 retirements.COLUMNS = 5
 
-function retirements.read_all(retired)
-  utils.wait_for_object(guids.RETIREMENT_SHEET, function() retirements.start_reading(retired) end)
+function retirements.load(retired)
+  utils.wait_for_object(guids.RETIREMENT_SHEET, function() retirements.startLoading(retired) end)
 end
 
 
-function retirements.start_reading(retired)
+function retirements.save()
+  local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
+
+  local retired = {}
+  local retiredCharacter = {}
+  for i, input in pairs(retirementSheet.getInputs()) do
+    local column = (i - 1) % retirements.COLUMNS
+    if column == 0 then
+      retirements.add(retired, retiredCharacter)
+      retiredCharacter = {}
+    end
+
+    if input.value ~= "" then
+      if column == 0 then
+        retiredCharacter.player = input.value
+      elseif column == 1 then
+        retiredCharacter.character = input.value
+      elseif column == 2 then
+        retiredCharacter.class = input.value
+      elseif column == 3 then
+        retiredCharacter.level = input.value
+      elseif column == 4 then
+        retiredCharacter.perks = input.value
+      end
+    end
+  end
+  retirements.add(retired, retiredCharacter)
+
+  return retired
+end
+
+
+function retirements.startLoading(retired)
   print("Loading Retirements")
-  local retirement_sheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
+  local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
 
   for i, retirement in pairs(retired) do
     local row = (i - 1) % retirements.COLUMNS
-    local off = row * retirements.COLUMNS
+    local offset = row * retirements.COLUMNS
 
-    retirement_sheet.editInput({index=off + 0, value=retirement.player})
-    retirement_sheet.editInput({index=off + 1, value=retirement.character})
-    retirement_sheet.editInput({index=off + 2, value=retirement.class})
-    retirement_sheet.editInput({index=off + 3, value=retirement.level})
-    retirement_sheet.editInput({index=off + 4, value=retirement.perks})
+    retirementSheet.editInput({index=offset + 0, value=retirement.player})
+    retirementSheet.editInput({index=offset + 1, value=retirement.character})
+    retirementSheet.editInput({index=offset + 2, value=retirement.class})
+    retirementSheet.editInput({index=offset + 3, value=retirement.level})
+    retirementSheet.editInput({index=offset + 4, value=retirement.perks})
+    retirementSheet.call("forceSave", {})
 
     if retirement.quest then
       local callback = function(obj) obj.destruct() end
       quests.take(retirement.quest, callback)
     end
+  end
+end
+
+
+function retirements.add(retired, retiredCharacter)
+  if next(retiredCharacter) then
+    table.insert(retired, retiredCharacter)
   end
 end
