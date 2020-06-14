@@ -31,6 +31,7 @@ function party.save()
   content.notes = { partySheet.UI.getAttribute("notes", "text") }
   content.achievements = { partySheet.UI.getAttribute("partyAchiev", "text") }
   content.reputation = tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
+  content.characters = characters.save()
 
   return content
 end

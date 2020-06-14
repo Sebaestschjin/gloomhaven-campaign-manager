@@ -13,6 +13,17 @@ function characters.read_all(content)
 end
 
 
+function characters.save()
+  characterList = {}
+
+  for _, guid in pairs(guids.ZONES) do
+    table.insert(characterList, characters.getSave(guid))
+  end
+
+  return characterList
+end
+
+
 function characters.add_player(index, character)
   local player_zone = guids.ZONES[index]
   local add_player_button = guids.ADD_PLAYERS[index]
@@ -287,4 +298,41 @@ function characters.setPartySheetAverageLevel(content)
   local scenarioLevel = math.ceil(average / 2)
   party_sheet.UI.setAttribute("averageLevel", "text", tonumber(string.format("%.2f", average)))
   party_sheet.UI.setAttribute("scenarioLevel", "text", tonumber(string.format("%d", scenarioLevel)))
+end
+
+
+function characters.getSave(playerZone)
+  local characterMat = utils.find_object_in_zone(playerZone, {name=names.CHARACTER_MAT})
+  if not characterMat then
+    return {}
+  end
+
+  local playerMat = utils.find_object_in_zone(playerZone, {name=names.PLAYER_MAT})
+  local characterSheet = utils.find_object_in_zone(playerZone, {name=names.CHARACTER_SHEET})
+  local characterSheetButtons = characterSheet.getTable("buttons")
+
+  character = {}
+  character.class = characterMat.getDescription()
+  character.name = characterSheet.UI.getAttribute("Name", "text")
+  character.xp = characterSheet.UI.getAttribute("xp", "text")
+  character.gold = characterSheet.UI.getAttribute("gold", "text")
+  character.notes = characterSheet.UI.getAttribute("NotesFront", "text")
+  character.hidden_notes = characterSheet.UI.getAttribute("Notes", "text")
+
+  local totalCheckmarks = 0
+  for i=1, 18 do
+    if characterSheetButtons["notes"..i].label ~= "" then
+      totalCheckmarks = totalCheckmarks + 1
+    end
+  end
+  character.checkmarks = totalCheckmarks
+
+  character.perks = {}
+  for i=1, 15 do
+    if characterSheetButtons["perk"..i].label ~= "" then
+      table.insert(character.perks, i)
+    end
+  end
+
+  return character
 end

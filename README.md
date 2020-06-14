@@ -25,15 +25,15 @@ There's not a Workshop mod yet, so here's how to set this up:
 | Prosperity                          | ✔️    | ✔️    |
 | Achievements                        | ✔️    | ❌   |
 | Party Sheet                         | ✔️    | ✔️    |
-| Character classes                   | ✔️    | ❌   |
-| Character sheets                    | ✔️    | ❌   |
-| Character attack modifiers          | ✔️    | ❌   |
+| Character classes                   | ✔️    | ✔️    |
+| Character sheets                    | ✔️    | ✔️    |
+| Character attack modifiers          | ✔️    | ✔️    |
 | Character item cards                | ✔️    | ❌   |
 | Unlocked abilities                  | ✔️    | ❌   |
 | Personal quests                     | ✔️    | ❌   |
 | Retired characters                  | ✔️    | ✔️    |
-| Shop                                | ✔️    | ❌   |
-| Looted Items                        | ✔️    | ❌   |
+| Shop                                | ✔️    | ✔️    |
+| Looted Items                        | ✔️    | ✔️    |
 | Unlocked character classes          | ✔️    | ❌   |
 | Unlocked special conditions         | ✔️    | ❌   |
 | Events                              | ✔️    | ❌   |
