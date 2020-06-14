@@ -148,6 +148,12 @@ function characters.setup_perks(player_zone, character)
   for _, perk in pairs(character.perks) do
     character_sheet.call('clickedToggle', "perk"..tostring(perk))
     characters.modify_deck(modifier_deck, additional_deck, perk_info[perk])
+    if additional_deck.remainder then
+      -- Remainder may only live for a single frame after last card is taken
+      -- May need to move this into the modify_deck routine itself to reduce
+      -- any delay.
+      additional_deck = additional_deck.remainder
+    end
   end
 
   modifier_deck.shuffle()
@@ -177,6 +183,10 @@ function characters.modify_deck(modifier_deck, additional_deck, info)
   if info.add then
     for _, card in pairs(info.add) do
       print("Adding: " .. card)
+      if additional_deck.name == "Card" then
+        additional_deck.putObject(modifier_deck)
+        return
+      end
       local found_card = characters.find_modifier_card(additional_deck, card)
       additional_deck.takeObject({
         guid = found_card.guid,
