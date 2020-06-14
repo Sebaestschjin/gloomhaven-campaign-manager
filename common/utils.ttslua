@@ -83,3 +83,15 @@ end
 function utils.getSnapPosition(object, snapPoint)
   return object.positionToWorld(object.getSnapPoints()[snapPoint].position)
 end
+
+
+function utils.setToList(set)
+  list = {}
+  for entry, value in pairs(set) do
+    if value then
+      table.insert(list, entry)
+    end
+  end
+
+  return list
+end

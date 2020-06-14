@@ -16,7 +16,7 @@ function shop.save()
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   local shopPosition = cityMat.positionToWorld(positions.CITY_DECK)
   local shopDeck = cityMat.call('checkForDeck', shopPosition)
-  local itemSet = {}
+  local items = {}
 
   for _, item in pairs(shopDeck.getObjects()) do
     local description = item.description
@@ -25,16 +25,11 @@ function shop.save()
 
     local itemNumber = tonumber(description)
     if itemNumber > 70 then
-      itemSet[itemNumber] = true
+      items[item.getName()] = true
     end
   end
 
-  items = {}
-  for item, _ in pairs(itemSet) do
-    table.insert(items, item)
-  end
-
-  return items
+  return utils.setToList(items)
 end
 
 
