@@ -126,22 +126,19 @@ end
 
 
 function saveHandler.saveGlobal(saveFile)
-  local global = {}
-
-  global.prosperity = prosperity.save()
-  global.sanctuary = sanctuary.save()
-  global.scenarios = scenarios.save()
-
-  saveFile.global = global
+  saveFile.global = {
+    prosperity = prosperity.save(),
+    sanctuary = sanctuary.save(),
+    scenarios = scenarios.save()
+  }
 end
 
 
 function saveHandler.saveUnlocked(saveFile)
-  local unlocked = {}
-
-  unlocked.items = shop.save()
-
-  saveFile.unlocked = unlocked
+  saveFile.unlocked = {
+    items = shop.save(),
+    special_conditions = unlocked.saveOpeningConditions()
+  }
 end
 
 

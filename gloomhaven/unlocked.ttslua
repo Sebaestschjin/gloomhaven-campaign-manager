@@ -12,6 +12,36 @@ function unlocked.read_all(content)
   end
 end
 
+
+function unlocked.saveOpeningConditions()
+  local openingConditions = {}
+
+  local openingConditionsSheet = getObjectFromGUID(guids.OPENING_CONDITIONS)
+  if not openingConditions then
+    return {}
+  end
+
+  local buttons = openingConditionsSheet.getTable("buttons")
+
+  openingConditions.ancient_technology = buttons["Ancient"].label ~= ""
+  openingConditions.drake_aided = buttons["Drake"].label ~= ""
+  openingConditions.low_reputation = buttons["RepN10"].label ~= ""
+  openingConditions.lowest_reputation = buttons["RepN20"].label ~= ""
+  openingConditions.high_reputation = buttons["Rep10"].label ~= ""
+  openingConditions.highest_reputation = buttons["Rep20"].label ~= ""
+  openingConditions.retired = buttons["Retire"].label ~= ""
+  local donations = 0
+  for i=1, 10 do
+    if buttons["Donation"..i].label ~= "" then
+      donations = donations + 1
+    end
+  end
+  openingConditions.donations = donations
+
+  return openingConditions
+end
+
+
 function unlocked.read_classes(classes)
   utils.wait_for_object(guids.LOCKED_CLASSES, function() unlocked.__read_classes_start(classes) end)
 end

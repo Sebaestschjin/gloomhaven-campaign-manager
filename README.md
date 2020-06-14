@@ -28,14 +28,14 @@ There's not a Workshop mod yet, so here's how to set this up:
 | Character classes                   | ✔️    | ✔️    |
 | Character sheets                    | ✔️    | ✔️    |
 | Character attack modifiers          | ✔️    | ✔️    |
-| Character item cards                | ✔️    | ❌   |
+| Character item cards                | ✔️    | ✔️    |
 | Unlocked abilities                  | ✔️    | ❌   |
 | Personal quests                     | ✔️    | ❌   |
 | Retired characters                  | ✔️    | ✔️    |
 | Shop                                | ✔️    | ✔️    |
 | Looted Items                        | ✔️    | ✔️    |
 | Unlocked character classes          | ✔️    | ❌   |
-| Unlocked special conditions         | ✔️    | ❌   |
+| Unlocked special conditions         | ✔️    | ✔️    |
 | Events                              | ✔️    | ❌   |
 | Current character deck              | ❌   | ❌   |
 | Unlocked envelopes                  | ❌   | ❌   |
