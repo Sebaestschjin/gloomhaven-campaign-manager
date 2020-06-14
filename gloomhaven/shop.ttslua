@@ -16,16 +16,12 @@ function shop.save()
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   local shopPosition = cityMat.positionToWorld(positions.CITY_DECK)
   local shopDeck = cityMat.call('checkForDeck', shopPosition)
+  -- TODO recall the shop if it is currently layed out
   local items = {}
 
   for _, item in pairs(shopDeck.getObjects()) do
-    local description = item.description
-    description = string.gsub(description, "red", "")
-    description = string.gsub(description, "blue", "")
-
-    local itemNumber = tonumber(description)
-    if itemNumber > 70 then
-      items[item.getName()] = true
+    if shop.isRewardItem(item) then
+      items[item.name] = true
     end
   end
 
@@ -71,4 +67,13 @@ function shop.getItem(name, position)
       end
     end
   end
+end
+
+
+function shop.isRewardItem(item)
+  local description = item.description
+  description = string.gsub(description, "red", "")
+  description = string.gsub(description, "blue", "")
+
+  return tonumber(description) > 70
 end
