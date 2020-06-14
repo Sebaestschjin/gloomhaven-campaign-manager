@@ -136,6 +136,7 @@ end
 
 function saveHandler.saveUnlocked(saveFile)
   saveFile.unlocked = {
+    classes = unlocked.saveClasses(),
     items = shop.save(),
     special_conditions = unlocked.saveOpeningConditions()
   }

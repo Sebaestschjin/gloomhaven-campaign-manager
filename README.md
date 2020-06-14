@@ -34,7 +34,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 | Retired characters                  | ✔️    | ✔️    |
 | Shop                                | ✔️    | ✔️    |
 | Looted Items                        | ✔️    | ✔️    |
-| Unlocked character classes          | ✔️    | ❌   |
+| Unlocked character classes          | ✔️    | ✔️    |
 | Unlocked special conditions         | ✔️    | ✔️    |
 | Events                              | ✔️    | ❌   |
 | Current character deck              | ❌   | ❌   |

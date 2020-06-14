@@ -42,6 +42,19 @@ function unlocked.saveOpeningConditions()
 end
 
 
+function unlocked.saveClasses()
+  local classes = {}
+  for class, info in pairs(info.CLASSES) do
+    local box = getObjectFromGUID(info.box_guid)
+    if box and not info.isStartingClass then
+      table.insert(classes, class)
+    end
+  end
+
+  return classes
+end
+
+
 function unlocked.read_classes(classes)
   utils.wait_for_object(guids.LOCKED_CLASSES, function() unlocked.__read_classes_start(classes) end)
 end
