@@ -29,7 +29,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 | Character sheets                    | ✔️    | ✔️    |
 | Character attack modifiers          | ✔️    | ✔️    |
 | Character item cards                | ✔️    | ✔️    |
-| Unlocked abilities                  | ✔️    | ❌   |
+| Unlocked abilities                  | ✔️    | ✔️    |
 | Personal quests                     | ✔️    | ✔️    |
 | Retired characters                  | ✔️    | ✔️    |
 | Shop                                | ✔️    | ✔️    |

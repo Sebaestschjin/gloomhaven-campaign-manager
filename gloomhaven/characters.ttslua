@@ -337,6 +337,21 @@ function characters.saveCharacter(playerZone)
 
   character.items = characters.saveItems(playerZone)
 
+  -- TODO this is not what I call clean code :-(
+  character.abilities = {}
+  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+    if object.tag == "Card" and object.getDescription():find(character.class) then
+      local name = object.getName():gsub(" %(%d+%)", "")
+      local allAbilites = info.CLASSES[character.class].abilities
+      if allAbilites and
+         (allAbilites[name] and allAbilites[name].level ~= 1 and allAbilites[name].level ~= "X"
+          or not allAbilites[name]) then
+        table.insert(character.abilities, name)
+      end
+    end
+  end
+
+
   -- TODO this is WAAAY to ugly...
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
     if object.tag == "Card" and object.getData().CustomDeck then

@@ -40,6 +40,21 @@ info.CLASSES = {
       [13] = { add = {"(Add Target) (Rolling)"} },
       [14] = { add = {"(+1) (Shield 1 Self)"} },
       [15] = { add = {"(+1)"}, ignore = "I"}
+    },
+    abilities = {
+      ["Eye for an Eye"] = {level = 1},
+      ["Trample"] = {level = 1},
+      ["Grab and Go"] = {level = 1},
+      ["Overwhelming Assault"] = {level = 1},
+      ["Provoking Roar"] = {level = 1},
+      ["Shield Bash"] = {level = 1},
+      ["Sweeping Blow"] = {level = 1},
+      ["Warding Strength"] = {level = 1},
+      ["Leaping Cleave"] = {level = 1},
+      ["Spare Dagger"] = {level = 1},
+      ["Wall of Doom"] = {level = "X"},
+      ["Skewer"] = {level = "X"},
+      ["Balanced Measure"] = {level = "X"}
     }
   },
   Scoundrel = {
