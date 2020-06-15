@@ -42,6 +42,7 @@ function utils.find_object_in_zone(zone_guid, search)
                return utils.find_non_empty(object.getGUID(), search.guid, plain)
                       and utils.find_non_empty(object.getName(), search.name, plain)
                       and utils.find_non_empty(object.getDescription(), search.description, plain)
+                      and utils.find_non_empty(object.tag, search.tag, plain)
                end
   end
 

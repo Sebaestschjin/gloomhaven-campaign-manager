@@ -62,26 +62,27 @@ end
 
 
 function characters.setup_character_maxHP(player_zone, character)
+  local characterInfo = info.CLASSES[character.class]
   local level = characters.getLevel(character.xp)
-  local maxHealth = info.CLASSES[character.class].hp[level]
-  local zone = getObjectFromGUID(player_zone)
-  local figure
-  local healthToken
+  local maxHealth = characterInfo.hp[level]
 
-  -- This should probably be added to utils.
-  for _, object in pairs(zone.getObjects()) do
-    if object.getName() == character.class and object.tag == "Figurine" then
-      figure = object
-    end
-    if object.name == "Custom_Token" and string.find(object.getName(), "hp") then
-      healthToken = object
-    end
-  end
-
-  figure.getVar('health')["max"] = maxHealth
-  figure.getVar('health')["value"] = maxHealth
-  figure.call('setHealth')
+  characters.setupFigureHealth(player_zone, character.class, maxHealth)
+  local tokenName = characterInfo.hp[1] .. " hp"
+  local healthToken = utils.find_object_in_zone(player_zone, {name=tokenName})
   healthToken.setState(maxHealth)
+
+  if characterInfo.extra_figure then
+    maxHealth = characterInfo.extra_figure.hp[level]
+    characters.setupFigureHealth(player_zone, characterInfo.extra_figure.name, maxHealth)
+  end
+end
+
+function characters.setupFigureHealth(playerZone, name, health)
+  local figure = utils.find_object_in_zone(playerZone, {name=name, tag="Figurine"})
+
+  figure.getVar('health')["max"] = health
+  figure.getVar('health')["value"] = health
+  figure.call('setHealth')
 end
 
 

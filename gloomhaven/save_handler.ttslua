@@ -84,7 +84,8 @@ function saveHandler.read_party(content)
   if not content then return end
 
   party.load(content)
-  saveHandler.read_characters(content)
+  Wait.time(function() saveHandler.read_characters(content) end, 2)
+  -- saveHandler.read_characters(content)
 end
 
 

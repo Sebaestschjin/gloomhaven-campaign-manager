@@ -219,7 +219,10 @@ info.CLASSES = {
   ["Beast Tyrant"] = {
     box_guid = "89bec7",
     hp = info.HP.LOW,
-    hp_2 = info.HP.HIGH,
+    extra_figure = {
+      name = "Bear Companion",
+      hp = info.HP.HIGH
+    },
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"} },
