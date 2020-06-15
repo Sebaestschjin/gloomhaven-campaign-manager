@@ -2,6 +2,7 @@ guids = {}
 
 guids.GAMEBOX = "346ed5"
 guids.EXPANSION_BOX = "5e28e8"
+guids.ACHIEVEMENTS_BAG = "3ea749"
 
 guids.LOCKED_CLASSES = "1e6549"
 guids.SCENARIO_BOOK = "f3404a"

@@ -23,7 +23,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 | ----------------------------------- | :--: | :--: |
 | Scenarios                           | ✔️    | ✔️    |
 | Prosperity                          | ✔️    | ✔️    |
-| Achievements                        | ✔️    | ❌   |
+| Achievements                        | ✔️    | ✔️    |
 | Party Sheet                         | ✔️    | ✔️    |
 | Character classes                   | ✔️    | ✔️    |
 | Character sheets                    | ✔️    | ✔️    |

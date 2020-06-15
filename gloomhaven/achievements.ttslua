@@ -16,6 +16,35 @@ function achievements.read_all(content)
 end
 
 
+function achievements.save(saveFile)
+  getObjectFromGUID(guids.ACHIEVEMENTS_BAG).takeObject({
+    guid = guids.ACHIEVEMENT_BOARD,
+    position = positions.ACHIEVEMENT_BOARD,
+    rotation = rotations.NORTH,
+    callback_function = function(obj) achievements.doSave(saveFile, obj) end
+  })
+end
+
+
+function achievements.doSave(saveFile, achievementBoard)
+  local achievementInfo = achievementBoard.getTable("flags")
+
+  local result = {}
+  for _, achievement in pairs(achievementInfo) do
+    local maxIndex = 0
+    for i, guid in pairs(achievement.guids) do
+      if getObjectFromGUID(guid) ~= nil then
+        maxIndex = i
+      end
+    end
+    if maxIndex > 0 then
+      table.insert(result, {name=achievement.name, count=maxIndex})
+    end
+  end
+  saveFile.achievements = result
+end
+
+
 function achievements.read(callbacks, achievement)
   log(achievement, "Loading achievement")
   local board = getObjectFromGUID(guids.ACHIEVEMENT_BOARD)

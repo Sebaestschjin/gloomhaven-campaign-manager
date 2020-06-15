@@ -8,6 +8,8 @@ positions.CITY_GAP = vector(-1.2, 0, 0)
 positions.QUEST = vector(1, 2, -19)
 positions.ITEM = vector(-7, 2, -7)
 
+positions.ACHIEVEMENT_BOARD = {87.26, 2, 26.12}
+
 positions.OPENING_CONDITIONS = vector(65.19, 1.70, -29.55)
 positions.RETIREMENT_SHEET = vector(77.88, 1.70, -33.34)
 positions.SCENARIO_BOOK = {63.88, 2, 37.89}

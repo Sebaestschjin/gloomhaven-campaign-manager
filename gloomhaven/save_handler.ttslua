@@ -39,9 +39,11 @@ end
 
 function saveHandler.save()
   local saveFile = saveHandler.createSaveFile()
-  local content = JSON.encode_pretty(saveFile)
 
-  Notes.addNotebookTab({ title = "New Savefile", body = content })
+  Wait.time(function()
+              local content = JSON.encode_pretty(saveFile)
+              Notes.addNotebookTab({ title = "New Savefile", body = content })
+            end, 3)
 end
 
 
@@ -132,6 +134,7 @@ function saveHandler.saveGlobal(saveFile)
     sanctuary = sanctuary.save(),
     scenarios = scenarios.save()
   }
+  achievements.save(saveFile.global)
 end
 
 
