@@ -337,6 +337,24 @@ function characters.saveCharacter(playerZone)
 
   character.items = characters.saveItems(playerZone)
 
+  -- TODO this is WAAAY to ugly...
+  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+    if object.tag == "Card" and object.getData().CustomDeck then
+      for key, _ in pairs(object.getData().CustomDeck) do
+        if key == 1997 then
+          local cardId = object.getData().CardID
+          local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+          for name, info in pairs(info.QUESTS) do
+            if info.index == cardIndex then
+              character.quest = name
+              break
+            end
+          end
+        end
+      end
+    end
+  end
+
   return character
 end
 

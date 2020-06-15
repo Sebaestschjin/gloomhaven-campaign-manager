@@ -30,7 +30,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 | Character attack modifiers          | ✔️    | ✔️    |
 | Character item cards                | ✔️    | ✔️    |
 | Unlocked abilities                  | ✔️    | ❌   |
-| Personal quests                     | ✔️    | ❌   |
+| Personal quests                     | ✔️    | ✔️    |
 | Retired characters                  | ✔️    | ✔️    |
 | Shop                                | ✔️    | ✔️    |
 | Looted Items                        | ✔️    | ✔️    |

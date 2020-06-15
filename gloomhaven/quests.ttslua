@@ -3,7 +3,7 @@ quests = {}
 quests.removed = {}
 
 function quests.take(quest, callback)
-  local quest_index = quests.get_index(quest) - 1
+  local quest_index = quests.get_index(quest)
   local deck = getObjectFromGUID(guids.QUESTS)
 
   deck.takeObject({
