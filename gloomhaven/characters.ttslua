@@ -341,7 +341,7 @@ function characters.saveCharacter(playerZone)
   character.abilities = {}
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
     if object.tag == "Card" and object.getDescription():find(character.class) then
-      local name = object.getName():gsub(" %(%d+%)", "")
+      local name = object.getName():gsub("%s?%(%d+%)", "")
       local allAbilites = info.CLASSES[character.class].abilities
       if allAbilites and
          (allAbilites[name] and allAbilites[name].level ~= 1 and allAbilites[name].level ~= "X"

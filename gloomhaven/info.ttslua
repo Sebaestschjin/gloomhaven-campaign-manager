@@ -73,10 +73,24 @@ info.CLASSES = {
       [9] = { add = {"(+1) (Rolling)", "(+1) (Rolling)"} },
       [10] = { add = {"(Pierce 3) (Rolling)", "(Pierce 3) (Rolling)"} },
       [11] = { add = {"(Poison) (Rolling)", "(Poison) (Rolling)"} },
-      [12] = { add = {"(Poison) (Rolling)", "(Poison) (Rolling)"}},
+      [12] = { add = {"(Poison) (Rolling)", "(Poison) (Rolling)"} },
       [13] = { add = {"(Muddle) (Rolling)", "(Muddle) (Rolling)"} },
       [14] = { add = {"(Invisible) (Rolling)"} },
       [15] = { ignore = "S" }
+    },
+    abilities = {
+      ["Flanking Strike"] = {level = 1},
+      ["Special Mixture"] = {level = 1},
+      ["Throwing Knives"] = {level = 1},
+      ["Thief's Knack"] = {level = 1},
+      ["Quick Hands"] = {level = 1},
+      ["Backstab"] = {level = 1},
+      ["Smoke Bomb"] = {level = 1},
+      ["Single Out"] = {level = 1},
+      ["Venom Shiv"] = {level = 1},
+      ["Sinister Opportunity"] = {level = "X"},
+      ["Trickster's Reversal"] = {level = "X"},
+      ["Swift Bow"] = {level = "X"}
     }
   },
   Spellweaver = {
@@ -98,7 +112,20 @@ info.CLASSES = {
       [12] = { add = {"(+2) (Ice)"} },
       [13] = { add = {"(+2) (Ice)"} },
       [14] = { add = {"(Earth) (Rolling)", "(Air) (Rolling)"} },
-      [15] = { add = {"(Dark) (Rolling)", "(Light) (Rolling)"} }
+      [15] = { add = {"(Dark) (Rolling)", "(Light) (Rolling)"} },
+    },
+    abilities = {
+      ["Flame Strike"] = {level = 1},
+      ["Frost Armor"] = {level = 1},
+      ["Fire Orbs"] = {level = 1},
+      ["Impaling Eruption"] = {level = 1},
+      ["Mana Bolt"] = {level = 1},
+      ["Reviving Ether"] = {level = 1},
+      ["Freezing Nova"] = {level = 1},
+      ["Ride the Wind"] = {level = 1},
+      ["Crackling Air"] = {level = "X"},
+      ["Aid from the Ether"] = {level = "X"},
+      ["Hardened Spikes"] = {level = "X"}
     }
   },
   Mindthief = {
@@ -121,6 +148,21 @@ info.CLASSES = {
       [13] = { add = {"(Stun) (Rolling)"} },
       [14] = { add = {"(Disarm) (Rolling)", "(Muddle) (Rolling)"} },
       [15] = { ignore = "S"}
+    },
+    abilities = {
+      ["Empathetic Assault"] = {level = 1},
+      ["Perverse Edge"] = {level = 1},
+      ["Gnawing Horde"] = {level = 1},
+      ["Into the Night"] = {level = 1},
+      ["Feedback Loop"] = {level = 1},
+      ["Fearsome Blade"] = {level = 1},
+      ["The Mind's Weakness"] = {level = 1},
+      ["Parasitic Influence"] = {level = 1},
+      ["Scurry"] = {level = 1},
+      ["Submissive Affliction"] = {level = 1},
+      ["Possession"] = {level = "X"},
+      ["Withering Claw"] = {level = "X"},
+      ["Frigid Apparition"] = {level = "X"}
     }
   },
   Cragheart = {
@@ -143,6 +185,22 @@ info.CLASSES = {
       [13] = { add = {"(Air) (Rolling)", "(Air) (Rolling)"} },
       [14] = { ignore = "S" },
       [15] = { ignore = "I" }
+    },
+    abilities = {
+      ["Dirt Tornado"] = {level = 1},
+      ["Crater"] = {level = 1},
+      ["Rock Tunnel"] = {level = 1},
+      ["Rumbling Advance"] = {level = 1},
+      ["Unstable Upheaval"] = {level = 1},
+      ["Backup Ammunition"] = {level = 1},
+      ["Earthen Clod"] = {level = 1},
+      ["Avalanche"] = {level = 1},
+      ["Massive Boulder"] = {level = 1},
+      ["Opposing Strike"] = {level = 1},
+      ["Crushing Grasp"] = {level = 1},
+      ["Heaving Swing"] = {level = "X"},
+      ["Forceful Storm"] = {level = "X"},
+      ["Nature's Lift"] = {level = "X"}
     }
   },
   Tinkerer = {
@@ -165,6 +223,23 @@ info.CLASSES = {
       [13] = { add = {"(+1) (Heal 2 Self)"} },
       [14] = { add = {"(+0) (Add Target)"} },
       [15] = { ignore = "S" }
+    },
+    abilities = {
+      ["Proximity Mine"] = {level = 1},
+      ["Hook Gun"] = {level = 1},
+      ["Enhancement Field"] = {level = 1},
+      ["Toxic Bolt"] = {level = 1},
+      ["Restorative Mist"] = {level = 1},
+      ["Energizing Tonic"] = {level = 1},
+      ["Stun Shot"] = {level = 1},
+      ["Harmless Contraption"] = {level = 1},
+      ["Flamethrower"] = {level = 1},
+      ["Reinvigorating Elixir"] = {level = 1},
+      ["Net Shooter"] = {level = 1},
+      ["Ink Bomb"] = {level = 1},
+      ["Reviving Shock"] = {level = "X"},
+      ["Potent Potables"] = {level = "X"},
+      ["Volatile Concoction"] = {level = "X"}
     }
   },
   Berserker = {
@@ -186,7 +261,21 @@ info.CLASSES = {
       [13] = { add = {"(+2) (Fire)"} },
       [14] = { add = {"(+2) (Fire)"} },
       [15] = { ignore = "I" }
-
+    },
+    abilities = {
+      ["Dazing Wound"] = {level = 1},
+      ["Bounce Back"] = {level = 1},
+      ["Growing Rage"] = {level = 1},
+      ["Cauterize"] = {level = 1},
+      ["Resolute Stand"] = {level = 1},
+      ["Furious Aid"] = {level = 1},
+      ["From the Brink"] = {level = 1},
+      ["Strength in Agony"] = {level = 1},
+      ["Defiance of Death"] = {level = 1},
+      ["Blood Pact"] = {level = 1},
+      ["Numb the Pain"] = {level = "X"},
+      ["Unbridled Power"] = {level = "X"},
+      ["Glass Hammer"] = {level = "X"}
     }
   },
   Elementalist = {
@@ -208,6 +297,21 @@ info.CLASSES = {
       [13] = { add = {"(+1) (Wound)"} },
       [14] = { add = {"(Stun)"} },
       [15] = { add = {"(Add Target)"} }
+    },
+    abilities = {
+      ["Pure Augmentation"] = {level = 1},
+      ["Raw Enhancement"] = {level = 1},
+      ["Formless Power"] = {level = 1},
+      ["Tremulant Cyclone"] = {level = 1},
+      ["Shaping the Ether"] = {level = 1},
+      ["Land Eruption"] = {level = 1},
+      ["Stoking Hail"] = {level = 1},
+      ["Infernal Vortex"] = {level = 1},
+      ["Ice Spikes"] = {level = 1},
+      ["Frigid Torrent"] = {level = 1},
+      ["Encompassing Shadow"] = {level = "X"},
+      ["Brilliant Flash"] = {level = "X"},
+      ["Malleable Evocation"] = {level = "X"}
     }
   },
   Quartermaster = {
@@ -229,6 +333,20 @@ info.CLASSES = {
       [13] = { add = {"(Refresh"} },
       [14] = { add = {"(Refresh)"} },
       [15] = { ignore= "I", add = {"(+1)", "(+1)"} }
+    },
+    abilities = {
+      ["Impaling Spear"] = {level = 1},
+      ["Cleaving Axe"] = {level = 1},
+      ["Hastened Step"] = {level = 1},
+      ["Iron Bulwark"] = {level = 1},
+      ["Crippling Bow"] = {level = 1},
+      ["Oversized Pack"] = {level = 1},
+      ["Sharpening Kit"] = {level = 1},
+      ["Restock"] = {level = 1},
+      ["Proficiency"] = {level = 1},
+      ["Crushing Hammer"] = {level = "X"},
+      ["Scroll of Recall"] = {level = "X"},
+      ["Reserved Energy"] = {level = "X"}
     }
   },
   ["Beast Tyrant"] = {
@@ -254,6 +372,21 @@ info.CLASSES = {
       [13] = { add = {"(Heal +1 Self) (Rolling)", "(Heal +1 Self) (Rolling)"} },
       [14] = { add = {"(Earth) (Rolling)", "(Earth) (Rolling)"} },
       [15] = { ignore = "S" }
+    },
+    abilities = {
+      ["Venemous Ally"] = {level = 1},
+      ["Spirit Swap"] = {level = 1},
+      ["Disappearing Wounds"] = {level = 1},
+      ["Maul"] = {level = 1},
+      ["Patch Fur"] = {level = 1},
+      ["Forceful Swipe"] = {level = 1},
+      ["Howling Bolts"] = {level = 1},
+      ["Disorienting Roar"] = {level = 1},
+      ["Relentless Ally"] = {level = 1},
+      ["Concentrated Rage"] = {level = 1},
+      ["Borrowed Essence"] = {level = "X"},
+      ["Focussed Aggresion"] = {level = "X"},
+      ["Soaring Ally"] = {level = "X"}
     }
   },
   Soothsinger = {
@@ -275,6 +408,20 @@ info.CLASSES = {
       [13] = { add = {"(+1) (Rolling)", "(+1) (Rolling)", "(+1) (Rolling)"} },
       [14] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"} },
       [15] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"} }
+    },
+    abilities = {
+      ["Throw Voice"] = {level = 1},
+      ["Warding Dagger"] = {level = 1},
+      ["Power Ballad"] = {level = 1},
+      ["Call to Action"] = {level = 1},
+      ["Singing Arrow"] = {level = 1},
+      ["Marching Beat"] = {level = 1},
+      ["Tuning the Outcome"] = {level = 1},
+      ["Song of Speed"] = {level = 1},
+      ["Defensive Ditty"] = {level = 1},
+      ["Unending Chant"] = {level = "X"},
+      ["Nimble Knife"] = {level = "X"},
+      ["Wistful Wounding"] = {level = "X"}
     }
   },
   Plagueherald = {
@@ -296,6 +443,22 @@ info.CLASSES = {
       [13] = { add = {"(Stun) (Rolling)"} },
       [14] = { add = {"(Stun) (Rolling)"} },
       [15] = { ignore = "S", add = {"(+1)"} }
+    },
+    abilities = {
+      ["Biting Gnats"] = {level = 1},
+      ["Spread the Plague"] = {level = 1},
+      ["Wretched Swarm"] = {level = 1},
+      ["Grasping Vermin"] = {level = 1},
+      ["Vile Pestilence"] = {level = 1},
+      ["Scattered Terror"] = {level = 1},
+      ["Foul Wind"] = {level = 1},
+      ["Paralyzing Bite"] = {level = 1},
+      ["Gathering Doom"] = {level = 1},
+      ["Creeping Curse"] = {level = 1},
+      ["Winnged Congregation"] = {level = 1},
+      ["Epidemic"] = {level = "X"},
+      ["Blistering Vortex"] = {level = "X"},
+      ["Virulent Strain"] = {level = "X"}
     }
   },
   Nightshroud = {
@@ -317,7 +480,20 @@ info.CLASSES = {
       [13] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"} },
       [14] = { add = {"(Add Target) (Rolling)"} },
       [15] = { ignore = "S", add = {"(+1)", "(+1)"} }
-
+    },
+    abilities = {
+      ["Doomed Breeze"] = {level = 1},
+      ["Empowering Void"] = {level = 1},
+      ["Smoke Step"] = {level = 1},
+      ["Cloak of Shade"] = {level = 1},
+      ["Silent Force"] = {level = 1},
+      ["Black Knives"] = {level = 1},
+      ["Enervating Wound"] = {level = 1},
+      ["Spirit of the Night"] = {level = 1},
+      ["Dancing Shadows"] = {level = 1},
+      ["Dark Cloud"] = {level = "X"},
+      ["Concealed Dominance"] = {level = "X"},
+      ["Wings of the Night"] = {level = "X"}
     }
   },
   Sawbones = {
@@ -339,6 +515,21 @@ info.CLASSES = {
       [13] = { add = {"(Heal 3 Self) (Rolling)"} },
       [14] = { add = {"(Heal 3 Self) (Rolling)"} },
       [15] = { add = {"(Refresh)"} }
+    },
+    abilities = {
+      ["Hand of the Surgeon"] = {level = 1},
+      ["Booster Shot"] = {level = 1},
+      ["Curative Mixture"] = {level = 1},
+      ["Triage"] = {level = 1},
+      ["Mobile Response"] = {level = 1},
+      ["Syringe"] = {level = 1},
+      ["Battlefield Medicine"] = {level = 1},
+      ["Hold Back the Pain"] = {level = 1},
+      ["Bloody Saw"] = {level = 1},
+      ["First Aid"] = {level = 1},
+      ["Vaccine"] = {level = "X"},
+      ["Prevention Is Key"] = {level = "X"},
+      ["Teamwork"] = {level = "X"}
     }
   },
   Sunkeeper = {
@@ -360,7 +551,22 @@ info.CLASSES = {
       [13] = { add = {"(Shield 1 Self) (Rolling)", "(Shield 1 Self) (Rolling)"} },
       [14] = { ignore = "I", add = {"(+1)", "(+1)"} },
       [15] = { ignore = "S" }
-
+    },
+    abilities = {
+      ["Lay on Hands"] = {level = 1},
+      ["Empowering Command"] = {level = 1},
+      ["Dazzling Charge"] = {level = 1},
+      ["Holy Strike"] = {level = 1},
+      ["Hammer Blow"] = {level = 1},
+      ["Defensive Stance"] = {level = 1},
+      ["Cautious Advance"] = {level = 1},
+      ["Tactical Order"] = {level = 1},
+      ["Purifying Aura"] = {level = 1},
+      ["Brilliant Prayer"] = {level = 1},
+      ["Protective Blessing"] = {level = 1},
+      ["Glorious Bolt"] = {level = "X"},
+      ["Beacon of Light"] = {level = "X"},
+      ["Daybreak"] = {level = "X"}
     }
   },
   Summoner = {
@@ -382,6 +588,20 @@ info.CLASSES = {
       [13] = { add = {"(Fire) (Rolling)", "(Air) (Rolling)"} },
       [14] = { add = {"(Dark) (Rolling)", "(Earth) (Rolling)"} },
       [15] = { ignore = "S", add = {"(+1)", "(+1)"} }
+    },
+    abilities = {
+      ["Bonded Might"] = {level = 1},
+      ["Unending Dominance"] = {level = 1},
+      ["Unwavering Hand"] = {level = 1},
+      ["Mighty Bond"] = {level = 1},
+      ["Forged Ferocity"] = {level = 1},
+      ["Biting Wind"] = {level = 1},
+      ["Black Fire"] = {level = 1},
+      ["Black Fire"] = {level = 1},
+      ["Wild Animation"] = {level = 1},
+      ["Ethereal Vines"] = {level = "X"},
+      ["Leathery Wings"] = {level = "X"},
+      ["Volatile Flame"] = {level = "X"}
     }
   },
   Doomstalker = {
@@ -403,6 +623,23 @@ info.CLASSES = {
       [13] = { add = {"(Add Target) (Rolling)"} },
       [14] = { add = {"(Add Target) (Rolling)"} },
       [15] = { ignore = "S" }
+    },
+    abilities = {
+      ["Vital Charge"] = {level = 1},
+      ["Race to the Grave"] = {level = 1},
+      ["Multi-Pronged Assault"] = {level = 1},
+      ["Frightening Curse"] = {level = 1},
+      ["Detonation"] = {level = 1},
+      ["Foot Snare"] = {level = 1},
+      ["Solid Bow"] = {level = 1},
+      ["A Moment's Peace"] = {level = 1},
+      ["Swift Trickery"] = {level = 1},
+      ["Felling Swoop"] = {level = 1},
+      ["Crippling Noose"] = {level = 1},
+      ["Rain of Arrows"] = {level = 1},
+      ["Fresh Kill"] = {level = "X"},
+      ["The Hunt Begins"] = {level = "X"},
+      ["Sap Life"] = {level = "X"}
     }
   },
   Diviner = {
@@ -424,6 +661,20 @@ info.CLASSES = {
       [13] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
       [14] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"}},
       [15] = { ignore = "S", add = {"(+1)", "(+1)"}}
+    },
+    abilities = {
+      ["Ray of Light"] = {level = 1},
+      ["Dimensional Transfer"] = {level = 1},
+      ["Void Snare"] = {level = 1},
+      ["Anticipate Intricacies"] = {level = 1},
+      ["Cursed Ground"] = {level = 1},
+      ["Peer into Battle"] = {level = 1},
+      ["Protective Aura"] = {level = 1},
+      ["Otherworldly Journey"] = {level = 1},
+      ["Clayrvoiance"] = {level = 1},
+      ["Inspiration from Beyond"] = {level = "X"},
+      ["Bad Omen"] = {level = "X"},
+      ["Duality Shards"] = {level = "X"}
     }
   }
 }
