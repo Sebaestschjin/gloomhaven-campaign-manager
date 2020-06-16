@@ -112,7 +112,7 @@ end
 
 function saveHandler.read_events(content)
   if not content.events then return end
-  events.read_all(content.events)
+  events.load(content.events)
 end
 
 
@@ -123,6 +123,7 @@ function saveHandler.createSaveFile()
   saveHandler.saveUnlocked(saveFile)
   saveHandler.saveParty(saveFile)
   saveHandler.saveRetirements(saveFile)
+  saveHandler.saveEvents(saveFile)
 
   return saveFile
 end
@@ -154,4 +155,9 @@ end
 
 function saveHandler.saveRetirements(saveFile)
   saveFile.retired = retirements.save()
+end
+
+
+function saveHandler.saveEvents(saveFile)
+  saveFile.events = events.save()
 end

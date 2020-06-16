@@ -339,22 +339,33 @@
         "city": {
           "title": "City Events",
           "description": "",
-          "type": "array",
-          "items": {
-            "title": "Event",
-            "type": "integer"
-          }
+          "$ref": "#/definitions/eventType"
         },
         "road": {
           "title": "Road Events",
           "description": "",
-          "type": "array",
-          "items": {
-            "title": "Event",
-            "type": "integer"
-          }
+          "$ref": "#/definitions/eventType"
         }
       }
     }
-  }
+  },
+  "definitions": {
+    "eventType": {
+      "type": "object",
+      "properties": {
+        "add": {
+          "type": "array",
+          "items": "integer"
+        },
+        "remove": {
+          "type": "array",
+          "items": "integer"
+         },
+         "bottomUp": {
+           "type": "array",
+           "items": "integer"
+         }
+       }
+     }
+   }
 }

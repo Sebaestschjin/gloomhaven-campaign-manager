@@ -1,8 +1,17 @@
 events = {}
 
-function events.read_all(values)
-  Wait.time(function() events.read(values.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS) end, 4)
-  Wait.time(function() events.read(values.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS) end, 8)
+function events.load(values)
+  events.read(values.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS)
+  events.read(values.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS)
+end
+
+
+function events.save()
+  eventTypes = {}
+  eventTypes.city = events.saveEventsFromDeck(snaps.CITY_EVENTS)
+  eventTypes.road = events.saveEventsFromDeck(snaps.ROAD_EVENTS)
+
+  return eventTypes
 end
 
 
@@ -15,7 +24,7 @@ function events.read(values, firstDeckGuid, deckGuid, snapPoint)
   local eventPosition = utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPoint)
   local eventsToTake = {}
 
-  for i, event in pairs(values) do
+  for i, event in pairs(values.bottomUp) do
     local eventName = string.format("%02d", event)
     local eventCard = utils.find_object_info_in_stack(deck, {name=eventName})
     deck.takeObject({
@@ -25,4 +34,28 @@ function events.read(values, firstDeckGuid, deckGuid, snapPoint)
       smooth = false
     })
   end
+end
+
+
+function events.saveEventsFromDeck(snapPosition)
+  local eventPosition = utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPosition)
+  local hitObjects = Physics.cast({
+    origin = eventPosition + vector(0, -0.05, 0),
+    direction = direction.UP,
+    max_distance = 0.1
+  })
+
+  local eventsFromDeck = {}
+  eventsFromDeck.bottomUp = {}
+  for _, object in pairs(hitObjects) do
+    object = object.hit_object
+    if object.tag == "Deck" then
+      local eventNumbers = {}
+      for _, card in pairs(object.getObjects()) do
+        table.insert(eventsFromDeck.bottomUp, tonumber(card.name))
+      end
+    end
+  end
+
+  return eventsFromDeck
 end

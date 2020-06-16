@@ -36,7 +36,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 | Looted Items                        | ✔️    | ✔️    |
 | Unlocked character classes          | ✔️    | ✔️    |
 | Unlocked special conditions         | ✔️    | ✔️    |
-| Events                              | ✔️    | ❌   |
+| Events                              | ✔️    | ✔️    |
 | Current character deck              | ❌   | ❌   |
 | Unlocked envelopes                  | ❌   | ❌   |
 | Forgotten Circle expansion          | ❌   | ❌   |

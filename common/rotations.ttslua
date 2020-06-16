@@ -8,3 +8,7 @@ rotations.SOUTH = vector(0, 0, 0)
 rotations.SOUTH_FLIPPED = vector(0, 0, 180)
 rotations.WEST = vector(0, 90, 0)
 rotations.WEST_FLIPPED = vector(0, 90, 180)
+
+direction = {}
+direction.UP = {0, 1, 0}
+direction.DOWN = {0, -1, 0}
