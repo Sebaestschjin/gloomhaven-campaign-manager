@@ -8,15 +8,15 @@ saveHandler = {}
 
 #include preparation
 #include prosperity
-#include scenarios
-#include achievements
+#include scenario
+#include achievement
 #include unlocked
 #include party
-#include characters
+#include character
 #include shop
-#include retirements
-#include quests
-#include events
+#include retirement
+#include quest
+#include event
 #include sanctuary
 
 saveHandler.SAVE_FILE = "Savefile"

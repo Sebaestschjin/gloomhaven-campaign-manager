@@ -10,7 +10,7 @@ There's not a Workshop mod yet, so here's how to set this up:
 - insert a new object (e.g. a Poker chip)
 - create a new notebook named Savefile
 - save the game and load it right away
-- add the script from `ui.ttslua` to the object
+- add `#include gloomhaven/saveHandlerUi` to the object
 - hit Ctrl+Shift+S in Atom
 - insert the save file you want to load into the notebook
 - the object now has a button, hit that and the save loads

@@ -1,5 +1,5 @@
 -- This is the code that goes onto the ui component
-#include gloomhaven/save_handler
+#include saveHandler
 
 
 function onLoad(save_state)
