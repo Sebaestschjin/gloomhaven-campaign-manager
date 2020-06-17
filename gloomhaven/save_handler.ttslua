@@ -59,7 +59,7 @@ function saveHandler.read_global(content)
   if not content then return end
 
   if content.scenarios then
-    scenarios.load(content.scenarios)
+    Scenario.loadAll(content.scenarios)
   end
   if content.achievements then
     Achievement.loadAll(content.achievements)
@@ -122,7 +122,7 @@ function saveHandler.saveGlobal(saveFile)
   saveFile.global = {
     prosperity = Prosperity.save(),
     sanctuary = Sanctuary.save(),
-    scenarios = scenarios.save()
+    scenarios = Scenario.save()
   }
   Achievement.saveAll(saveFile.global)
 end

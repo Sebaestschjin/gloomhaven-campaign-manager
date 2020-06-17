@@ -1,20 +1,20 @@
-scenarios = {}
+Scenario = {}
 
-scenarios.OPEN = "Open"
-scenarios.DONE = "Done"
-scenarios.LOCKED = "Locked"
+Scenario.OPEN = "Open"
+Scenario.DONE = "Done"
+Scenario.LOCKED = "Locked"
 
-function scenarios.load(content)
+function Scenario.loadAll(content)
   local scenarioStickers = getObjectFromGUID(guids.MAP).getTable("tableML")
 
   for number, state in pairs(content) do
-    local stickerGuid = scenarios.findStickerGuid(scenarioStickers, tonumber(number))
-    Wait.time(function() scenarios.placeSticker(stickerGuid, state) end, 1.1, 1)
+    local stickerGuid = Scenario.findStickerGuid(scenarioStickers, tonumber(number))
+    Wait.time(function() Scenario.placeSticker(stickerGuid, state) end, 1.1, 1)
   end
 end
 
 
-function scenarios.save()
+function Scenario.save()
   local content = {}
   local map = getObjectFromGUID(guids.MAP)
   local scenarioStickers = map.getTable("tableML")
@@ -22,12 +22,12 @@ function scenarios.save()
 
   for stickerGuid, info in pairs(scenarioStickers) do
     if getObjectFromGUID(stickerGuid) ~= nil and info.number ~= nil then
-      state = scenarios.OPEN
+      state = Scenario.OPEN
       if unlockedScenarios[stickerGuid] then
         if unlockedScenarios[stickerGuid][1] == 1 then
-          state = scenarios.LOCKED
+          state = Scenario.LOCKED
         else
-          state = scenarios.DONE
+          state = Scenario.DONE
         end
       end
       content[tostring(info.number)] = state
@@ -38,7 +38,7 @@ function scenarios.save()
 end
 
 
-function scenarios.findStickerGuid(scenarioStickers, number)
+function Scenario.findStickerGuid(scenarioStickers, number)
   for stickerGuid, info in pairs(scenarioStickers) do
     if info.number == number then
       return stickerGuid
@@ -48,14 +48,14 @@ function scenarios.findStickerGuid(scenarioStickers, number)
 end
 
 
-function scenarios.placeSticker(stickerGuid, state)
+function Scenario.placeSticker(stickerGuid, state)
   local map = getObjectFromGUID(guids.MAP)
-  if state == scenarios.OPEN then
+  if state == Scenario.OPEN then
     map.call("clickedML", stickerGuid)
-  elseif state == scenarios.DONE then
+  elseif state == Scenario.DONE then
     map.call("clickedML", stickerGuid)
     map.call("oneClick", { stickerGuid })
-  elseif state == scenarios.LOCKED then
+  elseif state == Scenario.LOCKED then
     map.call("clickedML", stickerGuid)
     map.call("triClick", { stickerGuid })
   else
