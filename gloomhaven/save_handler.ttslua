@@ -3,9 +3,7 @@ saveHandler = {}
 #include !/common/utils
 #include !/common/rotations
 
-#include guids
-#include names
-#include positions
+#include component
 #include info
 
 #include preparation

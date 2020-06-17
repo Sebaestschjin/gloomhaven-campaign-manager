@@ -1,0 +1,93 @@
+guids = {}
+
+guids.GAMEBOX = "346ed5"
+guids.EXPANSION_BOX = "5e28e8"
+guids.ACHIEVEMENTS_BAG = "3ea749"
+
+guids.LOCKED_CLASSES = "1e6549"
+guids.SCENARIO_BOOK = "f3404a"
+guids.RULE_BOOK = "c9d3f5"
+
+guids.MAP = "9cc037"
+guids.DECK_MAT = "a75fcd"
+guids.CITY_MAT = "f3ffb7"
+guids.EVENTS_MAT = "b53fb2"
+guids.PARTY_SHEET = "6d3de2"
+guids.ACHIEVEMENT_BOARD = "43d5b8"
+guids.OPENING_CONDITIONS = "30ae8e"
+guids.RETIREMENT_SHEET = "a30c94"
+guids.TOWN_RECORDS = "a6c771"
+guids.SANCTUARY_STICKER = "800847"
+
+guids.LAST_BOX = "fdef02" -- tinkerer
+guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
+
+guids.RANDOM_RED_DECK = "fb9bd4"
+guids.RANDOM_BLUE_DECK = "e18733"
+guids.REWARDS_DECK = "900a8d"
+
+guids.CITY_EVENTS_FIRST = "759349"
+guids.CITY_EVENTS = "f13efd"
+guids.ROAD_EVENTS_FIRST = "83de73"
+guids.ROAD_EVENTS = "f08b69"
+
+guids.QUESTS = "73a423"
+
+guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}
+guids.ADD_PLAYERS = {"3f0cda", "4d61da", "f98ff8", "d0f661"}
+
+
+names = {}
+
+names.CHARACTER_SHEET = "Character Sheet"
+names.PLAYER_MAT = "Player Mat"
+names.CHARACTER_MAT = "Character Mat"
+
+names.ABILITY_DECK = "Advanced Abilities"
+names.MODIFIER_DECK = "Attack Modifiers"
+
+names.ATTACK_MODIFIER = "Attack Modifier"
+
+
+positions = {}
+
+positions.REMOVED = vector(-60, 2, -71)
+
+positions.CITY_DECK = vector(7.8, 0.5, -0.16)
+positions.CITY_GAP = vector(-1.2, 0, 0)
+
+positions.QUEST = vector(1, 2, -19)
+positions.ITEM = vector(-7, 2, -7)
+
+positions.ACHIEVEMENT_BOARD = {87.26, 2, 26.12}
+
+positions.OPENING_CONDITIONS = vector(65.19, 1.70, -29.55)
+positions.RETIREMENT_SHEET = vector(77.88, 1.70, -33.34)
+positions.SCENARIO_BOOK = {63.88, 2, 37.89}
+positions.RULE_BOOK = {-64.31, 2, -41.68}
+positions.TOWN_RECORDS = {73.94, 2, 34.10}
+
+snaps = {}
+snaps.Head = 15
+snaps.Armor = 16
+snaps.HandLeft = 17
+snaps.HandRight = 18
+snaps.Boots = 19
+snaps.Bag1 = 12
+snaps.Bag2 = 13
+snaps.Bag3 = 14
+snaps.Active1 = 6
+snaps.Active2 = 7
+snaps.Active3 = 8
+snaps.Active4 = 9
+
+snaps.SHOP = 1
+
+snaps.ROAD_EVENTS = 1
+snaps.CITY_EVENTS = 2
+snaps.RIFT_EVENTS = 3
+
+
+function positions.relative_to_zone(zone_guid, position)
+  return getObjectFromGUID(zone_guid).getPosition() + position
+end
