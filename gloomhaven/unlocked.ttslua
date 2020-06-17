@@ -44,7 +44,7 @@ end
 
 function Unlocked.saveClasses()
   local classes = {}
-  for class, info in pairs(info.CLASSES) do
+  for class, info in pairs(Game.CLASSES) do
     local box = getObjectFromGUID(info.box_guid)
     if box and not info.isStartingClass then
       table.insert(classes, class)
@@ -120,7 +120,7 @@ function Unlocked.__read_class(number, class)
   local last_box = getObjectFromGUID(guids.LAST_BOX)
   local before_last_box = getObjectFromGUID(guids.BEFORE_LAST_BOX)
   local delta = (last_box.getPosition() - before_last_box.getPosition()) * number
-  local class_guid = info.CLASSES[class].box_guid
+  local class_guid = Game.CLASSES[class].box_guid
 
   character_boxes.takeObject({
     position = last_box.getPosition() + delta,

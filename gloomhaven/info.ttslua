@@ -1,29 +1,29 @@
 -- Contains information about different parts of the Gloomhaven mod and Gloomhaven components (e.g.
 -- all classes and their perks).
-info = {}
+Game = {}
 
 -- Mapping from a player's scripting zone GUID to PlayerColor
-info.PLAYERS = {
+Game.PLAYERS = {
   [guids.ZONES[1]] = "Red",
   [guids.ZONES[2]] = "White",
   [guids.ZONES[3]] = "Blue",
   [guids.ZONES[4]] = "Green"
 }
 
-info.HP = {
+Game.HP = {
   LOW = {6, 7, 8, 9, 10, 11, 12, 13, 14},
   MEDIUM =  {8, 9, 11, 12, 14, 15, 17, 18, 20},
   HIGH = {10, 12, 14, 16, 18, 20, 22, 24, 26}
 }
 
-info.XPLevel = {0, 45, 95, 150, 210, 275, 345, 420, 500}
+Game.XP_REQUIREMENTS = {0, 45, 95, 150, 210, 275, 345, 420, 500}
 
 -- Information about all character classes. Contains their name, components GUIDs, perks and HP.
-info.CLASSES = {
+Game.CLASSES = {
   Brute = {
     isStartingClass = true,
     box_guid = "697f18",
-    hp = info.HP.HIGH,
+    hp = Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { add = {"(+1)"}, remove = {"(-1)"} },
@@ -60,7 +60,7 @@ info.CLASSES = {
   Scoundrel = {
     isStartingClass = true,
     box_guid = "66309d",
-    hp = info.HP.MEDIUM,
+    hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -96,7 +96,7 @@ info.CLASSES = {
   Spellweaver = {
     isStartingClass = true,
     box_guid = "0507cf",
-    hp = info.HP.LOW,
+    hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"} },
@@ -131,7 +131,7 @@ info.CLASSES = {
   Mindthief = {
     isStartingClass = true,
     box_guid = "8c1ca4",
-    hp = info.HP.LOW,
+    hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -168,7 +168,7 @@ info.CLASSES = {
   Cragheart = {
     isStartingClass = true,
     box_guid = "ec1d2a",
-    hp = info.HP.HIGH,
+    hp = Game.HP.HIGH,
     perk = {
       [1] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"}},
@@ -206,7 +206,7 @@ info.CLASSES = {
   Tinkerer = {
     isStartingClass = true,
     box_guid = "fdef02",
-    hp = info.HP.MEDIUM,
+    hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -244,7 +244,7 @@ info.CLASSES = {
   },
   Berserker = {
     box_guid = "7ff6c4",
-    hp = info.HP.HIGH,
+    hp = Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
@@ -280,7 +280,7 @@ info.CLASSES = {
   },
   Elementalist = {
     box_guid = "21d7e7",
-    info.HP.LOW,
+    Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -316,7 +316,7 @@ info.CLASSES = {
   },
   Quartermaster = {
     box_guid = "d221fc",
-    hp = info.HP.HIGH,
+    hp = Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -351,10 +351,10 @@ info.CLASSES = {
   },
   ["Beast Tyrant"] = {
     box_guid = "89bec7",
-    hp = info.HP.LOW,
+    hp = Game.HP.LOW,
     extra_figure = {
       name = "Bear Companion",
-      hp = info.HP.HIGH
+      hp = Game.HP.HIGH
     },
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -391,7 +391,7 @@ info.CLASSES = {
   },
   Soothsinger = {
     box_guid = "732351",
-    hp = info.HP.LOW,
+    hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -426,7 +426,7 @@ info.CLASSES = {
   },
   Plagueherald = {
     box_guid = "10b86a",
-    hp = info.HP.LOW,
+    hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-2)"}, add = {"(+0)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"} },
@@ -463,7 +463,7 @@ info.CLASSES = {
   },
   Nightshroud = {
     box_guid = "8f7455",
-    hp = info.HP.MEDIUM,
+    hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -498,7 +498,7 @@ info.CLASSES = {
   },
   Sawbones = {
     box_guid = "e5148c",
-    info.HP.MEDIUM,
+    Game.HP.MEDIUM,
     perk = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -534,7 +534,7 @@ info.CLASSES = {
   },
   Sunkeeper = {
     box_guid = "bfe08d",
-    info.HP.HIGH,
+    Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -571,7 +571,7 @@ info.CLASSES = {
   },
   Summoner = {
     box_guid = "0f9847",
-    info.HP.MEDIUM,
+    Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-2)"}, add = {"(+0)"} },
@@ -606,7 +606,7 @@ info.CLASSES = {
   },
   Doomstalker = {
     box_guid = "b7fe6d",
-    info.HP.MEDIUM,
+    Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -644,7 +644,7 @@ info.CLASSES = {
   },
   Diviner = {
     box_guid = "ae2ea4",
-    hp = info.HP.LOW,
+    hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -680,7 +680,7 @@ info.CLASSES = {
 }
 
 -- indices are 1 based here
-info.QUESTS = {
+Game.QUESTS = {
   ["Seeker of Xorn"] = {
     index = 16,
     number = 510

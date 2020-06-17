@@ -31,12 +31,12 @@ end
 
 
 function Quest.getRawIndex(quest)
-  local questByName = info.QUESTS[quest]
+  local questByName = Game.QUESTS[quest]
   if questByName then
     return questByName.index
   end
 
-  for _, g in pairs(info.QUESTS) do
+  for _, g in pairs(Game.QUESTS) do
     if g.number == quest then
       return g.index
     end

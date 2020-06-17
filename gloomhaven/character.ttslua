@@ -39,7 +39,7 @@ end
 
 function Character.read(player_zone, character)
   local player_mat = utils.find_object_in_zone(player_zone, {name = names.PLAYER_MAT})
-  local character_box = getObjectFromGUID(info.CLASSES[character.class].box_guid)
+  local character_box = getObjectFromGUID(Game.CLASSES[character.class].box_guid)
 
   character_box.takeObject({
     position = player_mat.getPosition()
@@ -62,7 +62,7 @@ end
 
 
 function Character.setup_character_maxHP(player_zone, character)
-  local characterInfo = info.CLASSES[character.class]
+  local characterInfo = Game.CLASSES[character.class]
   local level = Character.getLevel(character.xp)
   local maxHealth = characterInfo.hp[level]
 
@@ -151,7 +151,7 @@ end
 
 
 function Character.setup_perks(player_zone, character)
-  local perk_info = info.CLASSES[character.class].perks
+  local perk_info = Game.CLASSES[character.class].perks
   local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
   local modifier_deck = utils.find_object_in_zone(player_zone, {name=names.MODIFIER_DECK, description="Player"})
   local other_deck = function(obj) return obj.getName():find(names.MODIFIER_DECK) and obj.getGUID() ~= modifier_deck.getGUID() end
@@ -250,7 +250,7 @@ end
 -- TODO this should be in a more generic module
 function Character.move_to_hand(object, player_zone, hand)
   if not hand then hand = 1 end
-  local player_name = info.PLAYERS[player_zone]
+  local player_name = Game.PLAYERS[player_zone]
   object.deal(1, player_name, hand)
 end
 
@@ -264,7 +264,7 @@ end
 
 
 function Character.getLevel(curXP)
-  for i, xp in pairs(info.XPLevel) do
+  for i, xp in pairs(Game.XP_REQUIREMENTS) do
     if curXP < xp then
       return i-1
     end
@@ -342,7 +342,7 @@ function Character.saveCharacter(playerZone)
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
     if object.tag == "Card" and object.getDescription():find(character.class) then
       local name = object.getName():gsub("%s?%(%d+%)", "")
-      local allAbilites = info.CLASSES[character.class].abilities
+      local allAbilites = Game.CLASSES[character.class].abilities
       if allAbilites and
          (allAbilites[name] and allAbilites[name].level ~= 1 and allAbilites[name].level ~= "X"
           or not allAbilites[name]) then
@@ -359,7 +359,7 @@ function Character.saveCharacter(playerZone)
         if key == 1997 then
           local cardId = object.getData().CardID
           local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
-          for name, info in pairs(info.QUESTS) do
+          for name, info in pairs(Game.QUESTS) do
             if info.index == cardIndex then
               character.quest = name
               break
