@@ -103,7 +103,7 @@ end
 
 function saveHandler.read_events(content)
   if not content.events then return end
-  events.load(content.events)
+  Event.loadAll(content.events)
 end
 
 
@@ -150,5 +150,5 @@ end
 
 
 function saveHandler.saveEvents(saveFile)
-  saveFile.events = events.save()
+  saveFile.events = Event.save()
 end

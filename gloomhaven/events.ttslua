@@ -1,21 +1,12 @@
-events = {}
+Event = {}
 
-function events.load(values)
-  events.read(values.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS)
-  events.read(values.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS)
+function Event.loadAll(values)
+  Event.load(values.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS)
+  Event.load(values.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS)
 end
 
 
-function events.save()
-  eventTypes = {}
-  eventTypes.city = events.saveEventsFromDeck(snaps.CITY_EVENTS)
-  eventTypes.road = events.saveEventsFromDeck(snaps.ROAD_EVENTS)
-
-  return eventTypes
-end
-
-
-function events.read(values, firstDeckGuid, deckGuid, snapPoint)
+function Event.load(values, firstDeckGuid, deckGuid, snapPoint)
   if not values then return end
 
   deck = getObjectFromGUID(deckGuid)
@@ -37,7 +28,16 @@ function events.read(values, firstDeckGuid, deckGuid, snapPoint)
 end
 
 
-function events.saveEventsFromDeck(snapPosition)
+function Event.save()
+  eventTypes = {}
+  eventTypes.city = Event.saveEventsFromDeck(snaps.CITY_EVENTS)
+  eventTypes.road = Event.saveEventsFromDeck(snaps.ROAD_EVENTS)
+
+  return eventTypes
+end
+
+
+function Event.saveEventsFromDeck(snapPosition)
   local eventPosition = utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPosition)
   local hitObjects = Physics.cast({
     origin = eventPosition + vector(0, -0.05, 0),
