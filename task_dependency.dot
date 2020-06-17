@@ -1,0 +1,32 @@
+digraph D {
+
+    rankdir=RL
+
+    "Prosperity" -> Start
+    "Sanctuary" -> Start
+    "Achievements" -> Start
+    "Scenarios" -> Start
+
+    "Unlocked Classes" -> "Empty Gamebox"
+    "Unlocked Classes" -> "Unpack Expansion"
+    "Unlocked Items" -> "Unpack Expansion"
+    "Special Conditions" -> Start
+
+    "Party" -> "Unlocked Classes"
+    "Character Sheet" -> "Party"
+    "Character Quest" -> "Character Sheet"
+    "Character Perks" -> "Character Sheet"
+    "Character Abilities" -> "Character Sheet"
+    "Character Items" -> "Character Sheet"
+    "Character Deck" -> "Character Abilities"
+
+    "Retirement" -> "Empty Gamebox"
+
+    "Events" -> "Unpack Expansion"
+
+    "Empty Gamebox" -> Start
+    "Unpack Expansion" -> Start
+    "Repack Gamebox" -> "Unlocked Classes"
+
+    "Enhancements" -> "???"
+}
