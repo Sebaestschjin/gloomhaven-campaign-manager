@@ -85,16 +85,7 @@ end
 function saveHandler.read_party(content)
   if not content then return end
 
-  party.load(content)
-  Wait.time(function() saveHandler.read_characters(content) end, 2)
-  -- saveHandler.read_characters(content)
-end
-
-
-function saveHandler.read_characters(party)
-  if party.characters then
-    characters.read_all(party.characters)
-  end
+  Party.load(content)
 end
 
 
@@ -149,7 +140,7 @@ end
 
 
 function saveHandler.saveParty(saveFile)
-  saveFile.party = party.save()
+  saveFile.party = Party.save()
 end
 
 

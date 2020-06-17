@@ -1,6 +1,6 @@
-party = {}
+Party = {}
 
-function party.load(content)
+function Party.load(content)
   local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
 
   if content.name then
@@ -19,10 +19,14 @@ function party.load(content)
   if content.reputation then
     partySheet.call("addSub", {"partyReputation", content.reputation})
   end
+
+  if content.characters then
+    Wait.time(function() characters.read_all(content.characters) end, 2)
+  end
 end
 
 
-function party.save()
+function Party.save()
   local content = {}
 
   local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
