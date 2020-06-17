@@ -19,14 +19,8 @@ end
 
 
 function Quest.getIndex(quest)
-  local rawIndex = Quest.getRawIndex(quest)
-  local index = rawIndex
-  for _, rem in pairs(Quest.removed) do
-    if rem < rawIndex then
-      index = index - 1
-    end
-  end
-  return index
+  local index = Quest.getRawIndex(quest)
+  return utils.adjustIndex(index, Quest.removed)
 end
 
 

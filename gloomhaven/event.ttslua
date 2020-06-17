@@ -1,26 +1,73 @@
 Event = {}
 
-function Event.loadAll(values)
-  Event.load(values.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS)
-  Event.load(values.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS)
+function Event.loadAll(events)
+  Event.load(events.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS)
+  Event.load(events.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS)
 end
 
 
-function Event.load(values, firstDeckGuid, deckGuid, snapPoint)
-  if not values then return end
-
+function Event.load(events, firstDeckGuid, deckGuid, snapPoint)
   deck = getObjectFromGUID(deckGuid)
   deck.putObject(getObjectFromGUID(firstDeckGuid))
 
-  local eventPosition = utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPoint)
-  local eventsToTake = {}
+  local bottomCards = Event.findBottomDeck(events, deck)
+  local addedCards = Event.findAddedCards(events, deck, bottomCards)
 
-  for i, event in pairs(values.bottomUp) do
+  tableUtil.shuffle(addedCards)
+  local eventCards = tableUtil.append(bottomCards, addedCards)
+
+  Event.dealEvents(eventCards, snapPoint)
+end
+
+
+function Event.findBottomDeck(events, deck)
+  if not events.bottomUp then return {} end
+
+  local eventsToAdd = {}
+  for i, event in pairs(events.bottomUp) do
     local eventName = string.format("%02d", event)
     local eventCard = utils.find_object_info_in_stack(deck, {name=eventName})
+    table.insert(eventsToAdd, eventCard.guid)
+  end
+
+  return eventsToAdd
+end
+
+
+function Event.findAddedCards(events, deck, alreadyAdded)
+  local eventsToAdd = {}
+  for _, eventCard in pairs(deck.getObjects()) do
+    local eventNumber = tonumber(eventCard.name)
+    if not tableUtil.contains(alreadyAdded, eventCard.guid)
+       and Event.isAdded(events, eventNumber)
+       and not Event.isRemoved(events, eventNumber)
+    then
+      table.insert(eventsToAdd, eventCard.guid)
+    end
+  end
+
+  return eventsToAdd
+end
+
+
+function Event.isRemoved(events, eventNumber)
+  return events.remove and tableUtil.contains(events.remove, eventNumber)
+end
+
+
+function Event.isAdded(events, eventNumber)
+  return eventNumber <= 30
+         or (events.add and tableUtil.contains(events.add, eventNumber))
+end
+
+
+function Event.dealEvents(eventCards, snapPoint)
+  local eventPosition = Event.getPosition(snapPoint)
+  for i, event in pairs(eventCards) do
+    local offset = i * 0.2
     deck.takeObject({
-      guid = eventCard.guid,
-      position = eventPosition + vector(0, i * 0.3, 0),
+      guid = event,
+      position = eventPosition + vector(0, offset, 0),
       rotation = rotations.NORTH,
       smooth = false
     })
@@ -29,18 +76,17 @@ end
 
 
 function Event.save()
-  eventTypes = {}
-  eventTypes.city = Event.saveEventsFromDeck(snaps.CITY_EVENTS)
-  eventTypes.road = Event.saveEventsFromDeck(snaps.ROAD_EVENTS)
+  events = {}
+  events.city = Event.saveEventsFromDeck(snaps.CITY_EVENTS)
+  events.road = Event.saveEventsFromDeck(snaps.ROAD_EVENTS)
 
-  return eventTypes
+  return events
 end
 
 
-function Event.saveEventsFromDeck(snapPosition)
-  local eventPosition = utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPosition)
+function Event.saveEventsFromDeck(snapPoint)
   local hitObjects = Physics.cast({
-    origin = eventPosition + vector(0, -0.05, 0),
+    origin = Event.getPosition(snapPoint) + vector(0, -0.05, 0),
     direction = direction.UP,
     max_distance = 0.1
   })
@@ -58,4 +104,9 @@ function Event.saveEventsFromDeck(snapPosition)
   end
 
   return eventsFromDeck
+end
+
+
+function Event.getPosition(snapPoint)
+  return utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPoint)
 end

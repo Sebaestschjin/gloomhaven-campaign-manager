@@ -1,0 +1,44 @@
+tableUtil = {}
+
+--- Checks whether a given value is part of the given table
+function tableUtil.contains(table, value)
+  for _, v in pairs(table) do
+    if v == value then
+      return true
+    end
+  end
+  return false
+end
+
+--- Shuffles the given table.
+function tableUtil.shuffle(table)
+  for i = #table, 2, -1 do
+    local j = math.random(i)
+    table[i], table[j] = table[j], table[i]
+  end
+end
+
+--- Appends t2 to t1 and returns a new table.
+-- Only appends the values, not the keys.
+function tableUtil.append(t1, t2)
+  local t3 = {}
+  for k,v in pairs(t1) do
+    table.insert(t3, v)
+  end
+  for k,v in pairs(t2) do
+    table.insert(t3, v)
+  end
+  return t3
+end
+
+--- Converts a table given as a set into a list.
+function utils.setToList(set)
+  list = {}
+  for entry, value in pairs(set) do
+    if value then
+      table.insert(list, entry)
+    end
+  end
+
+  return list
+end

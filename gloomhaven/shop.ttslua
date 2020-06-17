@@ -25,7 +25,7 @@ function Shop.save()
     end
   end
 
-  return utils.setToList(items)
+  return tableUtil.setToList(items)
 end
 
 

@@ -1,10 +1,11 @@
 saveHandler = {}
 
 #include !/common/utils
+#include !/common/tableUtil
 #include !/common/rotations
 
 #include component
-#include info
+#include game
 
 #include preparation
 #include prosperity

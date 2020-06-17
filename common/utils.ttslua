@@ -86,13 +86,12 @@ function utils.getSnapPosition(object, snapPoint)
 end
 
 
-function utils.setToList(set)
-  list = {}
-  for entry, value in pairs(set) do
-    if value then
-      table.insert(list, entry)
+function utils.adjustIndex(index, removed)
+  local adjustedIndex = index
+  for _, removedIndex in pairs(removed) do
+    if removedIndex < index then
+      adjustedIndex = adjustedIndex - 1
     end
   end
-
-  return list
+  return adjustedIndex
 end
