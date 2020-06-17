@@ -21,7 +21,7 @@ function Party.load(content)
   end
 
   if content.characters then
-    Wait.time(function() characters.read_all(content.characters) end, 2)
+    Wait.time(function() Character.read_all(content.characters) end, 2)
   end
 end
 
@@ -35,7 +35,7 @@ function Party.save()
   content.notes = { partySheet.UI.getAttribute("notes", "text") }
   content.achievements = { partySheet.UI.getAttribute("partyAchiev", "text") }
   content.reputation = tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
-  content.characters = characters.save()
+  content.characters = Character.save()
 
   return content
 end
