@@ -85,7 +85,7 @@ function Unlocked.read_special_conditions(special_conditions)
     getObjectFromGUID(guids.GAMEBOX).takeObject({
       guid = guids.TOWN_RECORDS,
       position = positions.TOWN_RECORDS,
-      rotation = rotations.NORTH,
+      rotation = Rotation.NORTH,
       smooth = false
     })
   end

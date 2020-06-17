@@ -9,7 +9,7 @@ function Quest.take(quest, callback)
   deck.takeObject({
     index = questIndex,
     smooth = false,
-    rotation = rotations.NORTH_FLIPPED,
+    rotation = Rotation.NORTH_FLIPPED,
     callback_function = function(obj)
                           table.insert(Quest.removed, questIndex)
                           callback(obj)
