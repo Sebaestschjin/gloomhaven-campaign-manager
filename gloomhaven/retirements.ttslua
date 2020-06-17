@@ -56,7 +56,7 @@ function retirements.startLoading(retired)
 
     if retirement.quest then
       local callback = function(obj) obj.destruct() end
-      quests.take(retirement.quest, callback)
+      Quest.take(retirement.quest, callback)
     end
   end
 end

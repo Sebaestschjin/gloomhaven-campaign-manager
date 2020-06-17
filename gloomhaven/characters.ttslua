@@ -145,7 +145,7 @@ function Character.setup_quest(player_zone, character)
   -- TODO ensure that the quests deck is full to make index access easier
   if character.quest then
     local callback = function(obj) Character.move_to_position(obj, player_zone, positions.QUEST) end
-    quests.take(character.quest, callback)
+    Quest.take(character.quest, callback)
   end
 end
 

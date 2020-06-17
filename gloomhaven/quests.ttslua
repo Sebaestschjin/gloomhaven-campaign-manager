@@ -1,28 +1,28 @@
-quests = {}
+Quest = {}
 
-quests.removed = {}
+Quest.removed = {}
 
-function quests.take(quest, callback)
-  local quest_index = quests.get_index(quest)
+function Quest.take(quest, callback)
+  local questIndex = Quest.getIndex(quest)
   local deck = getObjectFromGUID(guids.QUESTS)
 
   deck.takeObject({
-    index = quest_index,
+    index = questIndex,
     smooth = false,
     rotation = rotations.NORTH_FLIPPED,
     callback_function = function(obj)
-                          table.insert(quests.removed, quest_index)
+                          table.insert(Quest.removed, questIndex)
                           callback(obj)
                         end
   })
 end
 
 
-function quests.get_index(quest)
-  local raw_index = quests.get_raw_index(quest)
-  local index = raw_index
-  for _, rem in pairs(quests.removed) do
-    if rem < raw_index then
+function Quest.getIndex(quest)
+  local rawIndex = Quest.getRawIndex(quest)
+  local index = rawIndex
+  for _, rem in pairs(Quest.removed) do
+    if rem < rawIndex then
       index = index - 1
     end
   end
@@ -30,10 +30,10 @@ function quests.get_index(quest)
 end
 
 
-function quests.get_raw_index(quest)
-  local quest_by_name = info.QUESTS[quest]
-  if quest_by_name then
-    return quest_by_name.index
+function Quest.getRawIndex(quest)
+  local questByName = info.QUESTS[quest]
+  if questByName then
+    return questByName.index
   end
 
   for _, g in pairs(info.QUESTS) do
