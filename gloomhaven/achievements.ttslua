@@ -1,6 +1,6 @@
-achievements = {}
+Achievement = {}
 
-function achievements.read_all(content)
+function Achievement.loadAll(content)
   print("Reading Achievements")
 
   local callbacks = {}
@@ -8,25 +8,46 @@ function achievements.read_all(content)
     local count = 1
     if achievement.count then count = achievement.count end
     for i=1, count do
-      table.insert(callbacks, function(cb) achievements.read(cb, achievement) end)
+      table.insert(callbacks, function(cb) Achievement.doLoad(cb, achievement) end)
     end
   end
 
-  achievements.start(callbacks)
+  Achievement.load(callbacks)
 end
 
 
-function achievements.save(saveFile)
+function Achievement.doLoad(callbacks, achievement)
+  log(achievement, "Loading achievement")
+  local board = getObjectFromGUID(guids.ACHIEVEMENT_BOARD)
+  local index = Achievement.findIndex(board, achievement)
+  board.call("clicked", index)
+
+  Wait.time(function() Achievement.load(callbacks) end, 2)
+end
+
+
+function Achievement.load(callbacks)
+  local nextCallback = table.remove(callbacks)
+  if nextCallback == nil then
+    return
+  end
+
+  getObjectFromGUID(guids.MAP).call("addAchiev", {})
+  utils.wait_for_object(guids.ACHIEVEMENT_BOARD, function() nextCallback(callbacks) end)
+end
+
+
+function Achievement.saveAll(saveFile)
   getObjectFromGUID(guids.ACHIEVEMENTS_BAG).takeObject({
     guid = guids.ACHIEVEMENT_BOARD,
     position = positions.ACHIEVEMENT_BOARD,
     rotation = rotations.NORTH,
-    callback_function = function(obj) achievements.doSave(saveFile, obj) end
+    callback_function = function(obj) Achievement.doSave(saveFile, obj) end
   })
 end
 
 
-function achievements.doSave(saveFile, achievementBoard)
+function Achievement.doSave(saveFile, achievementBoard)
   local achievementInfo = achievementBoard.getTable("flags")
 
   local result = {}
@@ -45,31 +66,10 @@ function achievements.doSave(saveFile, achievementBoard)
 end
 
 
-function achievements.read(callbacks, achievement)
-  log(achievement, "Loading achievement")
-  local board = getObjectFromGUID(guids.ACHIEVEMENT_BOARD)
-  local index = achievements.find_achievement_index(board, achievement)
-  board.call("clicked", index)
+function Achievement.findIndex(board, achievement)
+  local achievementInfo = board.getTable("flags")
 
-  Wait.time(function() achievements.start(callbacks) end, 2)
-end
-
-
-function achievements.start(callbacks)
-  local next_callback = table.remove(callbacks)
-  if next_callback == nil then
-    return
-  end
-
-  getObjectFromGUID(guids.MAP).call("addAchiev", {})
-  utils.wait_for_object(guids.ACHIEVEMENT_BOARD, function() next_callback(callbacks) end)
-end
-
-
-function achievements.find_achievement_index(board, achievement)
-  local achievement_info = board.getTable("flags")
-
-  for i, flag in pairs(achievement_info) do
+  for i, flag in pairs(achievementInfo) do
     if flag.name == achievement.name then
       return i
     end

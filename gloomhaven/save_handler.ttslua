@@ -64,7 +64,7 @@ function saveHandler.read_global(content)
     scenarios.load(content.scenarios)
   end
   if content.achievements then
-    achievements.read_all(content.achievements)
+    Achievement.loadAll(content.achievements)
   end
   if content.prosperity then
     prosperity.load(content.prosperity)
@@ -135,7 +135,7 @@ function saveHandler.saveGlobal(saveFile)
     sanctuary = sanctuary.save(),
     scenarios = scenarios.save()
   }
-  achievements.save(saveFile.global)
+  Achievement.saveAll(saveFile.global)
 end
 
 
