@@ -67,7 +67,7 @@ function unlocked.read_items(items)
   local shopPosition = utils.getSnapPosition(cityMat, snaps.SHOP)
 
   for _, item in pairs(items) do
-    shop.getReward(item, shopPosition)
+    Shop.getReward(item, shopPosition)
   end
 end
 

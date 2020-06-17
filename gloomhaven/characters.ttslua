@@ -184,7 +184,7 @@ function Character.setup_items(player_zone, character)
     else
       item_position = positions.relative_to_zone(player_zone, positions.ITEM)
     end
-    shop.getItem(item.name, item_position)
+    Shop.getItem(item.name, item_position)
     items_text = items_text .. "\n" .. item.name
   end
   character_sheet.UI.setAttribute("Items", "text", items_text)
@@ -378,12 +378,12 @@ function Character.saveItems(playerZone)
   local playerMat = utils.find_object_in_zone(playerZone, {name=names.PLAYER_MAT})
   local items = {}
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
-    if shop.isItem(object) then
+    if Shop.isItem(object) then
       local item = {name=object.getName(), position=Character.getItemPosition(playerMat, object)}
       table.insert(items, item)
     elseif object.tag == "Deck" then
       for _, card in pairs(object.getObjects()) do
-        if shop.isItemInfo(card) then
+        if Shop.isItemInfo(card) then
           local item = {name=card.name, position=Character.getItemPosition(playerMat, object)}
           table.insert(items, item)
         end

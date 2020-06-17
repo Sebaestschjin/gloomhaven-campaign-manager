@@ -95,7 +95,7 @@ end
 
 
 function saveHandler.read_shop()
-  shop.load()
+  Shop.load()
 end
 
 
@@ -131,7 +131,7 @@ end
 function saveHandler.saveUnlocked(saveFile)
   saveFile.unlocked = {
     classes = unlocked.saveClasses(),
-    items = shop.save(),
+    items = Shop.save(),
     special_conditions = unlocked.saveOpeningConditions()
   }
 end
