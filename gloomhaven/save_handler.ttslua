@@ -89,7 +89,7 @@ end
 
 function saveHandler.read_retirements(retired)
   if retired then
-    retirements.load(retired)
+    Retirement.load(retired)
   end
 end
 
@@ -143,7 +143,7 @@ end
 
 
 function saveHandler.saveRetirements(saveFile)
-  saveFile.retired = retirements.save()
+  saveFile.retired = Retirement.save()
 end
 
 

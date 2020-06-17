@@ -1,21 +1,21 @@
-retirements = {}
+Retirement = {}
 
-retirements.COLUMNS = 5
+Retirement.COLUMNS = 5
 
-function retirements.load(retired)
-  utils.wait_for_object(guids.RETIREMENT_SHEET, function() retirements.startLoading(retired) end)
+function Retirement.load(retired)
+  utils.wait_for_object(guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
 end
 
 
-function retirements.save()
+function Retirement.save()
   local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
 
   local retired = {}
   local retiredCharacter = {}
   for i, input in pairs(retirementSheet.getInputs()) do
-    local column = (i - 1) % retirements.COLUMNS
+    local column = (i - 1) % Retirement.COLUMNS
     if column == 0 then
-      retirements.add(retired, retiredCharacter)
+      Retirement.add(retired, retiredCharacter)
       retiredCharacter = {}
     end
 
@@ -33,19 +33,19 @@ function retirements.save()
       end
     end
   end
-  retirements.add(retired, retiredCharacter)
+  Retirement.add(retired, retiredCharacter)
 
   return retired
 end
 
 
-function retirements.startLoading(retired)
+function Retirement.startLoading(retired)
   print("Loading Retirements")
   local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
 
   for i, retirement in pairs(retired) do
-    local row = (i - 1) % retirements.COLUMNS
-    local offset = row * retirements.COLUMNS
+    local row = (i - 1) % Retirement.COLUMNS
+    local offset = row * Retirement.COLUMNS
 
     retirementSheet.editInput({index=offset + 0, value=retirement.player})
     retirementSheet.editInput({index=offset + 1, value=retirement.character})
@@ -62,7 +62,7 @@ function retirements.startLoading(retired)
 end
 
 
-function retirements.add(retired, retiredCharacter)
+function Retirement.add(retired, retiredCharacter)
   if next(retiredCharacter) then
     table.insert(retired, retiredCharacter)
   end
