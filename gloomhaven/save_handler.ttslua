@@ -76,7 +76,7 @@ end
 function saveHandler.read_unlocked(content)
   if not content then return end
 
-  unlocked.read_all(content)
+  Unlocked.read_all(content)
 end
 
 
@@ -130,9 +130,9 @@ end
 
 function saveHandler.saveUnlocked(saveFile)
   saveFile.unlocked = {
-    classes = unlocked.saveClasses(),
+    classes = Unlocked.saveClasses(),
     items = Shop.save(),
-    special_conditions = unlocked.saveOpeningConditions()
+    special_conditions = Unlocked.saveOpeningConditions()
   }
 end
 

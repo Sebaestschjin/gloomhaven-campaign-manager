@@ -1,19 +1,19 @@
-unlocked = {}
+Unlocked = {}
 
-function unlocked.read_all(content)
+function Unlocked.read_all(content)
   if content.classes then
-    unlocked.read_classes(content.classes)
+    Unlocked.read_classes(content.classes)
   end
 
-  unlocked.read_items(content.items)
+  Unlocked.read_items(content.items)
 
   if content.special_conditions then
-    utils.wait_for_object(guids.OPENING_CONDITIONS, function() unlocked.read_special_conditions(content.special_conditions) end)
+    utils.wait_for_object(guids.OPENING_CONDITIONS, function() Unlocked.read_special_conditions(content.special_conditions) end)
   end
 end
 
 
-function unlocked.saveOpeningConditions()
+function Unlocked.saveOpeningConditions()
   local openingConditions = {}
 
   local openingConditionsSheet = getObjectFromGUID(guids.OPENING_CONDITIONS)
@@ -42,7 +42,7 @@ function unlocked.saveOpeningConditions()
 end
 
 
-function unlocked.saveClasses()
+function Unlocked.saveClasses()
   local classes = {}
   for class, info in pairs(info.CLASSES) do
     local box = getObjectFromGUID(info.box_guid)
@@ -55,12 +55,12 @@ function unlocked.saveClasses()
 end
 
 
-function unlocked.read_classes(classes)
-  utils.wait_for_object(guids.LOCKED_CLASSES, function() unlocked.__read_classes_start(classes) end)
+function Unlocked.read_classes(classes)
+  utils.wait_for_object(guids.LOCKED_CLASSES, function() Unlocked.__read_classes_start(classes) end)
 end
 
 
-function unlocked.read_items(items)
+function Unlocked.read_items(items)
   if not items then return end
 
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
@@ -72,13 +72,13 @@ function unlocked.read_items(items)
 end
 
 
-function unlocked.read_special_conditions(special_conditions)
-  unlocked.set_special_condition(special_conditions.ancient_technology, "Ancient")
-  unlocked.set_special_condition(special_conditions.drake_aided, "Drake")
-  unlocked.set_special_condition(special_conditions.low_reputation, "RepN10")
-  unlocked.set_special_condition(special_conditions.lowest_reputation, "RepN20")
-  unlocked.set_special_condition(special_conditions.high_reputation, "Rep10")
-  unlocked.set_special_condition(special_conditions.highest_reputation, "Rep20")
+function Unlocked.read_special_conditions(special_conditions)
+  Unlocked.set_special_condition(special_conditions.ancient_technology, "Ancient")
+  Unlocked.set_special_condition(special_conditions.drake_aided, "Drake")
+  Unlocked.set_special_condition(special_conditions.low_reputation, "RepN10")
+  Unlocked.set_special_condition(special_conditions.lowest_reputation, "RepN20")
+  Unlocked.set_special_condition(special_conditions.high_reputation, "Rep10")
+  Unlocked.set_special_condition(special_conditions.highest_reputation, "Rep20")
 
   if special_conditions.retired then
     getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", "Retire")
@@ -92,30 +92,30 @@ function unlocked.read_special_conditions(special_conditions)
 
   if special_conditions.donations then
     for i=1, special_conditions.donations do
-      unlocked.set_special_condition(true, "Donation"..i)
+      Unlocked.set_special_condition(true, "Donation"..i)
     end
     if special_conditions.donations >= 10 then
-      unlocked.set_special_condition(true, "DonationFull")
+      Unlocked.set_special_condition(true, "DonationFull")
     end
   end
 end
 
-function unlocked.set_special_condition(condition, name)
+function Unlocked.set_special_condition(condition, name)
   if condition then
     getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", name)
   end
 end
 
 
-function unlocked.__read_classes_start(classes)
+function Unlocked.__read_classes_start(classes)
   print("Reading unlocked classes")
   for number, class in pairs(classes) do
-    unlocked.__read_class(number, class)
+    Unlocked.__read_class(number, class)
   end
 end
 
 
-function unlocked.__read_class(number, class)
+function Unlocked.__read_class(number, class)
   local character_boxes = getObjectFromGUID(guids.LOCKED_CLASSES)
   local last_box = getObjectFromGUID(guids.LAST_BOX)
   local before_last_box = getObjectFromGUID(guids.BEFORE_LAST_BOX)
