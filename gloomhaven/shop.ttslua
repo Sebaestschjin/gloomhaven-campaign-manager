@@ -4,7 +4,7 @@ shop = {}
 function shop.load()
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
 
-  for i=1, prosperity.getLevel() do
+  for i=1, Prosperity.getLevel() do
     cityMat.call("layOut", i)
   end
   cityMat.call("layOut", 0)

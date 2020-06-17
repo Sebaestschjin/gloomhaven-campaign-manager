@@ -1,13 +1,13 @@
-sanctuary = {}
+Sanctuary = {}
 
-function sanctuary.load(value)
+function Sanctuary.load(value)
   local map = getObjectFromGUID(guids.MAP)
   map.call('unseal')
-  utils.wait_for_object(guids.SANCTUARY_STICKER, function() sanctuary.read_sanctuary(value) end)
+  utils.wait_for_object(guids.SANCTUARY_STICKER, function() Sanctuary.read_sanctuary(value) end)
 end
 
 
-function sanctuary.save()
+function Sanctuary.save()
   local checkmarks = getObjectFromGUID(guids.SANCTUARY_STICKER).getTable("Pros")
   local maxValue = -1
   for i, checked in pairs(checkmarks) do
@@ -20,7 +20,7 @@ function sanctuary.save()
 end
 
 
-function sanctuary.read_sanctuary(value)
+function Sanctuary.read_sanctuary(value)
   local sanctuary_sticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
   for i = 0, value-1 do
     sanctuary_sticker.call("clickedPros", i)

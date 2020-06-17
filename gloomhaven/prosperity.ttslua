@@ -1,6 +1,6 @@
-prosperity = {}
+Prosperity = {}
 
-function prosperity.load(value)
+function Prosperity.load(value)
   local map = getObjectFromGUID(guids.MAP)
   for i = 1, value do
     map.call("clickedPros", i)
@@ -8,7 +8,7 @@ function prosperity.load(value)
 end
 
 
-function prosperity.save()
+function Prosperity.save()
   local checkmarks = getObjectFromGUID(guids.MAP).getTable("Pros")
   local maxValue = -1
   for i, checked in pairs(checkmarks) do
@@ -21,6 +21,6 @@ function prosperity.save()
 end
 
 
-function prosperity.getLevel()
+function Prosperity.getLevel()
   return getObjectFromGUID(guids.MAP).call("getProsLevel", {})
 end
