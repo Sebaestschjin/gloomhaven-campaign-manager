@@ -2,6 +2,11 @@
 -- all classes and their perks).
 Game = {}
 
+Y = 0.36
+ATK = -0.41
+RET = -0.46
+OFF = -0.2
+
 -- Mapping from a player's scripting zone GUID to PlayerColor
 Game.PLAYERS = {
   [guids.ZONES[1]] = "Red",
@@ -42,19 +47,120 @@ Game.CLASSES = {
       [15] = { add = {"(+1)"}, ignore = "I"}
     },
     abilities = {
-      ["Eye for an Eye"] = {level = 1},
-      ["Trample"] = {level = 1},
-      ["Grab and Go"] = {level = 1},
-      ["Overwhelming Assault"] = {level = 1},
-      ["Provoking Roar"] = {level = 1},
-      ["Shield Bash"] = {level = 1},
-      ["Sweeping Blow"] = {level = 1},
-      ["Warding Strength"] = {level = 1},
-      ["Leaping Cleave"] = {level = 1},
-      ["Spare Dagger"] = {level = 1},
-      ["Wall of Doom"] = {level = "X"},
-      ["Skewer"] = {level = "X"},
-      ["Balanced Measure"] = {level = "X"}
+      ["Eye for an Eye"] = {
+        level = 1,
+        enhancements = {{RET, -0.96}, {-0.35, 0.54}, {-0.55, 0.54}}
+      },
+      ["Trample"] = {
+        level = 1,
+        enhancements = {{ATK, -0.66}, {-0.35, -0.47}, {ATK, 0.38}, {ATK, 0.76}, {ATK + OFF, 0.76}}
+      },
+      ["Grab and Go"] = {
+        level = 1,
+        enhancements = {{ATK, 0.74}, {ATK + OFF, 0.74}}
+      },
+      ["Overwhelming Assault"] = {
+        level = 1,
+        enhancements = {{ATK, -0.72}, {ATK + OFF, -0.72}, {ATK, 0.8}}
+      },
+      ["Provoking Roar"] = {
+        level = 1,
+        enhancements = {{ATK, -0.66}} },
+      ["Shield Bash"] = {
+        level = 1,
+        enhancements = {{ATK, -0.79}, {-0.61, -0.79}, {ATK, 0.55}, {ATK + OFF, 0.55}}
+      },
+      ["Sweeping Blow"] = {
+        level = 1,
+        enhancements = {{-0.09, -0.58}, {-0.23, -0.77}, {-0.4, 0.8}}
+      },
+      ["Warding Strength"] = {
+        level = 1,
+        enhancements = {{ATK, -0.65}, {-0.33, -0.47}}
+      },
+      ["Leaping Cleave"] = {
+        level = 1,
+        enhancements = {{ATK, -0.28}, {-0.07, -0.69}, {ATK, 0.56}}
+      },
+      ["Spare Dagger"] = {
+        level = 1,
+        enhancements = {{ATK, -0.79}, {ATK, 0.74}}
+      },
+      ["Wall of Doom"] = {
+        level = "X",
+        enhancements = {{RET, -0.97}, {ATK, -0.61}}
+      },
+      ["Skewer"] = {
+        level = "X",
+        enhancements = {{-0.05, -0.85}, {-0.64, -1.02}, {ATK, 0.62}, {ATK + OFF, 0.62}}
+      },
+      ["Balanced Measure"] = {
+        level = "X",
+        enhancements = {} },
+      ["Fatal Advance"] = {
+        level = 2,
+        enhancements = {{ATK, 0.77}}
+      },
+      ["Juggernaut"] = {
+        level = 2,
+        enhancements = {{ATK, -0.71}, {ATK, -0.47}}
+      },
+      ["Hook and Chain"] = {
+        level = 3,
+        enhancements = {{ATK, -0.71}, {ATK + OFF, -0.71}}
+      },
+      ["Brute Force"] = {
+        level = 3,
+        enhancements = {{-0.05, -0.74}, {-0.25, -0.77}, {-0.25, -0.38}, {ATK, 0.66}}
+      },
+      ["Unstoppable Charge"] = {
+        level = 4,
+        enhancements = {{ATK, -0.72}, {ATK, 0.54}}
+      },
+      ["Devasttating Hack"] = {
+        level = 4,
+        enhancements = {{ATK, -0.72}, {ATK + OFF, -0.72}}
+      },
+      ["Whirlwind"] = {
+        level = 5,
+        enhancements = {{ATK, -0.73}, {ATK, 0.57}, {ATK, 0.82}}
+      },
+      ["Skirmishing Maneuver"] = {
+        level = 5,
+        enhancements = {{ATK, -0.58}, {ATK, 0.56}}
+      },
+      ["Quietus"] = {
+        level = 6,
+        enhancements = {{ATK, 0.5}}
+      },
+      ["Immovable Phalanx"] = {
+        level = 6,
+        enhancements = {{ATK, -0.79}, {ATK, -0.57}}
+      },
+      ["Defensive Tactics"] = {
+        level = 7,
+        enhancements = {{ATK, -0.94}, {-0.32, -0.65}}
+      },
+      ["Crippling Offensive"] = {
+        level = 7,
+        enhancements = {{ATK, -0.87}, {ATK + OFF, -0.87}, {ATK, 0.48}}
+      },
+      ["Selfish Retribution"] = {
+        level = 8,
+        enhancements = {{ATK, -0.72}, {ATK, 0.4}, {RET, 0.66}}
+      },
+      ["Frenzied Onslaught"] = {
+        level = 8,
+        enhancements = {{ATK, -0.69}, {ATK, -0.24}}
+      },
+      ["Face Your End"] = {
+        level = 9,
+        enhancements = {{ATK, -0.95}, {-0.33, -0.63}}
+      },
+      ["King of the Hill"] = {
+        level = 9,
+        enhancements = {{ATK, -0.81}, {ATK + OFF, -0.81}, {ATK, 0.72}}
+      }
     }
   },
   Scoundrel = {
