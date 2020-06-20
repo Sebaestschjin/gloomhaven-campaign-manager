@@ -115,16 +115,19 @@ function Enhancement.saveInZone(playerZone, enhancements)
       Enhancement.saveForCard(object, abilityInfo, enhancements[class])
     elseif Component.isAbilityDeck(object) then
       local abilityDeck = object
+      local deckPosition = abilityDeck.getPosition()
       for i, abilityCard in pairs(abilityDeck.getObjects()) do
         abilityDeck.takeObject({
           guid = abilityCard.guid,
           position = Character.get_safe_position(),
           callback_function = function(card)
                                 Enhancement.saveForCard(card, abilityInfo, enhancements[class])
+                                card.setPosition(deckPosition)
                               end
         })
         if abilityDeck.remainder then
           Enhancement.saveForCard(abilityDeck.remainder, abilityInfo, enhancements[class])
+          abilityDeck.remainder.setPosition(deckPosition)
           break
         end
       end
