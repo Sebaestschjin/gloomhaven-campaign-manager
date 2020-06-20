@@ -1,0 +1,72 @@
+#include saveHandler
+
+function onCollisionEnter(collision_info)
+  local obj = collision_info.collision_object
+
+  printDecals(obj)
+  -- addDecals(obj)
+end
+
+
+function addDecals(obj)
+  local name = obj.getName():gsub("%s?%(%d+%)", "")
+  log(name)
+
+  local abs = Game.CLASSES["Nightshroud"].abilities[name]
+  local positions = abs.enhancements
+  for i, position in pairs(positions) do
+    position = {position[1], 0.36, position[2]}
+    obj.addDecal({
+      name = tostring(i),
+      url = Enhancement.NUMBERS[i],
+      position = position,
+      rotation = {90, 180, 0},
+      scale = {0.16, 0.16, 3.08}
+    })
+  end
+end
+
+function printDecals(obj)
+
+  local objName = obj.getName():gsub("%s%(%d+%)", "")
+  local line = "[\"" .. objName .. "\"] = { level = 0,\n" ..
+               "  enhancements = {"
+
+  if obj.getDecals() then
+    local lastZ = nil
+    for i, decal in pairs(obj.getDecals()) do
+      local name = decal.name
+      local position = decal.position
+      local x = round(position.x, 2)
+      local z = round(position.z, 2)
+      if x == -0.38 or x == -0.39 or x == -0.40 or x == -0.42 or x == -0.43 then
+        x = -0.41
+      end
+      if x == -0.44 or x == -0.45 or x == -0.47 or x == -0.47 then
+        x = -0.46
+      end
+      if x == -0.59 or x == -0.60 or x == -0.62 or x == -0.63 then
+        x = -0.61
+      end
+      if lastZ and math.abs(lastZ - z) <= 0.02 then
+        x = lastZ
+      end
+      lastZ = z
+
+      if i ~= 1 then
+        line = line .. ", "
+      end
+      line = line .. "[" .. name .. "]={" .. tostring(x) .. ", " .. tostring(z) .. "}"
+    end
+  end
+  line = line .. "}\n},"
+  log(line)
+end
+
+function round(num, numDecimalPlaces)
+  if numDecimalPlaces and numDecimalPlaces>0 then
+    local mult = 10^numDecimalPlaces
+    return math.floor(num * mult + 0.5) / mult
+  end
+  return math.floor(num + 0.5)
+end
