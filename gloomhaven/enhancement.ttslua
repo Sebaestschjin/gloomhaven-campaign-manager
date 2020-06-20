@@ -88,3 +88,78 @@ function Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
     })
   end
 end
+
+
+function Enhancement.save()
+  enhancements = {}
+
+  for _, playerZone in pairs(guids.ZONES) do
+    Enhancement.saveInZone(playerZone, enhancements)
+  end
+
+  return enhancements
+end
+
+
+function Enhancement.saveInZone(playerZone, enhancements)
+  local class = Character.findClassInZone(playerZone)
+  if not class then
+    return
+  end
+
+  enhancements[class] = {}
+  local abilityInfo = Game.CLASSES[class].abilities
+
+  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+    if Component.isAbilityCardForClass(object, class) then
+      Enhancement.saveForCard(object, abilityInfo, enhancements[class])
+    elseif Component.isAbilityDeck(object) then
+      local abilityDeck = object
+      for i, abilityCard in pairs(abilityDeck.getObjects()) do
+        abilityDeck.takeObject({
+          guid = abilityCard.guid,
+          position = Character.get_safe_position(),
+          callback_function = function(card)
+                                Enhancement.saveForCard(card, abilityInfo, enhancements[class])
+                              end
+        })
+        if abilityDeck.remainder then
+          Enhancement.saveForCard(abilityDeck.remainder, abilityInfo, enhancements[class])
+          break
+        end
+      end
+    end
+  end
+end
+
+
+function Enhancement.saveForCard(card, abilityInfo, classEnhancements)
+  local ability = Component.getAbilityName(card)
+  local enhancementInfo = abilityInfo[ability].enhancements
+  local enhancements = {}
+
+  for _, decal in utils.pairs(card.getDecals()) do
+    local name = decal.name:gsub("Enhancement ", "")
+    local nearestIndex = Enhancement.findNearestIndex(decal.position, enhancementInfo)
+    enhancements[tostring(nearestIndex)] = name
+  end
+
+  if tableUtil.isNotEmpty(enhancements) then
+    classEnhancements[ability] = enhancements
+  end
+end
+
+
+function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
+  local nearestDistance = 9999999
+  local nearestIndex = 1
+  for i, enhancement in pairs(enhancementInfo) do
+    local x, z = enhancement[1], enhancement[2]
+    local distance = decalPosition:distance(vector(x, Enhancement.Y_COORDINATE, z))
+    if distance < nearestDistance then
+      nearestDistance = distance
+      nearestIndex = i
+    end
+  end
+  return nearestIndex
+end

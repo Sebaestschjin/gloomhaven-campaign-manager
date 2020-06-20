@@ -102,3 +102,20 @@ end
 function Component.abilityDeck(playerZone)
   return utils.find_object_in_zone(playerZone, {name = names.ABILITY_DECK})
 end
+
+
+function Component.isAbilityDeck(object)
+  return object.tag == "Deck"
+         and object.getName():find(names.ABILITY_DECK)
+end
+
+
+function Component.isAbilityCardForClass(object, class)
+  return object.tag == "Card"
+         and object.getDescription():find(class)
+end
+
+
+function Component.getAbilityName(abilityCard)
+  return abilityCard.getName():gsub("%s?%(%d+%)", "")
+end

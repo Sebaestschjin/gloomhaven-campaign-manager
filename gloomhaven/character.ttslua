@@ -341,7 +341,7 @@ function Character.saveCharacter(playerZone)
   character.abilities = {}
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
     if object.tag == "Card" and object.getDescription():find(character.class) then
-      local name = object.getName():gsub("%s?%(%d+%)", "")
+      local name = Component.getAbilityName(object)
       local allAbilites = Game.CLASSES[character.class].abilities
       if allAbilites and
          (allAbilites[name] and allAbilites[name].level ~= 1 and allAbilites[name].level ~= "X"
@@ -416,6 +416,15 @@ function Character.findZoneForClass(className)
     if characterMat and characterMat.getDescription() == className then
       return playerZone
     end
+  end
+  return nil
+end
+
+
+function Character.findClassInZone(playerZone)
+  local characterMat = Component.characterMat(playerZone)
+  if characterMat then
+    return characterMat.getDescription()
   end
   return nil
 end

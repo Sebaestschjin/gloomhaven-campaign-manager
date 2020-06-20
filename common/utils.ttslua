@@ -95,3 +95,12 @@ function utils.adjustIndex(index, removed)
   end
   return adjustedIndex
 end
+
+
+function utils.pairs(table)
+  if table then
+    return pairs(table)
+  else
+    return pairs({})
+  end
+end

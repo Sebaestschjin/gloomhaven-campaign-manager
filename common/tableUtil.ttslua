@@ -31,8 +31,20 @@ function tableUtil.append(t1, t2)
   return t3
 end
 
+--- Checks whether a table is empty.
+-- A nil value is also considered an empty table.
+function tableUtil.isEmpty(table)
+  return not table or not next(table)
+end
+
+--- Checks whether a table is not empty.
+-- Also works for nil values, for which this is always false.
+function tableUtil.isNotEmpty(table)
+  return not tableUtil.isEmpty(table)
+end
+
 --- Converts a table given as a set into a list.
-function utils.setToList(set)
+function tableUtil.setToList(set)
   list = {}
   for entry, value in pairs(set) do
     if value then
