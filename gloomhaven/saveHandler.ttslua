@@ -54,6 +54,7 @@ function saveHandler.start_reading(content)
   saveHandler.read_retirements(content.retired)
   saveHandler.read_shop()
   saveHandler.read_events(content)
+  Wait.time(function() Enhancement.loadAll(content) end, 7) -- TODO just a workaround until Task module is done
 end
 
 

@@ -288,6 +288,21 @@
         }
       }
     },
+    "enhancements": {
+      "title": "Enhanced ability cards",
+      "description": "",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["Air", "Earth", "Fire", "Frost", "Ice", "Dark", "Light", "Any Element", "Curse", "Bless", "Disarm", "Immobilize", "Muddle", "Poison", "Regenerate", "Strengthen", "Stun", "Wound", "Plus 1", "Area", "Jump", ]
+          }
+        }
+      }
+    },
     "retired": {
       "title": "Retired Characters",
       "description": "",

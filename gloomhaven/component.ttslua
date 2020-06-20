@@ -91,3 +91,14 @@ snaps.RIFT_EVENTS = 3
 function positions.relative_to_zone(zone_guid, position)
   return getObjectFromGUID(zone_guid).getPosition() + position
 end
+
+Component = {}
+
+function Component.characterMat(playerZone)
+  return utils.find_object_in_zone(playerZone, {name=names.CHARACTER_MAT})
+end
+
+
+function Component.abilityDeck(playerZone)
+  return utils.find_object_in_zone(playerZone, {name = names.ABILITY_DECK})
+end

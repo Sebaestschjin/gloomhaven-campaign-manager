@@ -127,7 +127,7 @@ end
 
 function Character.setup_abilities(player_zone, character)
   if character.abilities then
-    local ability_deck = utils.find_object_in_zone(player_zone, {name = names.ABILITY_DECK})
+    local ability_deck = Component.abilityDeck(player_zone)
 
     for _, ability in pairs(character.abilities) do
       local ability_card = utils.find_object_info_in_stack(ability_deck, {name=ability})
@@ -406,4 +406,16 @@ function Character.getItemPosition(playerMat, object)
   end
 
   return "Unequipped"
+end
+
+
+
+function Character.findZoneForClass(className)
+  for _, playerZone in pairs(guids.ZONES) do
+    local characterMat = Component.characterMat(playerZone)
+    if characterMat and characterMat.getDescription() == className then
+      return playerZone
+    end
+  end
+  return nil
 end

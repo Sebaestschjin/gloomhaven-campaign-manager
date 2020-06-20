@@ -95,6 +95,25 @@
             ]
         }]
     },
+    "enhancements" : {
+      "Brute": {
+        "Eye for an Eye": {
+          "1": "Plus 1",
+          "2": "Ice"
+        },
+        "Hook and Chain": {
+          "1": "Plus 1"
+        },
+        "Fatal Advance": {
+          "1": "Jump"
+        }
+      },
+      "Tinkerer": {
+        "Ink Bomb": {
+          "1": "Fire"
+        }
+      }
+    },
     "retired": [
       {
           "player": "Alice",
