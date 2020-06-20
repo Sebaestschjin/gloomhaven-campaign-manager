@@ -19,6 +19,7 @@ saveHandler = {}
 #include quest
 #include event
 #include sanctuary
+#include enhancement
 
 saveHandler.SAVE_FILE = "Savefile"
 

@@ -1,15 +1,27 @@
 Enhancement = {}
 
-Enhancement.AIR = {
-  name = "Enhancement Air",
-  url = "http://cloud-3.steamusercontent.com/ugc/938309024726768884/CC8308C7D7DD6185F3EFA99F452C83101E1E95E3/"
-}
+Enhancement.Air = "http://cloud-3.steamusercontent.com/ugc/938309024726768884/CC8308C7D7DD6185F3EFA99F452C83101E1E95E3/"
+Enhancement.Earth = "http://cloud-3.steamusercontent.com/ugc/938309024726773039/E83D1E9F06938B3B5355F0A6A49D98B78B1F2594/"
+Enhancement.Fire = "http://cloud-3.steamusercontent.com/ugc/938309024726770166/CD369CF7C22FAD932A71C65BA811AE137234270D/"
+Enhancement.Frost = "http://cloud-3.steamusercontent.com/ugc/938309024726771564/3C69B7D1E66E8FC022B2BD77CC427E8AEC5D9331/"
+Enhancement.Dark = "http://cloud-3.steamusercontent.com/ugc/938309024726982499/9C14793623433565A9D6E5B3C608C1F6FBB84C76/"
+Enhancement.Light = "http://cloud-3.steamusercontent.com/ugc/938309024726774294/5BBAC718ED55E90563D2B24848DE3ACAEBD76FE9/"
+Enhancement["Any Element"] = "http://cloud-3.steamusercontent.com/ugc/938309024726984504/2F962A64E2A9888C90856D9C150EF81089745137/"
 
-Enhancement.ANY_ELEMENT = {
-  name = "Enhancement Any Element",
-  url = "http://cloud-3.steamusercontent.com/ugc/938309024726984504/2F962A64E2A9888C90856D9C150EF81089745137/"
-}
+Enhancement.Curse = "http://cloud-3.steamusercontent.com/ugc/938309024726987796/ABB2E197E22015077D39A378AA9A9E7A317C69FE/"
+Enhancement.Bless = "http://cloud-3.steamusercontent.com/ugc/938309024726986639/FDF514FDA20826ACA054BE5CBA579AE6FB25A263/"
+Enhancement.Disarm = "http://cloud-3.steamusercontent.com/ugc/938309024726989091/DB993A58BC37C60B64A2F2CCDAED888F6176BC43/"
+Enhancement.Immobilize = "http://cloud-3.steamusercontent.com/ugc/938309024726990928/14B27BE1DC8F226D05FDB7D7D5D420FFCA6919B0/"
+Enhancement.Muddle = "http://cloud-3.steamusercontent.com/ugc/938309024726993395/820BE84906894B87F0C0DAC77C3BFBCD9B1AD504/"
+Enhancement.Poison = "http://cloud-3.steamusercontent.com/ugc/938309024726994202/6EAECD4A8A6A56F42834D486A21219002B883C53/"
+Enhancement.Regenerate = "http://cloud-3.steamusercontent.com/ugc/791986676667649885/92F7F934D298524F6F72997095DDBA073D9A15BF/"
+Enhancement.Strenghten = "http://cloud-3.steamusercontent.com/ugc/938309024726995467/72FC8E8918F788646DBD0C571FDAB214D7A36445/"
+Enhancement.Stun = "http://cloud-3.steamusercontent.com/ugc/83721958671678940/616CC0951CB17024448D3CBC7E5CA9D3A05D7555/"
+Enhancement.Wound = "http://cloud-3.steamusercontent.com/ugc/938309024726992099/9B90EEDC5B68B4FFD04C0037008F9C96BA603C24/"
 
+Enhancement["Plus 1"] = "http://cloud-3.steamusercontent.com/ugc/938309024726761532/C3BB327E15466B74ED256A0BD7B66C20A8825861/"
+Enhancement.Area = "http://cloud-3.steamusercontent.com/ugc/938309024726997997/041C0C738331AA8B4D8281BE8E9BE2C2963D823D/"
+Enhancement.Jump = "http://cloud-3.steamusercontent.com/ugc/938309024726767406/7C34D7EA30D5E6FF90BBA88A767ACB98467FC557/"
 
 Enhancement.NUMBERS = {
   "http://cloud-3.steamusercontent.com/ugc/929311677225889607/DFA4EF43DC2D1A8B6F1C7F22E7C31718E35CCB31/",
