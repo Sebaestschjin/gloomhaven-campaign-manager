@@ -5,7 +5,7 @@ Enhancement.DECALS = {
   ["Earth"] = "http://cloud-3.steamusercontent.com/ugc/938309024726773039/E83D1E9F06938B3B5355F0A6A49D98B78B1F2594/",
   ["Fire"] = "http://cloud-3.steamusercontent.com/ugc/938309024726770166/CD369CF7C22FAD932A71C65BA811AE137234270D/",
   ["Frost"] = "http://cloud-3.steamusercontent.com/ugc/938309024726771564/3C69B7D1E66E8FC022B2BD77CC427E8AEC5D9331/",
-  ["Ice"] = Enhancement["Frost"], -- Makes more sense, since the element is also called Ice
+  ["Ice"] = "http://cloud-3.steamusercontent.com/ugc/938309024726771564/3C69B7D1E66E8FC022B2BD77CC427E8AEC5D9331/", -- Some as Frost
   ["Dark"] = "http://cloud-3.steamusercontent.com/ugc/938309024726982499/9C14793623433565A9D6E5B3C608C1F6FBB84C76/",
   ["Light"] = "http://cloud-3.steamusercontent.com/ugc/938309024726774294/5BBAC718ED55E90563D2B24848DE3ACAEBD76FE9/",
   ["Any Element"] = "http://cloud-3.steamusercontent.com/ugc/938309024726984504/2F962A64E2A9888C90856D9C150EF81089745137/",
@@ -51,7 +51,6 @@ end
 
 
 function Enhancement.loadForClass(className, abilities)
-  local abilityNumber = 1
   local playerZone = Character.findZoneForClass(className)
   for ability, enhancements in pairs(abilities) do
     local enhancementInfo = Game.CLASSES[className].abilities[ability].enhancements
@@ -62,30 +61,18 @@ function Enhancement.loadForClass(className, abilities)
     else
       local abilityDeck = Component.abilityDeck(playerZone)
       local abilityCard = utils.find_object_info_in_stack(abilityDeck, {name=ability})
-      log(abilityDeck, "Deck")
-      log(abilityNumber, "Number")
-      log(abilityDeck.getPosition())
       abilityDeck.takeObject({
         guid = abilityCard.guid,
-        position = abilityDeck.getPosition() + vector(0, abilityNumber * 0.2, 0),
+        position = Character.get_safe_position(),
         rotation = abilityDeck.getRotation(),
-        callback_function = function(obj) Enhancement.loadForCard(obj, enhancements, enhancementInfo) end
+        smooth = false,
+        callback_function = function(obj)
+                              Enhancement.loadForCard(obj, enhancements, enhancementInfo)
+                              abilityDeck.putObject(obj)
+                            end
       })
     end
-    abilityNumber = abilityNumber + 1
   end
-end
-
-
-function Enhancement.loadForAbility(playerZone, className, ability, enhancements)
-  local abilityCard = utils.find_object_in_zone(playerZone, {name=ability})
-  if not abilityCard then
-    log("No ability found", ability)
-    return
-  end
-
-  local enhancementInfo = Game.CLASSES[className].abilities[ability].enhancements
-  Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
 end
 
 
