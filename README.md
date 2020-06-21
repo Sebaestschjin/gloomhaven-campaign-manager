@@ -1,5 +1,5 @@
 # Beware!
-This code contains mild spoilers for Gloomhaven. The names and perks of all available classes are listed in the `game.ttslua` file (and maybe somewhere else), so don't look there if that's a problem for you. :-)
+This code contains mild spoilers for Gloomhaven. The names of all availables classes, their perks and ability names are listed in the file `game.ttslua`. So don't look there if that's a problem for you. :-)
 
 # How To Use
 There's not a Workshop mod yet, so here's how to set this up:
@@ -49,13 +49,15 @@ You can use the [generated form] based on JSON schema.
 | Unlocked envelopes                  | ❌   | ❌   |
 | Enhancements                        | ❌   | ❌   |
 
-| Expansion Features                  | Load | Save  |
-| ----------------------------------- | :--: |
-| Forgotten Circle - Diviner class    | ✔️    | ✔️    |
-| Forgotten Circle - Events           | ❌  | ❌    |
+| Expansion Features                   | Load | Save |
+| ------------------------------------ | :--: | :--: |
+| Forgotten Circle - Diviner class     | ✔️    | ✔️    |
+| Forgotten Circle - Events            | ❌  | ❌   |
+| Forgotten Circle - Replacement Cards | ❌  | ❌   |
+| Forgotten Circle - Items             | ❌  | ❌   |
 
 
-| Customizable Features               | Done |
+| Customization Features              | Done |
 | ----------------------------------- | :--: |
 | Customizable component positions    | ❌  |
 | Include extended battle goals       | ❌  |
