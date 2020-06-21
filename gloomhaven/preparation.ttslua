@@ -65,3 +65,13 @@ end
 function preparation.finish(callback)
     callback()
 end
+
+
+function preparation.prepareSave()
+  for _, zoneGuid in pairs(guids.ZONES) do
+    local zone = getObjectFromGUID(zoneGuid)
+    local zonePosition = zone.getPosition()
+    zonePosition:setAt("y", 4.22)
+    zone.setPosition(zonePosition)
+  end
+end

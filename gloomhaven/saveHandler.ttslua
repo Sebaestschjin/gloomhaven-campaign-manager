@@ -42,7 +42,7 @@ function saveHandler.save()
 
   Wait.time(function()
               local content = JSON.encode_pretty(saveFile)
-              Notes.addNotebookTab({ title = "New Savefile", body = content })
+              Notes.addNotebookTab({ title="New Savefile", body=content })
             end, 3)
 end
 
@@ -111,12 +111,17 @@ end
 function saveHandler.createSaveFile()
   local saveFile = {}
 
-  saveHandler.saveGlobal(saveFile)
-  saveHandler.saveUnlocked(saveFile)
-  saveHandler.saveParty(saveFile)
-  saveHandler.saveEnhancements(saveFile)
-  saveHandler.saveRetirements(saveFile)
-  saveHandler.saveEvents(saveFile)
+  preparation.prepareSave()
+  -- TODO change to task based, this wait is necessary, because the scripting zones have to be
+  -- adjusted, otherwise they won't detect cards lying on the table
+  Wait.time(function()
+              saveHandler.saveGlobal(saveFile)
+              saveHandler.saveUnlocked(saveFile)
+              saveHandler.saveParty(saveFile)
+              saveHandler.saveEnhancements(saveFile)
+              saveHandler.saveRetirements(saveFile)
+              saveHandler.saveEvents(saveFile)
+            end, 1)
 
   return saveFile
 end
