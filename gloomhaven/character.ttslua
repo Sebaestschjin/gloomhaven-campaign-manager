@@ -225,8 +225,8 @@ function Character.save(playerZone)
   character.name = characterSheet.UI.getAttribute("Name", "text")
   character.xp = characterSheet.UI.getAttribute("xp", "text")
   character.gold = characterSheet.UI.getAttribute("gold", "text")
-  character.notes = characterSheet.UI.getAttribute("NotesFront", "text")
-  character.hidden_notes = characterSheet.UI.getAttribute("Notes", "text")
+  character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), {"\n"})
+  character.hidden_notes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), {"\n"})
 
   local totalCheckmarks = 0
   for i=1, 18 do
@@ -258,7 +258,7 @@ function Character.saveItems(playerZone)
     if Component.IsItemCard(object) then
       local item = {name=object.getName(), position=Character.getItemPosition(playerMat, object)}
       table.insert(items, item)
-    elseif object.tag == "Deck" then
+    elseif object.tag == Tag.DECK then
       for _, card in pairs(object.getObjects()) do
         if Component.IsItemCardInfo(card) then
           local item = {name=card.name, position=Character.getItemPosition(playerMat, object)}
@@ -306,7 +306,6 @@ end
 function Character.saveQuest(playerZone)
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
     if Component.isPersonalQuestCard(object) then
-      log(object.getGMNotes(), "GM")
       local cardId = object.getData().CardID
       local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
       for name, quest in pairs(Game.QUESTS) do

@@ -1,5 +1,23 @@
 StringUtil = {}
 
+
+function StringUtil.split(text, seperators)
+  if not text then
+    return {}
+  end
+  if TableUtil.isEmpty(seperators) then
+    return {text}
+  end
+
+  local parts = {}
+  local seperatorExpression = "[^" .. table.concat(seperators, "") .. "]+"
+  for part in string.gmatch(text, seperatorExpression) do
+    table.insert(parts, part)
+  end
+  return parts
+end
+
+
 function StringUtil.escapePattern(text)
   return text:gsub("([-+()%[%]])", "%%%1")
 end

@@ -77,8 +77,8 @@ function Party.save()
   local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
   party.name = partySheet.UI.getAttribute("partyName", "text")
   party.location = partySheet.UI.getAttribute("location", "text")
-  party.notes = { partySheet.UI.getAttribute("notes", "text") }
-  party.achievements = { partySheet.UI.getAttribute("partyAchiev", "text") }
+  party.notes = StringUtil.split(partySheet.UI.getAttribute("notes", "text"), {"\n"})
+  party.achievements = StringUtil.split(partySheet.UI.getAttribute("partyAchiev", "text"), {",", "\n"})
   party.reputation = tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
 
   party.characters = {}

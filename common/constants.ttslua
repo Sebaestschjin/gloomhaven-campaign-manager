@@ -13,5 +13,6 @@ Direction.UP = {0, 1, 0}
 Direction.DOWN = {0, -1, 0}
 
 Tag = {}
-Tag.FIGURINE = "Figurine"
 Tag.CARD = "Card"
+Tag.DECK = "Deck"
+Tag.FIGURINE = "Figurine"
