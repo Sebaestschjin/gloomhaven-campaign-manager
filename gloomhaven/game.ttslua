@@ -10,15 +10,22 @@ Game.PLAYERS = {
   [guids.ZONES[4]] = "Green"
 }
 
+-- Max HP per level.
 Game.HP = {
   LOW = {6, 7, 8, 9, 10, 11, 12, 13, 14},
   MEDIUM =  {8, 9, 11, 12, 14, 15, 17, 18, 20},
   HIGH = {10, 12, 14, 16, 18, 20, 22, 24, 26}
 }
 
+-- XP Requirements per level
 Game.XP_REQUIREMENTS = {0, 45, 95, 150, 210, 275, 345, 420, 500}
 
--- Information about all character classes. Contains their name, components GUIDs, perks and HP.
+-- Information about all character classes.
+-- Contains: name (as the key)
+--           GUID of the box containing the character
+--           max HP progression per level
+--           list of perks and how they modify the modifier deck
+--           list of abilities with their level and positions for enhancements
 Game.CLASSES = {
   Brute = {
     isStartingClass = true,
@@ -1563,71 +1570,95 @@ Game.CLASSES = {
   }
 }
 
--- indices are 1 based here
+-- Information about Personal quests.
 Game.QUESTS = {
-  ["Seeker of Xorn"] = {
-    index = 16,
-    number = 510
-  },
-  ["Merchant Class"] = {
-    index = 13,
-    number = 511
-  },
-  ["Greed is Good"] = {
-    index = 10,
-    number = 512
-  },
-  ["Finding the Cure"] = {
-    index = 8,
-    number = 513
+  ["A Helping Hand"] = {
+    index = 0,
+    number = 532
   },
   ["A Study of Anatomy"] = {
     index = 1,
     number = 514
   },
-  ["Law Bringer"] = {
-    index = 12,
-    number = 515
+  ["Aberrant Slayer"] = {
+    index = 2,
+    number = 523
   },
-  ["Pounds of Flesh"] = {
-    index = 15,
-    number = 516
-  },
-  ["Trophy Hunt"] = {
-    index = 21,
-    number = 517
-  },
-  ["Eternal Wanderer"] = {
-    index = 6,
-    number = 518
+  ["Augmented Abilities"] = {
+    index = 3,
+    number = 530
   },
   ["Battle Legend"] = {
     index = 4,
     number = 519
   },
-  ["Implement of Light"] = {
-    index = 11,
-    number = 520
+  ["Elemental Samples"] = {
+    index = 5,
+    number = 531
   },
-  ["Take Back the Trees"] = {
-    index = 17,
-    number = 521
-  },
-  ["The Thin Places"] = {
-    index = 20,
-    number = 522
-  },
-  ["Aberrant Slayer"] = {
-    index = 2,
-    number = 523
+  ["Eternal Wanderer"] = {
+    index = 6,
+    number = 518
   },
   ["Fearless Stand"] = {
     index = 7,
     number = 524
   },
+  ["Finding the Cure"] = {
+    index = 8,
+    number = 513
+  },
+  ["Goliath Toppler"] = {
+    index = 9,
+    number = 528
+  },
+  ["Greed is Good"] = {
+    index = 10,
+    number = 512
+  },
+  ["Implement of Light"] = {
+    index = 11,
+    number = 520
+  },
+  ["Law Bringer"] = {
+    index = 12,
+    number = 515
+  },
+  ["Merchant Class"] = {
+    index = 13,
+    number = 511
+  },
   ["Piety in All Things"] = {
     index = 14,
     number = 525
+  },
+  ["Pounds of Flesh"] = {
+    index = 15,
+    number = 516
+  },
+  ["Seeker of Xorn"] = {
+    index = 16,
+    number = 510
+  },
+  ["Take Back the Trees"] = {
+    index = 17,
+    number = 521
+  },
+  ["The Fall of Man"] = {
+    index = 18,
+    number = 529
+  },
+  ["The Perfect Poison"] = {
+    index = 19,
+    number = 533
+  },
+  ["The Thin Places"] = {
+    index = 20,
+    number = 522
+  },
+  ["Trophy Hunt"] = {
+    index = 21,
+    number = 517
   },
   ["Vengeance"] = {
     index = 22,
@@ -1636,29 +1667,5 @@ Game.QUESTS = {
   ["Zealot of the Blood God"] = {
     index = 23,
     number = 527
-  },
-  ["Goliath Toppler"] = {
-    index = 9,
-    number = 528
-  },
-  ["The Fall of Man"] = {
-    index = 18,
-    number = 529
-  },
-  ["Augmented Abilities"] = {
-    index = 3,
-    number = 530
-  },
-  ["Elemental Samples"] = {
-    index = 5,
-    number = 531
-  },
-  ["A Helping Hand"] = {
-    index = 0,
-    number = 532
-  },
-  ["The Perfect Poison"] = {
-    index = 19,
-    number = 533
   },
 }

@@ -1,8 +1,9 @@
 saveHandler = {}
 
-#include !/common/utils
-#include !/common/tableUtil
 #include !/common/constants
+#include !/common/utils
+#include !/common/TableUtil
+#include !/common/StringUtil
 
 #include component
 #include game
@@ -23,21 +24,35 @@ saveHandler = {}
 
 saveHandler.SAVE_FILE = "Savefile"
 
-function saveHandler.read()
-  local save_file = utils.read_notebook(saveHandler.SAVE_FILE)
+function saveHandler.loadAll()
+  local saveFile = Utils.readNotebook(saveHandler.SAVE_FILE)
 
-  if not save_file then
+  if not saveFile then
     print("No notebook found containing the save file! Please add a notebook named " .. saveHandler.SAVE_FILE)
     return
   end
 
-  local content = JSON.decode(save_file)
+  local content = JSON.decode(saveFile)
 
-  preparation.start(function() saveHandler.start_reading(content) end)
+  preparation.start(function() saveHandler.doLoadAll(content) end)
 end
 
 
-function saveHandler.save()
+function saveHandler.doLoadAll(content)
+  Scenario.loadAll(content.global.scenarios)
+  Achievement.loadAll(content.global.achievements)
+  Prosperity.load(content.global.prosperity)
+  Sanctuary.load(content.global.sanctuary)
+  Unlocked.loadAll(content.unlocked)
+  Party.load(content.party)
+  Retirement.load(content.retired)
+  Shop.load()
+  Event.loadAll(content.events)
+  Wait.time(function() Enhancement.loadAll(content) end, 7) -- TODO just a workaround until Task module is done
+end
+
+
+function saveHandler.saveAll()
   local saveFile = saveHandler.createSaveFile()
 
   Wait.time(function()
@@ -47,120 +62,28 @@ function saveHandler.save()
 end
 
 
-function saveHandler.start_reading(content)
-  saveHandler.read_global(content.global)
-  saveHandler.read_unlocked(content.unlocked)
-  saveHandler.read_party(content.party)
-  saveHandler.read_retirements(content.retired)
-  saveHandler.read_shop()
-  saveHandler.read_events(content)
-  Wait.time(function() Enhancement.loadAll(content) end, 7) -- TODO just a workaround until Task module is done
-end
-
-
-function saveHandler.read_global(content)
-  if not content then return end
-
-  if content.scenarios then
-    Scenario.loadAll(content.scenarios)
-  end
-  if content.achievements then
-    Achievement.loadAll(content.achievements)
-  end
-  if content.prosperity then
-    Prosperity.load(content.prosperity)
-  end
-  if content.sanctuary then
-    Sanctuary.load(content.sanctuary)
-  end
-end
-
-
-function saveHandler.read_unlocked(content)
-  if not content then return end
-
-  Unlocked.read_all(content)
-end
-
-
-function saveHandler.read_party(content)
-  if not content then return end
-
-  Party.load(content)
-end
-
-
-function saveHandler.read_retirements(retired)
-  if retired then
-    Retirement.load(retired)
-  end
-end
-
-
-function saveHandler.read_shop()
-  Shop.load()
-end
-
-
-function saveHandler.read_events(content)
-  if not content.events then return end
-  Event.loadAll(content.events)
-end
-
-
 function saveHandler.createSaveFile()
   local saveFile = {}
 
   preparation.prepareSave()
   -- TODO change to task based, this wait is necessary, because the scripting zones have to be
   -- adjusted, otherwise they won't detect cards lying on the table
-  Wait.time(function()
-              saveHandler.saveGlobal(saveFile)
-              saveHandler.saveUnlocked(saveFile)
-              saveHandler.saveParty(saveFile)
-              saveHandler.saveEnhancements(saveFile)
-              saveHandler.saveRetirements(saveFile)
-              saveHandler.saveEvents(saveFile)
-            end, 1)
+  Wait.time(function() saveHandler.doCreateSaveFile(saveFile) end, 1)
 
   return saveFile
 end
 
 
-function saveHandler.saveGlobal(saveFile)
+function saveHandler.doCreateSaveFile(saveFile)
   saveFile.global = {
     prosperity = Prosperity.save(),
     sanctuary = Sanctuary.save(),
     scenarios = Scenario.save()
   }
   Achievement.saveAll(saveFile.global)
-end
-
-
-function saveHandler.saveUnlocked(saveFile)
-  saveFile.unlocked = {
-    classes = Unlocked.saveClasses(),
-    items = Shop.save(),
-    special_conditions = Unlocked.saveOpeningConditions()
-  }
-end
-
-
-function saveHandler.saveParty(saveFile)
+  saveFile.unlocked = Unlocked.saveAll()
   saveFile.party = Party.save()
-end
-
-
-function saveHandler.saveEnhancements(saveFile)
   saveFile.enhancements = Enhancement.save()
-end
-
-
-function saveHandler.saveRetirements(saveFile)
   saveFile.retired = Retirement.save()
-end
-
-
-function saveHandler.saveEvents(saveFile)
   saveFile.events = Event.save()
 end

@@ -20,6 +20,13 @@ digraph D {
     "Character Items" -> "Character Sheet"
     "Character Deck" -> "Character Abilities"
 
+    "Character Done" -> "Character Sheet"
+    "Character Done" -> "Character Quest"
+    "Character Done" -> "Character Perks"
+    "Character Done" -> "Character Abilities"
+    "Character Done" -> "Character Items"
+    "Character Done" -> "Character Deck"
+
     "Retirement" -> "Empty Gamebox"
 
     "Events" -> "Unpack Expansion"
@@ -28,5 +35,18 @@ digraph D {
     "Unpack Expansion" -> Start
     "Repack Gamebox" -> "Unlocked Classes"
 
-    "Enhancements" -> "???"
+    "Enhancements" -> "Character Deck"
+
+    Finish -> "Prosperity"
+    Finish -> "Sanctuary"
+    Finish -> "Achievements"
+    Finish -> "Scenarios"
+    Finish -> "Unlocked Classes"
+    Finish -> "Unlocked Items"
+    Finish -> "Special Conditions"
+    Finish -> "Party"
+    Finish -> "Character Done"
+    Finish -> "Enhancements"
+    Finish -> "Retirement"
+    Finish -> "Events"
 }

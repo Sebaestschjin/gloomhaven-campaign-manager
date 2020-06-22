@@ -3,7 +3,7 @@ Sanctuary = {}
 function Sanctuary.load(value)
   local map = getObjectFromGUID(guids.MAP)
   map.call('unseal')
-  utils.wait_for_object(guids.SANCTUARY_STICKER, function() Sanctuary.read_sanctuary(value) end)
+  Utils.waitForObject(guids.SANCTUARY_STICKER, function() Sanctuary.getLevel(value) end)
 end
 
 
@@ -20,7 +20,7 @@ function Sanctuary.save()
 end
 
 
-function Sanctuary.read_sanctuary(value)
+function Sanctuary.getLevel(value)
   local sanctuary_sticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
   for i = 0, value-1 do
     sanctuary_sticker.call("clickedPros", i)

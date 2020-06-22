@@ -1,0 +1,5 @@
+StringUtil = {}
+
+function StringUtil.escapePattern(text)
+  return text:gsub("([-+()%[%]])", "%%%1")
+end

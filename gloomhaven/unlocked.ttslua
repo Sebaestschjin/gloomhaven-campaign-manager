@@ -1,28 +1,119 @@
 Unlocked = {}
 
-function Unlocked.read_all(content)
-  if content.classes then
-    Unlocked.read_classes(content.classes)
+function Unlocked.loadAll(unlocked)
+  if unlocked.classes then
+    Utils.waitForObject(guids.LOCKED_CLASSES, function() Unlocked.loadClasses(unlocked.classes) end)
   end
 
-  Unlocked.read_items(content.items)
+  if unlocked.items then
+    Unlocked.loadItems(unlocked.items)
+  end
 
-  if content.special_conditions then
-    utils.wait_for_object(guids.OPENING_CONDITIONS, function() Unlocked.read_special_conditions(content.special_conditions) end)
+  if unlocked.special_conditions then
+    Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.loadOpeningConditions(unlocked.special_conditions) end)
   end
 end
 
 
-function Unlocked.saveOpeningConditions()
-  local openingConditions = {}
+function Unlocked.loadClasses(classes)
+  print("Loading unlocked classes")
+  for i, class in pairs(classes) do
+    Unlocked.loadClass(i, class)
+  end
+end
 
+
+function Unlocked.loadClass(number, class)
+  local characterBoxes = getObjectFromGUID(guids.LOCKED_CLASSES)
+  local lastBox = getObjectFromGUID(guids.LAST_BOX)
+  local beforeLastBox = getObjectFromGUID(guids.BEFORE_LAST_BOX)
+  local delta = (lastBox.getPosition() - beforeLastBox.getPosition()) * number
+
+  characterBoxes.takeObject({
+    position = lastBox.getPosition() + delta,
+    rotation = lastBox.getRotation(),
+    smooth = false,
+    guid = Game.CLASSES[class].box_guid,
+    callback_function = function(obj) obj.setLock(true) end
+  })
+end
+
+
+function Unlocked.loadItems(items)
+  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
+
+  for _, item in pairs(items) do
+    Shop.getRewardItem(item, shopPosition)
+  end
+end
+
+
+function Unlocked.loadOpeningConditions(openingConditions)
+  Unlocked.setOpeningCondition(openingConditions.ancient_technology, "Ancient")
+  Unlocked.setOpeningCondition(openingConditions.drake_aided, "Drake")
+  Unlocked.setOpeningCondition(openingConditions.low_reputation, "RepN10")
+  Unlocked.setOpeningCondition(openingConditions.lowest_reputation, "RepN20")
+  Unlocked.setOpeningCondition(openingConditions.high_reputation, "Rep10")
+  Unlocked.setOpeningCondition(openingConditions.highest_reputation, "Rep20")
+
+  if openingConditions.retired then
+    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", "Retire")
+    getObjectFromGUID(guids.GAMEBOX).takeObject({
+      guid = guids.TOWN_RECORDS,
+      position = positions.TOWN_RECORDS,
+      rotation = Rotation.NORTH,
+      smooth = false
+    })
+  end
+
+  if openingConditions.donations then
+    for i=1, openingConditions.donations do
+      Unlocked.setOpeningCondition(true, "Donation"..i)
+    end
+    if openingConditions.donations >= 10 then
+      Unlocked.setOpeningCondition(true, "DonationFull")
+    end
+  end
+end
+
+function Unlocked.setOpeningCondition(condition, name)
+  if condition then
+    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", name)
+  end
+end
+
+
+function Unlocked.saveAll()
+  return {
+    classes = Unlocked.saveClasses(),
+    items = Shop.save(),
+    special_conditions = Unlocked.saveOpeningConditions()
+  }
+end
+
+function Unlocked.saveClasses()
+  local classes = {}
+  for class, info in pairs(Game.CLASSES) do
+    local box = getObjectFromGUID(info.box_guid)
+    if box and not info.isStartingClass then
+      table.insert(classes, class)
+    end
+  end
+
+  return classes
+end
+
+
+
+function Unlocked.saveOpeningConditions()
   local openingConditionsSheet = getObjectFromGUID(guids.OPENING_CONDITIONS)
-  if not openingConditions then
+  if not openingConditionsSheet then
     return {}
   end
 
+  local openingConditions = {}
   local buttons = openingConditionsSheet.getTable("buttons")
-
   openingConditions.ancient_technology = buttons["Ancient"].label ~= ""
   openingConditions.drake_aided = buttons["Drake"].label ~= ""
   openingConditions.low_reputation = buttons["RepN10"].label ~= ""
@@ -39,94 +130,4 @@ function Unlocked.saveOpeningConditions()
   openingConditions.donations = donations
 
   return openingConditions
-end
-
-
-function Unlocked.saveClasses()
-  local classes = {}
-  for class, info in pairs(Game.CLASSES) do
-    local box = getObjectFromGUID(info.box_guid)
-    if box and not info.isStartingClass then
-      table.insert(classes, class)
-    end
-  end
-
-  return classes
-end
-
-
-function Unlocked.read_classes(classes)
-  utils.wait_for_object(guids.LOCKED_CLASSES, function() Unlocked.__read_classes_start(classes) end)
-end
-
-
-function Unlocked.read_items(items)
-  if not items then return end
-
-  local cityMat = getObjectFromGUID(guids.CITY_MAT)
-  local shopPosition = utils.getSnapPosition(cityMat, snaps.SHOP)
-
-  for _, item in pairs(items) do
-    Shop.getReward(item, shopPosition)
-  end
-end
-
-
-function Unlocked.read_special_conditions(special_conditions)
-  Unlocked.set_special_condition(special_conditions.ancient_technology, "Ancient")
-  Unlocked.set_special_condition(special_conditions.drake_aided, "Drake")
-  Unlocked.set_special_condition(special_conditions.low_reputation, "RepN10")
-  Unlocked.set_special_condition(special_conditions.lowest_reputation, "RepN20")
-  Unlocked.set_special_condition(special_conditions.high_reputation, "Rep10")
-  Unlocked.set_special_condition(special_conditions.highest_reputation, "Rep20")
-
-  if special_conditions.retired then
-    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", "Retire")
-    getObjectFromGUID(guids.GAMEBOX).takeObject({
-      guid = guids.TOWN_RECORDS,
-      position = positions.TOWN_RECORDS,
-      rotation = Rotation.NORTH,
-      smooth = false
-    })
-  end
-
-  if special_conditions.donations then
-    for i=1, special_conditions.donations do
-      Unlocked.set_special_condition(true, "Donation"..i)
-    end
-    if special_conditions.donations >= 10 then
-      Unlocked.set_special_condition(true, "DonationFull")
-    end
-  end
-end
-
-function Unlocked.set_special_condition(condition, name)
-  if condition then
-    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", name)
-  end
-end
-
-
-function Unlocked.__read_classes_start(classes)
-  print("Reading unlocked classes")
-  for number, class in pairs(classes) do
-    Unlocked.__read_class(number, class)
-  end
-end
-
-
-function Unlocked.__read_class(number, class)
-  local character_boxes = getObjectFromGUID(guids.LOCKED_CLASSES)
-  local last_box = getObjectFromGUID(guids.LAST_BOX)
-  local before_last_box = getObjectFromGUID(guids.BEFORE_LAST_BOX)
-  local delta = (last_box.getPosition() - before_last_box.getPosition()) * number
-  local class_guid = Game.CLASSES[class].box_guid
-
-  character_boxes.takeObject({
-    position = last_box.getPosition() + delta,
-    rotation = last_box.getRotation(),
-    smooth = false,
-    guid = class_guid,
-    callback_function = function(o) utils.set_locked(o) end
-  })
 end

@@ -1,7 +1,15 @@
-tableUtil = {}
+TableUtil = {}
 
---- Checks whether a given value is part of the given table
-function tableUtil.contains(table, value)
+--- Variant of pairs that also works for nil values.
+function TableUtil.pairs(table)
+  if table then
+    return pairs(table)
+  end
+  return pairs({})
+end
+
+--- Checks whether a given value is part of the given table.
+function TableUtil.contains(table, value)
   for _, v in pairs(table) do
     if v == value then
       return true
@@ -11,7 +19,7 @@ function tableUtil.contains(table, value)
 end
 
 --- Shuffles the given table.
-function tableUtil.shuffle(table)
+function TableUtil.shuffle(table)
   for i = #table, 2, -1 do
     local j = math.random(i)
     table[i], table[j] = table[j], table[i]
@@ -20,7 +28,7 @@ end
 
 --- Appends t2 to t1 and returns a new table.
 -- Only appends the values, not the keys.
-function tableUtil.append(t1, t2)
+function TableUtil.append(t1, t2)
   local t3 = {}
   for k,v in pairs(t1) do
     table.insert(t3, v)
@@ -33,18 +41,18 @@ end
 
 --- Checks whether a table is empty.
 -- A nil value is also considered an empty table.
-function tableUtil.isEmpty(table)
+function TableUtil.isEmpty(table)
   return not table or not next(table)
 end
 
 --- Checks whether a table is not empty.
 -- Also works for nil values, for which this is always false.
-function tableUtil.isNotEmpty(table)
-  return not tableUtil.isEmpty(table)
+function TableUtil.isNotEmpty(table)
+  return not TableUtil.isEmpty(table)
 end
 
 --- Converts a table given as a set into a list.
-function tableUtil.setToList(set)
+function TableUtil.setToList(set)
   list = {}
   for entry, value in pairs(set) do
     if value then

@@ -14,84 +14,56 @@ end
 function Shop.save()
   -- TODO this also has to take character items into account
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
-  local shopPosition = cityMat.positionToWorld(positions.CITY_DECK)
+  local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
   local shopDeck = cityMat.call('checkForDeck', shopPosition)
   -- TODO recall the shop if it is currently layed out
   local items = {}
 
   for _, item in pairs(shopDeck.getObjects()) do
-    if Shop.isRewardItem(item) then
+    if Component.isRewardItemCard(item) then
       items[item.name] = true
     end
   end
 
-  return tableUtil.setToList(items)
-end
-
-
-function Shop.getReward(name, position)
-  local decks = {getObjectFromGUID(guids.RANDOM_RED_DECK),
-                 getObjectFromGUID(guids.RANDOM_BLUE_DECK),
-                 getObjectFromGUID(guids.REWARDS_DECK)}
-
-  for _, deck in pairs(decks) do
-      local item = utils.find_object_info_in_stack(deck, {name=name})
-      if item then
-        deck.takeObject({
-          guid = item.guid,
-          position = position,
-          smooth = false
-        })
-      end
-  end
+  return TableUtil.setToList(items)
 end
 
 
 function Shop.getItem(name, position)
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
-  for i=0, 13 do
-    local pos = cityMat.positionToWorld(positions.CITY_DECK + positions.CITY_GAP * i)
+  for i=1, 14 do
+    local pos = Utils.getSnapPosition(cityMat, i)
     local deck = cityMat.call('checkForDeck', pos)
     if deck then
-      for _, item in pairs(deck.getObjects()) do
-        if item.name == name then
-          deck.takeObject({
-            guid = item.guid,
-            smooth = false,
-            rotation = Rotation.NORTH,
-            callback_function = function(obj) obj.setPosition(position) end,
-            flip = true
-          })
-          break
-        end
+      local item = Utils.findObjectInfoInStack(deck, {name=name, plain=true})
+      if item then
+        deck.takeObject({
+          guid = item.guid,
+          smooth = false,
+          rotation = Rotation.NORTH,
+          callback_function = function(card) card.setPosition(position) end,
+          flip = true
+        })
+        return
       end
     end
   end
 end
 
---- Returns true if the given object is an item card.
-function Shop.isItem(object)
-  return object.tag == "Card"
-         and Shop.isItemDescription(object.getDescription())
-end
 
---- Returns true if the given object info (from getObjects()) is an item card.
-function Shop.isItemInfo(objectInfo)
-  return Shop.isItemDescription(objectInfo.description)
-end
+function Shop.getRewardItem(name, position)
+  local decks = {getObjectFromGUID(guids.RANDOM_RED_DECK),
+                 getObjectFromGUID(guids.RANDOM_BLUE_DECK),
+                 getObjectFromGUID(guids.REWARDS_DECK)}
 
---- Returns true if the given item card object is an item from the rewards or item design deck.
-function Shop.isRewardItem(item)
-  local description = item.description
-  description = string.gsub(description, "red", "")
-  description = string.gsub(description, "blue", "")
-
-  return tonumber(description) > 70
-end
-
---- Returns true if the given object description is a possible item card's description.
-function Shop.isItemDescription(description)
-  return description:find("^%d+$")
-         or description:find("^%d+ red$")
-         or description:find("^%d+ blue$")
+  for _, deck in pairs(decks) do
+    local item = Utils.findObjectInfoInStack(deck, {name=name})
+    if item then
+      deck.takeObject({
+        guid = item.guid,
+        position = position,
+        smooth = false
+      })
+    end
+  end
 end

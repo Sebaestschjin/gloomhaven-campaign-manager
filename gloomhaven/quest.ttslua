@@ -4,15 +4,15 @@ Quest.removed = {}
 
 function Quest.take(quest, callback)
   local questIndex = Quest.getIndex(quest)
-  local deck = getObjectFromGUID(guids.QUESTS)
+  local deck = getObjectFromGUID(guids.QUEST_DECK)
 
   deck.takeObject({
     index = questIndex,
     smooth = false,
     rotation = Rotation.NORTH_FLIPPED,
-    callback_function = function(obj)
+    callback_function = function(card)
                           table.insert(Quest.removed, questIndex)
-                          callback(obj)
+                          callback(card)
                         end
   })
 end
@@ -20,7 +20,7 @@ end
 
 function Quest.getIndex(quest)
   local index = Quest.getRawIndex(quest)
-  return utils.adjustIndex(index, Quest.removed)
+  return Utils.adjustIndex(index, Quest.removed)
 end
 
 

@@ -34,9 +34,9 @@ end
 
 
 function load()
-  saveHandler.read()
+  saveHandler.loadAll()
 end
 
 function save()
-  saveHandler.save()
+  saveHandler.saveAll()
 end

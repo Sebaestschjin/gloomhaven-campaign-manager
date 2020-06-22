@@ -3,39 +3,7 @@ Retirement = {}
 Retirement.COLUMNS = 5
 
 function Retirement.load(retired)
-  utils.wait_for_object(guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
-end
-
-
-function Retirement.save()
-  local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
-
-  local retired = {}
-  local retiredCharacter = {}
-  for i, input in pairs(retirementSheet.getInputs()) do
-    local column = (i - 1) % Retirement.COLUMNS
-    if column == 0 then
-      Retirement.add(retired, retiredCharacter)
-      retiredCharacter = {}
-    end
-
-    if input.value ~= "" then
-      if column == 0 then
-        retiredCharacter.player = input.value
-      elseif column == 1 then
-        retiredCharacter.character = input.value
-      elseif column == 2 then
-        retiredCharacter.class = input.value
-      elseif column == 3 then
-        retiredCharacter.level = input.value
-      elseif column == 4 then
-        retiredCharacter.perks = input.value
-      end
-    end
-  end
-  Retirement.add(retired, retiredCharacter)
-
-  return retired
+  Utils.waitForObject(guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
 end
 
 
@@ -55,15 +23,43 @@ function Retirement.startLoading(retired)
     retirementSheet.call("forceSave", {})
 
     if retirement.quest then
-      local callback = function(obj) obj.destruct() end
-      Quest.take(retirement.quest, callback)
+      Quest.take(retirement.quest, function(card) card.destruct() end)
     end
   end
 end
 
 
-function Retirement.add(retired, retiredCharacter)
-  if next(retiredCharacter) then
+function Retirement.save()
+  local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
+
+  local retired = {}
+  local retiredCharacter = {}
+  for i, input in pairs(retirementSheet.getInputs()) do
+    local column = (i - 1) % Retirement.COLUMNS
+    if column == 0 then
+      if TableUtil.isNotEmpty(retiredCharacter) then
+        table.insert(retired, retiredCharacter)
+      end
+      retiredCharacter = {}
+    end
+
+    if input.value ~= "" then
+      if column == 0 then
+        retiredCharacter.player = input.value
+      elseif column == 1 then
+        retiredCharacter.character = input.value
+      elseif column == 2 then
+        retiredCharacter.class = input.value
+      elseif column == 3 then
+        retiredCharacter.level = input.value
+      elseif column == 4 then
+        retiredCharacter.perks = input.value
+      end
+    end
+  end
+  if TableUtil.isNotEmpty(retiredCharacter) then
     table.insert(retired, retiredCharacter)
   end
+
+  return retired
 end

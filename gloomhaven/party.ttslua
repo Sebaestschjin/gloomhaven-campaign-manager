@@ -1,41 +1,90 @@
 Party = {}
 
-function Party.load(content)
+function Party.load(party)
+  Party.loadPartySheet(party)
+  Wait.time(function() Party.loadCharacters(party.characters) end, 2)
+end
+
+
+function Party.loadPartySheet(party)
   local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
 
-  if content.name then
-    partySheet.UI.setAttribute("partyName", "text", content.name)
-    partySheet.setName(content.name)
+  if party.name then
+    partySheet.UI.setAttribute("partyName", "text", party.name)
+    partySheet.setName(party.name)
   end
-  if content.location then
-    partySheet.UI.setAttribute("location", "text", content.location)
+  if party.location then
+    partySheet.UI.setAttribute("location", "text", party.location)
   end
-  if content.notes then
-    partySheet.UI.setAttribute("notes", "text", table.concat(content.notes, "\n"))
+  if party.notes then
+    partySheet.UI.setAttribute("notes", "text", table.concat(party.notes, "\n"))
   end
-  if content.achievements then
-    partySheet.UI.setAttribute("partyAchiev", "text", table.concat(content.achievements, "\n"))
+  if party.achievements then
+    partySheet.UI.setAttribute("partyAchiev", "text", table.concat(party.achievements, "\n"))
   end
-  if content.reputation then
-    partySheet.call("addSub", {"partyReputation", content.reputation})
-  end
-
-  if content.characters then
-    Wait.time(function() Character.read_all(content.characters) end, 2)
+  if party.reputation then
+    partySheet.call("addSub", {"partyReputation", party.reputation})
   end
 end
 
 
+function Party.loadCharacters(characters)
+  if not characters then return end
+  print("Loading characters")
+
+  for i, character in pairs(characters) do
+    if next(character) != nil then
+      Character.load(i, character)
+      Party.setPartySheetCharacter(i, character)
+    end
+  end
+  Party.setPartySheetAverageLevel(characters)
+end
+
+
+function Party.setPartySheetCharacter(position, character)
+  local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local partySheetAttributeNames = {"playerone", "playertwo", "playerthree", "playerfour"}
+  local attributeName = partySheetAttributeNames[position]
+  local attributeLvlName = attributeName .. 'lvl'
+  local level = Character.getLevel(character.xp)
+
+  partySheet.UI.setAttribute(attributeName, "text", character.name)
+  partySheet.UI.setAttribute(attributeLvlName, "text", level)
+end
+
+
+-- TODO It should be easier than this. :()
+function Party.setPartySheetAverageLevel(characters)
+  local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local sum, numPlayers = 0, 0
+  for i, character in pairs(characters) do
+    if next(character) != nil then
+      sum = sum + Character.getLevel(character.xp)
+      numPlayers = numPlayers + 1
+    end
+  end
+  local average = sum / numPlayers
+  local scenarioLevel = math.ceil(average / 2)
+  partySheet.UI.setAttribute("averageLevel", "text", tonumber(string.format("%.2f", average)))
+  partySheet.UI.setAttribute("scenarioLevel", "text", tonumber(string.format("%d", scenarioLevel)))
+end
+
+
 function Party.save()
-  local content = {}
+  local party = {}
 
   local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
-  content.name = partySheet.UI.getAttribute("partyName", "text")
-  content.location = partySheet.UI.getAttribute("location", "text")
-  content.notes = { partySheet.UI.getAttribute("notes", "text") }
-  content.achievements = { partySheet.UI.getAttribute("partyAchiev", "text") }
-  content.reputation = tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
-  content.characters = Character.save()
+  party.name = partySheet.UI.getAttribute("partyName", "text")
+  party.location = partySheet.UI.getAttribute("location", "text")
+  party.notes = { partySheet.UI.getAttribute("notes", "text") }
+  party.achievements = { partySheet.UI.getAttribute("partyAchiev", "text") }
+  party.reputation = tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
 
-  return content
+  party.characters = {}
+  for _, zoneGuid in pairs(guids.ZONES) do
+    table.insert(party.characters, Character.save(zoneGuid))
+  end
+
+  return party
 end

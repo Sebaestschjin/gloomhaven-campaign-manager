@@ -55,15 +55,15 @@ function Enhancement.loadForClass(className, abilities)
   for ability, enhancements in pairs(abilities) do
     local enhancementInfo = Game.CLASSES[className].abilities[ability].enhancements
 
-    local abilityCard = utils.find_object_in_zone(playerZone, {name=ability})
+    local abilityCard = Utils.findObjectInZone(playerZone, {name=ability})
     if abilityCard then
       Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
     else
       local abilityDeck = Component.abilityDeck(playerZone)
-      local abilityCard = utils.find_object_info_in_stack(abilityDeck, {name=ability})
+      local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=ability})
       abilityDeck.takeObject({
         guid = abilityCard.guid,
-        position = Character.get_safe_position(),
+        position = positions.getSafe(),
         rotation = abilityDeck.getRotation(),
         smooth = false,
         callback_function = function(obj)
@@ -119,7 +119,7 @@ function Enhancement.saveInZone(playerZone, enhancements)
       for i, abilityCard in pairs(abilityDeck.getObjects()) do
         abilityDeck.takeObject({
           guid = abilityCard.guid,
-          position = Character.get_safe_position(),
+          position = positions.getSafe(),
           callback_function = function(card)
                                 Enhancement.saveForCard(card, abilityInfo, enhancements[class])
                                 card.setPosition(deckPosition)
@@ -141,13 +141,13 @@ function Enhancement.saveForCard(card, abilityInfo, classEnhancements)
   local enhancementInfo = abilityInfo[ability].enhancements
   local enhancements = {}
 
-  for _, decal in utils.pairs(card.getDecals()) do
+  for _, decal in TableUtil.pairs(card.getDecals()) do
     local name = decal.name:gsub("Enhancement ", "")
     local nearestIndex = Enhancement.findNearestIndex(decal.position, enhancementInfo)
     enhancements[tostring(nearestIndex)] = name
   end
 
-  if tableUtil.isNotEmpty(enhancements) then
+  if TableUtil.isNotEmpty(enhancements) then
     classEnhancements[ability] = enhancements
   end
 end

@@ -1,265 +1,202 @@
 Character = {}
 
-function Character.read_all(content)
-  print("Reading characters")
 
-  for i, character in pairs(content) do
-    if next(character) != nil then
-        Character.add_player(i, character)
-        Character.setPartySheetParty(i, character)
-    end
-  end
-  Character.setPartySheetAverageLevel(content)
+function Character.load(index, character)
+  local playerZone = guids.ZONES[index]
+  getObjectFromGUID(guids.ADD_PLAYERS[index]).call("addPlayer")
+
+  Utils.waitForObjectInZone(playerZone, {name=names.PLAYER_MAT},
+                            function() Character.unpackCharacterBox(playerZone, character) end)
 end
 
 
-function Character.save()
-  characterList = {}
+function Character.unpackCharacterBox(playerZone, character)
+  local playerMat = Component.playerMat(playerZone)
+  local characterBox = getObjectFromGUID(Game.CLASSES[character.class].box_guid)
 
-  for _, zoneGuid in pairs(guids.ZONES) do
-    table.insert(characterList, Character.saveCharacter(zoneGuid))
-  end
-
-  return characterList
-end
-
-
-function Character.add_player(index, character)
-  local player_zone = guids.ZONES[index]
-  local add_player_button = guids.ADD_PLAYERS[index]
-  getObjectFromGUID(add_player_button).call("addPlayer")
-
-  Wait.condition(
-    function() Character.read(player_zone, character) end,
-    function() return Character.check_player_mat(player_zone) end
-  )
-end
-
-
-
-function Character.read(player_zone, character)
-  local player_mat = utils.find_object_in_zone(player_zone, {name = names.PLAYER_MAT})
-  local character_box = getObjectFromGUID(Game.CLASSES[character.class].box_guid)
-
-  character_box.takeObject({
-    position = player_mat.getPosition()
+  characterBox.takeObject({
+    position = playerMat.getPosition()
   })
 
-  Wait.condition(
-    function() Character.setup(player_zone, character) end,
-    function() return Character.check_character_sheet(player_zone) end
-  )
+  Utils.waitForObjectInZone(playerZone, {name=names.CHARACTER_SHEET},
+                            function() Character.doLoad(playerZone, character) end)
 end
 
 
-function Character.setup(player_zone, character)
+function Character.doLoad(playerZone, character)
   -- still need more waiting to init the UI of the sheet :-(
-  Wait.time(function() Character.setup_character_sheet(player_zone, character) end, 1)
-  Wait.time(function() Character.setup_character_maxHP(player_zone, character) end, 5)
-  Character.setup_abilities(player_zone, character)
-  Character.setup_quest(player_zone, character)
+  Wait.time(function() Character.loadCharacterSheet(playerZone, character) end, 1)
+  Wait.time(function() Character.loadMaxHp(playerZone, character) end, 5)
+  Character.loadAbilities(playerZone, character)
+  Character.loadQuest(playerZone, character)
 end
 
 
-function Character.setup_character_maxHP(player_zone, character)
+function Character.loadCharacterSheet(playerZone, character)
+  local characterSheet = Component.characterSheet(playerZone)
+
+  if character.name then
+    characterSheet.UI.setAttribute("Name", "text", character.name)
+  end
+  if character.gold then
+    characterSheet.call('addEx', {name='gold', amount=character.gold})
+  end
+  if character.xp then
+    characterSheet.call('addEx', {name='xp', amount=character.xp})
+  end
+  if character.checkmarks then
+    for i=1, character.checkmarks do
+      characterSheet.call('clickedToggle', "notes"..tostring(i))
+    end
+  end
+  if character.perks then
+    Character.loadPerks(playerZone, character)
+  end
+  if character.items then
+    Character.loadItems(playerZone, character)
+  end
+  if character.notes then
+    characterSheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
+  end
+  if character.hidden_notes then
+    characterSheet.UI.setAttribute("Notes", "text", table.concat(character.notes, "\n"))
+  end
+end
+
+
+function Character.loadMaxHp(playerZone, character)
   local characterInfo = Game.CLASSES[character.class]
   local level = Character.getLevel(character.xp)
   local maxHealth = characterInfo.hp[level]
 
-  Character.setupFigureHealth(player_zone, character.class, maxHealth)
+  Character.loadFigureHealth(playerZone, character.class, maxHealth)
   local tokenName = characterInfo.hp[1] .. " hp"
-  local healthToken = utils.find_object_in_zone(player_zone, {name=tokenName})
+  local healthToken = Utils.findObjectInZone(playerZone, {name=tokenName})
   healthToken.setState(maxHealth)
 
   if characterInfo.extra_figure then
     maxHealth = characterInfo.extra_figure.hp[level]
-    Character.setupFigureHealth(player_zone, characterInfo.extra_figure.name, maxHealth)
+    Character.loadFigureHealth(playerZone, characterInfo.extra_figure.name, maxHealth)
   end
 end
 
-function Character.setupFigureHealth(playerZone, name, health)
-  local figure = utils.find_object_in_zone(playerZone, {name=name, tag="Figurine"})
+
+function Character.loadFigureHealth(playerZone, name, health)
+  local figure = Utils.findObjectInZone(playerZone, {name=name, tag=Tag.FIGURINE})
 
   figure.getVar('health')["max"] = health
   figure.getVar('health')["value"] = health
   figure.call('setHealth')
 end
 
+function Character.loadAbilities(playerZone, character)
+  if not character.abilities then return end
 
-function Character.setup_character_sheet(player_zone, character)
-  local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
-
-  if character.name then
-    character_sheet.UI.setAttribute("Name", "text", character.name)
-  end
-
-  if character.gold then
-    character_sheet.call('addEx', {name='gold', amount=character.gold})
-  end
-
-  if character.xp then
-    character_sheet.call('addEx', {name='xp', amount=character.xp})
-  end
-
-  if character.checkmarks then
-    for i=1, character.checkmarks do
-      character_sheet.call('clickedToggle', "notes"..tostring(i))
-    end
-  end
-
-  if character.perks then
-    Character.setup_perks(player_zone, character)
-  end
-
-  if character.items then
-    Character.setup_items(player_zone, character)
-  end
-
-  if character.notes then
-    character_sheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
-  end
-
-  if character.hidden_notes then
-    character_sheet.UI.setAttribute("Notes", "text", table.concat(character.notes, "\n"))
+  local abilityDeck = Component.abilityDeck(playerZone)
+  for _, ability in pairs(character.abilities) do
+    local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=ability})
+    abilityDeck.takeObject({
+      position = positions.getSafe(),
+      guid = abilityCard.guid,
+      callback_function = function(card) Character.moveToHand(card, playerZone, 2) end
+    })
   end
 end
 
 
-function Character.setup_abilities(player_zone, character)
-  if character.abilities then
-    local ability_deck = Component.abilityDeck(player_zone)
+function Character.loadQuest(playerZone, character)
+  if not character.quest then return end
 
-    for _, ability in pairs(character.abilities) do
-      local ability_card = utils.find_object_info_in_stack(ability_deck, {name=ability})
-      ability_deck.takeObject({
-        position = Character.get_safe_position(),
-        guid = ability_card.guid,
-        callback_function = function(o) Character.move_to_hand(o, player_zone, 2) end
-      })
-    end
-  end
+  local callback = function(card) card.setPosition(positions.relativeToZone(playerZone, positions.QUEST_CARD)) end
+  Quest.take(character.quest, callback)
 end
 
 
-function Character.setup_quest(player_zone, character)
-  -- TODO ensure that the quests deck is full to make index access easier
-  if character.quest then
-    local callback = function(obj) Character.move_to_position(obj, player_zone, positions.QUEST) end
-    Quest.take(character.quest, callback)
-  end
-end
-
-
-function Character.setup_perks(player_zone, character)
-  local perk_info = Game.CLASSES[character.class].perks
-  local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
-  local modifier_deck = utils.find_object_in_zone(player_zone, {name=names.MODIFIER_DECK, description="Player"})
-  local other_deck = function(obj) return obj.getName():find(names.MODIFIER_DECK) and obj.getGUID() ~= modifier_deck.getGUID() end
-  local additional_deck = utils.find_object_in_zone(player_zone, {func=other_deck})
+function Character.loadPerks(playerZone, character)
+  local perkInfo = Game.CLASSES[character.class].perks
+  local characterSheet = Component.characterSheet(playerZone)
+  local modifierDeck = Utils.findObjectInZone(playerZone, {name=names.MODIFIER_DECK, description="Player"})
+  local isOtherDeck = function(obj) return obj.getName():find(names.MODIFIER_DECK)
+                                           and obj.getGUID() ~= modifierDeck.getGUID()
+                                    end
+  local additionalModifierDeck = Utils.findObjectInZone(playerZone, {func=isOtherDeck})
 
   for _, perk in pairs(character.perks) do
-    character_sheet.call('clickedToggle', "perk"..tostring(perk))
-    Character.modify_deck(modifier_deck, additional_deck, perk_info[perk])
-    if additional_deck.remainder then
+    characterSheet.call('clickedToggle', "perk"..tostring(perk))
+    Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, perkInfo[perk])
+    if additionalModifierDeck.remainder then
       -- Remainder may only live for a single frame after last card is taken
-      -- May need to move this into the modify_deck routine itself to reduce
+      -- May need to move this into the adjustAttackModifierDeck routine itself to reduce
       -- any delay.
-      additional_deck = additional_deck.remainder
+      additionalModifierDeck = additionalModifierDeck.remainder
     end
   end
 
-  modifier_deck.shuffle()
+  modifierDeck.shuffle()
 end
 
 
-function Character.setup_items(player_zone, character)
-  local character_sheet = utils.find_object_in_zone(player_zone, {name = names.CHARACTER_SHEET})
-  local player_mat = utils.find_object_in_zone(player_zone, {name = names.PLAYER_MAT})
-
-  local items_text = ""
-  for _, item in pairs(character.items) do
-    local item_position
-    if item.position then
-      item_position = utils.getSnapPosition(player_mat, snaps[item.position])
-    else
-      item_position = positions.relative_to_zone(player_zone, positions.ITEM)
-    end
-    Shop.getItem(item.name, item_position)
-    items_text = items_text .. "\n" .. item.name
-  end
-  character_sheet.UI.setAttribute("Items", "text", items_text)
-end
-
-
-function Character.modify_deck(modifier_deck, additional_deck, info)
+function Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, info)
   if info.add then
     for _, card in pairs(info.add) do
-      print("Adding: " .. card)
-      if additional_deck.name == "Card" then
-        additional_deck.putObject(modifier_deck)
-        return
+      if additionalModifierDeck.tag == Tag.CARD then
+        additionalModifierDeck.putObject(modifierDeck)
+        break
       end
-      local found_card = Character.find_modifier_card(additional_deck, card)
-      additional_deck.takeObject({
-        guid = found_card.guid,
-        position = Character.get_safe_position(),
+      local foundCard = Character.findModifierCard(additionalModifierDeck, card)
+      additionalModifierDeck.takeObject({
+        guid = foundCard.guid,
+        position = positions.getSafe(),
         smooth = false,
-        callback_function = function(obj) obj.putObject(modifier_deck) end
+        callback_function = function(card) card.putObject(modifierDeck) end
       })
     end
   end
 
   if info.remove then
     for _, card in pairs(info.remove) do
-      print("Removing: " .. card)
-      local found_card = Character.find_modifier_card(modifier_deck, card)
-      modifier_deck.takeObject({
-        guid=found_card.guid,
-        position=positions.REMOVED,
-        smooth=false,
-        callback_function = function(obj) obj.destruct() end})
+      local foundCard = Character.findModifierCard(modifierDeck, card)
+      modifierDeck.takeObject({
+        guid = foundCard.guid,
+        position = positions.getSafe(),
+        smooth = false,
+        callback_function = function(card) card.destruct() end})
     end
   end
 
   if info.ignore then
-    print("Ignoring: " .. info.ignore)
   end
 end
 
 
-function Character.find_modifier_card(deck, name)
-  local search_pattern = "^" .. names.ATTACK_MODIFIER .. " " .. utils.escape_pattern(name) .. "$"
-  return utils.find_object_info_in_stack(deck, {name=search_pattern})
+function Character.findModifierCard(deck, name)
+  local searchPattern = "^" .. names.ATTACK_MODIFIER .. " " .. StringUtil.escapePattern(name) .. "$"
+  return Utils.findObjectInfoInStack(deck, {name=searchPattern})
 end
 
 
--- TODO this could be a generic function like wait_for_object
-function Character.check_player_mat(zone_guid)
-  return utils.find_object_in_zone(zone_guid, {name = names.PLAYER_MAT}) ~= nil
+function Character.loadItems(playerZone, character)
+  local characterSheet = Component.characterSheet(playerZone)
+  local playerMat = Component.playerMat(playerZone)
+
+  local itemsText = ""
+  for _, item in pairs(character.items) do
+    local itemPosition
+    if item.position then
+      itemPosition = Utils.getSnapPosition(playerMat, snaps[item.position])
+    else
+      itemPosition = positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
+    end
+    Shop.getItem(item.name, itemPosition)
+    itemsText = itemsText .. "\n" .. item.name
+  end
+  characterSheet.UI.setAttribute("Items", "text", itemsText)
 end
 
 
-function Character.check_character_sheet(zone_guid)
-  return utils.find_object_in_zone(zone_guid, {name = names.CHARACTER_SHEET}) ~= nil
-end
-
-function Character.move_to_position(object, player_zone, position)
-  object.setPosition(positions.relative_to_zone(player_zone, position))
-end
-
--- TODO this should be in a more generic module
-function Character.move_to_hand(object, player_zone, hand)
-  if not hand then hand = 1 end
-  local player_name = Game.PLAYERS[player_zone]
-  object.deal(1, player_name, hand)
-end
-
-
--- TODO this has to become better...
-Character.positions = 0
-function Character.get_safe_position()
-  Character.positions = Character.positions + 1
-  return vector(-43 + (Character.positions * 3), 2, -85)
+function Character.moveToHand(object, playerZone, hand)
+  local playerName = Game.PLAYERS[playerZone]
+  object.deal(1, playerName, hand)
 end
 
 
@@ -273,43 +210,14 @@ function Character.getLevel(curXP)
 end
 
 
-function Character.setPartySheetParty(position, character)
-  local partySheetAttributeName = {"playerone", "playertwo", "playerthree", "playerfour"}
-  local party_sheet = getObjectFromGUID(guids.PARTY_SHEET)
-  local attributeName = partySheetAttributeName[position]
-  local attributeLvlName = attributeName..'lvl'
-  local level = Character.getLevel(character.xp)
-
-  party_sheet.UI.setAttribute(attributeName, "text", character.name)
-  party_sheet.UI.setAttribute(attributeLvlName, "text", level)
-end
-
--- TODO It should be easier than this. :()
-function Character.setPartySheetAverageLevel(content)
-  local party_sheet = getObjectFromGUID(guids.PARTY_SHEET)
-  local sum = 0
-  local numPlayers = 0
-  for i, character in pairs(content) do
-    if next(character) != nil then
-        sum = sum + Character.getLevel(character.xp)
-        numPlayers = numPlayers + 1
-    end
-  end
-  local average = sum / numPlayers
-  local scenarioLevel = math.ceil(average / 2)
-  party_sheet.UI.setAttribute("averageLevel", "text", tonumber(string.format("%.2f", average)))
-  party_sheet.UI.setAttribute("scenarioLevel", "text", tonumber(string.format("%d", scenarioLevel)))
-end
-
-
-function Character.saveCharacter(playerZone)
-  local characterMat = utils.find_object_in_zone(playerZone, {name=names.CHARACTER_MAT})
+function Character.save(playerZone)
+  local characterMat = Component.characterMat(playerZone)
   if not characterMat then
     return {}
   end
 
-  local playerMat = utils.find_object_in_zone(playerZone, {name=names.PLAYER_MAT})
-  local characterSheet = utils.find_object_in_zone(playerZone, {name=names.CHARACTER_SHEET})
+  local playerMat = Component.playerMat(playerZone)
+  local characterSheet = Component.characterSheet(playerZone)
   local characterSheetButtons = characterSheet.getTable("buttons")
 
   character = {}
@@ -336,54 +244,23 @@ function Character.saveCharacter(playerZone)
   end
 
   character.items = Character.saveItems(playerZone)
-
-  -- TODO this is not what I call clean code :-(
-  character.abilities = {}
-  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
-    if object.tag == "Card" and object.getDescription():find(character.class) then
-      local name = Component.getAbilityName(object)
-      local allAbilites = Game.CLASSES[character.class].abilities
-      if allAbilites and
-         (allAbilites[name] and allAbilites[name].level ~= 1 and allAbilites[name].level ~= "X"
-          or not allAbilites[name]) then
-        table.insert(character.abilities, name)
-      end
-    end
-  end
-
-
-  -- TODO this is WAAAY to ugly...
-  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
-    if object.tag == "Card" and object.getData().CustomDeck then
-      for key, _ in pairs(object.getData().CustomDeck) do
-        if key == 1997 then
-          local cardId = object.getData().CardID
-          local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
-          for name, info in pairs(Game.QUESTS) do
-            if info.index == cardIndex then
-              character.quest = name
-              break
-            end
-          end
-        end
-      end
-    end
-  end
+  character.abilities = Character.saveAbilities(playerZone)
+  character.quest = Character.saveQuest(playerZone)
 
   return character
 end
 
 
 function Character.saveItems(playerZone)
-  local playerMat = utils.find_object_in_zone(playerZone, {name=names.PLAYER_MAT})
+  local playerMat = Utils.findObjectInZone(playerZone, {name=names.PLAYER_MAT})
   local items = {}
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
-    if Shop.isItem(object) then
+    if Component.IsItemCard(object) then
       local item = {name=object.getName(), position=Character.getItemPosition(playerMat, object)}
       table.insert(items, item)
     elseif object.tag == "Deck" then
       for _, card in pairs(object.getObjects()) do
-        if Shop.isItemInfo(card) then
+        if Component.IsItemCardInfo(card) then
           local item = {name=card.name, position=Character.getItemPosition(playerMat, object)}
           table.insert(items, item)
         end
@@ -400,7 +277,7 @@ function Character.getItemPosition(playerMat, object)
   -- only works, because the player mat snaps are defined first. This should be changed, so that it
   -- works regardless of definition order
   for name, snap in pairs(snaps) do
-    if utils.getSnapPosition(playerMat, snap) == object.getPosition() then
+    if Utils.getSnapPosition(playerMat, snap) == object.getPosition() then
       return name
     end
   end
@@ -408,6 +285,37 @@ function Character.getItemPosition(playerMat, object)
   return "Unequipped"
 end
 
+
+function Character.saveAbilities(playerZone)
+  local class = Character.findClassInZone(playerZone)
+  local abilities = {}
+
+  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+    if Component.isAbilityCardForClass(object, class) then
+      local name = Component.getAbilityName(object)
+      if not Component.isStartingAbility(name, class) then
+        table.insert(abilities, name)
+      end
+    end
+  end
+
+  return abilities
+end
+
+
+function Character.saveQuest(playerZone)
+  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+    if Component.isPersonalQuestCard(object) then
+      log(object.getGMNotes(), "GM")
+      local cardId = object.getData().CardID
+      local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+      for name, quest in pairs(Game.QUESTS) do
+        if quest.index == cardIndex then return name end
+      end
+    end
+  end
+  return nil
+end
 
 
 function Character.findZoneForClass(className)

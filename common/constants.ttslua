@@ -11,3 +11,7 @@ Rotation.WEST_FLIPPED = vector(0, 90, 180)
 Direction = {}
 Direction.UP = {0, 1, 0}
 Direction.DOWN = {0, -1, 0}
+
+Tag = {}
+Tag.FIGURINE = "Figurine"
+Tag.CARD = "Card"

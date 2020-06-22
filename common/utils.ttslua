@@ -1,7 +1,7 @@
-utils = {}
+Utils = {}
 
 --- Reads the body of the notebook with the given name.
-function utils.read_notebook(name)
+function Utils.readNotebook(name)
   for _, notebook in pairs(Notes.getNotebookTabs()) do
     if notebook.title == name then
       return notebook.body
@@ -11,25 +11,20 @@ function utils.read_notebook(name)
 end
 
 
-function utils.set_locked(object)
-  object.setLock(true)
-end
-
-
-function utils.move_to_hand(object, player, number)
-  if not number then number = 1 end
-  object.deal(1, player, number)
-end
-
-
-function utils.wait_for_object(guid, callback, timeout, timeout_callback)
+function Utils.waitForObject(guid, callback, timeout, timeout_callback)
   local waiter = function() return getObjectFromGUID(guid) ~= nil end
   Wait.condition(callback, waiter, timeout, timeout_callback)
 end
 
 
+function Utils.waitForObjectInZone(zone, search, callback, timeout, timeout_callback)
+  local waiter = function() return Utils.findObjectInZone(zone, search) ~= nil end
+  Wait.condition(callback, waiter, timeout, timeout_callback)
+end
+
+
 -- TODO this looks quite ugly now...
-function utils.find_object_in_zone(zone_guid, search)
+function Utils.findObjectInZone(zone_guid, search)
   local zone = getObjectFromGUID(zone_guid)
   local plain = search.plain
   if not plain then plain = false end
@@ -39,10 +34,10 @@ function utils.find_object_in_zone(zone_guid, search)
     tester = search.func
   else
     tester = function(object)
-               return utils.find_non_empty(object.getGUID(), search.guid, plain)
-                      and utils.find_non_empty(object.getName(), search.name, plain)
-                      and utils.find_non_empty(object.getDescription(), search.description, plain)
-                      and utils.find_non_empty(object.tag, search.tag, plain)
+               return Utils.findNonEmpty(object.getGUID(), search.guid, plain)
+                      and Utils.findNonEmpty(object.getName(), search.name, plain)
+                      and Utils.findNonEmpty(object.getDescription(), search.description, plain)
+                      and Utils.findNonEmpty(object.tag, search.tag, plain)
                end
   end
 
@@ -55,38 +50,33 @@ function utils.find_object_in_zone(zone_guid, search)
 end
 
 
-function utils.find_object_info_in_stack(stack, search)
+function Utils.findObjectInfoInStack(stack, search)
   local plain = search.plain
   if not plain then plain = false end
 
-  for _, object_info in pairs(stack.getObjects()) do
-    if utils.find_non_empty(object_info.guid, search.guid, plain)
-       and utils.find_non_empty(object_info.name, search.name, plain)
-       and utils.find_non_empty(object_info.description, search.description, plain)
+  for _, objectInfo in pairs(stack.getObjects()) do
+    if Utils.findNonEmpty(objectInfo.guid, search.guid, plain)
+       and Utils.findNonEmpty(objectInfo.name, search.name, plain)
+       and Utils.findNonEmpty(objectInfo.description, search.description, plain)
     then
-      return object_info
+      return objectInfo
     end
   end
   return nil
 end
 
 
-function utils.find_non_empty(value, pattern, plain)
+function Utils.findNonEmpty(value, pattern, plain)
   return pattern == nil or value:find(pattern, nil, plain)
 end
 
 
-function utils.escape_pattern(text)
-  return text:gsub("([-+()%[%]])", "%%%1")
-end
-
-
-function utils.getSnapPosition(object, snapPoint)
+function Utils.getSnapPosition(object, snapPoint)
   return object.positionToWorld(object.getSnapPoints()[snapPoint].position)
 end
 
 
-function utils.adjustIndex(index, removed)
+function Utils.adjustIndex(index, removed)
   local adjustedIndex = index
   for _, removedIndex in pairs(removed) do
     if removedIndex < index then
@@ -94,13 +84,4 @@ function utils.adjustIndex(index, removed)
     end
   end
   return adjustedIndex
-end
-
-
-function utils.pairs(table)
-  if table then
-    return pairs(table)
-  else
-    return pairs({})
-  end
 end

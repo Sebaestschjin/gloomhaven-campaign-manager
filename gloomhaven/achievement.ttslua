@@ -33,7 +33,7 @@ function Achievement.load(callbacks)
   end
 
   getObjectFromGUID(guids.MAP).call("addAchiev", {})
-  utils.wait_for_object(guids.ACHIEVEMENT_BOARD, function() nextCallback(callbacks) end)
+  Utils.waitForObject(guids.ACHIEVEMENT_BOARD, function() nextCallback(callbacks) end)
 end
 
 

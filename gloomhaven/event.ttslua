@@ -1,20 +1,20 @@
 Event = {}
 
 function Event.loadAll(events)
-  Event.load(events.city, guids.CITY_EVENTS_FIRST, guids.CITY_EVENTS, snaps.CITY_EVENTS)
-  Event.load(events.road, guids.ROAD_EVENTS_FIRST, guids.ROAD_EVENTS, snaps.ROAD_EVENTS)
+  Event.load(events.city, guids.CITY_EVENTS_DECK_INITIAL, guids.CITY_EVENTS_DECK, snaps.CITY_EVENTS_DECK)
+  Event.load(events.road, guids.ROAD_EVENTS_DECK_INITIAL, guids.ROAD_EVENTS_DECK, snaps.ROAD_EVENTS_DECK)
 end
 
 
-function Event.load(events, firstDeckGuid, deckGuid, snapPoint)
+function Event.load(events, initialDeckGuid, deckGuid, snapPoint)
   deck = getObjectFromGUID(deckGuid)
-  deck.putObject(getObjectFromGUID(firstDeckGuid))
+  deck.putObject(getObjectFromGUID(initialDeckGuid))
 
   local bottomCards = Event.findBottomDeck(events, deck)
   local addedCards = Event.findAddedCards(events, deck, bottomCards)
 
-  tableUtil.shuffle(addedCards)
-  local eventCards = tableUtil.append(bottomCards, addedCards)
+  TableUtil.shuffle(addedCards)
+  local eventCards = TableUtil.append(bottomCards, addedCards)
 
   Event.dealEvents(eventCards, snapPoint)
 end
@@ -26,7 +26,7 @@ function Event.findBottomDeck(events, deck)
   local eventsToAdd = {}
   for i, event in pairs(events.bottomUp) do
     local eventName = string.format("%02d", event)
-    local eventCard = utils.find_object_info_in_stack(deck, {name=eventName})
+    local eventCard = Utils.findObjectInfoInStack(deck, {name=eventName})
     table.insert(eventsToAdd, eventCard.guid)
   end
 
@@ -38,7 +38,7 @@ function Event.findAddedCards(events, deck, alreadyAdded)
   local eventsToAdd = {}
   for _, eventCard in pairs(deck.getObjects()) do
     local eventNumber = tonumber(eventCard.name)
-    if not tableUtil.contains(alreadyAdded, eventCard.guid)
+    if not TableUtil.contains(alreadyAdded, eventCard.guid)
        and Event.isAdded(events, eventNumber)
        and not Event.isRemoved(events, eventNumber)
     then
@@ -51,13 +51,13 @@ end
 
 
 function Event.isRemoved(events, eventNumber)
-  return events.remove and tableUtil.contains(events.remove, eventNumber)
+  return events.remove and TableUtil.contains(events.remove, eventNumber)
 end
 
 
 function Event.isAdded(events, eventNumber)
   return eventNumber <= 30
-         or (events.add and tableUtil.contains(events.add, eventNumber))
+         or (events.add and TableUtil.contains(events.add, eventNumber))
 end
 
 
@@ -77,8 +77,8 @@ end
 
 function Event.save()
   events = {}
-  events.city = Event.saveEventsFromDeck(snaps.CITY_EVENTS)
-  events.road = Event.saveEventsFromDeck(snaps.ROAD_EVENTS)
+  events.city = Event.saveEventsFromDeck(snaps.CITY_EVENTS_DECK)
+  events.road = Event.saveEventsFromDeck(snaps.ROAD_EVENTS_DECK)
 
   return events
 end
@@ -108,5 +108,5 @@ end
 
 
 function Event.getPosition(snapPoint)
-  return utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPoint)
+  return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPoint)
 end

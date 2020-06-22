@@ -1,71 +1,71 @@
 guids = {}
 
 guids.GAMEBOX = "346ed5"
-guids.EXPANSION_BOX = "5e28e8"
-guids.ACHIEVEMENTS_BAG = "3ea749"
-
 guids.LOCKED_CLASSES = "1e6549"
 guids.SCENARIO_BOOK = "f3404a"
 guids.RULE_BOOK = "c9d3f5"
-
-guids.MAP = "9cc037"
-guids.DECK_MAT = "a75fcd"
-guids.CITY_MAT = "f3ffb7"
-guids.EVENTS_MAT = "b53fb2"
-guids.PARTY_SHEET = "6d3de2"
-guids.ACHIEVEMENT_BOARD = "43d5b8"
 guids.OPENING_CONDITIONS = "30ae8e"
 guids.RETIREMENT_SHEET = "a30c94"
 guids.TOWN_RECORDS = "a6c771"
+
+guids.FORGOTTEN_CIRCLES_BOX = "5e28e8"
+
+guids.MAP = "9cc037"
+guids.ACHIEVEMENTS_BAG = "3ea749" -- Bag containing the Achievement board
+guids.ACHIEVEMENT_BOARD = "43d5b8"
 guids.SANCTUARY_STICKER = "800847"
-
-guids.LAST_BOX = "fdef02" -- tinkerer
-guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
-
+guids.DECK_MAT = "a75fcd"
+guids.CITY_EVENTS_DECK_INITIAL = "759349"
+guids.CITY_EVENTS_DECK = "f13efd"
+guids.ROAD_EVENTS_DECK_INITIAL = "83de73"
+guids.ROAD_EVENTS_DECK = "f08b69"
+guids.QUEST_DECK = "73a423"
+guids.CITY_MAT = "f3ffb7"
 guids.RANDOM_RED_DECK = "fb9bd4"
 guids.RANDOM_BLUE_DECK = "e18733"
 guids.REWARDS_DECK = "900a8d"
+guids.EVENTS_MAT = "b53fb2"
+guids.PARTY_SHEET = "6d3de2"
 
-guids.CITY_EVENTS_FIRST = "759349"
-guids.CITY_EVENTS = "f13efd"
-guids.ROAD_EVENTS_FIRST = "83de73"
-guids.ROAD_EVENTS = "f08b69"
-
-guids.QUESTS = "73a423"
+-- TODO this could be determined on the fly instead of hardcoding it here
+guids.LAST_BOX = "fdef02" -- tinkerer
+guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
 
 guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}
 guids.ADD_PLAYERS = {"3f0cda", "4d61da", "f98ff8", "d0f661"}
 
 
 names = {}
-
-names.CHARACTER_SHEET = "Character Sheet"
 names.PLAYER_MAT = "Player Mat"
 names.CHARACTER_MAT = "Character Mat"
-
+names.CHARACTER_SHEET = "Character Sheet"
 names.ABILITY_DECK = "Advanced Abilities"
 names.MODIFIER_DECK = "Attack Modifiers"
-
 names.ATTACK_MODIFIER = "Attack Modifier"
 
 
 positions = {}
-
-positions.REMOVED = vector(-60, 2, -71)
-
-positions.CITY_DECK = vector(7.8, 0.5, -0.16)
-positions.CITY_GAP = vector(-1.2, 0, 0)
-
-positions.QUEST = vector(1, 2, -19)
-positions.ITEM = vector(-7, 2, -7)
+positions.QUEST_CARD = vector(1, 2, -19) -- relative to player zone
+positions.ITEM_UNEQUIPPED = vector(-7, 2, -7) -- relative to player zone
 
 positions.ACHIEVEMENT_BOARD = {87.26, 2, 26.12}
-
 positions.OPENING_CONDITIONS = vector(65.19, 1.70, -29.55)
 positions.RETIREMENT_SHEET = vector(77.88, 1.70, -33.34)
 positions.SCENARIO_BOOK = {63.88, 2, 37.89}
 positions.RULE_BOOK = {-64.31, 2, -41.68}
 positions.TOWN_RECORDS = {73.94, 2, 34.10}
+
+function positions.relativeToZone(zoneGuid, position)
+  return getObjectFromGUID(zoneGuid).getPosition() + position
+end
+
+-- TODO this has to become better...
+positions.counter = 0
+function positions.getSafe()
+  positions.counter = positions.counter + 1
+  return vector(-43 + (positions.counter * 3), 2, -85)
+end
+
 
 snaps = {}
 snaps.Head = 15
@@ -83,39 +83,82 @@ snaps.Active4 = 9
 
 snaps.SHOP = 1
 
-snaps.ROAD_EVENTS = 1
-snaps.CITY_EVENTS = 2
+snaps.ROAD_EVENTS_DECK = 1
+snaps.CITY_EVENTS_DECK = 2
 snaps.RIFT_EVENTS = 3
 
 
-function positions.relative_to_zone(zone_guid, position)
-  return getObjectFromGUID(zone_guid).getPosition() + position
-end
-
 Component = {}
 
+function Component.playerMat(playerZone)
+  return Utils.findObjectInZone(playerZone, {name=names.PLAYER_MAT})
+end
+
 function Component.characterMat(playerZone)
-  return utils.find_object_in_zone(playerZone, {name=names.CHARACTER_MAT})
+  return Utils.findObjectInZone(playerZone, {name=names.CHARACTER_MAT})
+end
+
+function Component.characterSheet(playerZone)
+  return Utils.findObjectInZone(playerZone, {name=names.CHARACTER_SHEET})
 end
 
 
 function Component.abilityDeck(playerZone)
-  return utils.find_object_in_zone(playerZone, {name = names.ABILITY_DECK})
+  return Utils.findObjectInZone(playerZone, {name=names.ABILITY_DECK})
 end
-
 
 function Component.isAbilityDeck(object)
   return object.tag == "Deck"
          and object.getName():find(names.ABILITY_DECK)
 end
 
-
 function Component.isAbilityCardForClass(object, class)
-  return object.tag == "Card"
+  return object.tag == Tag.CARD
          and object.getDescription():find(class)
 end
 
+function Component.isStartingAbility(name, class)
+  local abilityInfo = Game.CLASSES[class].abilities
+  return abilityInfo[name].level == 1 or abilityInfo[name].level == "X"
+end
 
 function Component.getAbilityName(abilityCard)
   return abilityCard.getName():gsub("%s?%(%d+%)", "")
+end
+
+--- Returns true if the given object is an item card.
+function Component.IsItemCard(object)
+  return object.tag == "Card"
+         and Component.IsItemCardDescription(object.getDescription())
+end
+
+--- Returns true if the given object info (from getObjects()) is an item card.
+function Component.IsItemCardInfo(objectInfo)
+  return Component.IsItemCardDescription(objectInfo.description)
+end
+
+--- Returns true if the given item card object is an item from the rewards or item design deck.
+function Component.isRewardItemCard(item)
+  local description = item.description
+  description = string.gsub(description, "red", "")
+  description = string.gsub(description, "blue", "")
+
+  return tonumber(description) > 70
+end
+
+--- Returns true if the given object description is a possible item card's description.
+function Component.IsItemCardDescription(description)
+  return description:find("^%d+$")
+         or description:find("^%d+ red$")
+         or description:find("^%d+ blue$")
+end
+
+function Component.isPersonalQuestCard(object)
+  if object.tag ~= Tag.CARD or not object.getData().CustomDeck then
+    return false
+  end
+
+  for key, _ in pairs(object.getData().CustomDeck) do
+    return key == 1997
+  end
 end
