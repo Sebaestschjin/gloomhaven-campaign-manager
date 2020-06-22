@@ -182,7 +182,7 @@ function Character.loadItems(playerZone, character)
   local itemsText = ""
   for _, item in pairs(character.items) do
     local itemPosition
-    if item.position then
+    if item.position and snaps[item.position] then
       itemPosition = Utils.getSnapPosition(playerMat, snaps[item.position])
     else
       itemPosition = positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
