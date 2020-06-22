@@ -1,6 +1,8 @@
 Event = {}
 
 function Event.loadAll(events)
+  if not events then return end
+  
   Event.load(events.city, guids.CITY_EVENTS_DECK_INITIAL, guids.CITY_EVENTS_DECK, snaps.CITY_EVENTS_DECK)
   Event.load(events.road, guids.ROAD_EVENTS_DECK_INITIAL, guids.ROAD_EVENTS_DECK, snaps.ROAD_EVENTS_DECK)
 end
