@@ -51,9 +51,9 @@ function Retirement.save()
       elseif column == 2 then
         retiredCharacter.class = input.value
       elseif column == 3 then
-        retiredCharacter.level = input.value
+        retiredCharacter.level = tonumber(input.value)
       elseif column == 4 then
-        retiredCharacter.perks = input.value
+        retiredCharacter.perks = tonumber(input.value)
       end
     end
   end

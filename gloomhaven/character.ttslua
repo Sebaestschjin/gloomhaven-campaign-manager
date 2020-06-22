@@ -223,8 +223,8 @@ function Character.save(playerZone)
   character = {}
   character.class = characterMat.getDescription()
   character.name = characterSheet.UI.getAttribute("Name", "text")
-  character.xp = characterSheet.UI.getAttribute("xp", "text")
-  character.gold = characterSheet.UI.getAttribute("gold", "text")
+  character.xp = tonumber(characterSheet.UI.getAttribute("xp", "text"))
+  character.gold = tonumber(characterSheet.UI.getAttribute("gold", "text"))
   character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), {"\n"})
   character.hidden_notes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), {"\n"})
 
