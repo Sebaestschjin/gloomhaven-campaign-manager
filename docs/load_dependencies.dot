@@ -1,3 +1,4 @@
+# dot -T jpg -o load_dependencies.jpg load_dependencies.dot
 digraph D {
 
     rankdir=RL
@@ -10,7 +11,7 @@ digraph D {
     "Unlocked Classes" -> "Empty Gamebox"
     "Unlocked Classes" -> "Unpack Expansion"
     "Unlocked Items" -> "Unpack Expansion"
-    "Special Conditions" -> Start
+    "Opening Conditions" -> "Empty Gamebox"
 
     "Party" -> "Unlocked Classes"
     "Character Sheet" -> "Party"
@@ -32,7 +33,7 @@ digraph D {
     "Events" -> "Unpack Expansion"
 
     "Empty Gamebox" -> Start
-    "Unpack Expansion" -> Start
+    "Unpack Expansion" -> "Empty Gamebox"
     "Repack Gamebox" -> "Unlocked Classes"
 
     "Enhancements" -> "Character Deck"
@@ -43,10 +44,11 @@ digraph D {
     Finish -> "Scenarios"
     Finish -> "Unlocked Classes"
     Finish -> "Unlocked Items"
-    Finish -> "Special Conditions"
+    Finish -> "Opening Conditions"
     Finish -> "Party"
     Finish -> "Character Done"
     Finish -> "Enhancements"
     Finish -> "Retirement"
     Finish -> "Events"
+    Finish -> "Repack Gamebox"
 }
