@@ -93,12 +93,12 @@ function Character.loadAbilities(playerZone, character)
   if not character.abilities then return end
 
   local abilityDeck = Component.abilityDeck(playerZone)
+  local secondHandPos = {abilityDeck.getPosition().x,3,-59}
   for _, ability in pairs(character.abilities) do
     local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=ability})
     abilityDeck.takeObject({
-      position = positions.getSafe(),
-      guid = abilityCard.guid,
-      callback_function = function(card) Character.moveToHand(card, playerZone, 2) end
+      position = secondHandPos,
+      guid = abilityCard.guid
     })
   end
 end
