@@ -824,19 +824,93 @@ Game.CLASSES = {
       [15] = { add = {"(Add Target)"} }
     },
     abilities = {
-      ["Pure Augmentation"] = {level = 1},
-      ["Raw Enhancement"] = {level = 1},
-      ["Formless Power"] = {level = 1},
-      ["Tremulant Cyclone"] = {level = 1},
-      ["Shaping the Ether"] = {level = 1},
-      ["Land Eruption"] = {level = 1},
-      ["Stoking Hail"] = {level = 1},
-      ["Infernal Vortex"] = {level = 1},
-      ["Ice Spikes"] = {level = 1},
-      ["Frigid Torrent"] = {level = 1},
-      ["Encompassing Shadow"] = {level = "X"},
-      ["Brilliant Flash"] = {level = "X"},
-      ["Malleable Evocation"] = {level = "X"}
+      ["Formless Power"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.93}, [2]={-0.34, -0.73}}
+      },
+      ["Infernal Vortex"] = { level = 1,
+        enhancements = {[2]={-0.66, -0.78}, [1]={-0.46, -0.78}, [3]={-0.41, 0.64}}
+      },
+      ["Frigid Torrent"] = { level = 1,
+        enhancements = {[1]={-0.46, -0.68}, [2]={-0.15, 0.5}, [3]={-0.03, 0.8}, [4]={-0.33, 0.64}}
+      },
+      ["Ice Spikes"] = { level = 1,
+        enhancements = {[1]={-0.17, -0.83}, [2]={-0.41, -0.67}, [3]={-0.46, 0.5}, [4]={-0.33, 0.65}}
+      },
+      ["Pure Augmentation"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.92}, [2]={-0.41, 0.51}}
+      },
+      ["Tremulant Cyclone"] = { level = 1,
+        enhancements = {[1]={-0.12, -0.82}, [2]={-0.41, 0.65}}
+      },
+      ["Land Eruption"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.77}, [2]={-0.41, 0.63}}
+      },
+      ["Shaping the Ether"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.95}}
+      },
+      ["Raw Enhancement"] = { level = 1,
+        enhancements = {[1]={-0.46, -0.91}, [2]={-0.41, 0.51}}
+      },
+      ["Stoking Hail"] = { level = 1,
+        enhancements = {[1]={-0.46, -0.75}, [2]={-0.33, -0.57}, [3]={-0.46, 0.65}}
+      },
+      ["Brilliant Flash"] = { level = "X",
+        enhancements = {[1]={-0.41, -0.79}, [2]={-0.58, -0.79}}
+      },
+      ["Encompassing Shadow"] = { level = "X",
+        enhancements = {[1]={-0.41, 0.44}}
+      },
+      ["Malleable Evocation"] = { level = "X",
+        enhancements = {[1]={-0.46, -0.97}, [2]={-0.34, -0.79}, [3]={-0.41, 0.46}}
+      },
+      ["Boiling Arc"] = { level = 2,
+        enhancements = {[1]={-0.02, -0.68}, [2]={-0.41, 0.61}}
+      },
+      ["Crystallizing Blast"] = { level = 2,
+        enhancements = {[1]={0.01, -0.79}, [2]={0.1, -0.6}, [3]={-0.41, 0.59}}
+      },
+      ["Burial"] = { level = 3,
+        enhancements = {[1]={-0.19, -0.95}, [2]={-0.46, 0.57}}
+      },
+      ["Chain Lightning"] = { level = 3,
+        enhancements = {[1]={-0.51, -1.01}, [2]={-0.41, 0.56}}
+      },
+      ["Primal Duality"] = { level = 4,
+        enhancements = {[1]={-0.46, -0.86}, [2]={-0.66, -0.86}, [3]={-0.36, -0.54}, [4]={-0.41, 0.66}}
+      },
+      ["Gravel Vortex"] = { level = 4,
+        enhancements = {[1]={-0.41, -0.79}}
+      },
+      ["Obsidian Shards"] = { level = 5,
+        enhancements = {[1]={-0.46, -0.85}, [2]={-0.41, 0.42}}
+      },
+      ["Winter's Edge"] = { level = 5,
+        enhancements = {[1]={-0.46, -0.8}, [2]={-0.41, 0.51}, [3]={-0.34, 0.71}}
+      },
+      ["Eye of the Hurricane"] = { level = 6,
+        enhancements = {[1]={-0.41, -0.99}, [2]={-0.41, -0.68}, [3]={-0.41, 0.53}}
+      },
+      ["Simulacrum"] = { level = 6,
+        enhancements = {[1]={-0.46, -0.97}, [3]={0.16, 0.67}, [4]={-0.27, 0.67}}
+      },
+      ["Vengeance"] = { level = 7,
+        enhancements = {[1]={-0.48, -0.67}, [2]={-0.41, 0.38}, [3]={-0.5, 0.59}}
+      },
+      ["Pragmatic Reinforcement"] = { level = 7,
+        enhancements = {[1]={-0.41, -0.95}, [2]={-0.41, 0.45}}
+      },
+      ["Volatile Consumption"] = { level = 8,
+        enhancements = {[1]={-0.41, 0.38}}
+      },
+      ["Elemental Aegis"] = { level = 8,
+        enhancements = {[1]={-0.41, -0.89}, [2]={-0.41, 0.57}, [3]={-0.61, 0.57}}
+      },
+      ["Ethereal Manifestation"] = { level = 9,
+        enhancements = {[1]={0.19, -0.73}, [2]={-0.26, -0.73}, [3]={-0.27, -0.53}}
+      },
+      ["Eternal Equilibrium (27("] = { level = 9,
+        enhancements = {[1]={-0.46, -0.9}, [2]={-0.41, 0.47}}
+      },
     }
   },
   Quartermaster = {
@@ -1301,18 +1375,90 @@ Game.CLASSES = {
       [15] = { ignore = "S", add = {"(+1)", "(+1)"} }
     },
     abilities = {
-      ["Doomed Breeze"] = {level = 1},
-      ["Empowering Void"] = {level = 1},
-      ["Smoke Step"] = {level = 1},
-      ["Cloak of Shade"] = {level = 1},
-      ["Silent Force"] = {level = 1},
-      ["Black Knives"] = {level = 1},
-      ["Enervating Wound"] = {level = 1},
-      ["Spirit of the Night"] = {level = 1},
-      ["Dancing Shadows"] = {level = 1},
-      ["Dark Cloud"] = {level = "X"},
-      ["Concealed Dominance"] = {level = "X"},
-      ["Wings of the Night"] = {level = "X"}
+      ["Silent Force"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.63}}
+      },
+      ["Empowering Void"] = { level = 1,
+        enhancements = {}
+      },
+      ["Cloak of Shade"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.72}, [2]={-0.61, -0.72}}
+      },
+      ["Spirit of the Night"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.63}, [2]={-0.61, 0.63}}
+      },
+      ["Enervating Wound"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.96}, [2]={-0.41, -0.61}}
+      },
+      ["Smoke Step"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.62}, [2]={-0.61, 0.62}}
+      },
+      ["Doomed Breeze"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.85}, [2]={-0.32, -0.68}}
+      },
+      ["Black Knives"] = { level = 1,
+        enhancements = {}
+      },
+      ["Dancing Shadows"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.7}}
+      },
+      ["Wings of the Night"] = { level = "X",
+        enhancements = {}
+      },
+      ["Dark Cloud"] = { level = "X",
+        enhancements = {}
+      },
+      ["Concealed Dominance"] = { level = "X",
+        enhancements = {}
+      },
+      ["Prepare for the Kill"] = { level = 2,
+        enhancements = {[1]={-0.41, -0.71}, [2]={-0.61, -0.71}, [3]={-0.41, 0.63}, [4]={-0.61, 0.63}}
+      },
+      ["Soulfire"] = { level = 2,
+        enhancements = {[1]={-0.32, -0.73}, [2]={-0.41, 0.68}, [3]={-0.61, 0.67}}
+      },
+      ["Terror Blade"] = { level = 3,
+        enhancements = {[1]={-0.34, -0.51}}
+      },
+      ["Armor of the Night"] = { level = 3,
+        enhancements = {[1]={-0.41, 0.56}, [2]={-0.61, 0.56}}
+      },
+      ["Nightfall"] = { level = 4,
+        enhancements = {}
+      },
+      ["Grim Sustenance"] = { level = 4,
+        enhancements = {}
+      },
+      ["Claws of the Night"] = { level = 5,
+        enhancements = {[1]={-0.17, -0.77}}
+      },
+      ["Black Arrow"] = { level = 5,
+        enhancements = {[1]={-0.35, -0.76}}
+      },
+      ["Unseen Dread"] = { level = 6,
+        enhancements = {[1]={-0.41, -0.73}, [2]={-0.61, -0.73}, [3]={-0.41, 0.66}}
+      },
+      ["Swallowed by Fear"] = { level = 6,
+        enhancements = {[1]={-0.41, -0.74}}
+      },
+      ["Eyes of the Night"] = { level = 7,
+        enhancements = {}
+      },
+      ["Quiet Frenzy"] = { level = 7,
+        enhancements = {}
+      },
+      ["Gloom Darts"] = { level = 8,
+        enhancements = {[1]={-0.33, -0.76}, [2]={-0.41, 0.62}, [3]={-0.61, 0.62}}
+      },
+      ["Lurking Ruin"] = { level = 8,
+        enhancements = {}
+      },
+      ["Angel of Death"] = { level = 9,
+        enhancements = {[1]={-0.41, -0.9}, [2]={-0.41, 0.54}}
+      },
+      ["Voice of the Night"] = { level = 9,
+        enhancements = {[1]={-0.41, 0.53}, [2]={-0.41, 0.76}}
+      },
     }
   },
   Sawbones = {
@@ -1336,19 +1482,93 @@ Game.CLASSES = {
       [15] = { add = {"(Refresh)"} }
     },
     abilities = {
-      ["Hand of the Surgeon"] = {level = 1},
-      ["Booster Shot"] = {level = 1},
-      ["Curative Mixture"] = {level = 1},
-      ["Triage"] = {level = 1},
-      ["Mobile Response"] = {level = 1},
-      ["Syringe"] = {level = 1},
-      ["Battlefield Medicine"] = {level = 1},
-      ["Hold Back the Pain"] = {level = 1},
-      ["Bloody Saw"] = {level = 1},
-      ["First Aid"] = {level = 1},
-      ["Vaccine"] = {level = "X"},
-      ["Prevention Is Key"] = {level = "X"},
-      ["Teamwork"] = {level = "X"}
+      ["Mobile Response"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.41}}
+      },
+      ["Battlefield Medicine"] = { level = 1,
+        enhancements = {}
+      },
+      ["Syringe"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.57}, [2]={-0.41, 0.6}}
+      },
+      ["Hand of the Surgeon"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.71}}
+      },
+      ["Curative Mixture"] = { level = 1,
+        enhancements = {[1]={-0.35, -0.91}, [2]={-0.55, -0.91}, [3]={-0.41, 0.6}}
+      },
+      ["Booster Shot"] = { level = 1,
+        enhancements = {[1]={-0.36, -0.64}, [2]={-0.57, -0.66}}
+      },
+      ["Hold Back the Pain"] = { level = 1,
+        enhancements = {[1]={-0.37, -0.77}, [2]={-0.57, -0.77}}
+      },
+      ["Triage"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.73}}
+      },
+      ["First Aid"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.75}}
+      },
+      ["Bloody Saw"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.78}}
+      },
+      ["Prevention Is Key"] = { level = "X",
+        enhancements = {[1]={-0.48, -0.65}, [2]={-0.41, 0.56}}
+      },
+      ["Teamwork"] = { level = "X",
+        enhancements = {[1]={-0.41, 0.91}}
+      },
+      ["Vaccine"] = { level = "X",
+        enhancements = {[1]={-0.06, -0.86}}
+      },
+      ["Precaution"] = { level = 2,
+        enhancements = {[1]={-0.41, -0.77}}
+      },
+      ["Hamstring"] = { level = 2,
+        enhancements = {[1]={-0.41, -0.81}, [2]={-0.41, 0.56}}
+      },
+      ["Regenerative Tissue"] = { level = 3,
+        enhancements = {[1]={-0.35, -0.77}, [2]={-0.56, -0.77}}
+      },
+      ["Vital Strike"] = { level = 3,
+        enhancements = {[1]={-0.41, -0.72}, [2]={-0.61, -0.72}, [3]={-0.41, 0.72}}
+      },
+      ["Blood Transfusion"] = { level = 4,
+        enhancements = {[1]={-0.37, -0.93}, [2]={-0.41, 0.54}, [3]={-0.41, 0.8}}
+      },
+      ["Do No Harm"] = { level = 4,
+        enhancements = {[1]={-0.37, 0.81}, [2]={-0.57, 0.81}}
+      },
+      ["Amputate"] = { level = 5,
+        enhancements = {[1]={-0.41, -0.86}, [2]={-0.41, 0.6}, [3]={-0.61, 0.6}}
+      },
+      ["Research the Cure"] = { level = 5,
+        enhancements = {[1]={-0.41, -0.77}}
+      },
+      ["Prescription"] = { level = 6,
+        enhancements = {}
+      },
+      ["Euthanize"] = { level = 6,
+        enhancements = {[1]={-0.41, 0.54}}
+      },
+      ["Master Physician"] = { level = 7,
+        enhancements = {}
+      },
+      ["Surgeon's Satchel"] = { level = 7,
+        enhancements = {[1]={-0.36, -0.56}, [2]={-0.41, 0.45}}
+      },
+      ["Gentleman's Anger"] = { level = 8,
+        enhancements = {[1]={-0.41, -0.8}, [2]={-0.46, 0.54}}
+      },
+      ["Bedside Manner"] = { level = 8,
+        enhancements = {[1]={-0.35, -1.02}, [2]={-0.55, -1.02}, [3]={-0.41, 0.57}}
+      },
+      ["Prep for Surgery"] = { level = 9,
+        enhancements = {[1]={-0.41, 0.56}, [2]={-0.41, 0.84}}
+      },
+      ["Grisley Trauma"] = { level = 9,
+        enhancements = {[1]={-0.41, 0.47}}
+      },
     }
   },
   Sunkeeper = {
@@ -1372,20 +1592,96 @@ Game.CLASSES = {
       [15] = { ignore = "S" }
     },
     abilities = {
-      ["Lay on Hands"] = {level = 1},
-      ["Empowering Command"] = {level = 1},
-      ["Dazzling Charge"] = {level = 1},
-      ["Holy Strike"] = {level = 1},
-      ["Hammer Blow"] = {level = 1},
-      ["Defensive Stance"] = {level = 1},
-      ["Cautious Advance"] = {level = 1},
-      ["Tactical Order"] = {level = 1},
-      ["Purifying Aura"] = {level = 1},
-      ["Brilliant Prayer"] = {level = 1},
-      ["Protective Blessing"] = {level = 1},
-      ["Glorious Bolt"] = {level = "X"},
-      ["Beacon of Light"] = {level = "X"},
-      ["Daybreak"] = {level = "X"}
+      ["Lay on Hands"] = { level = 1,
+        enhancements = {}
+      },
+      ["Tactical Order"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.5}, [2]={-0.41, 0.77}}
+      },
+      ["Purifying Aura"] = { level = 1,
+        enhancements = {[1]={-0.61, 0.57}}
+      },
+      ["Holy Strike"] = { level = 1,
+        enhancements = {[1]={-0.46, -0.65}, [2]={-0.46, 0.54}, [3]={-0.33, 0.71}}
+      },
+      ["Empowering Command"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.82}}
+      },
+      ["Hammer Blow"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.7}, [2]={-0.41, 0.74}}
+      },
+      ["Protective Blessing"] = { level = 1,
+        enhancements = {}
+      },
+      ["Defensive Stance"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.7}, [2]={-0.41, 0.44}}
+      },
+      ["Cautious Advance"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.8}, [2]={-0.41, 0.74}}
+      },
+      ["Brilliant Prayer"] = { level = 1,
+        enhancements = {[1]={-0.37, 0.54}, [2]={-0.56, 0.54}}
+      },
+      ["Dazzling Charge"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.78}, [2]={-0.41, 0.44}, [3]={-0.41, 0.66}}
+      },
+      ["Daybreak"] = { level = "X",
+        enhancements = {[1]={-0.41, -0.78}, [2]={-0.41, 0.54}, [3]={-0.41, 0.83}}
+      },
+      ["Glorious Bolt"] = { level = "X",
+        enhancements = {[1]={-0.37, -0.89}, [2]={-0.56, -0.89}, [3]={-0.46, 0.61}}
+      },
+      ["Beacon of Light"] = { level = "X",
+        enhancements = {}
+      },
+      ["Practical Plans"] = { level = 2,
+        enhancements = {}
+      },
+      ["Unwavering Mandate"] = { level = 2,
+        enhancements = {[1]={-0.37, 0.57}, [2]={-0.34, 0.74}}
+      },
+      ["Burning Flash"] = { level = 3,
+        enhancements = {[1]={-0.41, -0.86}, [2]={-0.41, 0.54}, [3]={-0.33, 0.74}}
+      },
+      ["Mobilizing Axiom"] = { level = 3,
+        enhancements = {[1]={-0.41, -0.71}}
+      },
+      ["Righteous Strength"] = { level = 4,
+        enhancements = {[1]={-0.41, -0.79}, [2]={-0.41, 0.45}, [3]={-0.41, 0.67}}
+      },
+      ["Engulfing Radiance"] = { level = 4,
+        enhancements = {[1]={-0.35, -0.79}}
+      },
+      ["Path of Glory"] = { level = 5,
+        enhancements = {[1]={-0.41, -0.71}, [2]={-0.61, -0.71}, [3]={-0.41, 0.43}}
+      },
+      ["Scales of Justice"] = { level = 5,
+        enhancements = {[1]={-0.48, -0.91}, [2]={-0.41, 0.44}, [3]={-0.41, 0.92}}
+      },
+      ["Supportive Chant"] = { level = 6,
+        enhancements = {}
+      },
+      ["Illuminate the Target"] = { level = 6,
+        enhancements = {[1]={-0.41, -0.91}, [2]={-0.61, -0.69}, [3]={-0.41, 0.83}}
+      },
+      ["Weapon of Purity"] = { level = 7,
+        enhancements = {[1]={-0.41, 0.64}, [2]={-0.41, 0.9}}
+      },
+      ["Bright Aegis"] = { level = 7,
+        enhancements = {[1]={-0.41, -0.94}, [2]={-0.5, -0.6}}
+      },
+      ["Cleansing Force"] = { level = 8,
+        enhancements = {[1]={-0.41, -0.85}, [2]={-0.61, -0.85}, [3]={-0.41, 0.62}}
+      },
+      ["Inspiring Sanctity"] = { level = 8,
+        enhancements = {}
+      },
+      ["Angelic Ascension"] = { level = 9,
+        enhancements = {[1]={-0.41, 0.68}}
+      },
+      ["Divine Intervention"] = { level = 9,
+        enhancements = {[1]={-0.41, 0.55}}
+      },
     }
   },
   Summoner = {
@@ -1409,18 +1705,90 @@ Game.CLASSES = {
       [15] = { ignore = "S", add = {"(+1)", "(+1)"} }
     },
     abilities = {
-      ["Bonded Might"] = {level = 1},
-      ["Unending Dominance"] = {level = 1},
-      ["Unwavering Hand"] = {level = 1},
-      ["Mighty Bond"] = {level = 1},
-      ["Forged Ferocity"] = {level = 1},
-      ["Biting Wind"] = {level = 1},
-      ["Black Fire"] = {level = 1},
-      ["Black Fire"] = {level = 1},
-      ["Wild Animation"] = {level = 1},
-      ["Ethereal Vines"] = {level = "X"},
-      ["Leathery Wings"] = {level = "X"},
-      ["Volatile Flame"] = {level = "X"}
+      ["Mighty Bond"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.7}}
+      },
+      ["Biting Wind"] = { level = 1,
+        enhancements = {[1]={-0.46, -0.77}, [2]={-0.34, -0.6}, [3]={-0.41, 0.69}}
+      },
+      ["Black Fire"] = { level = 1,
+        enhancements = {[1]={-0.46, -0.84}, [2]={-0.36, -0.55}, [3]={-0.41, 0.53}}
+      },
+      ["Unending Dominance"] = { level = 1,
+        enhancements = {[1]={0.21, -0.72}, [2]={-0.25, -0.74}}
+      },
+      ["Living Night"] = { level = 1,
+        enhancements = {[1]={0.21, -0.74}, [2]={0.19, -0.53}}
+      },
+      ["Unwavering Hand"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.8}, [2]={-0.61, -0.8}}
+      },
+      ["Wild Animation"] = { level = 1,
+        enhancements = {[1]={0.21, -0.73}, [2]={-0.25, -0.73}, [3]={0.21, -0.54}, [4]={-0.25, -0.54}, [5]={-0.41, 0.62}}
+      },
+      ["Bonded Might"] = { level = 1,
+        enhancements = {}
+      },
+      ["Forged Ferocity"] = { level = 1,
+        enhancements = {[1]={0.21, -0.73}, [2]={-0.25, -0.73}, [3]={0.21, -0.54}, [4]={-0.41, 0.56}}
+      },
+      ["Ethereal Vines"] = { level = "X",
+        enhancements = {[1]={-0.09, -0.72}, [2]={-0.41, 0.56}, [3]={-0.36, 0.83}}
+      },
+      ["Leathery Wings"] = { level = "X",
+        enhancements = {[1]={0.21, -0.73}, [2]={-0.25, -0.73}, [3]={-0.61, 0.66}}
+      },
+      ["Volatile Flame"] = { level = "X",
+        enhancements = {[1]={-0.25, -0.74}, [2]={0.19, -0.56}, [3]={-0.41, 0.53}}
+      },
+      ["Earthen Steed"] = { level = 2,
+        enhancements = {[1]={-0.41, 0.71}}
+      },
+      ["Grasping the Void"] = { level = 2,
+        enhancements = {[1]={-0.46, -0.81}, [2]={-0.46, 0.51}, [3]={-0.41, 0.91}}
+      },
+      ["Tear the Fabric"] = { level = 3,
+        enhancements = {[1]={-0.41, 0.61}, [2]={-0.61, 0.61}}
+      },
+      ["Oozing Manifestation"] = { level = 3,
+        enhancements = {[1]={0.21, -0.72}, [2]={-0.25, -0.72}, [3]={0.21, -0.51}, [4]={-0.46, 0.53}}
+      },
+      ["Living Mountain"] = { level = 4,
+        enhancements = {[1]={0.21, -0.72}, [2]={-0.25, -0.72}, [3]={-0.46, 0.64}}
+      },
+      ["Divided Mind"] = { level = 4,
+        enhancements = {}
+      },
+      ["Strength in Numbers"] = { level = 5,
+        enhancements = {}
+      },
+      ["Conjured Aid"] = { level = 5,
+        enhancements = {[1]={0.21, -0.72}, [2]={-0.25, -0.72}, [3]={-0.25, -0.51}, [4]={-0.41, 0.77}}
+      },
+      ["Endless Spikers"] = { level = 6,
+        enhancements = {[1]={0.21, -0.72}, [2]={-0.25, -0.72}}
+      },
+      ["Inexorable Momentum"] = { level = 6,
+        enhancements = {[1]={-0.41, -0.83}, [2]={-0.36, -0.53}, [3]={-0.41, 0.56}, [4]={-0.41, 1}}
+      },
+      ["Staff of Visions"] = { level = 7,
+        enhancements = {[1]={-0.41, -0.71}, [2]={-0.61, -0.71}, [3]={-0.41, 0.58}, [4]={-0.64, 0.81}}
+      },
+      ["Negative Energy"] = { level = 7,
+        enhancements = {[1]={0.21, -0.73}, [2]={-0.25, -0.73}, [3]={0.21, -0.51}, [4]={-0.25, -0.51}}
+      },
+      ["Intervening Apparitions"] = { level = 8,
+        enhancements = {}
+      },
+      ["Otherworldly Rage"] = { level = 8,
+        enhancements = {[1]={-0.41, 0.92}}
+      },
+      ["Interplanar Mastery"] = { level = 9,
+        enhancements = {[1]={-0.41, 0.68}}
+      },
+      ["Horned Majesty"] = { level = 9,
+        enhancements = {[1]={0.2, -0.72}, [2]={-0.25, -0.72}, [3]={0.18, -0.52}}
+      },
     }
   },
   Doomstalker = {
@@ -1444,21 +1812,99 @@ Game.CLASSES = {
       [15] = { ignore = "S" }
     },
     abilities = {
-      ["Vital Charge"] = {level = 1},
-      ["Race to the Grave"] = {level = 1},
-      ["Multi-Pronged Assault"] = {level = 1},
-      ["Frightening Curse"] = {level = 1},
-      ["Detonation"] = {level = 1},
-      ["Foot Snare"] = {level = 1},
-      ["Solid Bow"] = {level = 1},
-      ["A Moment's Peace"] = {level = 1},
-      ["Swift Trickery"] = {level = 1},
-      ["Felling Swoop"] = {level = 1},
-      ["Crippling Noose"] = {level = 1},
-      ["Rain of Arrows"] = {level = 1},
-      ["Fresh Kill"] = {level = "X"},
-      ["The Hunt Begins"] = {level = "X"},
-      ["Sap Life"] = {level = "X"}
+      ["Race to the Grave"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.78}, [2]={-0.61, -0.78}, [3]={-0.32, -0.62}}
+      },
+      ["A Moment's Peace"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.56}, [2]={-0.37, 0.83}}
+      },
+      ["Swift Trickery"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.8}, [2]={-0.3, -0.62}, [3]={-0.41, 0.74}}
+      },
+      ["Foot Snare"] = { level = 1,
+        enhancements = {[1]={-0.41, 0.96}}
+      },
+      ["Detonation"] = { level = 1,
+        enhancements = {}
+      },
+      ["Multi-Pronged Assault"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.86}, [2]={-0.32, -0.7}, [3]={-0.33, -0.52}}
+      },
+      ["Frightening Curse"] = { level = 1,
+        enhancements = {}
+      },
+      ["Vital Charge"] = { level = 1,
+        enhancements = {[1]={0.2, -0.71}, [2]={-0.25, -0.71}, [3]={0.19, -0.51}}
+      },
+      ["Felling Swoop"] = { level = 1,
+        enhancements = {[1]={0.2, -0.73}, [2]={-0.23, -0.73}, [3]={0.2, -0.52}}
+      },
+      ["Crippling Noose"] = { level = 1,
+        enhancements = {}
+      },
+      ["Rain of Arrows"] = { level = 1,
+        enhancements = {}
+      },
+      ["Solid Bow"] = { level = 1,
+        enhancements = {[1]={-0.41, -0.66}, [2]={-0.32, -0.49}, [3]={-0.41, 0.74}}
+      },
+      ["Sap Life"] = { level = "X",
+        enhancements = {[1]={-0.48, -0.79}, [2]={-0.32, -0.61}}
+      },
+      ["The Hunt Begins"] = { level = "X",
+        enhancements = {[1]={0.2, -0.73}, [2]={-0.24, -0.73}, [3]={0.19, -0.52}}
+      },
+      ["Fresh Kill"] = { level = "X",
+        enhancements = {[1]={-0.41, -0.79}, [2]={-0.32, -0.62}, [3]={-0.41, 0.69}}
+      },
+      ["Expose"] = { level = 2,
+        enhancements = {}
+      },
+      ["Relentless Offensive"] = { level = 2,
+        enhancements = {[1]={-0.41, -0.74}, [2]={-0.32, -0.42}}
+      },
+      ["Darkened Skies"] = { level = 3,
+        enhancements = {[1]={-0.41, -0.79}}
+      },
+      ["Press the Attack"] = { level = 3,
+        enhancements = {[1]={-0.41, -0.8}, [2]={-0.33, -0.64}, [3]={-0.49, 0.55}}
+      },
+      ["Singular Focus"] = { level = 4,
+        enhancements = {}
+      },
+      ["Flight of Flame"] = { level = 4,
+        enhancements = {[1]={-0.41, 0.69}}
+      },
+      ["Inescapable Fate"] = { level = 5,
+        enhancements = {}
+      },
+      ["Wild Commad"] = { level = 5,
+        enhancements = {[1]={-0.41, 0.51}, [2]={-0.41, 0.74}}
+      },
+      ["Nature's Hunger"] = { level = 6,
+        enhancements = {[1]={0.2, -0.72}, [2]={-0.25, -0.72}, [3]={0.21, -0.52}}
+      },
+      ["Camouflage"] = { level = 6,
+        enhancements = {[1]={-0.41, -0.88}, [2]={-0.41, 0.56}}
+      },
+      ["Impending End"] = { level = 7,
+        enhancements = {[1]={-0.41, -0.86}, [2]={-0.33, -0.7}}
+      },
+      ["Crashing Wave"] = { level = 7,
+        enhancements = {[1]={-0.41, -0.86}, [2]={-0.41, -0.62}, [3]={-0.61, -0.62}}
+      },
+      ["Rising Momentum"] = { level = 8,
+        enhancements = {[1]={-0.41, -0.89}, [2]={-0.31, -0.72}, [3]={-0.32, -0.55}}
+      },
+      ["Feral Instincts"] = { level = 8,
+        enhancements = {[1]={-0.41, -0.83}, [2]={-0.41, -0.57}, [3]={-0.41, 0.56}, [4]={-0.37, 0.82}}
+      },
+      ["Predator and Prey"] = { level = 9,
+        enhancements = {[1]={0.2, -0.74}, [2]={-0.23, -0.74}, [3]={0.19, -0.52}, [4]={-0.24, -0.55}}
+      },
+      ["Lead to Slaughter"] = { level = 9,
+        enhancements = {[1]={-0.41, -0.88}, [2]={-0.35, -0.72}, [3]={-0.41, 0.53}}
+      },
     }
   },
   Diviner = {

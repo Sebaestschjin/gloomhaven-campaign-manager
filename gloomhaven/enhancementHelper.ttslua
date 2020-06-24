@@ -3,8 +3,8 @@
 function onCollisionEnter(collision_info)
   local obj = collision_info.collision_object
 
-  printDecals(obj)
-  -- addDecals(obj)
+  -- printDecals(obj)
+  addDecals(obj)
 end
 
 
@@ -12,7 +12,7 @@ function addDecals(obj)
   local name = obj.getName():gsub("%s?%(%d+%)", "")
   log(name)
 
-  local abs = Game.CLASSES["Nightshroud"].abilities[name]
+  local abs = Game.CLASSES["Doomstalker"].abilities[name]
   local positions = abs.enhancements
   for i, position in pairs(positions) do
     position = {position[1], 0.36, position[2]}
@@ -27,13 +27,12 @@ function addDecals(obj)
 end
 
 function printDecals(obj)
-
-  local objName = obj.getName():gsub("%s%(%d+%)", "")
+  local objName = obj.getName():gsub("%s?%(%d+%)", "")
   local line = "[\"" .. objName .. "\"] = { level = 0,\n" ..
                "  enhancements = {"
 
   if obj.getDecals() then
-    local lastZ = nil
+    local lastZ, lastX = nil
     for i, decal in pairs(obj.getDecals()) do
       local name = decal.name
       local position = decal.position
@@ -49,9 +48,15 @@ function printDecals(obj)
         x = -0.61
       end
       if lastZ and math.abs(lastZ - z) <= 0.02 then
-        x = lastZ
+        z = lastZ
       end
+
+      if z == lastZ and lastX and lastX != x and math.abs(x - lastX) < 0.2 then
+        x = lastX - 0.2
+      end
+
       lastZ = z
+      lastX = x
 
       if i ~= 1 then
         line = line .. ", "
