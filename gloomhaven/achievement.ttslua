@@ -2,38 +2,35 @@ Achievement = {}
 
 function Achievement.loadAll(content)
   print("Reading Achievements")
+  groupReady = {true}
 
-  local callbacks = {}
-  for _, achievement in pairs(content) do
-    local count = 1
-    if achievement.count then count = achievement.count end
-    for i=1, count do
-      table.insert(callbacks, function(cb) Achievement.doLoad(cb, achievement) end)
+  for i=1,5 do
+    groupReady[i+1] = false
+    local achievementGroup = {}
+    for _, achievement in pairs(content) do
+      if achievement.count >= i then
+        table.insert(achievementGroup, achievement.name)
+      end
+    end
+
+    if next(achievementGroup) != nil then
+      Wait.condition(function() Achievement.loadGroup(i, achievementGroup) end, function() return groupReady[i] end)
     end
   end
-
-  Achievement.load(callbacks)
 end
 
+function Achievement.loadGroup(i, achievementGroup)
+  globalAchievementsBag = getObjectFromGUID(guids.ACHIEVEMENTS_BAG)
 
-function Achievement.doLoad(callbacks, achievement)
-  log(achievement, "Loading achievement")
-  local board = getObjectFromGUID(guids.ACHIEVEMENT_BOARD)
-  local index = Achievement.findIndex(board, achievement)
-  board.call("clicked", index)
-
-  Wait.time(function() Achievement.load(callbacks) end, 2)
-end
-
-
-function Achievement.load(callbacks)
-  local nextCallback = table.remove(callbacks)
-  if nextCallback == nil then
-    return
-  end
-
-  getObjectFromGUID(guids.MAP).call("addAchiev", {})
-  Utils.waitForObject(guids.ACHIEVEMENT_BOARD, function() nextCallback(callbacks) end)
+  globalAchievementsBag.takeObject({
+    guid=guids.ACHIEVEMENT_BOARD,
+    callback_function = function(obj)
+      for _, achievement in pairs(achievementGroup) do
+          local index = Achievement.findIndex(obj, achievement)
+        obj.call('clicked', index)
+      end
+      groupReady[i+1] = true end
+  })
 end
 
 
@@ -70,7 +67,7 @@ function Achievement.findIndex(board, achievement)
   local achievementInfo = board.getTable("flags")
 
   for i, flag in pairs(achievementInfo) do
-    if flag.name == achievement.name then
+    if flag.name == achievement then
       return i
     end
   end
