@@ -9,8 +9,12 @@ function Unlocked.loadAll(unlocked)
     Unlocked.loadItems(unlocked.items)
   end
 
-  if unlocked.special_conditions then
-    Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.loadOpeningConditions(unlocked.special_conditions) end)
+  if unlocked.specialConditions then
+    Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.loadOpeningConditions(unlocked.specialConditions) end)
+  end
+
+  if unlocked.sanctuary then
+    Sanctuary.load(unlocked.sanctuary)
   end
 end
 
@@ -33,7 +37,7 @@ function Unlocked.loadClass(number, class)
     position = lastBox.getPosition() + delta,
     rotation = lastBox.getRotation(),
     smooth = false,
-    guid = Game.CLASSES[class].box_guid,
+    guid = Game.CLASSES[class].boxGuid,
     callback_function = function(obj) obj.setLock(true) end
   })
 end
@@ -50,12 +54,12 @@ end
 
 
 function Unlocked.loadOpeningConditions(openingConditions)
-  Unlocked.setOpeningCondition(openingConditions.ancient_technology, "Ancient")
-  Unlocked.setOpeningCondition(openingConditions.drake_aided, "Drake")
-  Unlocked.setOpeningCondition(openingConditions.low_reputation, "RepN10")
-  Unlocked.setOpeningCondition(openingConditions.lowest_reputation, "RepN20")
-  Unlocked.setOpeningCondition(openingConditions.high_reputation, "Rep10")
-  Unlocked.setOpeningCondition(openingConditions.highest_reputation, "Rep20")
+  Unlocked.setOpeningCondition(openingConditions.ancientTechnology, "Ancient")
+  Unlocked.setOpeningCondition(openingConditions.drakeAided, "Drake")
+  Unlocked.setOpeningCondition(openingConditions.lowReputation, "RepN10")
+  Unlocked.setOpeningCondition(openingConditions.lowestReputation, "RepN20")
+  Unlocked.setOpeningCondition(openingConditions.highReputation, "Rep10")
+  Unlocked.setOpeningCondition(openingConditions.highestReputation, "Rep20")
 
   if openingConditions.retired then
     getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", "Retire")
@@ -88,14 +92,15 @@ function Unlocked.saveAll()
   return {
     classes = Unlocked.saveClasses(),
     items = Shop.save(),
-    special_conditions = Unlocked.saveOpeningConditions()
+    sanctuary = Sanctuary.save(),
+    specialConditions = Unlocked.saveOpeningConditions()
   }
 end
 
 function Unlocked.saveClasses()
   local classes = {}
   for class, info in pairs(Game.CLASSES) do
-    local box = getObjectFromGUID(info.box_guid)
+    local box = getObjectFromGUID(info.boxGuid)
     if box and not info.isStartingClass then
       table.insert(classes, class)
     end
@@ -114,12 +119,12 @@ function Unlocked.saveOpeningConditions()
 
   local openingConditions = {}
   local buttons = openingConditionsSheet.getTable("buttons")
-  openingConditions.ancient_technology = buttons["Ancient"].label ~= ""
-  openingConditions.drake_aided = buttons["Drake"].label ~= ""
-  openingConditions.low_reputation = buttons["RepN10"].label ~= ""
-  openingConditions.lowest_reputation = buttons["RepN20"].label ~= ""
-  openingConditions.high_reputation = buttons["Rep10"].label ~= ""
-  openingConditions.highest_reputation = buttons["Rep20"].label ~= ""
+  openingConditions.ancientTechnology = buttons["Ancient"].label ~= ""
+  openingConditions.drakeAided = buttons["Drake"].label ~= ""
+  openingConditions.lowReputation = buttons["RepN10"].label ~= ""
+  openingConditions.lowestReputation = buttons["RepN20"].label ~= ""
+  openingConditions.highReputation = buttons["Rep10"].label ~= ""
+  openingConditions.highestReputation = buttons["Rep20"].label ~= ""
   openingConditions.retired = buttons["Retire"].label ~= ""
   local donations = 0
   for i=1, 10 do

@@ -12,7 +12,7 @@ end
 
 function Character.unpackCharacterBox(playerZone, character)
   local playerMat = Component.playerMat(playerZone)
-  local characterBox = getObjectFromGUID(Game.CLASSES[character.class].box_guid)
+  local characterBox = getObjectFromGUID(Game.CLASSES[character.class].boxGuid)
 
   characterBox.takeObject({
     position = playerMat.getPosition()
@@ -58,8 +58,8 @@ function Character.loadCharacterSheet(playerZone, character)
   if character.notes then
     characterSheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
   end
-  if character.hidden_notes then
-    characterSheet.UI.setAttribute("Notes", "text", table.concat(character.hidden_notes, "\n"))
+  if character.hiddenNotes then
+    characterSheet.UI.setAttribute("Notes", "text", table.concat(character.hiddenNotes, "\n"))
   end
 end
 
@@ -74,9 +74,9 @@ function Character.loadMaxHp(playerZone, character)
   local healthToken = Utils.findObjectInZone(playerZone, {name=tokenName})
   healthToken.setState(maxHealth)
 
-  if characterInfo.extra_figure then
-    maxHealth = characterInfo.extra_figure.hp[level]
-    Character.loadFigureHealth(playerZone, characterInfo.extra_figure.name, maxHealth)
+  if characterInfo.extraFigure then
+    maxHealth = characterInfo.extraFigure.hp[level]
+    Character.loadFigureHealth(playerZone, characterInfo.extraFigure.name, maxHealth)
   end
 end
 
@@ -226,7 +226,7 @@ function Character.save(playerZone)
   character.xp = tonumber(characterSheet.UI.getAttribute("xp", "text"))
   character.gold = tonumber(characterSheet.UI.getAttribute("gold", "text"))
   character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), {"\n"})
-  character.hidden_notes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), {"\n"})
+  character.hiddenNotes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), {"\n"})
 
   local totalCheckmarks = 0
   for i=1, 18 do

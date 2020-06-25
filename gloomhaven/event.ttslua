@@ -1,16 +1,32 @@
 Event = {}
 
+Event.DECKS = {
+  ["city"] = {
+    initialDeckGuid = guids.CITY_EVENTS_DECK_INITIAL,
+    deckGuid = guids.CITY_EVENTS_DECK,
+    snapPoint = snaps.CITY_EVENTS_DECK,
+  },
+  ["road"] = {
+    initialDeckGuid = guids.ROAD_EVENTS_DECK_INITIAL,
+    deckGuid = guids.ROAD_EVENTS_DECK,
+    snapPoint = snaps.ROAD_EVENTS_DECK,
+  },
+}
+
 function Event.loadAll(events)
   if not events then return end
-  
-  Event.load(events.city, guids.CITY_EVENTS_DECK_INITIAL, guids.CITY_EVENTS_DECK, snaps.CITY_EVENTS_DECK)
-  Event.load(events.road, guids.ROAD_EVENTS_DECK_INITIAL, guids.ROAD_EVENTS_DECK, snaps.ROAD_EVENTS_DECK)
+
+  for _, eventDeck in pairs(events) do
+    Event.load(eventDeck)
+  end
 end
 
 
-function Event.load(events, initialDeckGuid, deckGuid, snapPoint)
-  deck = getObjectFromGUID(deckGuid)
-  deck.putObject(getObjectFromGUID(initialDeckGuid))
+
+function Event.load(events)
+  local eventsInfo = Event.DECKS[events.deck]
+  local deck = getObjectFromGUID(eventsInfo.deckGuid)
+  deck.putObject(getObjectFromGUID(eventsInfo.initialDeckGuid))
 
   local bottomCards = Event.findBottomDeck(events, deck)
   local addedCards = Event.findAddedCards(events, deck, bottomCards)
@@ -18,7 +34,7 @@ function Event.load(events, initialDeckGuid, deckGuid, snapPoint)
   TableUtil.shuffle(addedCards)
   local eventCards = TableUtil.append(bottomCards, addedCards)
 
-  Event.dealEvents(eventCards, snapPoint)
+  Event.dealEvents(deck, eventCards, eventsInfo.snapPoint)
 end
 
 
@@ -63,7 +79,7 @@ function Event.isAdded(events, eventNumber)
 end
 
 
-function Event.dealEvents(eventCards, snapPoint)
+function Event.dealEvents(deck, eventCards, snapPoint)
   local eventPosition = Event.getPosition(snapPoint)
   for i, event in pairs(eventCards) do
     local offset = i * 0.2
@@ -79,8 +95,12 @@ end
 
 function Event.save()
   events = {}
-  events.city = Event.saveEventsFromDeck(snaps.CITY_EVENTS_DECK)
-  events.road = Event.saveEventsFromDeck(snaps.ROAD_EVENTS_DECK)
+
+  for name, info in pairs(Event.DECKS) do
+    local eventDeck = Event.saveEventsFromDeck(info.snapPoint)
+    eventDeck.deck = name
+    table.insert(events, eventDeck)
+  end
 
   return events
 end

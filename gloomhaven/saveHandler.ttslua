@@ -42,7 +42,6 @@ function saveHandler.doLoadAll(content)
   Scenario.loadAll(content.global.scenarios)
   Achievement.loadAll(content.global.achievements)
   Prosperity.load(content.global.prosperity)
-  Sanctuary.load(content.global.sanctuary)
   Unlocked.loadAll(content.unlocked)
   Party.load(content.party)
   Retirement.load(content.retired)
@@ -77,8 +76,7 @@ end
 function saveHandler.doCreateSaveFile(saveFile)
   saveFile.global = {
     prosperity = Prosperity.save(),
-    sanctuary = Sanctuary.save(),
-    scenarios = Scenario.save()
+    scenarios = Scenario.save(),
   }
   Achievement.saveAll(saveFile.global)
   saveFile.unlocked = Unlocked.saveAll()

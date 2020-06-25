@@ -33,7 +33,7 @@ end
 
 function preparation.put_divinier_into_box(classes)
   getObjectFromGUID(guids.FORGOTTEN_CIRCLES_BOX).takeObject({
-    guid = Game.CLASSES.Diviner.box_guid,
+    guid = Game.CLASSES.Diviner.boxGuid,
     smooth = false,
     callback_function = function(obj) classes.putObject(obj) end
   })

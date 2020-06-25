@@ -29,7 +29,7 @@ Game.XP_REQUIREMENTS = {0, 45, 95, 150, 210, 275, 345, 420, 500}
 Game.CLASSES = {
   Brute = {
     isStartingClass = true,
-    box_guid = "697f18",
+    boxGuid = "697f18",
     hp = Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -140,7 +140,7 @@ Game.CLASSES = {
   },
   Scoundrel = {
     isStartingClass = true,
-    box_guid = "66309d",
+    boxGuid = "66309d",
     hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -248,7 +248,7 @@ Game.CLASSES = {
   },
   Spellweaver = {
     isStartingClass = true,
-    box_guid = "0507cf",
+    boxGuid = "0507cf",
     hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
@@ -353,7 +353,7 @@ Game.CLASSES = {
   },
   Mindthief = {
     isStartingClass = true,
-    box_guid = "8c1ca4",
+    boxGuid = "8c1ca4",
     hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -464,7 +464,7 @@ Game.CLASSES = {
   },
   Cragheart = {
     isStartingClass = true,
-    box_guid = "ec1d2a",
+    boxGuid = "ec1d2a",
     hp = Game.HP.HIGH,
     perk = {
       [1] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
@@ -578,7 +578,7 @@ Game.CLASSES = {
   },
   Tinkerer = {
     isStartingClass = true,
-    box_guid = "fdef02",
+    boxGuid = "fdef02",
     hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -694,7 +694,7 @@ Game.CLASSES = {
     }
   },
   Berserker = {
-    box_guid = "7ff6c4",
+    boxGuid = "7ff6c4",
     hp = Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -804,7 +804,7 @@ Game.CLASSES = {
     }
   },
   Elementalist = {
-    box_guid = "21d7e7",
+    boxGuid = "21d7e7",
     Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -914,7 +914,7 @@ Game.CLASSES = {
     }
   },
   Quartermaster = {
-    box_guid = "d221fc",
+    boxGuid = "d221fc",
     hp = Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -1021,9 +1021,9 @@ Game.CLASSES = {
     }
   },
   ["Beast Tyrant"] = {
-    box_guid = "89bec7",
+    boxGuid = "89bec7",
     hp = Game.HP.LOW,
-    extra_figure = {
+    extraFigure = {
       name = "Bear Companion",
       hp = Game.HP.HIGH
     },
@@ -1135,7 +1135,7 @@ Game.CLASSES = {
     }
   },
   Soothsinger = {
-    box_guid = "732351",
+    boxGuid = "732351",
     hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -1242,7 +1242,7 @@ Game.CLASSES = {
     }
   },
   Plagueherald = {
-    box_guid = "10b86a",
+    boxGuid = "10b86a",
     hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-2)"}, add = {"(+0)"} },
@@ -1355,7 +1355,7 @@ Game.CLASSES = {
     }
   },
   Nightshroud = {
-    box_guid = "8f7455",
+    boxGuid = "8f7455",
     hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -1462,7 +1462,7 @@ Game.CLASSES = {
     }
   },
   Sawbones = {
-    box_guid = "e5148c",
+    boxGuid = "e5148c",
     Game.HP.MEDIUM,
     perk = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -1572,7 +1572,7 @@ Game.CLASSES = {
     }
   },
   Sunkeeper = {
-    box_guid = "bfe08d",
+    boxGuid = "bfe08d",
     Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -1685,7 +1685,7 @@ Game.CLASSES = {
     }
   },
   Summoner = {
-    box_guid = "0f9847",
+    boxGuid = "0f9847",
     Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -1792,7 +1792,7 @@ Game.CLASSES = {
     }
   },
   Doomstalker = {
-    box_guid = "b7fe6d",
+    boxGuid = "b7fe6d",
     Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
@@ -1908,7 +1908,7 @@ Game.CLASSES = {
     }
   },
   Diviner = {
-    box_guid = "ae2ea4",
+    boxGuid = "ae2ea4",
     hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },

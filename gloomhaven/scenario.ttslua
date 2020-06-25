@@ -7,8 +7,9 @@ Scenario.LOCKED = "Locked"
 function Scenario.loadAll(content)
   local scenarioStickers = getObjectFromGUID(guids.MAP).getTable("tableML")
 
-  for number, state in pairs(content) do
-    local stickerGuid = Scenario.findStickerGuid(scenarioStickers, tonumber(number))
+  for _, scenario in pairs(content) do
+    local number, state = scenario.number, scenario.state
+    local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
     Wait.time(function() Scenario.placeSticker(stickerGuid, state) end, 1.1, 1)
   end
 end
@@ -30,7 +31,7 @@ function Scenario.save()
           state = Scenario.DONE
         end
       end
-      content[tostring(info.number)] = state
+      table.insert(content, {number=info.number, state=state})
     end
   end
 

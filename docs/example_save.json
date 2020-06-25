@@ -1,18 +1,17 @@
 {
     "global": {
         "prosperity": 5,
-        "sanctuary": 18,
         "achievements": [
             { "name": "City Rule: Militaristic" },
             { "name": "The Dead Invade" },
             { "name": "Ancient Technology", "count": 2 }
         ],
-        "scenarios": {
-            "1": "Done",
-            "2": "Open",
-            "3": "Locked",
-            "8": "Open"
-        }
+        "scenarios": [
+          { "number": 1, "state": "Done" },
+          { "number": 2, "state": "Open" },
+          { "number": 3, "state": "Locked" },
+          { "number": 8, "state": "Open" }
+        ]
     },
     "unlocked": {
       "classes": [
@@ -22,14 +21,15 @@
         "Power Core",
         "Wand of Infernos"
       ],
-      "special_conditions": {
-        "ancient_technology": true,
-        "drake_aided": true,
+      "sanctuary": 18,
+      "specialConditions": {
+        "ancientTechnology": true,
+        "drakeAided": true,
         "donations": 10,
-        "low_reputation": true,
-        "lowest_reputation": true,
-        "high_reputation": true,
-        "highest_reputation": true,
+        "lowReputation": true,
+        "lowestReputation": true,
+        "highReputation": true,
+        "highestReputation": true,
         "retired": true
       }
     },
@@ -38,90 +38,102 @@
         "reputation": -10,
         "location": "Gloomhaven",
         "notes": [
-            "Some notes",
-            "More notes"
+          "Some notes",
+          "More notes"
         ],
         "achievements": [
-            "First Steps",
-            "Jerkserah's Plans"
+          "First Steps",
+          "Jerkserah's Plans"
         ],
         "characters": [{
-            "class": "Brute",
-            "name": "Rambo",
-            "quest": "Finding the Cure",
-            "xp": 100,
-            "gold": 42,
-            "checkmarks": 4,
-            "perks": [
-              1, 3, 6
-            ],
-            "abilities": [
-              "Juggernaut",
-              "Hook and Chain"
-            ],
-            "items": [
-              { "name": "Iron Helmet", "position": "Head" },
-              { "name": "Hide Armor", "position": "Armor" },
-              { "name": "Poison Dagger", "position": "HandLeft" },
-              { "name": "Battle-Axe", "position": "HandRight" },
-              { "name": "Boots of Striding", "position": "Boots" },
-              { "name": "Minor Stamina Potion", "position": "Bag1" },
-              { "name": "Minor Power Potion", "position": "Bag2" },
-              { "name": "Minor Healing Potion", "position": "Bag3" }
-            ],
-            "notes": [
-              "My Note",
-              "More notes"
-            ],
-            "hidden_notes": [
-              "Don't look!",
-              "This is secret!"
-            ]
+          "class": "Brute",
+          "name": "Rambo",
+          "quest": "Finding the Cure",
+          "xp": 100,
+          "gold": 42,
+          "checkmarks": 4,
+          "perks": [
+            1, 3, 6
+          ],
+          "abilities": [
+            "Juggernaut",
+            "Hook and Chain"
+          ],
+          "items": [
+            { "name": "Iron Helmet", "position": "Head" },
+            { "name": "Hide Armor", "position": "Armor" },
+            { "name": "Poison Dagger", "position": "HandLeft" },
+            { "name": "Battle-Axe", "position": "HandRight" },
+            { "name": "Boots of Striding", "position": "Boots" },
+            { "name": "Minor Stamina Potion", "position": "Bag1" },
+            { "name": "Minor Power Potion", "position": "Bag2" },
+            { "name": "Minor Healing Potion", "position": "Bag3" }
+          ],
+          "notes": [
+            "My Note",
+            "More notes"
+          ],
+          "hiddenNotes": [
+            "Don't look!",
+            "This is secret!"
+          ]
         },
         {
-            "class": "Tinkerer",
-            "name": "Dave",
-            "quest": "Elemental Samples",
-            "xp": 50,
-            "gold": 42,
-            "perks": [
-              1
-            ],
-            "abilities": [
-              "Stamina Booster"
-            ],
-            "items": [
-              { "name": "Minor Healing Potion" }
-            ]
+          "class": "Tinkerer",
+          "name": "Dave",
+          "quest": "Elemental Samples",
+          "xp": 50,
+          "gold": 42,
+          "perks": [
+            1
+          ],
+          "abilities": [
+            "Stamina Booster"
+          ],
+          "items": [
+            { "name": "Minor Healing Potion" }
+          ]
         }]
     },
-    "enhancements" : {
-      "Brute": {
-        "Eye for an Eye": {
-          "1": "Plus 1",
-          "2": "Ice"
-        },
-        "Hook and Chain": {
-          "1": "Plus 1"
-        },
-        "Fatal Advance": {
-          "1": "Jump"
-        }
+    "enhancements" : [
+      { "class": "Brute",
+        "abilities": [
+          { "name": "Eye for an Eye",
+            "enhancements": [
+              { "position": 1, "enhancement": "Plus 1" },
+              { "position": 2, "enhancement": "Ice" }
+            ]
+          },
+          { "name": "Hook and Chain",
+            "enhancements": [
+              { "position": 1, "enhancement": "Plus 1" }
+            ]
+          },
+          { "name": "Fatal Advance",
+            "enhancements": [
+              { "position": 1, "enhancement": "Jump" }
+            ]
+          }
+        ]
       },
-      "Tinkerer": {
-        "Ink Bomb": {
-          "1": "Fire"
-        }
+      { "class": "Tinkerer",
+        "abilities": [
+          { "name": "Ink Bomb",
+            "enhancements": [
+              { "position": 1, "enhancement": "Fire" }
+            ]
+          }
+        ]
       }
-    },
+    ],
     "retired": [
       {
-          "player": "Alice",
-          "character": "Random Elf Name",
-          "class": "Spellweaver",
-          "quest": "Seeker of Xorn",
-          "level": 3,
-          "perks": 0
+        "player": "Alice",
+        "character": "Random Elf Name",
+        "class": "Spellweaver",
+        "quest": "Seeker of Xorn",
+        "level": 3,
+        "perks": 0
       },
       {
         "player": "Bob",
@@ -131,16 +143,16 @@
         "level": 4,
         "perks": 1
     }],
-    "events": {
-      "city": {
+    "events": [
+      { "deck": "city",
         "add": [39],
         "remove": [12],
         "bottomUp": [1, 2, 3, 4, 55, 6]
       },
-      "road": {
+      { "deck": "road",
         "add": [39],
         "remove": [12],
         "bottomUp": [1, 2, 3, 4, 55, 6]
       }
-    }
+    ]
 }

@@ -44,23 +44,24 @@ function Enhancement.loadAll(saveFile)
   end
   print("Loading Enhancements")
 
-  for className, abilities in pairs(saveFile.enhancements) do
-    Enhancement.loadForClass(className, abilities)
+  for _, enhanced in pairs(saveFile.enhancements) do
+    Enhancement.loadForClass(enhanced.class, enhanced.abilities)
   end
 end
 
 
 function Enhancement.loadForClass(className, abilities)
   local playerZone = Character.findZoneForClass(className)
-  for ability, enhancements in pairs(abilities) do
-    local enhancementInfo = Game.CLASSES[className].abilities[ability].enhancements
+  for _, ability in pairs(abilities) do
+    local abilityName, enhancements = ability.name, ability.enhancements
+    local enhancementInfo = Game.CLASSES[className].abilities[abilityName].enhancements
 
-    local abilityCard = Utils.findObjectInZone(playerZone, {name=ability})
+    local abilityCard = Utils.findObjectInZone(playerZone, {name=abilityName})
     if abilityCard then
       Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
     else
       local abilityDeck = Component.abilityDeck(playerZone)
-      local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=ability})
+      local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=abilityName})
       abilityDeck.takeObject({
         guid = abilityCard.guid,
         position = positions.getSafe(),
@@ -77,11 +78,11 @@ end
 
 
 function Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
-  for i, enhancement in pairs(enhancements) do
-    local position = enhancementInfo[tonumber(i)]
+  for _, enhancement in pairs(enhancements) do
+    local position = enhancementInfo[enhancement.position]
     abilityCard.addDecal({
-      name = "Enhancement " .. enhancement,
-      url = Enhancement.DECALS[enhancement],
+      name = "Enhancement " .. enhancement.enhancement,
+      url = Enhancement.DECALS[enhancement.enhancement],
       position = {position[1], Enhancement.Y_COORDINATE, position[2]},
       rotation = Enhancement.ROTATION,
       scale = Enhancement.SCALE
@@ -107,12 +108,13 @@ function Enhancement.saveInZone(playerZone, enhancements)
     return
   end
 
-  enhancements[class] = {}
+  local classEnhancements = { class=class, abilities={} }
+  table.insert(enhancements, classEnhancements)
   local abilityInfo = Game.CLASSES[class].abilities
 
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
     if Component.isAbilityCardForClass(object, class) then
-      Enhancement.saveForCard(object, abilityInfo, enhancements[class])
+      Enhancement.saveForCard(object, abilityInfo, classEnhancements.abilities)
     elseif Component.isAbilityDeck(object) then
       local abilityDeck = object
       local deckPosition = abilityDeck.getPosition()
@@ -121,12 +123,12 @@ function Enhancement.saveInZone(playerZone, enhancements)
           guid = abilityCard.guid,
           position = positions.getSafe(),
           callback_function = function(card)
-                                Enhancement.saveForCard(card, abilityInfo, enhancements[class])
+                                Enhancement.saveForCard(card, abilityInfo, classEnhancements.abilities)
                                 card.setPosition(deckPosition)
                               end
         })
         if abilityDeck.remainder then
-          Enhancement.saveForCard(abilityDeck.remainder, abilityInfo, enhancements[class])
+          Enhancement.saveForCard(abilityDeck.remainder, abilityInfo, classEnhancements.abilities)
           abilityDeck.remainder.setPosition(deckPosition)
           break
         end
@@ -144,11 +146,11 @@ function Enhancement.saveForCard(card, abilityInfo, classEnhancements)
   for _, decal in TableUtil.pairs(card.getDecals()) do
     local name = decal.name:gsub("Enhancement ", "")
     local nearestIndex = Enhancement.findNearestIndex(decal.position, enhancementInfo)
-    enhancements[tostring(nearestIndex)] = name
+    table.insert(enhancements, { position=nearestIndex, enhancement=name })
   end
 
   if TableUtil.isNotEmpty(enhancements) then
-    classEnhancements[ability] = enhancements
+    table.insert(classEnhancements, { name=ability, enhancements=enhancements })
   end
 end
 
