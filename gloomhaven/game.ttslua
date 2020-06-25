@@ -517,13 +517,13 @@ Game.CLASSES = {
       ["Crushing Grasp"] = { level = 1,
         enhancements = {[1]={-0.41, -0.76}}
       },
-      ["Forceful Storm"] = { level = 0,
+      ["Forceful Storm"] = { level = "X",
         enhancements = {[1]={-0.16, -0.93}, [2]={-0.41, -0.8}}
       },
-      ["Heaving Swing"] = { level = 0,
+      ["Heaving Swing"] = { level = "X",
         enhancements = {[1]={-0.41, -0.96}, [2]={-0.31, -0.79}}
       },
-      ["Nature's Lift"] = { level = 0,
+      ["Nature's Lift"] = { level = "X",
         enhancements = {[1]={-0.35, -0.75}, [2]={-0.32, -0.58}, [3]={-0.33, -0.42}}
       },
       ["Explosive Punch"] = { level = 2,
@@ -908,7 +908,7 @@ Game.CLASSES = {
       ["Ethereal Manifestation"] = { level = 9,
         enhancements = {[1]={0.19, -0.73}, [2]={-0.26, -0.73}, [3]={-0.27, -0.53}}
       },
-      ["Eternal Equilibrium (27("] = { level = 9,
+      ["Eternal Equilibrium"] = { level = 9,
         enhancements = {[1]={-0.46, -0.9}, [2]={-0.41, 0.47}}
       },
     }
