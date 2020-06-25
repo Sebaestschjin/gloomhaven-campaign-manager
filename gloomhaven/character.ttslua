@@ -59,7 +59,7 @@ function Character.loadCharacterSheet(playerZone, character)
     characterSheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
   end
   if character.hidden_notes then
-    characterSheet.UI.setAttribute("Notes", "text", table.concat(character.notes, "\n"))
+    characterSheet.UI.setAttribute("Notes", "text", table.concat(character.hidden_notes, "\n"))
   end
 end
 
