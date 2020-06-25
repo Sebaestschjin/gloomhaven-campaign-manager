@@ -2,34 +2,36 @@ Achievement = {}
 
 function Achievement.loadAll(content)
   print("Reading Achievements")
-  groupReady = {true}
+  Achievement.groupReady = {true}
 
   for i=1,5 do
-    groupReady[i+1] = false
+    Achievement.groupReady[i+1] = false
     local achievementGroup = {}
     for _, achievement in pairs(content) do
+      if not achievement.count then achievement.count = 1 end
       if achievement.count >= i then
         table.insert(achievementGroup, achievement.name)
       end
     end
 
     if next(achievementGroup) != nil then
-      Wait.condition(function() Achievement.loadGroup(i, achievementGroup) end, function() return groupReady[i] end)
+      Wait.condition(function() Achievement.loadGroup(i, achievementGroup) end,
+                     function() return Achievement.groupReady[i] end)
     end
   end
 end
 
 function Achievement.loadGroup(i, achievementGroup)
-  globalAchievementsBag = getObjectFromGUID(guids.ACHIEVEMENTS_BAG)
+  local globalAchievementsBag = getObjectFromGUID(guids.ACHIEVEMENTS_BAG)
 
   globalAchievementsBag.takeObject({
     guid=guids.ACHIEVEMENT_BOARD,
     callback_function = function(obj)
       for _, achievement in pairs(achievementGroup) do
-          local index = Achievement.findIndex(obj, achievement)
+        local index = Achievement.findIndex(obj, achievement)
         obj.call('clicked', index)
       end
-      groupReady[i+1] = true end
+      Achievement.groupReady[i+1] = true end
   })
 end
 
