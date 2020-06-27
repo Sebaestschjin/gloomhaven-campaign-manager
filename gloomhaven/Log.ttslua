@@ -1,0 +1,17 @@
+Log = {}
+
+function Log.error(text)
+  printToAll(text, "Red")
+end
+
+function Log.errorMessage(pre, message)
+  Log.error(pre .. ":\n    " .. message)
+end
+
+function Log.warning(text)
+  printToAll(text, "Yellow")
+end
+
+function Log.info(text)
+  printToAll(text, "Blue")
+end

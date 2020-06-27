@@ -2,8 +2,8 @@ saveHandler = {}
 
 #include !/common/constants
 #include !/common/utils
-#include !/common/TableUtil
-#include !/common/StringUtil
+#include !/common/tableUtil
+#include !/common/stringUtil
 
 #include component
 #include game
@@ -21,6 +21,7 @@ saveHandler = {}
 #include event
 #include sanctuary
 #include enhancement
+#include log
 
 saveHandler.SAVE_FILE = "Savefile"
 
@@ -28,20 +29,30 @@ function saveHandler.loadAll()
   local saveFile = Utils.readNotebook(saveHandler.SAVE_FILE)
 
   if not saveFile then
-    print("No notebook found containing the save file! Please add a notebook named " .. saveHandler.SAVE_FILE)
+    Log.error("No notebook found containing the save file!"
+              .. " Please add a notebook named " .. saveHandler.SAVE_FILE .. ".")
     return
   end
 
-  local content = JSON.decode(saveFile)
+  local status, content = pcall(function() return JSON.decode(saveFile) end)
+  if not status then
+    Log.error("The provided save file contains errors."
+              .. " The error message from Lua is also very cryptic and doesn't really help. :-("
+              .. " Make sure your save file is a valid JSON file and try again."
+              .. "\n" .. content)
+    return
+  end
 
   preparation.start(function() saveHandler.doLoadAll(content) end)
 end
 
 
 function saveHandler.doLoadAll(content)
-  Scenario.loadAll(content.global.scenarios)
-  Achievement.loadAll(content.global.achievements)
-  Prosperity.load(content.global.prosperity)
+  if content.global then
+    Scenario.loadAll(content.global.scenarios)
+    Achievement.loadAll(content.global.achievements)
+    Prosperity.load(content.global.prosperity)
+  end
   Unlocked.loadAll(content.unlocked)
   Party.load(content.party)
   Retirement.load(content.retired)

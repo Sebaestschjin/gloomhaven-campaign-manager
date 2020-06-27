@@ -1,12 +1,20 @@
 Prosperity = {}
 
 function Prosperity.load(value)
+  Log.info("Loading prosperity")
+
+  local status, message = pcall(function() Prosperity.doLoad(value) end)
+  if not status then
+    Log.errorMessage("Error loading Prosperity", message)
+  end
+end
+
+function Prosperity.doLoad(value)
   local map = getObjectFromGUID(guids.MAP)
   for i = 1, value do
     map.call("clickedPros", i)
   end
 end
-
 
 function Prosperity.save()
   local checkmarks = getObjectFromGUID(guids.MAP).getTable("Pros")

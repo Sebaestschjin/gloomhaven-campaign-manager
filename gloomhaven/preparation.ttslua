@@ -4,7 +4,7 @@ preparation = {}
 -- TODO why did I decide to put this in this class? XD Better of put that into the relevant parts
 
 function preparation.start(callback)
-  preparation.reveal_locked_characters(callback)
+  preparation.revealLockedCharacters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.SCENARIO_BOOK,
     smooth = false,
@@ -20,18 +20,18 @@ function preparation.start(callback)
 end
 
 
-function preparation.reveal_locked_characters(callback)
+function preparation.revealLockedCharacters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.LOCKED_CLASSES,
     smooth = false,
     callback_function = function(obj)
-      preparation.put_divinier_into_box(obj)
-      preparation.reveal_opening_conditions(callback) end
+      preparation.putDivinierIntoBox(obj)
+      preparation.revealOpeningConditions(callback) end
   })
 end
 
 
-function preparation.put_divinier_into_box(classes)
+function preparation.putDivinierIntoBox(classes)
   getObjectFromGUID(guids.FORGOTTEN_CIRCLES_BOX).takeObject({
     guid = Game.CLASSES.Diviner.boxGuid,
     smooth = false,
@@ -40,18 +40,18 @@ function preparation.put_divinier_into_box(classes)
 end
 
 
-function preparation.reveal_opening_conditions(callback)
+function preparation.revealOpeningConditions(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.OPENING_CONDITIONS,
     smooth = false,
     position = positions.OPENING_CONDITIONS,
     rotation = Rotation.NORTH,
-    callback_function = function() preparation.reveal_retirement_sheet(callback) end
+    callback_function = function() preparation.revealRetirementSheet(callback) end
   })
 end
 
 
-function preparation.reveal_retirement_sheet(callback)
+function preparation.revealRetirementSheet(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.RETIREMENT_SHEET,
     smooth = false,
