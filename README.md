@@ -76,14 +76,7 @@ You can generate the JSON manually. For a starting point, look at the `example_s
 
 
 # ToDo
-- [ ] Error handling
-- [ ] Logging
-- [ ] Usage documentation
-- [ ] Implement loading custom battle goals
-- [ ] Implement loading character decks
-- [ ] Implement loading JSON from web
 - [ ] Fix Elementalist "Eternal Equilibrium" ability
-- [ ] Repack gamebox when finished
 
 [this tool]: https://www.json2yaml.com/
 [the tool]: https://pmk65.github.io/jedemov2/dist/demo.html

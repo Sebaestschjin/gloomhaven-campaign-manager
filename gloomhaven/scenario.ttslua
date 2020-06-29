@@ -1,16 +1,67 @@
 Scenario = {}
 
+Scenario.MAX_VALUE = 115
 Scenario.OPEN = "Open"
 Scenario.DONE = "Done"
 Scenario.LOCKED = "Locked"
+Scenario.STATES = {Scenario.OPEN, Scenario.DONE, Scenario.LOCKED}
 
-function Scenario.loadAll(content)
+function Scenario.loadAll(scenarios)
+  Task.load("Scenarios", scenarios, Scenario.validate, Scenario.doLoad)
+end
+
+function Scenario.validate(scenarios)
+  local errors = {}
+  for i, scenario in pairs(scenarios) do
+    local number, state = scenario.number, scenario.state
+    if type(number) ~= "number" or number < 1 or number > Scenario.MAX_VALUE then
+      table.insert(errors, "Scenario '" .. tostring(number) .. "' does not exist."
+                           .. " Scenario won't be loaded")
+      scenarios[i] = nil
+    end
+    if not TableUtil.contains(Scenario.STATES, state) then
+      table.insert(errors, "Scenario '" .. tostring(number) .. "' has unknown state "
+                           .. "'" .. tostring(state) .. "'. Has to be one of ["
+                           .. table.concat(Scenario.STATES, ",") .. "]."
+                           .. " Will default to '" .. Scenario.OPEN .. "'.")
+      scenario.state = Scenario.OPEN
+    end
+  end
+
+  return true, errors
+end
+
+function Scenario.doLoad(scenarios)
   local scenarioStickers = getObjectFromGUID(guids.MAP).getTable("tableML")
 
-  for _, scenario in pairs(content) do
+  for _, scenario in pairs(scenarios) do
     local number, state = scenario.number, scenario.state
     local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
-    Wait.time(function() Scenario.placeSticker(stickerGuid, state) end, 1.1, 1)
+    Wait.time(function() Scenario.placeSticker(stickerGuid, number, state) end, 1.1, 1)
+  end
+end
+
+
+function Scenario.findStickerGuid(scenarioStickers, number)
+  for stickerGuid, info in pairs(scenarioStickers) do
+    if info.number == number then
+      return stickerGuid
+    end
+  end
+  return nil
+end
+
+function Scenario.placeSticker(stickerGuid, number, state)
+  Log.verbose("Placing scenario " .. tostring(number) .. " as " .. state)
+  local map = getObjectFromGUID(guids.MAP)
+  if state == Scenario.OPEN then
+    map.call("clickedML", stickerGuid)
+  elseif state == Scenario.DONE then
+    map.call("clickedML", stickerGuid)
+    map.call("oneClick", { stickerGuid })
+  elseif state == Scenario.LOCKED then
+    map.call("clickedML", stickerGuid)
+    map.call("triClick", { stickerGuid })
   end
 end
 
@@ -36,30 +87,4 @@ function Scenario.save()
   end
 
   return content
-end
-
-
-function Scenario.findStickerGuid(scenarioStickers, number)
-  for stickerGuid, info in pairs(scenarioStickers) do
-    if info.number == number then
-      return stickerGuid
-    end
-  end
-  return nil
-end
-
-
-function Scenario.placeSticker(stickerGuid, state)
-  local map = getObjectFromGUID(guids.MAP)
-  if state == Scenario.OPEN then
-    map.call("clickedML", stickerGuid)
-  elseif state == Scenario.DONE then
-    map.call("clickedML", stickerGuid)
-    map.call("oneClick", { stickerGuid })
-  elseif state == Scenario.LOCKED then
-    map.call("clickedML", stickerGuid)
-    map.call("triClick", { stickerGuid })
-  else
-    print("Unknown state: " .. tostring(state))
-  end
 end

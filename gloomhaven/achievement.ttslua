@@ -1,20 +1,46 @@
 Achievement = {}
 
-function Achievement.loadAll(content)
-  print("Reading Achievements")
+function Achievement.loadAll(achievements)
+  Task.load("Achievements", achievements, Achievement.validate, Achievement.doLoad)
+end
+
+function Achievement.validate(achievements)
+  errors = {}
+  for i, achievement in pairs(achievements) do
+    local name, count = achievement.name, achievement.count
+    if not Game.ACHIEVEMENTS[name] then
+      table.insert(errors, "Achievement with name '" .. tostring(name) .. " does not exist."
+                           .. " Achievement won't be loaded.")
+      achievements[i] = nil
+    else
+      local maxCount = Game.ACHIEVEMENTS[name].maxCount
+      if count and count < 1 or count > maxCount then
+        local newCount = math.min(math.max(1, count), maxCount)
+        table.insert(errors, "Achievement has a maximum count of '" .. maxCount
+                             .. "', but '" .. count .."' was given."
+                             .. " Will default to '" .. newCount .. "'")
+        achievements[i].count = newCount
+      end
+    end
+  end
+
+  return true, errors
+end
+
+function Achievement.doLoad(achievements)
   Achievement.groupReady = {true}
 
   for i=1,5 do
     Achievement.groupReady[i+1] = false
     local achievementGroup = {}
-    for _, achievement in pairs(content) do
+    for _, achievement in pairs(achievements) do
       if not achievement.count then achievement.count = 1 end
       if achievement.count >= i then
         table.insert(achievementGroup, achievement.name)
       end
     end
 
-    if next(achievementGroup) != nil then
+    if TableUtil.isNotEmpty(achievementGroup) then
       Wait.condition(function() Achievement.loadGroup(i, achievementGroup) end,
                      function() return Achievement.groupReady[i] end)
     end

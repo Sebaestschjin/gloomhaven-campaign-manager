@@ -2016,6 +2016,90 @@ Game.CLASSES = {
   }
 }
 
+Game.ACHIEVEMENTS = {
+  ["Ancient Technology"] = {
+    maxCount = 5
+  },
+  ["Artifact: Cleansed"] = {
+    maxCount = 1
+  },
+  ["Artifact: Lost"] = {
+    maxCount = 1
+  },
+  ["Artifact: Recovered"] = {
+    maxCount = 1
+  },
+  ["City Rule: Demonic"] = {
+    maxCount = 1
+  },
+  ["City Rule: Economic"] = {
+    maxCount = 1
+  },
+  ["City Rule: Militaristic"] = {
+    maxCount = 1
+  },
+  ["End of Corruption"] = {
+    maxCount = 3
+  },
+  ["End of Gloom"] = {
+    maxCount = 1
+  },
+  ["End of the Invasion"] = {
+    maxCount = 1
+  },
+  ["The Annihilation of the Order"] = {
+    maxCount = 1
+  },
+  ["The Dead Invade"] = {
+    maxCount = 1
+  },
+  ["The Rift Neutralized"] = {
+    maxCount = 1
+  },
+  ["The Drake Aided"] = {
+    maxCount = 1
+  },
+  ["The Drake Slain"] = {
+    maxCount = 1
+  },
+  ["The Edge of Darkness"] = {
+    maxCount = 1
+  },
+  ["The Merchant Flees"] = {
+    maxCount = 1
+  },
+  ["The Power of Enhancement"] = {
+    maxCount = 1
+  },
+  ["The Voice Freed"] = {
+    maxCount = 1
+  },
+  ["The Voice Silenced"] = {
+    maxCount = 1
+  },
+  ["Water-Breathing"] = {
+    maxCount = 1
+  },
+  ["Through the Portal"] = {
+    maxCount = 1
+  },
+  ["Severed Ties"] = {
+    maxCount = 1
+  },
+  ["Knowledge is Power"] = {
+    maxCount = 4
+  },
+  ["Peril Adverted"] = {
+    maxCount = 4
+  },
+  ["Pieces of an Artifact"] = {
+    maxCount = 3
+  },
+  ["Mechanical Splendor"] = {
+    maxCount = 1
+  },
+}
+
 -- Information about Personal quests.
 Game.QUESTS = {
   ["A Helping Hand"] = {

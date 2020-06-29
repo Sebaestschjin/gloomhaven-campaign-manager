@@ -1,14 +1,40 @@
 Sanctuary = {}
 
+Sanctuary.MAX_VALUE = 70
+
 function Sanctuary.load(value)
-  local map = getObjectFromGUID(guids.MAP)
-  map.call('unseal')
-  Utils.waitForObject(guids.SANCTUARY_STICKER, function() Sanctuary.getLevel(value) end)
+  if not value then
+    return
+  end
+
+  Task.load("Sanctuary", value, Sanctuary.validate, Sanctuary.doLoad)
 end
 
+function Sanctuary.validate(value)
+  return type(value) == "number"
+          and value >= 0
+          and value <= Sanctuary.MAX_VALUE
+end
+
+function Sanctuary.doLoad(value)
+  getObjectFromGUID(guids.MAP).call('unseal')
+  Utils.waitForObject(guids.SANCTUARY_STICKER, function() Sanctuary.setLevel(value) end)
+end
+
+function Sanctuary.setLevel(value)
+  local sanctuarySticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
+  for i = 0, value-1 do
+    sanctuarySticker.call("clickedPros", i)
+  end
+end
 
 function Sanctuary.save()
-  local checkmarks = getObjectFromGUID(guids.SANCTUARY_STICKER).getTable("Pros")
+  local sanctuarySticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
+  if not sanctuarySticker then
+    return 0
+  end
+
+  local checkmarks = sanctuarySticker.getTable("Pros")
   local maxValue = -1
   for i, checked in pairs(checkmarks) do
     if checked and tonumber(i) > maxValue then
@@ -17,12 +43,4 @@ function Sanctuary.save()
   end
 
   return maxValue + 1
-end
-
-
-function Sanctuary.getLevel(value)
-  local sanctuary_sticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
-  for i = 0, value-1 do
-    sanctuary_sticker.call("clickedPros", i)
-  end
 end

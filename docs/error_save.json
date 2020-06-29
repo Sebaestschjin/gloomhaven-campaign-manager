@@ -1,0 +1,22 @@
+{
+    "global": {
+        "prosperity": 100,
+        "scenarios": [
+          { "number": null, "state": "Done" },
+          { "state": "Locked" },
+          { "number": 0, "state": "Done" },
+          { "number": 1, "state": null },
+          { "number": 2 },
+          { "number": 300, "state": "Open" },
+          { "number": 4, "state": "Exists" }
+        ],
+        "achievements": [
+            { "name": null },
+            { },
+            { "count": 1 },
+            { "name": "Ancient Technology", "count": 6 },
+            { "name": "The Dead Invade", "count": 0 },
+            { "name": "City Rule: Militaristic", "count": -1 }
+        ]
+    }
+}

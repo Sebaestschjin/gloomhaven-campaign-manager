@@ -1,0 +1,30 @@
+Task = {}
+
+function Task.load(name, input, validator, executor)
+  if not input then
+    return
+  end
+  Log.info("Loading " .. name)
+
+  if not Task.validate(name, input, validator) then
+    Log.error("Loading " .. name .. " cancelled")
+    return
+  end
+
+  local status, message = pcall(function() executor(input) end)
+  if not status then
+    Log.errorMessage("Error loading " .. name, message)
+  end
+end
+
+
+function Task.validate(name, input, validator)
+  local status, messages = validator(input)
+  if messages then
+    for _, message in pairs(messages) do
+      Log.warningMessage(name, message)
+    end
+  end
+
+  return status
+end

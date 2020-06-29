@@ -1,17 +1,34 @@
 Log = {}
 
+function Log.fatal(text)
+  text = "Fatal Error! This is definitely a bug!\n    " .. text
+  printToAll(text, "Red")
+end
+
 function Log.error(text)
   printToAll(text, "Red")
 end
 
 function Log.errorMessage(pre, message)
-  Log.error(pre .. ":\n    " .. message)
+  Log.error(Log.fromMessage(pre, message))
 end
 
 function Log.warning(text)
   printToAll(text, "Yellow")
 end
 
+function Log.warningMessage(pre, message)
+  Log.warning(Log.fromMessage(pre, message))
+end
+
 function Log.info(text)
   printToAll(text, "Blue")
+end
+
+function Log.verbose(text)
+  log(text, nil, "verbose")
+end
+
+function Log.fromMessage(pre, message)
+  return pre .. ":\n    " .. message
 end

@@ -1,12 +1,17 @@
 Prosperity = {}
 
-function Prosperity.load(value)
-  Log.info("Loading prosperity")
+Prosperity.MAX_VALUE = 63
 
-  local status, message = pcall(function() Prosperity.doLoad(value) end)
-  if not status then
-    Log.errorMessage("Error loading Prosperity", message)
+function Prosperity.load(value)
+  Task.load("Prosperity", value, Prosperity.validate, Prosperity.doLoad)
+end
+
+function Prosperity.validate(value)
+  if type(value) ~= "number" or value < 0 or value > Prosperity.MAX_VALUE then
+    return false, {"Prosperity value '" .. value .. "' is not valid."
+                   .. " Has to be in range [0, " .. Prosperity.MAX_VALUE .. "]."}
   end
+  return true
 end
 
 function Prosperity.doLoad(value)
@@ -27,7 +32,6 @@ function Prosperity.save()
 
   return maxValue + 1
 end
-
 
 function Prosperity.getLevel()
   return getObjectFromGUID(guids.MAP).call("getProsLevel", {})

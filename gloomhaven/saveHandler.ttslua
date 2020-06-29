@@ -1,27 +1,28 @@
 saveHandler = {}
 
 #include !/common/constants
-#include !/common/utils
 #include !/common/tableUtil
 #include !/common/stringUtil
+#include !/common/utils
 
 #include component
 #include game
+#include log
+#include task
 
+#include achievement
+#include character
+#include enhancement
+#include event
+#include party
 #include preparation
 #include prosperity
-#include scenario
-#include achievement
-#include unlocked
-#include party
-#include character
-#include shop
-#include retirement
 #include quest
-#include event
+#include retirement
 #include sanctuary
-#include enhancement
-#include log
+#include scenario
+#include shop
+#include unlocked
 
 saveHandler.SAVE_FILE = "Savefile"
 

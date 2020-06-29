@@ -4,6 +4,7 @@ preparation = {}
 -- TODO why did I decide to put this in this class? XD Better of put that into the relevant parts
 
 function preparation.start(callback)
+  preparation.verify()
   preparation.revealLockedCharacters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.SCENARIO_BOOK,
@@ -19,6 +20,13 @@ function preparation.start(callback)
   })
 end
 
+-- Verifies that the script can acutally run, by checking if needed objects exists.
+function preparation.verify()
+  assert(getObjectFromGUID(guids.MAP), "Map object is missing")
+  assert(getObjectFromGUID(guids.MAP).getTable("tableML"), "Scenario information missing")
+  assert(getObjectFromGUID(guids.MAP).getTable("Pros"), "Prosperity information missing")
+  assert(getObjectFromGUID(guids.GAMEBOX), "Gamebox is missing")
+end
 
 function preparation.revealLockedCharacters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
