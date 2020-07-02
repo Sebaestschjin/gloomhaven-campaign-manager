@@ -466,7 +466,7 @@ Game.CLASSES = {
     isStartingClass = true,
     boxGuid = "ec1d2a",
     hp = Game.HP.HIGH,
-    perk = {
+    perks = {
       [1] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },
       [2] = { remove = {"(-1)"}, add = {"(+1)"}},
       [3] = { remove = {"(-1)"}, add = {"(+1)"} },
@@ -1464,7 +1464,7 @@ Game.CLASSES = {
   Sawbones = {
     boxGuid = "e5148c",
     Game.HP.MEDIUM,
-    perk = {
+    perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
       [3] = { remove = {"(+0)", "(+0)", "(+0)", "(+0)"} },

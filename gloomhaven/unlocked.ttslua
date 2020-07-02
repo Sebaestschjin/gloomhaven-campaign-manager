@@ -3,7 +3,7 @@ Unlocked = {}
 function Unlocked.loadAll(unlocked)
   Task.load("Unlocked Classes", unlocked.classes, Unlocked.validateClasses, Unlocked.loadClasses)
   Task.load("Unlocked Items", unlocked.items, Unlocked.validateItems, Unlocked.loadItems)
-  Task.load("Opening Conditions", unlocked.specialConditions, Task.success, Unlocked.loadOpeningConditions)
+  Task.load("Opening Conditions", unlocked.specialConditions, Unlocked.validateOpeningConditions, Unlocked.loadOpeningConditions)
   Sanctuary.load(unlocked.sanctuary)
 end
 
@@ -69,8 +69,12 @@ function Unlocked.loadItems(items)
   end
 end
 
+function Unlocked.validateOpeningConditions()
+  return true, {}
+end
+
 function Unlocked.loadOpeningConditions(openingConditions)
-  Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.doLoadOpeningConditions(unlocked.specialConditions) end)
+  Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.doLoadOpeningConditions(openingConditions) end)
 end
 
 function Unlocked.doLoadOpeningConditions(openingConditions)

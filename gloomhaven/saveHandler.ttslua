@@ -56,7 +56,7 @@ function saveHandler.doLoadAll(content)
     Prosperity.load(content.global.prosperity)
   end
   Unlocked.loadAll(content.unlocked)
-  -- Party.load(content.party)
+  Party.load(content.party)
   Retirement.load(content.retired)
   Shop.load()
   Event.loadAll(content.events)

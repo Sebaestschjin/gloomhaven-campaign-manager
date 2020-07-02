@@ -68,11 +68,14 @@ function Character.loadMaxHp(playerZone, character)
   local characterInfo = Game.CLASSES[character.class]
   local level = Character.getLevel(character.xp)
   local maxHealth = characterInfo.hp[level]
+  local startingHealth = characterInfo.hp[1]
 
   Character.loadFigureHealth(playerZone, character.class, maxHealth)
-  local tokenName = characterInfo.hp[1] .. " hp"
-  local healthToken = Utils.findObjectInZone(playerZone, {name=tokenName})
-  healthToken.setState(maxHealth)
+  if maxHealth > startingHealth then
+    local tokenName = startingHealth .. " hp"
+    local healthToken = Utils.findObjectInZone(playerZone, {name=tokenName})
+    healthToken.setState(maxHealth)
+  end
 
   if characterInfo.extraFigure then
     maxHealth = characterInfo.extraFigure.hp[level]
@@ -137,31 +140,27 @@ end
 
 
 function Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, info)
-  if info.add then
-    for _, card in pairs(info.add) do
-      if additionalModifierDeck.tag == Tag.CARD then
-        additionalModifierDeck.putObject(modifierDeck)
-        break
-      end
-      local foundCard = Character.findModifierCard(additionalModifierDeck, card)
-      additionalModifierDeck.takeObject({
-        guid = foundCard.guid,
-        position = positions.getSafe(),
-        smooth = false,
-        callback_function = function(card) card.putObject(modifierDeck) end
-      })
+  for _, card in TableUtil.pairs(info.add) do
+    if additionalModifierDeck.tag == Tag.CARD then
+      additionalModifierDeck.putObject(modifierDeck)
+      break
     end
+    local foundCard = Character.findModifierCard(additionalModifierDeck, card)
+    additionalModifierDeck.takeObject({
+      guid = foundCard.guid,
+      position = positions.getSafe(),
+      smooth = false,
+      callback_function = function(card) card.putObject(modifierDeck) end
+    })
   end
 
-  if info.remove then
-    for _, card in pairs(info.remove) do
-      local foundCard = Character.findModifierCard(modifierDeck, card)
-      modifierDeck.takeObject({
-        guid = foundCard.guid,
-        position = positions.getSafe(),
-        smooth = false,
-        callback_function = function(card) card.destruct() end})
-    end
+  for _, card in TableUtil.pairs(info.remove) do
+    local foundCard = Character.findModifierCard(modifierDeck, card)
+    modifierDeck.takeObject({
+      guid = foundCard.guid,
+      position = positions.getSafe(),
+      smooth = false,
+      callback_function = function(card) card.destruct() end})
   end
 
   if info.ignore then
