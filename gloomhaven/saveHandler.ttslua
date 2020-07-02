@@ -9,6 +9,7 @@ saveHandler = {}
 #include game
 #include log
 #include task
+#include error
 
 #include achievement
 #include character
@@ -55,11 +56,11 @@ function saveHandler.doLoadAll(content)
     Prosperity.load(content.global.prosperity)
   end
   Unlocked.loadAll(content.unlocked)
-  Party.load(content.party)
+  -- Party.load(content.party)
   Retirement.load(content.retired)
   Shop.load()
   Event.loadAll(content.events)
-  Wait.time(function() Enhancement.loadAll(content) end, 7) -- TODO just a workaround until Task module is done
+  Enhancement.loadAll(content.enhancements)
 end
 
 

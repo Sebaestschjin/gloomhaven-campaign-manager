@@ -1,12 +1,8 @@
 Sanctuary = {}
 
-Sanctuary.MAX_VALUE = 70
+Sanctuary.MAX_VALUE = 90
 
 function Sanctuary.load(value)
-  if not value then
-    return
-  end
-
   Task.load("Sanctuary", value, Sanctuary.validate, Sanctuary.doLoad)
 end
 

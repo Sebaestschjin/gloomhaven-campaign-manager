@@ -1,5 +1,14 @@
 #include saveHandler
 
+Enhancement.NUMBERS = {
+  "http://cloud-3.steamusercontent.com/ugc/929311677225889607/DFA4EF43DC2D1A8B6F1C7F22E7C31718E35CCB31/",
+  "http://cloud-3.steamusercontent.com/ugc/929311677225890374/9B9B38BE2BB6A23EC21C977911FEC8915C74FF19/",
+  "http://cloud-3.steamusercontent.com/ugc/929311677225891903/93FF8C7F051FDD06DAEBD17F2BBD917960CB1779/",
+  "http://cloud-3.steamusercontent.com/ugc/929311677225892191/F2D0FC8179C04D3E4BFD2A546FAD7BC76D813091/",
+  "http://cloud-3.steamusercontent.com/ugc/929311677225892469/3DC5E471FC5F2CB1D6DBFC91DF5ADB2751A52E12/",
+  "http://cloud-3.steamusercontent.com/ugc/929311677225892918/3720A0E91CA48BB3972BBE924B26A34FFA34F57F/"
+}
+
 function onCollisionEnter(collision_info)
   local obj = collision_info.collision_object
 

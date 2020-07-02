@@ -8,7 +8,7 @@
           { "number": 1, "state": null },
           { "number": 2 },
           { "number": 300, "state": "Open" },
-          { "number": 4, "state": "Exists" }
+          { "number": 4, "state": "Non Existent" }
         ],
         "achievements": [
             { "name": null },
@@ -18,5 +18,47 @@
             { "name": "The Dead Invade", "count": 0 },
             { "name": "City Rule: Militaristic", "count": -1 }
         ]
-    }
+    },
+    "unlocked": {
+      "classes": [
+        "Non Existent",
+        "Brute"
+      ],
+      "items": [
+        "Non Existent"
+      ],
+      "sanctuary": 100
+    },
+    "enhancements" : [
+      { "class": "Non Existent" },
+      { "class": null },
+      { "class": "Brute",
+        "abilities": [
+          { "name": "Non Existent" },
+          { "name": null },
+          { "name": "Eye for an Eye",
+            "enhancements": [
+              { "position": null, "enhancement": "Plus 1" },
+              { "position": 10, "enhancement": "Plus 1" },
+              { "position": 1, "enhancement": "Non Existent" },
+              { "position": 2, "enhancement": null }
+            ]
+          }
+        ]
+      }
+    ],
+    "retired": [
+      {
+        "quest": "Non Existent"
+      }
+    ],
+    "events": [
+      { "deck": "Non Existent" },
+      { "deck": null },
+      { "deck": "road",
+        "add": [200],
+        "remove": [300],
+        "bottomUp": [400]
+      }
+    ]
 }

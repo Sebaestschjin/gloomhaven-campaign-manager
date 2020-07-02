@@ -11,24 +11,20 @@ function Scenario.loadAll(scenarios)
 end
 
 function Scenario.validate(scenarios)
-  local errors = {}
   for i, scenario in pairs(scenarios) do
     local number, state = scenario.number, scenario.state
     if type(number) ~= "number" or number < 1 or number > Scenario.MAX_VALUE then
-      table.insert(errors, "Scenario '" .. tostring(number) .. "' does not exist."
-                           .. " Scenario won't be loaded")
+      Error.add("Scenario '%s' does not exist. Scenario won't be loaded", number)
       scenarios[i] = nil
     end
     if not TableUtil.contains(Scenario.STATES, state) then
-      table.insert(errors, "Scenario '" .. tostring(number) .. "' has unknown state "
-                           .. "'" .. tostring(state) .. "'. Has to be one of ["
-                           .. table.concat(Scenario.STATES, ",") .. "]."
-                           .. " Will default to '" .. Scenario.OPEN .. "'.")
+      Error.add("Scenario '%s' has unknown state '%s'. Has to be one of [%s]. Will default to '%s'.",
+                number, state, table.concat(Scenario.STATES, ","), Scenario.OPEN)
       scenario.state = Scenario.OPEN
     end
   end
 
-  return true, errors
+  return true, Error.pop()
 end
 
 function Scenario.doLoad(scenarios)

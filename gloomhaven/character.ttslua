@@ -187,7 +187,7 @@ function Character.loadItems(playerZone, character)
     else
       itemPosition = positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
     end
-    Shop.getItem(item.name, itemPosition)
+    Shop.takeItem(item.name, itemPosition)
     itemsText = itemsText .. "\n" .. item.name
   end
   characterSheet.UI.setAttribute("Items", "text", itemsText)

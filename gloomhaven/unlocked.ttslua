@@ -1,31 +1,36 @@
 Unlocked = {}
 
 function Unlocked.loadAll(unlocked)
-  if unlocked.classes then
-    Utils.waitForObject(guids.LOCKED_CLASSES, function() Unlocked.loadClasses(unlocked.classes) end)
-  end
-
-  if unlocked.items then
-    Unlocked.loadItems(unlocked.items)
-  end
-
-  if unlocked.specialConditions then
-    Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.loadOpeningConditions(unlocked.specialConditions) end)
-  end
-
-  if unlocked.sanctuary then
-    Sanctuary.load(unlocked.sanctuary)
-  end
+  Task.load("Unlocked Classes", unlocked.classes, Unlocked.validateClasses, Unlocked.loadClasses)
+  Task.load("Unlocked Items", unlocked.items, Unlocked.validateItems, Unlocked.loadItems)
+  Task.load("Opening Conditions", unlocked.specialConditions, Task.success, Unlocked.loadOpeningConditions)
+  Sanctuary.load(unlocked.sanctuary)
 end
 
+function Unlocked.validateClasses(classes)
+  for i, class in pairs(classes) do
+    local classInfo = Game.CLASSES[class]
+    if not classInfo then
+      Error.add("Class '%s' does not exist. Class won't be loaded.", class)
+      classes[i] = nil
+    elseif classInfo.isStartingClass then
+      Error.add("Class '%s' is already a starting class and doesn't need unlocking.", class)
+      classes[i] = nil
+    end
+  end
+
+  return true, Error.pop()
+end
 
 function Unlocked.loadClasses(classes)
-  print("Loading unlocked classes")
+  Utils.waitForObject(guids.LOCKED_CLASSES, function() Unlocked.doLoadClasses(classes) end)
+end
+
+function Unlocked.doLoadClasses(classes)
   for i, class in pairs(classes) do
     Unlocked.loadClass(i, class)
   end
 end
-
 
 function Unlocked.loadClass(number, class)
   local characterBoxes = getObjectFromGUID(guids.LOCKED_CLASSES)
@@ -43,17 +48,32 @@ function Unlocked.loadClass(number, class)
 end
 
 
+function Unlocked.validateItems(items)
+  for i, item in pairs(items) do
+    local foundItem = Shop.findItem(item)
+    if not foundItem then
+      Error.add("The item '%s' does not exist. Won't load item.", item)
+      items[i] = nil
+    end
+  end
+  return true, Error.pop()
+end
+
+
 function Unlocked.loadItems(items)
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
 
   for _, item in pairs(items) do
-    Shop.getRewardItem(item, shopPosition)
+    Shop.takeRewardItem(item, shopPosition)
   end
 end
 
-
 function Unlocked.loadOpeningConditions(openingConditions)
+  Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.doLoadOpeningConditions(unlocked.specialConditions) end)
+end
+
+function Unlocked.doLoadOpeningConditions(openingConditions)
   Unlocked.setOpeningCondition(openingConditions.ancientTechnology, "Ancient")
   Unlocked.setOpeningCondition(openingConditions.drakeAided, "Drake")
   Unlocked.setOpeningCondition(openingConditions.lowReputation, "RepN10")

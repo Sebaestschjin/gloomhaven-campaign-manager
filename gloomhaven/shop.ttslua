@@ -29,7 +29,22 @@ function Shop.save()
 end
 
 
-function Shop.getItem(name, position)
+function Shop.findItem(name)
+  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  for i=1, 14 do
+    local pos = Utils.getSnapPosition(cityMat, i)
+    local deck = cityMat.call('checkForDeck', pos)
+    if deck then
+      local item = Utils.findObjectInfoInStack(deck, {name=name, plain=true})
+      if item then
+        return item
+      end
+    end
+  end
+end
+
+
+function Shop.takeItem(name, position)
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   for i=1, 14 do
     local pos = Utils.getSnapPosition(cityMat, i)
@@ -51,7 +66,7 @@ function Shop.getItem(name, position)
 end
 
 
-function Shop.getRewardItem(name, position)
+function Shop.takeRewardItem(name, position)
   local decks = {getObjectFromGUID(guids.RANDOM_RED_DECK),
                  getObjectFromGUID(guids.RANDOM_BLUE_DECK),
                  getObjectFromGUID(guids.REWARDS_DECK)}

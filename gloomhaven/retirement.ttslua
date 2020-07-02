@@ -3,12 +3,23 @@ Retirement = {}
 Retirement.COLUMNS = 5
 
 function Retirement.load(retired)
+  Task.load("Retirements", retired, Retirement.validate, Retirement.doLoad)
+end
+
+function Retirement.validate(retired)
+  for i, retire in pairs(retired) do
+    if retire.quest and not Game.QUESTS[retire.quest] then
+      Error.add("A quest named '%s' does not exist. Can't exclude it from the deck.", retire.quest)
+    end
+  end
+  return true, Error.pop()
+end
+
+function Retirement.doLoad(retired)
   Utils.waitForObject(guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
 end
 
-
 function Retirement.startLoading(retired)
-  print("Loading Retirements")
   local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
 
   for i, retirement in pairs(retired) do

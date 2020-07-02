@@ -14,13 +14,50 @@ Event.DECKS = {
 }
 
 function Event.loadAll(events)
-  if not events then return end
+  Task.load("Events", events, Event.validate, Event.doLoad)
+end
 
+function Event.validate(events)
+  for i, eventDeck in pairs(events) do
+    if not Event.DECKS[eventDeck.deck] then
+      Error.add("An event deck named '%s' does not exist.", eventDeck.deck)
+      events[i] = nil
+    else
+      Event.validateEventNumbers(eventDeck.deck, eventDeck.add)
+      Event.validateEventNumbers(eventDeck.deck, eventDeck.remove)
+      Event.validateEventNumbers(eventDeck.deck, eventDeck.bottomUp)
+    end
+  end
+
+  return true, Error.pop()
+end
+
+
+function Event.validateEventNumbers(deckName, events)
+  if not events then
+    return
+  end
+
+  for i, event in pairs(events) do
+    if event > 30 then
+      local deck = getObjectFromGUID(Event.DECKS[deckName].deckGuid)
+      local info = Utils.findObjectInfoInStack(deck, {name=string.format("%02d", event)})
+      if not info then
+        Error.add("An event with number '%s' does not exist for deck '%s'.",
+                  event, deckName)
+        events[i] = nil
+      end
+    end
+  end
+end
+
+
+
+function Event.doLoad(events)
   for _, eventDeck in pairs(events) do
     Event.load(eventDeck)
   end
 end
-
 
 
 function Event.load(events)
