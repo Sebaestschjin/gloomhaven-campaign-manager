@@ -20,6 +20,10 @@ Game.HP = {
 -- XP Requirements per level
 Game.XP_REQUIREMENTS = {0, 45, 95, 150, 210, 275, 345, 420, 500}
 
+Game.ITEMS = {
+  Prosperity = {14, 21, 28, 35, 42, 49, 56, 63, 70} -- max item number per prosperity level
+}
+
 -- Information about all character classes.
 -- Contains: name (as the key)
 --           GUID of the box containing the character

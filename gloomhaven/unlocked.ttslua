@@ -67,7 +67,7 @@ function Unlocked.loadItems(items)
   local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
 
   for _, item in pairs(items) do
-    Shop.takeRewardItem(item, shopPosition)
+    Shop.takeItem(item, shopPosition)
   end
 end
 

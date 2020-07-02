@@ -67,7 +67,7 @@
             { "name": "Boots of Striding", "position": "Boots" },
             { "name": "Minor Stamina Potion", "position": "Bag1" },
             { "name": "Minor Power Potion", "position": "Bag2" },
-            { "name": "Minor Healing Potion", "position": "Bag3" }
+            { "name": "Major Healing Potion", "position": "Bag3" }
           ],
           "notes": [
             "My Note",

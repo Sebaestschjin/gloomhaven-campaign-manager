@@ -12,7 +12,6 @@ end
 
 
 function Shop.save()
-  -- TODO this also has to take character items into account
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
   local shopDeck = cityMat.call('checkForDeck', shopPosition)
@@ -44,7 +43,7 @@ function Shop.findItem(name)
 end
 
 
-function Shop.takeItem(name, position)
+function Shop.takeItem(name, position, rotation)
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   for i=1, 14 do
     local pos = Utils.getSnapPosition(cityMat, i)
@@ -55,30 +54,11 @@ function Shop.takeItem(name, position)
         deck.takeObject({
           guid = item.guid,
           smooth = false,
-          rotation = Rotation.NORTH,
-          callback_function = function(card) card.setPosition(position) end,
-          flip = true
+          position = position,
+          rotation = rotation,
         })
         return
       end
-    end
-  end
-end
-
-
-function Shop.takeRewardItem(name, position)
-  local decks = {getObjectFromGUID(guids.RANDOM_RED_DECK),
-                 getObjectFromGUID(guids.RANDOM_BLUE_DECK),
-                 getObjectFromGUID(guids.REWARDS_DECK)}
-
-  for _, deck in pairs(decks) do
-    local item = Utils.findObjectInfoInStack(deck, {name=name})
-    if item then
-      deck.takeObject({
-        guid = item.guid,
-        position = position,
-        smooth = false
-      })
     end
   end
 end

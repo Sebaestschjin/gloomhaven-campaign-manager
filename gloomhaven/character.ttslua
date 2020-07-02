@@ -233,7 +233,7 @@ function Character.loadItems(playerZone, character)
     else
       itemPosition = positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
     end
-    Shop.takeItem(item.name, itemPosition)
+    Shop.takeItem(item.name, itemPosition, Rotation.NORTH)
     itemsText = itemsText .. "\n" .. item.name
   end
   characterSheet.UI.setAttribute("Items", "text", itemsText)

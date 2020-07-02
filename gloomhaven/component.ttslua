@@ -143,7 +143,9 @@ function Component.isRewardItemCard(item)
   description = string.gsub(description, "red", "")
   description = string.gsub(description, "blue", "")
 
-  return tonumber(description) > 70
+  local prosperity = Prosperity.getLevel()
+
+  return tonumber(description) > Game.ITEMS.Prosperity[prosperity]
 end
 
 --- Returns true if the given object description is a possible item card's description.
