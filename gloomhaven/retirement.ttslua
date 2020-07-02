@@ -42,6 +42,9 @@ end
 
 function Retirement.save()
   local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
+  if not retirementSheet then
+    return {}
+  end
 
   local retired = {}
   local retiredCharacter = {}

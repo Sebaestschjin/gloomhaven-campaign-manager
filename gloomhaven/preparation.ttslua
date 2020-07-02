@@ -1,11 +1,8 @@
-preparation = {}
+Preparation = {}
 
--- TODO this is also needed in the end as a finishing step to return this stuff
--- TODO why did I decide to put this in this class? XD Better of put that into the relevant parts
-
-function preparation.start(callback)
-  preparation.verify()
-  preparation.revealLockedCharacters(callback)
+function Preparation.start(callback)
+  Preparation.verify()
+  Preparation.fix(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.SCENARIO_BOOK,
     smooth = false,
@@ -20,26 +17,36 @@ function preparation.start(callback)
   })
 end
 
--- Verifies that the script can acutally run, by checking if needed objects exists.
-function preparation.verify()
+-- Verifies that the script can actually run, by checking if needed objects exists.
+function Preparation.verify()
   assert(getObjectFromGUID(guids.MAP), "Map object is missing")
   assert(getObjectFromGUID(guids.MAP).getTable("tableML"), "Scenario information missing")
   assert(getObjectFromGUID(guids.MAP).getTable("Pros"), "Prosperity information missing")
   assert(getObjectFromGUID(guids.GAMEBOX), "Gamebox is missing")
 end
 
-function preparation.revealLockedCharacters(callback)
+function Preparation.fix(callback)
+  Preparation.fixAbility("Brute", "Devasttating Hack", "Devastating Hack")
+
+  Preparation.revealLockedCharacters(callback)
+end
+
+function Preparation.fixAbility(class, name, realName)
+  Game.CLASSES[class].abilities[name] = Game.CLASSES[class].abilities[realName]
+end
+
+function Preparation.revealLockedCharacters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.LOCKED_CLASSES,
     smooth = false,
     callback_function = function(obj)
-      preparation.putDivinierIntoBox(obj)
-      preparation.revealOpeningConditions(callback) end
+      Preparation.putDivinierIntoBox(obj)
+      Preparation.revealOpeningConditions(callback) end
   })
 end
 
 
-function preparation.putDivinierIntoBox(classes)
+function Preparation.putDivinierIntoBox(classes)
   getObjectFromGUID(guids.FORGOTTEN_CIRCLES_BOX).takeObject({
     guid = Game.CLASSES.Diviner.boxGuid,
     smooth = false,
@@ -48,34 +55,34 @@ function preparation.putDivinierIntoBox(classes)
 end
 
 
-function preparation.revealOpeningConditions(callback)
+function Preparation.revealOpeningConditions(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.OPENING_CONDITIONS,
     smooth = false,
     position = positions.OPENING_CONDITIONS,
     rotation = Rotation.NORTH,
-    callback_function = function() preparation.revealRetirementSheet(callback) end
+    callback_function = function() Preparation.revealRetirementSheet(callback) end
   })
 end
 
 
-function preparation.revealRetirementSheet(callback)
+function Preparation.revealRetirementSheet(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.RETIREMENT_SHEET,
     smooth = false,
     position = positions.RETIREMENT_SHEET,
     rotation = Rotation.NORTH,
-    callback_function = function() preparation.finish(callback) end
+    callback_function = function() Preparation.finish(callback) end
   })
 end
 
 
-function preparation.finish(callback)
+function Preparation.finish(callback)
     callback()
 end
 
 
-function preparation.prepareSave()
+function Preparation.prepareSave()
   for _, zoneGuid in pairs(guids.ZONES) do
     local zone = getObjectFromGUID(zoneGuid)
     local zonePosition = zone.getPosition()

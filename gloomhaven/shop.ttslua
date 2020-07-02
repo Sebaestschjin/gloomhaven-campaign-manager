@@ -15,9 +15,11 @@ function Shop.save()
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
   local shopDeck = cityMat.call('checkForDeck', shopPosition)
-  -- TODO recall the shop if it is currently layed out
-  local items = {}
+  if not shopDeck then
+    return {}
+  end
 
+  local items = {}
   for _, item in pairs(shopDeck.getObjects()) do
     if Component.isRewardItemCard(item) then
       items[item.name] = true

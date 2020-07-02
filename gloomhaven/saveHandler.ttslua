@@ -45,7 +45,7 @@ function saveHandler.loadAll()
     return
   end
 
-  preparation.start(function() saveHandler.doLoadAll(content) end)
+  Preparation.start(function() saveHandler.doLoadAll(content) end)
 end
 
 
@@ -77,7 +77,7 @@ end
 function saveHandler.createSaveFile()
   local saveFile = {}
 
-  preparation.prepareSave()
+  Preparation.prepareSave()
   -- TODO change to task based, this wait is necessary, because the scripting zones have to be
   -- adjusted, otherwise they won't detect cards lying on the table
   Wait.time(function() saveHandler.doCreateSaveFile(saveFile) end, 1)

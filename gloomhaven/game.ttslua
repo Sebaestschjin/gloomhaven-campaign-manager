@@ -107,7 +107,7 @@ Game.CLASSES = {
       ["Unstoppable Charge"] = { level = 4,
         enhancements = {{-0.41, -0.72}, {-0.41, 0.54}}
       },
-      ["Devasttating Hack"] = { level = 4,
+      ["Devastating Hack"] = { level = 4,
         enhancements = {{-0.41, -0.72}, {-0.61, -0.72}}
       },
       ["Whirlwind"] = { level = 5,
@@ -809,7 +809,7 @@ Game.CLASSES = {
   },
   Elementalist = {
     boxGuid = "21d7e7",
-    Game.HP.LOW,
+    hp = Game.HP.LOW,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -1467,7 +1467,7 @@ Game.CLASSES = {
   },
   Sawbones = {
     boxGuid = "e5148c",
-    Game.HP.MEDIUM,
+    hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -1577,7 +1577,7 @@ Game.CLASSES = {
   },
   Sunkeeper = {
     boxGuid = "bfe08d",
-    Game.HP.HIGH,
+    hp = Game.HP.HIGH,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },
@@ -1690,7 +1690,7 @@ Game.CLASSES = {
   },
   Summoner = {
     boxGuid = "0f9847",
-    Game.HP.MEDIUM,
+    hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-2)"}, add = {"(+0)"} },
@@ -1797,7 +1797,7 @@ Game.CLASSES = {
   },
   Doomstalker = {
     boxGuid = "b7fe6d",
-    Game.HP.MEDIUM,
+    hp = Game.HP.MEDIUM,
     perks = {
       [1] = { remove = {"(-1)", "(-1)"} },
       [2] = { remove = {"(-1)", "(-1)"} },

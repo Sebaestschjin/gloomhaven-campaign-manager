@@ -21,9 +21,6 @@ guids.ROAD_EVENTS_DECK_INITIAL = "83de73"
 guids.ROAD_EVENTS_DECK = "f08b69"
 guids.QUEST_DECK = "73a423"
 guids.CITY_MAT = "f3ffb7"
-guids.RANDOM_RED_DECK = "fb9bd4"
-guids.RANDOM_BLUE_DECK = "e18733"
-guids.REWARDS_DECK = "900a8d"
 guids.EVENTS_MAT = "b53fb2"
 guids.PARTY_SHEET = "6d3de2"
 
@@ -123,6 +120,10 @@ function Component.isStartingAbility(name, class)
 end
 
 function Component.getAbilityName(abilityCard)
+  -- quickfix for a typo in Elementalists ability card
+  if abilityCard.getName() == "Eternal Equilibrium (27(" then
+    return "Eternal Equilibrium"
+  end
   return abilityCard.getName():gsub("%s?%(%d+%)", "")
 end
 
