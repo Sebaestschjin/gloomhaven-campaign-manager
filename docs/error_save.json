@@ -60,5 +60,23 @@
         "remove": [300],
         "bottomUp": [400]
       }
-    ]
+    ],
+    "party": {
+        "characters": [{
+          "class": "Non Existent"
+        }, {
+          "class": "Brute",
+          "quest": "Non Existent",
+          "perks": [
+            0, 16
+          ],
+          "abilities": [
+            "Non Existent"
+          ],
+          "items": [
+            { "name": "Non Existent" },
+            { "name": "Hide Armor", "position": "Non Existent" }
+          ]
+        }]
+    }
 }

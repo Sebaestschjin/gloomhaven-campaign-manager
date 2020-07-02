@@ -2,6 +2,53 @@ Character = {}
 
 
 function Character.load(index, character)
+  local taskName = "Character " .. tostring(character.class) .. " at " .. index
+  Task.load(taskName, character, Character.validate, function(input)
+                                                       Character.startLoading(index, input)
+                                                     end)
+end
+
+
+function Character.validate(character)
+  if not Game.CLASSES[character.class] then
+    Error.add("A class named '%s' does not exist.", character.class)
+    return false, Error.pop()
+  end
+
+  if not Game.QUESTS[character.quest] then
+    Error.add("A quest named '%s' does not exist. Can't draw the quest from the deck.", character.quest)
+    character.quest = nil
+  end
+
+  for i, ability in TableUtil.pairs(character.abilities) do
+    if not Game.CLASSES[character.class].abilities[ability] then
+      Error.add("An ability named '%s' does not exist for the character class '%s'", ability, character.class)
+      character.abilities[i] = nil
+    end
+  end
+
+  for i, item in TableUtil.pairs(character.items) do
+    if not Shop.findItem(item.name) then
+      Error.add("The item '%s' does not exist. Won't load item.", item.name)
+      character.items[i] = nil
+    elseif item.position and item.position ~= "Unequipped" and not snaps[item.position] then
+      Error.add("An position named '%s' does not exist for item '%s'. Will default to 'Unequipped'.",
+                 item.position, item.name)
+      item.position = nil
+    end
+  end
+
+  for i, perk in TableUtil.pairs(character.perks) do
+    if not Game.CLASSES[character.class].perks[perk] then
+      Error.add("A perk '%s' does not exist for class '%s'.", perk, character.class)
+      character.perks[i] = nil
+    end
+  end
+
+  return true, Error.pop()
+end
+
+function Character.startLoading(index, character)
   local playerZone = guids.ZONES[index]
   getObjectFromGUID(guids.ADD_PLAYERS[index]).call("addPlayer")
 
@@ -9,13 +56,13 @@ function Character.load(index, character)
                             function() Character.unpackCharacterBox(playerZone, character) end)
 end
 
-
 function Character.unpackCharacterBox(playerZone, character)
   local playerMat = Component.playerMat(playerZone)
   local characterBox = getObjectFromGUID(Game.CLASSES[character.class].boxGuid)
 
   characterBox.takeObject({
-    position = playerMat.getPosition()
+    position = playerMat.getPosition(),
+    smooth = false,
   })
 
   Utils.waitForObjectInZone(playerZone, {name=names.CHARACTER_SHEET},
@@ -124,7 +171,7 @@ function Character.loadPerks(playerZone, character)
                                     end
   local additionalModifierDeck = Utils.findObjectInZone(playerZone, {func=isOtherDeck})
 
-  for _, perk in pairs(character.perks) do
+  for _, perk in TableUtil.pairs(character.perks) do
     characterSheet.call('clickedToggle', "perk"..tostring(perk))
     Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, perkInfo[perk])
     if additionalModifierDeck.remainder then
@@ -179,7 +226,7 @@ function Character.loadItems(playerZone, character)
   local playerMat = Component.playerMat(playerZone)
 
   local itemsText = ""
-  for _, item in pairs(character.items) do
+  for _, item in TableUtil.pairs(character.items) do
     local itemPosition
     if item.position and snaps[item.position] then
       itemPosition = Utils.getSnapPosition(playerMat, snaps[item.position])
@@ -200,6 +247,7 @@ end
 
 
 function Character.getLevel(curXP)
+  if not curXP then curXP = 0 end
   for i, xp in pairs(Game.XP_REQUIREMENTS) do
     if curXP < xp then
       return i-1
