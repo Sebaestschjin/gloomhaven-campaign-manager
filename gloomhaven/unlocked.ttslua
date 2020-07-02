@@ -30,6 +30,8 @@ function Unlocked.doLoadClasses(classes)
   for i, class in pairs(classes) do
     Unlocked.loadClass(i, class)
   end
+
+  getObjectFromGUID(guids.GAMEBOX).putObject(getObjectFromGUID(guids.LOCKED_CLASSES))
 end
 
 function Unlocked.loadClass(number, class)
