@@ -37,11 +37,15 @@ end
 
 
 function Achievement.saveAll(saveFile)
-  getObjectFromGUID(guids.ACHIEVEMENTS_BAG).takeObject({
+  local bag = getObjectFromGUID(guids.ACHIEVEMENTS_BAG)
+  bag.takeObject({
     guid = guids.ACHIEVEMENT_BOARD,
     position = positions.ACHIEVEMENT_BOARD,
     rotation = Rotation.NORTH,
-    callback_function = function(obj) Achievement.doSave(saveFile, obj) end
+    callback_function = function(obj)
+      Achievement.doSave(saveFile, obj)
+      bag.putObject(obj)
+    end
   })
 end
 
