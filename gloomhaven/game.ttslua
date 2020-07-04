@@ -2203,3 +2203,15 @@ Game.QUESTS = {
     number = 527
   },
 }
+
+Game.NegativeItemEffects = {
+  ["Hide Armor"] = 2,
+  ["Heavy Greaves"] = 1,
+  ["Chain Mail"] = 3,
+  ["Heavy Basinet"] = 2,
+  ["Splintmail"] = 4,
+  ["Steel Sabatons"] = 2,
+  ["Platemail"] = 5,
+  ["Swordedge Armor"] = 4,
+  ["Chain Hood"] = 1
+}

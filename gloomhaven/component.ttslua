@@ -15,6 +15,7 @@ guids.ACHIEVEMENTS_BAG = "3ea749" -- Bag containing the Achievement board
 guids.ACHIEVEMENT_BOARD = "43d5b8"
 guids.SANCTUARY_STICKER = "800847"
 guids.DECK_MAT = "a75fcd"
+guids.PLAYER_MINUS_ONE_DECK = "74a2ed"
 guids.CITY_EVENTS_DECK_INITIAL = "759349"
 guids.CITY_EVENTS_DECK = "f13efd"
 guids.ROAD_EVENTS_DECK_INITIAL = "83de73"
