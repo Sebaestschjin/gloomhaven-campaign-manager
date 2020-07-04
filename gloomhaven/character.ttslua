@@ -208,6 +208,12 @@ function Character.loadItems(playerZone, character)
 end
 
 function Character.hasNegItemEffectsPerk(character)
+  local perkInfo = Game.CLASSES[character.class].perks
+  for _, perk in pairs(character.perks) do
+    if(perkInfo[perk].ignore == "I") then
+      return true
+    end
+  end
   return false
 end
 
@@ -215,7 +221,8 @@ function Character.dealNegativeItemEffectCard(itemPosition)
   local deck = getObjectFromGUID(guids.PLAYER_MINUS_ONE_DECK)
   deck.takeObject({
     smooth = false,
-    position=itemPosition
+    -- position set to ensure PLayer -1 cards placed on top.
+    position={itemPosition.x, itemPosition.y+1, itemPosition.z}
   })
 end
 
