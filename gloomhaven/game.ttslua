@@ -21,7 +21,18 @@ Game.HP = {
 Game.XP_REQUIREMENTS = {0, 45, 95, 150, 210, 275, 345, 420, 500}
 
 Game.ITEMS = {
-  Prosperity = {14, 21, 28, 35, 42, 49, 56, 63, 70} -- max item number per prosperity level
+  Prosperity = {14, 21, 28, 35, 42, 49, 56, 63, 70}, -- max item number per prosperity level
+  NegativeEffects = {
+    ["Hide Armor"] = 2,
+    ["Heavy Greaves"] = 1,
+    ["Chain Mail"] = 3,
+    ["Heavy Basinet"] = 2,
+    ["Splintmail"] = 4,
+    ["Steel Sabatons"] = 2,
+    ["Platemail"] = 5,
+    ["Swordedge Armor"] = 4,
+    ["Chain Hood"] = 1,
+  },
 }
 
 -- Information about all character classes.
@@ -2202,16 +2213,4 @@ Game.QUESTS = {
     index = 23,
     number = 527
   },
-}
-
-Game.NegativeItemEffects = {
-  ["Hide Armor"] = 2,
-  ["Heavy Greaves"] = 1,
-  ["Chain Mail"] = 3,
-  ["Heavy Basinet"] = 2,
-  ["Splintmail"] = 4,
-  ["Steel Sabatons"] = 2,
-  ["Platemail"] = 5,
-  ["Swordedge Armor"] = 4,
-  ["Chain Hood"] = 1
 }

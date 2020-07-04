@@ -29,8 +29,9 @@ function Character.validate(character)
 
   for i, item in TableUtil.pairs(character.items) do
     if not Shop.findItem(item.name) then
-      Error.add("The item '%s' does not exist. Won't load item.", item.name)
-      character.items[i] = nil
+      -- TODO this has a timing issue with building the shop
+      -- Error.add("The item '%s' does not exist. Won't load item.", item.name)
+      -- character.items[i] = nil
     elseif item.position and item.position ~= "Unequipped" and not snaps[item.position] then
       Error.add("An position named '%s' does not exist for item '%s'. Will default to 'Unequipped'.",
                  item.position, item.name)
@@ -235,13 +236,13 @@ function Character.loadItems(playerZone, character)
     else
       itemPosition = positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
     end
-    
+
     Shop.takeItem(item.name, itemPosition, Rotation.NORTH)
     itemsText = itemsText .. "\n" .. item.name
 
     -- Perform check for adding of Negative Item Effects (-1 cards)
     if not ignoreNegItemEffects then
-      local negativeEffect = Game.NegativeItemEffects[item.name]
+      local negativeEffect = Game.ITEMS.NegativeEffects[item.name]
       if negativeEffect then
         for i = 1, negativeEffect do
           Character.dealNegativeItemEffectCard(itemPosition)
