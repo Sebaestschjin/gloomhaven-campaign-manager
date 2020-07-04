@@ -179,6 +179,8 @@ function Character.loadItems(playerZone, character)
   local characterSheet = Component.characterSheet(playerZone)
   local playerMat = Component.playerMat(playerZone)
 
+  local ignoreNegItemEffects = Character.hasNegItemEffectsPerk(character)
+
   local itemsText = ""
   for _, item in pairs(character.items) do
     local itemPosition
@@ -187,12 +189,35 @@ function Character.loadItems(playerZone, character)
     else
       itemPosition = positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
     end
+
     Shop.getItem(item.name, itemPosition)
     itemsText = itemsText .. "\n" .. item.name
+
+    -- Perform check for adding of Negative Item Effects (-1 cards)
+    if not ignoreNegItemEffects then
+      local negativeEffect = Game.NegativeItemEffects[item.name]
+      if negativeEffect then
+        for i = 1, negativeEffect do
+          Character.dealNegativeItemEffectCard(itemPosition)
+        end
+      end
+    end
+
   end
   characterSheet.UI.setAttribute("Items", "text", itemsText)
 end
 
+function Character.hasNegItemEffectsPerk(character)
+  return false
+end
+
+function Character.dealNegativeItemEffectCard(itemPosition)
+  local deck = getObjectFromGUID(guids.PLAYER_MINUS_ONE_DECK)
+  deck.takeObject({
+    smooth = false,
+    position=itemPosition
+  })
+end
 
 function Character.moveToHand(object, playerZone, hand)
   local playerName = Game.PLAYERS[playerZone]
