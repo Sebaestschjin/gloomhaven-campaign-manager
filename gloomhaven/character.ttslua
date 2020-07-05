@@ -1,3 +1,5 @@
+local DeckUtil = require("common/deckUtil")
+
 Character = {}
 
 
@@ -334,21 +336,23 @@ end
 function Character.saveItems(playerZone)
   local playerMat = Utils.findObjectInZone(playerZone, {name=names.PLAYER_MAT})
   local items = {}
-  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+  local zoneObjects = getObjectFromGUID(playerZone).getObjects()
+  Character.saveItemFromObjects(zoneObjects, playerMat, items)
+
+  return items
+end
+
+
+function Character.saveItemFromObjects(objects, playerMat, items)
+  for _, object in pairs(objects) do
     if Component.IsItemCard(object) then
       local item = {name=object.getName(), position=Character.getItemPosition(playerMat, object)}
       table.insert(items, item)
-    elseif object.tag == Tag.DECK then
-      for _, card in pairs(object.getObjects()) do
-        if Component.IsItemCardInfo(card) then
-          local item = {name=card.name, position=Character.getItemPosition(playerMat, object)}
-          table.insert(items, item)
-        end
-      end
+    elseif Component.isDeck(object) then
+      local deckObjects = DeckUtil.getContainedObjects(object)
+      Character.saveItemFromObjects(deckObjects, playerMat, items)
     end
   end
-
-  return items
 end
 
 
@@ -369,17 +373,24 @@ end
 function Character.saveAbilities(playerZone)
   local class = Character.findClassInZone(playerZone)
   local abilities = {}
+  local zoneObjects = getObjectFromGUID(playerZone).getObjects()
+  Character.saveAbilitiesFromObjects(zoneObjects, class, abilities)
 
-  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+  return abilities
+end
+
+function Character.saveAbilitiesFromObjects(objects, class, abilities)
+  for _, object in pairs(objects) do
     if Component.isAbilityCardForClass(object, class) then
       local name = Component.getAbilityName(object)
       if not Component.isStartingAbility(name, class) then
         table.insert(abilities, name)
       end
+    elseif Component.isDeck(object) and not Component.isAbilityDeck(object) then
+      local deckObjects = DeckUtil.getContainedObjects(object)
+      Character.saveAbilitiesFromObjects(deckObjects, class, abilities)
     end
   end
-
-  return abilities
 end
 
 

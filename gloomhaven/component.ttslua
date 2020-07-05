@@ -88,6 +88,14 @@ snaps.RIFT_EVENTS = 3
 
 Component = {}
 
+function Component.isCard(object)
+  return object.tag == Tag.CARD
+end
+
+function Component.isDeck(object)
+  return object.tag == Tag.DECK
+end
+
 function Component.playerMat(playerZone)
   return Utils.findObjectInZone(playerZone, {name=names.PLAYER_MAT})
 end
@@ -100,18 +108,17 @@ function Component.characterSheet(playerZone)
   return Utils.findObjectInZone(playerZone, {name=names.CHARACTER_SHEET})
 end
 
-
 function Component.abilityDeck(playerZone)
   return Utils.findObjectInZone(playerZone, {name=names.ABILITY_DECK})
 end
 
 function Component.isAbilityDeck(object)
-  return object.tag == "Deck"
+  return Component.isDeck(object)
          and object.getName():find(names.ABILITY_DECK)
 end
 
 function Component.isAbilityCardForClass(object, class)
-  return object.tag == Tag.CARD
+  return Component.isCard(object)
          and object.getDescription():find(class)
          and not object.getName():find(names.ATTACK_MODIFIER)
 end
@@ -131,13 +138,8 @@ end
 
 --- Returns true if the given object is an item card.
 function Component.IsItemCard(object)
-  return object.tag == "Card"
+  return Component.isCard(object)
          and Component.IsItemCardDescription(object.getDescription())
-end
-
---- Returns true if the given object info (from getObjects()) is an item card.
-function Component.IsItemCardInfo(objectInfo)
-  return Component.IsItemCardDescription(objectInfo.description)
 end
 
 --- Returns true if the given item card object is an item from the rewards or item design deck.

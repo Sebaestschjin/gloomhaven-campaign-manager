@@ -3,9 +3,14 @@ local ObjectUtil = require("common/objectUtil")
 local DeckUtil = {}
 
 function DeckUtil.getContainedObjects(deck)
+  local deckData = deck.getData()
+
   local objects = {}
-  for _, object in pairs(deck.getData().ContainedObjects) do
-    table.insert(objects, ObjectUtil.wrapOject(object))
+  for i, object in pairs(deckData.ContainedObjects) do
+    local wrappedObject = ObjectUtil.wrapOject(object)
+    wrappedObject.index = i
+    wrappedObject.getPosition = function() return ObjectUtil.wrapPosition(deckData) end
+    table.insert(objects, wrappedObject)
   end
 
   return objects

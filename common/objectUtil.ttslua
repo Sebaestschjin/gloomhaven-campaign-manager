@@ -12,17 +12,21 @@ function ObjectUtil.wrapOject(objectData)
   return object
 end
 
-
 function ObjectUtil.wrapDecals(decalsData)
   local decals = {}
   for _, decalData in TableUtil.pairs(decalsData) do
     local decal = {}
     decal.name = decalData.CustomDecal.Name
-    decal.position = vector(decalData.Transform.posX, decalData.Transform.posY, decalData.Transform.posZ)
+    decal.position = ObjectUtil.wrapPosition(decalData)
     table.insert(decals, decal)
   end
 
   return decals
+end
+
+function ObjectUtil.wrapPosition(data)
+  local transform = data.Transform
+  return vector(transform.posX, transform.posY, transform.posZ)
 end
 
 return ObjectUtil

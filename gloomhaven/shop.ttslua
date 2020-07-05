@@ -16,6 +16,8 @@ function Shop.save()
   local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
   local shopDeck = cityMat.call('checkForDeck', shopPosition)
   if not shopDeck then
+    Log.warning("Can't find shop deck, which means unlocked items can't be saved."
+                .." If the shop is currently layed out, please recall it and try again.")
     return {}
   end
 

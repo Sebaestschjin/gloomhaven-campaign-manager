@@ -26,6 +26,7 @@ Enhancement.DECALS = {
 }
 Enhancement.DECALS["Ice"] = Enhancement.DECALS["Frost"] -- makes more sense, since the element is also called Ice
 
+Enhancement.MAX_DISTANCE = 0.1
 Enhancement.Y_COORDINATE = 0.36
 Enhancement.ROTATION =  {90, 180, 0}
 Enhancement.SCALE = {0.16, 0.16, 3.07}
@@ -146,14 +147,14 @@ function Enhancement.saveInZone(playerZone, enhancements)
   Enhancement.saveInContainer(zoneObjects, class, classEnhancements.abilities)
 end
 
-function Enhancement.saveInContainer(objects, class, enhancements)
+function Enhancement.saveInContainer(objects, class, classEnhancements)
   for _, object in TableUtil.pairs(objects) do
     if Component.isAbilityCardForClass(object, class)
        and TableUtil.isNotEmpty(object.getDecals())
     then
-      Enhancement.saveForCard(object, class, enhancements)
+      Enhancement.saveForCard(object, class, classEnhancements)
     elseif object.tag == Tag.DECK then
-      Enhancement.saveInContainer(DeckUtil.getContainedObjects(object), class, enhancements)
+      Enhancement.saveInContainer(DeckUtil.getContainedObjects(object), class, classEnhancements)
     end
   end
 end
@@ -162,22 +163,31 @@ function Enhancement.saveForCard(card, class, classEnhancements)
   Log.verbose("Saving enhancements for " .. card.getName())
   local ability = Component.getAbilityName(card)
   local enhancementInfo = Game.CLASSES[class].abilities[ability].enhancements
-  local enhancements = {}
+  local cardEnhancements = {}
 
   for _, decal in TableUtil.pairs(card.getDecals()) do
     local name = decal.name:gsub("Enhancement ", "")
-    local nearestIndex = Enhancement.findNearestIndex(decal.position, enhancementInfo)
-    table.insert(enhancements, { position=nearestIndex, enhancement=name })
+    local nearestIndex, distance = Enhancement.findNearestIndex(decal.position, enhancementInfo)
+    table.insert(cardEnhancements, { position=nearestIndex, enhancement=name })
+
+    if distance > Enhancement.MAX_DISTANCE then
+      Log.warningMessage("Enhancement for ability " .. ability,
+                         "The distance to any known ennhancement position for this ability is bigger"
+                          .. " than expected (" .. distance .. "). This might mean, that the known"
+                          .. " information is outdated (e.g. a newer printing of the card exists),"
+                          .. " the card shouldn't have enhancements or that the decal was added"
+                          .. " rather sloppy. Please verify that the enhancement loads correctly.")
+    end
   end
 
-  if TableUtil.isNotEmpty(enhancements) then
-    table.insert(classEnhancements, { name=ability, enhancements=enhancements })
+  if TableUtil.isNotEmpty(cardEnhancements) then
+    table.insert(classEnhancements, { name=ability, enhancements=cardEnhancements })
   end
 end
 
 
 function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
-  local nearestDistance = 9999999
+  local nearestDistance = 42
   local nearestIndex = 1
   for i, enhancement in pairs(enhancementInfo) do
     local x, z = enhancement[1], enhancement[2]
@@ -187,5 +197,6 @@ function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
       nearestIndex = i
     end
   end
-  return nearestIndex
+
+  return nearestIndex, nearestDistance
 end
