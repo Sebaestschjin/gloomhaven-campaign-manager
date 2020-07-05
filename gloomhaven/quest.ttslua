@@ -4,9 +4,11 @@ Quest.removed = {}
 
 function Quest.take(quest, callback)
   local questIndex = Quest.getIndex(quest)
-  local deck = getObjectFromGUID(guids.QUEST_DECK)
+  if not questIndex then
+    return false
+  end
 
-  deck.takeObject({
+  getObjectFromGUID(guids.QUEST_DECK).takeObject({
     index = questIndex,
     smooth = false,
     rotation = Rotation.NORTH_FLIPPED,
@@ -15,6 +17,7 @@ function Quest.take(quest, callback)
                           callback(card)
                         end
   })
+  return true
 end
 
 

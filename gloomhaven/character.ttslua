@@ -17,30 +17,6 @@ function Character.validate(character)
     return false, Error.pop()
   end
 
-  if not Game.QUESTS[character.quest] then
-    Error.add("A quest named '%s' does not exist. Can't draw the quest from the deck.", character.quest)
-    character.quest = nil
-  end
-
-  for i, ability in TableUtil.pairs(character.abilities) do
-    if not Game.CLASSES[character.class].abilities[ability] then
-      Error.add("An ability named '%s' does not exist for the character class '%s'", ability, character.class)
-      character.abilities[i] = nil
-    end
-  end
-
-  for i, item in TableUtil.pairs(character.items) do
-    if not Shop.findItem(item.name) then
-      -- TODO this has a timing issue with building the shop
-      -- Error.add("The item '%s' does not exist. Won't load item.", item.name)
-      -- character.items[i] = nil
-    elseif item.position and item.position ~= "Unequipped" and not snaps[item.position] then
-      Error.add("An position named '%s' does not exist for item '%s'. Will default to 'Unequipped'.",
-                 item.position, item.name)
-      item.position = nil
-    end
-  end
-
   for i, perk in TableUtil.pairs(character.perks) do
     if not Game.CLASSES[character.class].perks[perk] then
       Error.add("A perk '%s' does not exist for class '%s'.", perk, character.class)
@@ -137,22 +113,26 @@ end
 function Character.loadFigureHealth(playerZone, name, health)
   local figure = Utils.findObjectInZone(playerZone, {name=name, tag=Tag.FIGURINE})
 
-  figure.getVar('health')["max"] = health
-  figure.getVar('health')["value"] = health
-  figure.call('setHealth')
+  figure.getVar("health")["max"] = health
+  figure.getVar("health")["value"] = health
+  figure.call("setHealth")
 end
 
 function Character.loadAbilities(playerZone, character)
   if not character.abilities then return end
 
   local abilityDeck = Component.abilityDeck(playerZone)
-  local secondHandPos = {abilityDeck.getPosition().x,3,-59}
   for _, ability in pairs(character.abilities) do
     local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=ability})
-    abilityDeck.takeObject({
-      position = secondHandPos,
-      guid = abilityCard.guid
-    })
+    if abilityCard then
+      abilityDeck.takeObject({
+        position = positions.relativeToZone(playerZone, positions.SECOND_HAND),
+        guid = abilityCard.guid
+      })
+    else
+      Log.error("An ability named '%s' does not exist for the character class '%s'",
+                ability, character.class)
+    end
   end
 end
 
@@ -160,8 +140,13 @@ end
 function Character.loadQuest(playerZone, character)
   if not character.quest then return end
 
-  local callback = function(card) card.setPosition(positions.relativeToZone(playerZone, positions.QUEST_CARD)) end
-  Quest.take(character.quest, callback)
+  local callback = function(card)
+                     card.setPosition(positions.relativeToZone(playerZone, positions.QUEST_CARD))
+                   end
+  if not Quest.take(character.quest, callback) then
+    Log.error("A quest named '%s' does not exist. Can't draw the quest from the deck.",
+              character.quest)
+  end
 end
 
 
@@ -175,13 +160,17 @@ function Character.loadPerks(playerZone, character)
   local additionalModifierDeck = Utils.findObjectInZone(playerZone, {func=isOtherDeck})
 
   for _, perk in TableUtil.pairs(character.perks) do
-    characterSheet.call('clickedToggle', "perk"..tostring(perk))
-    Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, perkInfo[perk])
-    if additionalModifierDeck.remainder then
-      -- Remainder may only live for a single frame after last card is taken
-      -- May need to move this into the adjustAttackModifierDeck routine itself to reduce
-      -- any delay.
-      additionalModifierDeck = additionalModifierDeck.remainder
+    if perkInfo[perk] then
+      characterSheet.call('clickedToggle', "perk"..tostring(perk))
+      Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, perkInfo[perk])
+      if additionalModifierDeck.remainder then
+        -- Remainder may only live for a single frame after last card is taken
+        -- May need to move this into the adjustAttackModifierDeck routine itself to reduce
+        -- any delay.
+        additionalModifierDeck = additionalModifierDeck.remainder
+      end
+    else
+      Log.error("A perk '%s' does not exist for class '%s'.", perk, character.class)
     end
   end
 
@@ -225,41 +214,43 @@ end
 
 
 function Character.loadItems(playerZone, character)
-  local characterSheet = Component.characterSheet(playerZone)
-  local playerMat = Component.playerMat(playerZone)
+  local items = {}
 
-  local ignoreNegItemEffects = Character.hasNegItemEffectsPerk(character)
-
-  local itemsText = ""
   for _, item in TableUtil.pairs(character.items) do
-    local itemPosition
-    if item.position and snaps[item.position] then
-      itemPosition = Utils.getSnapPosition(playerMat, snaps[item.position])
+    local itemPosition = Character.calculateItemPosition(playerZone, item)
+
+    if Shop.takeItem(item.name, itemPosition, Rotation.NORTH) then
+      table.insert(items, item.name)
+      Character.checkForNegativeItemEffects(character, item, itemPosition)
     else
-      itemPosition = positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
+      Log.error("The item '%s' does not exist. Won't load item.", item.name)
     end
-
-    Shop.takeItem(item.name, itemPosition, Rotation.NORTH)
-    itemsText = itemsText .. "\n" .. item.name
-
-    -- Perform check for adding of Negative Item Effects (-1 cards)
-    if not ignoreNegItemEffects then
-      local negativeEffect = Game.ITEMS.NegativeEffects[item.name]
-      if negativeEffect then
-        for i = 1, negativeEffect do
-          Character.dealNegativeItemEffectCard(itemPosition)
-        end
-      end
-    end
-
   end
-  characterSheet.UI.setAttribute("Items", "text", itemsText)
+
+  Component.characterSheet(playerZone).UI.setAttribute("Items", "text", table.concat(items, "\n"))
+end
+
+
+function Character.calculateItemPosition(playerZone, item)
+  if item.position and snaps[item.position] then
+    return Utils.getSnapPosition(Component.playerMat(playerZone), snaps[item.position])
+  end
+  return positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
+end
+
+function Character.checkForNegativeItemEffects(character, item, itemPosition)
+  if not Character.hasNegItemEffectsPerk(character) then
+    local negativeEffect = Game.ITEMS.NegativeEffects[item.name]
+    for i = 1, Utils.nvl(negativeEffect, 0) do
+      Character.dealNegativeItemEffectCard(itemPosition)
+    end
+  end
 end
 
 function Character.hasNegItemEffectsPerk(character)
   local perkInfo = Game.CLASSES[character.class].perks
-  for _, perk in pairs(character.perks) do
-    if(perkInfo[perk].ignore == "I") then
+  for _, perk in TableUtil.pairs(character.perks) do
+    if perkInfo[perk].ignore == "I" then
       return true
     end
   end
@@ -271,7 +262,7 @@ function Character.dealNegativeItemEffectCard(itemPosition)
   deck.takeObject({
     smooth = false,
     -- position set to ensure PLayer -1 cards placed on top.
-    position={itemPosition.x, itemPosition.y+1, itemPosition.z}
+    position = itemPosition + vector(0, 1, 0)
   })
 end
 

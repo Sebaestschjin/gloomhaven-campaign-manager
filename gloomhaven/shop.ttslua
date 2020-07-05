@@ -61,8 +61,10 @@ function Shop.takeItem(name, position, rotation)
           position = position,
           rotation = rotation,
         })
-        return
+        return true
       end
     end
   end
+  
+  return false
 end

@@ -5,16 +5,16 @@ function Log.fatal(text)
   printToAll(text, "Red")
 end
 
-function Log.error(text)
-  printToAll(text, "Red")
+function Log.error(...)
+  printToAll(Log.buildMessage(...), "Red")
 end
 
 function Log.errorMessage(pre, message)
   Log.error(Log.fromMessage(pre, message))
 end
 
-function Log.warning(text)
-  printToAll(text, "Yellow")
+function Log.warning(...)
+  printToAll(Log.buildMessage(...), "Yellow")
 end
 
 function Log.warningMessage(pre, message)
@@ -31,4 +31,12 @@ end
 
 function Log.fromMessage(pre, message)
   return pre .. ":\n    " .. message
+end
+
+function Log.buildMessage(...)
+  local args = table.pack(...)
+  for i=1, args.n do
+    args[i] = tostring(args[i])
+  end
+  return string.format(table.unpack(args))
 end

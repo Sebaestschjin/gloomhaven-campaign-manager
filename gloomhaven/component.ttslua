@@ -45,6 +45,7 @@ names.ATTACK_MODIFIER = "Attack Modifier"
 positions = {}
 positions.QUEST_CARD = vector(1, 2, -19) -- relative to player zone
 positions.ITEM_UNEQUIPPED = vector(-7, 2, -7) -- relative to player zone
+positions.SECOND_HAND = vector(0, 3, -2) -- relative to player zone
 
 positions.ACHIEVEMENT_BOARD = {87.26, 2, 26.12}
 positions.OPENING_CONDITIONS = vector(65.19, 1.70, -29.55)
@@ -178,6 +179,6 @@ function Component.getQuestName(object)
       return name
     end
   end
-  
+
   return nil
 end
