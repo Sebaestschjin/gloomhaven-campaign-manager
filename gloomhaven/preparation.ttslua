@@ -1,7 +1,7 @@
 Preparation = {}
 
 function Preparation.start(callback)
-  Preparation.verify()
+  Preparation.verifyLoad()
   Preparation.fix()
   Preparation.revealLockedCharacters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
@@ -19,11 +19,46 @@ function Preparation.start(callback)
 end
 
 -- Verifies that the script can actually run, by checking if needed objects exists.
-function Preparation.verify()
-  assert(getObjectFromGUID(guids.MAP), "Map object is missing")
-  assert(getObjectFromGUID(guids.MAP).getTable("tableML"), "Scenario information missing")
-  assert(getObjectFromGUID(guids.MAP).getTable("Pros"), "Prosperity information missing")
-  assert(getObjectFromGUID(guids.GAMEBOX), "Gamebox is missing")
+function Preparation.verifyLoad()
+  Preparation.verifyObject(guids.GAMEBOX, "Gamebox")
+  Preparation.verifyContent(guids.GAMEBOX, guids.LOCKED_CLASSES, "Locked classes")
+  Preparation.verifyContent(guids.GAMEBOX, guids.SCENARIO_BOOK, "Scenario book")
+  Preparation.verifyContent(guids.GAMEBOX, guids.RULE_BOOK, "Rule book")
+  Preparation.verifyContent(guids.GAMEBOX, guids.OPENING_CONDITIONS, "Opening Conditions")
+  Preparation.verifyContent(guids.GAMEBOX, guids.RETIREMENT_SHEET, "Retirement Sheet")
+  Preparation.verifyContent(guids.GAMEBOX, guids.TOWN_RECORDS, "Town Records")
+  Preparation.verifyObject(guids.MAP, "Map")
+  Preparation.verifyTable(guids.MAP, "tableML", "Scenario information")
+  Preparation.verifyTable(guids.MAP, "Pros", "Prosperity information")
+  Preparation.verifyObject(guids.ACHIEVEMENTS_BAG, "Achievements bag")
+  Preparation.verifyObject(guids.DECK_MAT, "Deck Mat")
+  Preparation.verifyObject(guids.PLAYER_MINUS_ONE_DECK, "-1 Deck")
+  Preparation.verifyObject(guids.CITY_EVENTS_DECK_INITIAL, "City Events 1-30")
+  Preparation.verifyObject(guids.CITY_EVENTS_DECK, "City Events 31+")
+  Preparation.verifyObject(guids.ROAD_EVENTS_DECK_INITIAL, "Road Events 1-30")
+  Preparation.verifyObject(guids.ROAD_EVENTS_DECK, "Road Events 31+")
+  Preparation.verifyObject(guids.QUEST_DECK, "Quest Deck")
+  Preparation.verifyObject(guids.CITY_MAT, "City Mat")
+  Preparation.verifyObject(guids.EVENTS_MAT, "Events Mat")
+  Preparation.verifyObject(guids.PARTY_SHEET, "Party Sheet")
+  for i, zone in pairs(guids.ZONES) do
+    Preparation.verifyObject(zone, "Player zone " .. i)
+  end
+  for i, zone in pairs(guids.ADD_PLAYERS) do
+    Preparation.verifyObject(zone, "Add Player button " .. i)
+  end
+end
+
+function Preparation.verifyObject(guid, name)
+  assert(getObjectFromGUID(guid), name .. " is missing (" .. guid .. ")")
+end
+
+function Preparation.verifyContent(guid, content, name)
+  assert(Utils.findObjectInfoInStack(getObjectFromGUID(guid), {guid=content}), name .. " is missing")
+end
+
+function Preparation.verifyTable(guid, table, name)
+  assert(getObjectFromGUID(guid).getTable(table), name .. " is missing")
 end
 
 function Preparation.revealLockedCharacters(callback)

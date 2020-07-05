@@ -48,7 +48,7 @@ function Achievement.loadGroup(i, achievementGroup)
   local globalAchievementsBag = getObjectFromGUID(guids.ACHIEVEMENTS_BAG)
 
   globalAchievementsBag.takeObject({
-    guid=guids.ACHIEVEMENT_BOARD,
+    guid = guids.ACHIEVEMENT_BOARD,
     callback_function = function(obj)
       for _, achievement in pairs(achievementGroup) do
         local index = Achievement.findIndex(obj, achievement)
