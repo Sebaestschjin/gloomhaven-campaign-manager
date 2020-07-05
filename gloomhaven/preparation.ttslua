@@ -2,7 +2,8 @@ Preparation = {}
 
 function Preparation.start(callback)
   Preparation.verify()
-  Preparation.fix(callback)
+  Preparation.fix()
+  Preparation.revealLockedCharacters(callback)
   getObjectFromGUID(guids.GAMEBOX).takeObject({
     guid = guids.SCENARIO_BOOK,
     smooth = false,
@@ -23,16 +24,6 @@ function Preparation.verify()
   assert(getObjectFromGUID(guids.MAP).getTable("tableML"), "Scenario information missing")
   assert(getObjectFromGUID(guids.MAP).getTable("Pros"), "Prosperity information missing")
   assert(getObjectFromGUID(guids.GAMEBOX), "Gamebox is missing")
-end
-
-function Preparation.fix(callback)
-  Preparation.fixAbility("Brute", "Devasttating Hack", "Devastating Hack")
-
-  Preparation.revealLockedCharacters(callback)
-end
-
-function Preparation.fixAbility(class, name, realName)
-  Game.CLASSES[class].abilities[name] = Game.CLASSES[class].abilities[realName]
 end
 
 function Preparation.revealLockedCharacters(callback)
@@ -83,10 +74,20 @@ end
 
 
 function Preparation.prepareSave()
+  Preparation.fix()
   for _, zoneGuid in pairs(guids.ZONES) do
     local zone = getObjectFromGUID(zoneGuid)
     local zonePosition = zone.getPosition()
     zonePosition:setAt("y", 4.22)
     zone.setPosition(zonePosition)
   end
+end
+
+
+function Preparation.fix()
+  Preparation.fixAbility("Brute", "Devasttating Hack", "Devastating Hack")
+end
+
+function Preparation.fixAbility(class, name, realName)
+  Game.CLASSES[class].abilities[name] = Game.CLASSES[class].abilities[realName]
 end

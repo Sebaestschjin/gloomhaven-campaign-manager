@@ -1,3 +1,5 @@
+local DeckUtil = require("common/deckUtil")
+
 Enhancement = {}
 
 Enhancement.DECALS = {
@@ -139,37 +141,27 @@ function Enhancement.saveInZone(playerZone, enhancements)
 
   local classEnhancements = { class=class, abilities={} }
   table.insert(enhancements, classEnhancements)
-  local abilityInfo = Game.CLASSES[class].abilities
 
-  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
-    if Component.isAbilityCardForClass(object, class) then
-      Enhancement.saveForCard(object, abilityInfo, classEnhancements.abilities)
-    elseif Component.isAbilityDeck(object) then
-      local abilityDeck = object
-      local deckPosition = abilityDeck.getPosition()
-      for i, abilityCard in pairs(abilityDeck.getObjects()) do
-        abilityDeck.takeObject({
-          guid = abilityCard.guid,
-          position = positions.getSafe(),
-          callback_function = function(card)
-                                Enhancement.saveForCard(card, abilityInfo, classEnhancements.abilities)
-                                card.setPosition(deckPosition)
-                              end
-        })
-        if abilityDeck.remainder then
-          Enhancement.saveForCard(abilityDeck.remainder, abilityInfo, classEnhancements.abilities)
-          abilityDeck.remainder.setPosition(deckPosition)
-          break
-        end
-      end
+  local zoneObjects = getObjectFromGUID(playerZone).getObjects()
+  Enhancement.saveInContainer(zoneObjects, class, classEnhancements.abilities)
+end
+
+function Enhancement.saveInContainer(objects, class, enhancements)
+  for _, object in TableUtil.pairs(objects) do
+    if Component.isAbilityCardForClass(object, class)
+       and TableUtil.isNotEmpty(object.getDecals())
+    then
+      Enhancement.saveForCard(object, class, enhancements)
+    elseif object.tag == Tag.DECK then
+      Enhancement.saveInContainer(DeckUtil.getContainedObjects(object), class, enhancements)
     end
   end
 end
 
-
-function Enhancement.saveForCard(card, abilityInfo, classEnhancements)
+function Enhancement.saveForCard(card, class, classEnhancements)
+  Log.verbose("Saving enhancements for " .. card.getName())
   local ability = Component.getAbilityName(card)
-  local enhancementInfo = abilityInfo[ability].enhancements
+  local enhancementInfo = Game.CLASSES[class].abilities[ability].enhancements
   local enhancements = {}
 
   for _, decal in TableUtil.pairs(card.getDecals()) do

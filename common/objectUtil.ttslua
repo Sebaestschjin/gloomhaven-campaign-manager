@@ -1,0 +1,28 @@
+local ObjectUtil = {}
+
+function ObjectUtil.wrapOject(objectData)
+  local object = {}
+
+  object.tag = objectData.Name
+  object.getGUID = function() return objectData.GUID end
+  object.getName = function() return objectData.Nickname end
+  object.getDescription = function() return objectData.Description end
+  object.getDecals = function() return ObjectUtil.wrapDecals(objectData.AttachedDecals) end
+
+  return object
+end
+
+
+function ObjectUtil.wrapDecals(decalsData)
+  local decals = {}
+  for _, decalData in TableUtil.pairs(decalsData) do
+    local decal = {}
+    decal.name = decalData.CustomDecal.Name
+    decal.position = vector(decalData.Transform.posX, decalData.Transform.posY, decalData.Transform.posZ)
+    table.insert(decals, decal)
+  end
+
+  return decals
+end
+
+return ObjectUtil

@@ -1,0 +1,15 @@
+local ObjectUtil = require("common/objectUtil")
+
+local DeckUtil = {}
+
+function DeckUtil.getContainedObjects(deck)
+  local objects = {}
+  for _, object in pairs(deck.getData().ContainedObjects) do
+    table.insert(objects, ObjectUtil.wrapOject(object))
+  end
+
+  return objects
+end
+
+
+return DeckUtil
