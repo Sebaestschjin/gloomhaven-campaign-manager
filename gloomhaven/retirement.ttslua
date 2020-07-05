@@ -41,12 +41,20 @@ end
 
 
 function Retirement.save()
+  local retired = {}
+
+  Retirement.saveRetirementSheet(retired)
+  Retirement.saveCompletedQuests(retired)
+
+  return retired
+end
+
+function Retirement.saveRetirementSheet(retired)
   local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
   if not retirementSheet then
-    return {}
+    return
   end
 
-  local retired = {}
   local retiredCharacter = {}
   for i, input in pairs(retirementSheet.getInputs()) do
     local column = (i - 1) % Retirement.COLUMNS
@@ -74,6 +82,34 @@ function Retirement.save()
   if TableUtil.isNotEmpty(retiredCharacter) then
     table.insert(retired, retiredCharacter)
   end
+end
 
-  return retired
+
+function Retirement.saveCompletedQuests(retired)
+  local completedQuests = {}
+  for name, _ in pairs(Game.QUESTS) do
+    completedQuests[name] = 1
+  end
+
+  local questDeck = getObjectFromGUID(guids.QUEST_DECK)
+  for _, quest in pairs(DeckUtil.getContainedObjects(questDeck)) do
+    local questName = Component.getQuestName(quest)
+    completedQuests[questName] = nil
+  end
+
+  for _, playerZone in pairs(guids.ZONES) do
+    local playerQuest = Character.saveQuest(playerZone)
+    if playerQuest then
+      completedQuests[playerQuest] = nil
+    end
+  end
+
+  local i = 1
+  for completed, _ in pairs(completedQuests) do
+    if not retired[i] then
+      retired[i] = {}
+    end
+    retired[i].quest = completed
+    i = i + 1
+  end
 end

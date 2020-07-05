@@ -397,11 +397,7 @@ end
 function Character.saveQuest(playerZone)
   for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
     if Component.isPersonalQuestCard(object) then
-      local cardId = object.getData().CardID
-      local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
-      for name, quest in pairs(Game.QUESTS) do
-        if quest.index == cardIndex then return name end
-      end
+      return Component.getQuestName(object)
     end
   end
   return nil

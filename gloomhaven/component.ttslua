@@ -169,3 +169,15 @@ function Component.isPersonalQuestCard(object)
     return key == 1997
   end
 end
+
+function Component.getQuestName(object)
+  local cardId = object.getData().CardID
+  local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+  for name, quest in pairs(Game.QUESTS) do
+    if quest.index == cardIndex then
+      return name
+    end
+  end
+  
+  return nil
+end

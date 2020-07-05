@@ -8,6 +8,7 @@ function ObjectUtil.wrapOject(objectData)
   object.getName = function() return objectData.Nickname end
   object.getDescription = function() return objectData.Description end
   object.getDecals = function() return ObjectUtil.wrapDecals(objectData.AttachedDecals) end
+  object.getData = function() return objectData end
 
   return object
 end
