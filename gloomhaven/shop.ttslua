@@ -28,7 +28,7 @@ function Shop.save()
     end
   end
 
-  return TableUtil.setToList(items)
+  return table.sort(TableUtil.setToList(items))
 end
 
 
@@ -65,6 +65,6 @@ function Shop.takeItem(name, position, rotation)
       end
     end
   end
-  
+
   return false
 end
