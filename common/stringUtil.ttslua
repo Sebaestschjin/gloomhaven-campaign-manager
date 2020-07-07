@@ -43,5 +43,5 @@ function StringUtil.chars(bytes)
 end
 
 function StringUtil.isBase64(text)
-  return text:gmatch("^[a-zA-Z0-9+/]+=?=?$")
+  return text:find("^[a-zA-Z0-9+/]+=?=?$")
 end

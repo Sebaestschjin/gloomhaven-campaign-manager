@@ -76,19 +76,6 @@ function Utils.getSnapPosition(object, snapPoint)
 end
 
 
-function Utils.adjustIndex(index, removed)
-  if not index then
-    return nil
-  end
-  local adjustedIndex = index
-  for _, removedIndex in pairs(removed) do
-    if removedIndex < index then
-      adjustedIndex = adjustedIndex - 1
-    end
-  end
-  return adjustedIndex
-end
-
 function Utils.nvl(value, default)
   if value ~= nil then
     return value

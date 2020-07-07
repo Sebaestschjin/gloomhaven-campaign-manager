@@ -1,7 +1,5 @@
 Quest = {}
 
-Quest.removed = {}
-
 function Quest.take(quest, callback)
   local questIndex = Quest.getIndex(quest)
   if not questIndex then
@@ -12,32 +10,37 @@ function Quest.take(quest, callback)
     index = questIndex,
     smooth = false,
     rotation = Rotation.NORTH_FLIPPED,
-    callback_function = function(card)
-                          table.insert(Quest.removed, questIndex)
-                          callback(card)
-                        end
+    callback_function = callback
   })
   return true
 end
 
 
 function Quest.getIndex(quest)
-  local index = Quest.getRawIndex(quest)
-  return Utils.adjustIndex(index, Quest.removed)
-end
+  local questId = Quest.getCardId(quest)
 
+  local questDeck = getObjectFromGUID(guids.QUEST_DECK)
+  for _, card in pairs(DeckUtil.getContainedObjects(questDeck)) do
+    local cardId = card.getData().CardID
+    local cardIdIndex = tonumber(tostring(cardId):sub(-2, -1))
 
-function Quest.getRawIndex(quest)
-  local questByName = Game.QUESTS[quest]
-  if questByName then
-    return questByName.index
-  end
-
-  for _, g in pairs(Game.QUESTS) do
-    if g.number == quest then
-      return g.index
+    if cardIdIndex == questId then
+      return card.index - 1 -- card ids start with 0, but index in decks with 1
     end
   end
+end
 
-  return nil
+function Quest.getCardId(quest)
+    local questByName = Game.QUESTS[quest]
+    if questByName then
+      return questByName.index
+    end
+
+    for _, questInfo in pairs(Game.QUESTS) do
+      if questInfo.number == quest then
+        return questInfo.index
+      end
+    end
+
+    return nil
 end
