@@ -171,12 +171,12 @@ function Component.isPersonalQuestCard(object)
   end
 end
 
-function Component.getQuestName(object)
+function Component.getQuestInfo(object)
   local cardId = object.getData().CardID
   local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
   for name, quest in pairs(Game.QUESTS) do
     if quest.index == cardIndex then
-      return name
+      return name, quest
     end
   end
 

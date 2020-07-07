@@ -386,12 +386,10 @@ end
 
 
 function Character.saveQuest(playerZone)
-  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
-    if Component.isPersonalQuestCard(object) then
-      return Component.getQuestName(object)
-    end
+  local quest, info = Character.findQuest(playerZone)
+  if info then
+    return info.number
   end
-  return nil
 end
 
 
@@ -410,6 +408,15 @@ function Character.findClassInZone(playerZone)
   local characterMat = Component.characterMat(playerZone)
   if characterMat then
     return characterMat.getDescription()
+  end
+  return nil
+end
+
+function Character.findQuest(playerZone)
+  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+    if Component.isPersonalQuestCard(object) then
+      return Component.getQuestInfo(object)
+    end
   end
   return nil
 end
