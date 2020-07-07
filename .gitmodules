@@ -1,0 +1,3 @@
+[submodule "ge_tts"]
+	path = ge_tts
+	url = https://github.com/Benjamin-Dobell/ge_tts.git

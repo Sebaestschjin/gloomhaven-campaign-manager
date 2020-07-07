@@ -21,3 +21,27 @@ end
 function StringUtil.escapePattern(text)
   return text:gsub("([-+()%[%]])", "%%%1")
 end
+
+function StringUtil.bytes(text)
+  local bytes = {}
+
+  for i=1, #text do
+    table.insert(bytes, text:byte(i))
+  end
+
+  return bytes
+end
+
+function StringUtil.chars(bytes)
+  local text = ""
+
+  for _, byte in pairs(bytes) do
+    text = text .. string.char(byte)
+  end
+
+  return text
+end
+
+function StringUtil.isBase64(text)
+  return text:gmatch("^[a-zA-Z0-9+/]+=?=?$")
+end
