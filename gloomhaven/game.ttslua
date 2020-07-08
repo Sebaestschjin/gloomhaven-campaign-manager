@@ -723,7 +723,7 @@ Game.CLASSES = {
       [9] = { add = {"(Stun) (Rolling)"} },
       [10] = { add = {"(Stun) (Rolling)"} },
       [11] = { add = {"(+1) (Disarm) (Rolling)"} },
-      [12] = { add = {"(Heal 1 Self)", "(Heal 1 Self)"} },
+      [12] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
       [13] = { add = {"(+2) (Fire)"} },
       [14] = { add = {"(+2) (Fire)"} },
       [15] = { ignore = "I" }
@@ -944,7 +944,7 @@ Game.CLASSES = {
       [10] = { add = {"(Stun) (Rolling)"} },
       [11] = { add = {"(Add Target) (Rolling)"} },
       [12] = { add = {"(Refresh)"}},
-      [13] = { add = {"(Refresh"} },
+      [13] = { add = {"(Refresh)"} },
       [14] = { add = {"(Refresh)"} },
       [15] = { ignore= "I", add = {"(+1)", "(+1)"} }
     },
@@ -1164,7 +1164,7 @@ Game.CLASSES = {
       [9] = { remove = {"(+0)"}, add = {"(+2) (Poison)"} },
       [10] = { remove = {"(+0)"}, add = {"(+2) (Curse)"} },
       [11] = { remove = {"(+0)"}, add = {"(+3) (Muddle)"} },
-      [12] = { remove = {"(-1)"}, add = {"(+0) (Stun)"} },
+      [12] = { remove = {"(-1)"}, add = {"(Stun)"} },
       [13] = { add = {"(+1) (Rolling)", "(+1) (Rolling)", "(+1) (Rolling)"} },
       [14] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"} },
       [15] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"} }
@@ -1380,8 +1380,8 @@ Game.CLASSES = {
       [5] = { add = {"(-1) (Dark)"} },
       [6] = { remove = {"(-1) (Dark)"}, add = {"(+1) (Dark)"} },
       [7] = { remove = {"(-1) (Dark)"}, add = {"(+1) (Dark)"} },
-      [8] = { add = {"(+1) (Invisible)"} },
-      [9] = { add = {"(+1) (Invisible)"} },
+      [8] = { add = {"(+1) (Invisibility)"} },
+      [9] = { add = {"(+1) (Invisibility)"} },
       [10] = { add = {"(Muddle) (Rolling)", "(Muddle) (Rolling)", "(Muddle) (Rolling)"} },
       [11] = { add = {"(Muddle) (Rolling)", "(Muddle) (Rolling)", "(Muddle) (Rolling)"} },
       [12] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
@@ -1932,12 +1932,12 @@ Game.CLASSES = {
       [4] = { remove = {"(+1)", "(+1)"}, add = {"(+3) (Shield 1 Self)"} },
       [5] = { remove = {"(+1)", "(+1)"}, add = {"(+3) (Shield 1 Self)"} },
       [6] = { remove = {"(+0)"}, add = {"(+1) (Shield 1 Ally)"} },
-      [7] = { remove = {"(+0)"}, add = {"(+2) (Dark)"} },
-      [8] = { remove = {"(+0)"}, add = {"(+2) (Light)"} },
+      [7] = { remove = {"(+0)"}, add = {"(+2) (Create Dark)"} },
+      [8] = { remove = {"(+0)"}, add = {"(+2) (Create Light)"} },
       [9] = { remove = {"(+0)"}, add = {"(+3) (Muddle)"} },
       [10] = { remove = {"(+0)"}, add = {"(+2) (Curse)"} },
       [11] = { remove = {"(+0)"}, add = {"(+2) (Regenerate Self)"} },
-      [12] = { remove = {"(+0)"}, add = {"(+1) (Heal 2 Ally)"} },
+      [12] = { remove = {"(-1)"}, add = {"(+1) (Heal 2 Ally)"} },
       [13] = { add = {"(Heal 1 Self) (Rolling)", "(Heal 1 Self) (Rolling)"} },
       [14] = { add = {"(Curse) (Rolling)", "(Curse) (Rolling)"}},
       [15] = { ignore = "S", add = {"(+1)", "(+1)"}}
@@ -1967,7 +1967,7 @@ Game.CLASSES = {
       ["Peer into Battle"] = { level = 1,
         enhancements = {[1]={-0.41, 0.49}}
       },
-      ["Clayrvoiance"] = { level = 1,
+      ["Clairvoyance"] = { level = 1,
         enhancements = {[1]={-0.73, -0.97}}
       },
       ["Duality Shards"] = { level = "X",

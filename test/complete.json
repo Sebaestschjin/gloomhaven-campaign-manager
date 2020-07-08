@@ -1,0 +1,158 @@
+{
+  "enhancements": [ {
+    "abilities": [ {
+      "enhancements": [ {
+        "enhancement": "Plus 1",
+        "position": 1
+      }, {
+        "enhancement": "Ice",
+        "position": 2
+      } ],
+      "name": "Eye for an Eye"
+    }, {
+      "enhancements": [ {
+        "enhancement": "Jump",
+        "position": 1
+      } ],
+      "name": "Fatal Advance"
+    }, {
+      "enhancements": [ {
+        "enhancement": "Plus 1",
+        "position": 1
+      } ],
+      "name": "Hook and Chain"
+    } ],
+    "class": "Brute"
+  }, {
+    "abilities": [ {
+      "enhancements": [ {
+        "enhancement": "Fire",
+        "position": 1
+      } ],
+      "name": "Ink Bomb"
+    } ],
+    "class": "Tinkerer"
+  } ],
+  "events": [ {
+    "bottomUp": [ 1, 2, 3, 4, 55, 6, 39, 26, 10, 29, 7, 28, 16, 14, 21, 20, 11, 25, 13, 23, 9, 17, 5, 24, 30, 18, 19, 8, 15, 27, 22 ],
+    "deck": "city"
+  }, {
+    "bottomUp": [ 1, 2, 3, 4, 55, 6, 18, 16, 5, 28, 29, 13, 39, 24, 23, 15, 30, 20, 22, 26, 17, 14, 21, 9, 8, 7, 27, 11, 25, 19, 10 ],
+    "deck": "road"
+  } ],
+  "global": {
+    "achievements": [ {
+      "count": 2,
+      "name": "Ancient Technology"
+    }, {
+      "count": 1,
+      "name": "City Rule: Militaristic"
+    }, {
+      "count": 1,
+      "name": "The Dead Invade"
+    } ],
+    "prosperity": 5,
+    "scenarios": [ {
+      "number": 1,
+      "state": "Done"
+    }, {
+      "number": 2,
+      "state": "Open"
+    }, {
+      "number": 3,
+      "state": "Locked"
+    }, {
+      "number": 8,
+      "state": "Open"
+    } ]
+  },
+  "party": {
+    "achievements": [ "First Steps", "Jerkserah's Plans" ],
+    "characters": [ {
+      "abilities": [ "Hook and Chain", "Juggernaut" ],
+      "checkmarks": 4,
+      "class": "Brute",
+      "gold": 42,
+      "hiddenNotes": [ "TXkgTm90ZQ==", "Non Base64 is also possible" ],
+      "items": [ {
+        "name": "Battle-Axe",
+        "position": "HandRight"
+      }, {
+        "name": "Boots of Striding",
+        "position": "Boots"
+      }, {
+        "name": "Hide Armor",
+        "position": "Armor"
+      }, {
+        "name": "Iron Helmet",
+        "position": "Head"
+      }, {
+        "name": "Minor Healing Potion",
+        "position": "Bag3"
+      }, {
+        "name": "Minor Power Potion",
+        "position": "Bag2"
+      }, {
+        "name": "Minor Stamina Potion",
+        "position": "Bag1"
+      }, {
+        "name": "Poison Dagger",
+        "position": "HandLeft"
+      } ],
+      "name": "Rambo",
+      "notes": [ "My Note", "More notes" ],
+      "perks": [ 1, 3, 6 ],
+      "quest": 513,
+      "xp": 100
+    }, {
+      "abilities": [ "Stamina Booster" ],
+      "checkmarks": 0,
+      "class": "Tinkerer",
+      "gold": 42,
+      "hiddenNotes": [],
+      "items": [ {
+        "name": "Minor Healing Potion",
+        "position": "Unequipped"
+      } ],
+      "name": "Dave",
+      "notes": [],
+      "perks": [ 1 ],
+      "quest": 531,
+      "xp": 50
+    }, [], [] ],
+    "location": "Gloomhaven",
+    "name": "Devil's advocates",
+    "notes": [ "Some notes", "More notes" ],
+    "reputation": -10
+  },
+  "retired": [ {
+    "character": "Random Elf Name",
+    "class": "Spellweaver",
+    "level": 3,
+    "perks": 0,
+    "player": "Alice",
+    "quest": "Pounds of Flesh"
+  }, {
+    "character": "Big Boss",
+    "class": "Brute",
+    "level": 4,
+    "perks": 1,
+    "player": "Bob",
+    "quest": "Seeker of Xorn"
+  } ],
+  "unlocked": {
+    "classes": [ "Berserker" ],
+    "items": [ "Power Core", "Wand of Infernos", "Major Healing Potion", "Major Healing Potion" ],
+    "sanctuary": 18,
+    "specialConditions": {
+      "ancientTechnology": true,
+      "donations": 10,
+      "drakeAided": true,
+      "highestReputation": true,
+      "highReputation": true,
+      "lowestReputation": true,
+      "lowReputation": true,
+      "retired": true
+    }
+  }
+}

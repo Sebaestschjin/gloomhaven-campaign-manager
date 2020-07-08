@@ -175,7 +175,7 @@ function Character.loadPerks(playerZone, character)
   for _, perk in TableUtil.pairs(character.perks) do
     if perkInfo[perk] then
       characterSheet.call('clickedToggle', "perk"..tostring(perk))
-      Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, perkInfo[perk])
+      Character.adjustAttackModifierDeck(character, modifierDeck, additionalModifierDeck, perkInfo[perk])
       if additionalModifierDeck.remainder then
         -- Remainder may only live for a single frame after last card is taken
         -- May need to move this into the adjustAttackModifierDeck routine itself to reduce
@@ -191,28 +191,47 @@ function Character.loadPerks(playerZone, character)
 end
 
 
-function Character.adjustAttackModifierDeck(modifierDeck, additionalModifierDeck, info)
-  for _, card in TableUtil.pairs(info.add) do
+function Character.adjustAttackModifierDeck(character, modifierDeck, additionalModifierDeck, info)
+  for i, card in TableUtil.pairs(info.add) do
     if additionalModifierDeck.tag == Tag.CARD then
       additionalModifierDeck.putObject(modifierDeck)
       break
     end
     local foundCard = Character.findModifierCard(additionalModifierDeck, card)
-    additionalModifierDeck.takeObject({
-      guid = foundCard.guid,
-      position = positions.getSafe(),
-      smooth = false,
-      callback_function = function(card) card.putObject(modifierDeck) end
-    })
+    if foundCard then
+      Log.verbose(character.class .. ": Adding " .. foundCard.name)
+      additionalModifierDeck.takeObject({
+        guid = foundCard.guid,
+        position = positions.getSafe(),
+        smooth = false,
+        callback_function = function(card) card.putObject(modifierDeck) end
+      })
+    else
+      Log.error(character.class .. ", adding: Can't find modifier card " .. card .. ".")
+    end
+
+    -- TODO ugly :-( This is the special case where the the last perk adds all remaining cards which
+    -- doesn't trigger
+    if additionalModifierDeck.remainder and i < #info.add then
+      additionalModifierDeck = additionalModifierDeck.remainder
+    end
   end
 
   for _, card in TableUtil.pairs(info.remove) do
     local foundCard = Character.findModifierCard(modifierDeck, card)
-    modifierDeck.takeObject({
-      guid = foundCard.guid,
-      position = positions.getSafe(),
-      smooth = false,
-      callback_function = function(card) card.destruct() end})
+    if foundCard then
+      Log.verbose(character.class .. ": Removing " .. foundCard.name)
+      modifierDeck.takeObject({
+        guid = foundCard.guid,
+        position = positions.getSafe(),
+        smooth = false,
+        callback_function = function(card)
+            card.setPosition(positions.relativeToZone(modifierDeck.getGUID(), vector(0, 0, 3)))
+            -- card.destruct() end})
+          end})
+    else
+      Log.error(character.class .. ", removing: Can't find modifier card " .. card .. ".")
+    end
   end
 
   if info.ignore then

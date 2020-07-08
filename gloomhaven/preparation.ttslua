@@ -4,18 +4,24 @@ function Preparation.start(callback)
   Preparation.verifyLoad()
   Preparation.fix()
   Preparation.revealLockedCharacters(callback)
-  getObjectFromGUID(guids.GAMEBOX).takeObject({
-    guid = guids.SCENARIO_BOOK,
-    smooth = false,
-    position = positions.SCENARIO_BOOK,
-    rotation = Rotation.NORTH
-  })
-  getObjectFromGUID(guids.GAMEBOX).takeObject({
-    guid = guids.RULE_BOOK,
-    smooth = false,
-    position = positions.RULE_BOOK,
-    rotation = Rotation.NORTH
-  })
+
+  Preparation.takeFromGamebox(guids.SCENARIO_BOOK, positions.SCENARIO_BOOK)
+  Preparation.takeFromGamebox(guids.RULE_BOOK, positions.RULE_BOOK)
+end
+
+function Preparation.takeFromGamebox(guid, position, callback)
+  local object = getObjectFromGUID(guid)
+  if object == nil then
+    getObjectFromGUID(guids.GAMEBOX).takeObject({
+      guid = guid,
+      smooth = false,
+      position = position,
+      rotation = Rotation.NORTH,
+      callback_function = callback
+    })
+  else
+    callback(object)
+  end
 end
 
 -- Verifies that the script can actually run, by checking if needed objects exists.
@@ -54,7 +60,9 @@ function Preparation.verifyObject(guid, name)
 end
 
 function Preparation.verifyContent(guid, content, name)
-  assert(Utils.findObjectInfoInStack(getObjectFromGUID(guid), {guid=content}), name .. " is missing")
+  assert(getObjectFromGUID(content)
+         or Utils.findObjectInfoInStack(getObjectFromGUID(guid), {guid=content}),
+         name .. " is missing")
 end
 
 function Preparation.verifyTable(guid, table, name)
@@ -62,13 +70,11 @@ function Preparation.verifyTable(guid, table, name)
 end
 
 function Preparation.revealLockedCharacters(callback)
-  getObjectFromGUID(guids.GAMEBOX).takeObject({
-    guid = guids.LOCKED_CLASSES,
-    smooth = false,
-    callback_function = function(obj)
-      Preparation.putDivinierIntoBox(obj)
-      Preparation.revealOpeningConditions(callback) end
-  })
+  Preparation.takeFromGamebox(guids.LOCKED_CLASSES, nil,
+                              function(obj)
+                                Preparation.putDivinierIntoBox(obj)
+                                Preparation.revealOpeningConditions(callback)
+                              end)
 end
 
 
@@ -82,24 +88,14 @@ end
 
 
 function Preparation.revealOpeningConditions(callback)
-  getObjectFromGUID(guids.GAMEBOX).takeObject({
-    guid = guids.OPENING_CONDITIONS,
-    smooth = false,
-    position = positions.OPENING_CONDITIONS,
-    rotation = Rotation.NORTH,
-    callback_function = function() Preparation.revealRetirementSheet(callback) end
-  })
+  Preparation.takeFromGamebox(guids.OPENING_CONDITIONS, positions.OPENING_CONDITIONS,
+                              function() Preparation.revealRetirementSheet(callback) end)
 end
 
 
 function Preparation.revealRetirementSheet(callback)
-  getObjectFromGUID(guids.GAMEBOX).takeObject({
-    guid = guids.RETIREMENT_SHEET,
-    smooth = false,
-    position = positions.RETIREMENT_SHEET,
-    rotation = Rotation.NORTH,
-    callback_function = function() Preparation.finish(callback) end
-  })
+  Preparation.takeFromGamebox(guids.RETIREMENT_SHEET, positions.RETIREMENT_SHEET,
+                              function() Preparation.finish(callback) end)
 end
 
 

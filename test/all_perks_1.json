@@ -1,0 +1,94 @@
+{
+  "enhancements": [ {
+    "abilities": [],
+    "class": "Diviner"
+  }, {
+    "abilities": [],
+    "class": "Doomstalker"
+  }, {
+    "abilities": [],
+    "class": "Summoner"
+  }, {
+    "abilities": [],
+    "class": "Sunkeeper"
+  } ],
+  "events": [ {
+    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
+    "deck": "city"
+  }, {
+    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
+    "deck": "road"
+  } ],
+  "global": {
+    "achievements": [],
+    "prosperity": 0,
+    "scenarios": []
+  },
+  "party": {
+    "achievements": [],
+    "characters": [ {
+      "abilities": [ "Bright Aegis", "Burning Flash", "Cleansing Force", "Divine Intervention", "Engulfing Radiance", "Illuminate the Target", "Inspiring Sanctity", "Mobilizing Axiom", "Path of Glory", "Practical Plans", "Righteous Strength", "Scales of Justice", "Supportive Chant", "Unwavering Mandate", "Weapon of Purity" ],
+      "checkmarks": 0,
+      "class": "Sunkeeper",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "name": "",
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    }, {
+      "abilities": [ "Crashing Wave", "Darkened Skies", "Expose", "Feral Instincts", "Flight of Flame", "Impending End", "Inescapable Fate", "Lead to Slaughter", "Nature's Hunger", "Predator and Prey", "Press the Attack", "Relentless Offensive", "Rising Momentum", "Singular Focus", "Wild Commad" ],
+      "checkmarks": 0,
+      "class": "Doomstalker",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "name": "",
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    }, {
+      "abilities": [ "Divided Mind", "Earthen Steed", "Endless Spikers", "Grasping the Void", "Horned Majesty", "Inexorable Momentum", "Interplanar Mastery", "Intervening Apparitions", "Living Mountain", "Negative Energy", "Oozing Manifestation", "Otherworldly Rage", "Staff of Visions", "Strength in Numbers", "Tear the Fabric" ],
+      "checkmarks": 0,
+      "class": "Summoner",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "name": "",
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    }, {
+      "abilities": [ "Call of the Nether", "Careful Attunement", "Cleansing Rite", "Curative Flux", "Deep Contemplation", "Dimensional Divide", "Enfeebling Hex", "Envision the Course", "Ethereal Vortex", "Gift of the Void", "Hand of Destiny", "Planar Fissure", "Preordain the Path", "Revitalizing Fount ", "Seal Their Fate" ],
+      "checkmarks": 0,
+      "class": "Diviner",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    } ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  },
+  "retired": [],
+  "unlocked": {
+    "classes": [ "Sunkeeper", "Summoner", "Doomstalker", "Diviner" ],
+    "items": [],
+    "sanctuary": 0,
+    "specialConditions": {
+      "ancientTechnology": false,
+      "donations": 0,
+      "drakeAided": false,
+      "highestReputation": false,
+      "highReputation": false,
+      "lowestReputation": false,
+      "lowReputation": false,
+      "retired": false
+    }
+  }
+}

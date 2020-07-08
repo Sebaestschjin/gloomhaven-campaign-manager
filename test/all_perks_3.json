@@ -1,0 +1,93 @@
+{
+  "enhancements": [ {
+    "abilities": [],
+    "class": "Berserker"
+  }, {
+    "abilities": [],
+    "class": "Cragheart"
+  }, {
+    "abilities": [],
+    "class": "Quartermaster"
+  }, {
+    "abilities": [],
+    "class": "Tinkerer"
+  } ],
+  "events": [ {
+    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
+    "deck": "city"
+  }, {
+    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 14, 13, 11, 10, 15, 12, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
+    "deck": "road"
+  } ],
+  "global": {
+    "achievements": [],
+    "prosperity": 0,
+    "scenarios": []
+  },
+  "party": {
+    "achievements": [],
+    "characters": [ {
+      "abilities": [ "Blunt Force", "Brutal Momentum", "Cataclysm", "Clear the Way", "Dig Pit", "Explosive Punch", "Kinetic Assault", "Lumbering Bash", "Meteor", "Petrify", "Pulverize", "Rock Slide", "Rocky End", "Sentient Growth", "Stone Pummel" ],
+      "checkmarks": 0,
+      "class": "Cragheart",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    }, {
+      "abilities": [ "Chimeric Formula", "Crank Bow", "Curative Aerosol", "Dangerous Contraption", "Disintegration Beam", "Disorienting Flash", "Gas Canister", "Harsh Stimulants", "Jet Propulsion", "Lethal Injection", "Micro Bots", "Murderous Contraption", "Noxious Vials", "Stamina Booster", "Tinkerer's Tools" ],
+      "checkmarks": 0,
+      "class": "Tinkerer",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    }, {
+      "abilities": [ "Bladed Boomerang", "Catastrophic Bomb", "Continual Supply", "Fortified Position", "Giant Club", "Portable Balliswta", "Quiver of Arrows", "Reforge", "Refreshments", "Reinforced Steel", "Scroll of Annihilation", "Scroll of Blizzards", "Scroll of Judgement", "Scroll of Lightning", "Side Pouch" ],
+      "checkmarks": 0,
+      "class": "Quartermaster",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "name": "",
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    }, {
+      "abilities": [ "Break the Chains", "Burning Hatred", "Careless Charge", "Devil Horns", "Fatal Fury", "Final Fight", "Flurry of Axes", "Immortality", "Reckless Offensive", "Seeing Red", "Shiny Distraction", "Spiked Armor", "The Maw of Madness", "Unstoppable Destruction", "Vengeful Barrage" ],
+      "checkmarks": 0,
+      "class": "Berserker",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [],
+      "name": "",
+      "notes": [],
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+      "xp": 0
+    } ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  },
+  "retired": [],
+  "unlocked": {
+    "classes": [ "Berserker", "Quartermaster" ],
+    "items": [],
+    "sanctuary": 0,
+    "specialConditions": {
+      "ancientTechnology": false,
+      "donations": 0,
+      "drakeAided": false,
+      "highestReputation": false,
+      "highReputation": false,
+      "lowestReputation": false,
+      "lowReputation": false,
+      "retired": false
+    }
+  }
+}

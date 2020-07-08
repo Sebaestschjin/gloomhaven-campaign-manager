@@ -1,8 +1,10 @@
 Party = {}
 
 function Party.load(party)
-  Party.loadPartySheet(party)
-  Wait.time(function() Party.loadCharacters(party.characters) end, 2)
+  if party then
+    Party.loadPartySheet(party)
+    Wait.time(function() Party.loadCharacters(party.characters) end, 2)
+  end
 end
 
 

@@ -1,19 +1,19 @@
--- This is the code that goes onto the ui component
 #include saveHandler
 
-
 function onLoad(save_state)
+  local colors = { yellow = {0.753, 0.671, 0.565, 1}, black = {0.18, 0.047, 0.047, 1} }
+
   self.createButton({
     click_function = "load",
     function_owner = self,
     label = "Load",
-    position = {0, 0.1, -0.9},
-    scale = {1.5, 1.5, 1.5},
-    width = 1200,
+    position = {0, 0.6, -4},
+    scale = {3.5, 1.5, 5.5},
+    width = 1600,
     height = 400,
-    font_size = 200,
-    color = {0.5, 0.5, 0.5, 1},
-    font_color = {1, 1, 1, 1},
+    font_size = 300,
+    color = colors.yellow,
+    font_color = colors.black,
     tooltip = "Loads the save file from the notebook 'Savefile'"
   })
 
@@ -21,13 +21,13 @@ function onLoad(save_state)
     click_function = "save",
     function_owner = self,
     label = "Save",
-    position = {0, 0.1, 0.9},
-    scale = {1.5, 1.5, 1.5},
-    width = 1200,
+    position = {0, 0.6, 4},
+    scale = {3.5, 1.5, 5.5},
+    width = 1600,
     height = 400,
-    font_size = 200,
-    color = {0.5, 0.5, 0.5, 1},
-    font_color = {1, 1, 1, 1},
+    font_size = 300,
+    color = colors.yellow,
+    font_color = colors.black,
     tooltip = "Saves the current game progress into the notebook 'Savefile'"
   })
 end

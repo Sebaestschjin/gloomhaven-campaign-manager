@@ -121,6 +121,8 @@ end
 function Component.isAbilityCardForClass(object, class)
   return Component.isCard(object)
          and object.getDescription():find(class)
+         and (object.getName():find("%(%d%d%)")
+              or object.getName() == "Eternal Equilibrium (27(") -- quickfix for a typo in Elementalists ability card
          and not object.getName():find(names.ATTACK_MODIFIER)
 end
 

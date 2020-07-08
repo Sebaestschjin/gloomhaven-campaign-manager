@@ -47,19 +47,21 @@ function Shop.findItem(name)
 end
 
 
-function Shop.takeItem(name, position, rotation)
+function Shop.takeItem(name, toPosition, toRotation, startAt)
+  startAt = startAt or 1
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
-  for i=1, 14 do
+
+  for i=startAt, 14 do
     local pos = Utils.getSnapPosition(cityMat, i)
     local deck = cityMat.call('checkForDeck', pos)
     if deck then
       local item = Utils.findObjectInfoInStack(deck, {name=name, plain=true})
       if item then
         deck.takeObject({
-          guid = item.guid,
+          index = item.index,
           smooth = false,
-          position = position,
-          rotation = rotation,
+          position = toPosition,
+          rotation = toRotation,
         })
         return true
       end
@@ -67,4 +69,9 @@ function Shop.takeItem(name, position, rotation)
   end
 
   return false
+end
+
+
+function Shop.takeRewardItem(name, toPosition, toRotation)
+  return Shop.takeItem(name, toPosition, toRotation, 2)
 end
