@@ -41,8 +41,8 @@ function Event.validateEventNumbers(deckName, events)
   for i, event in pairs(events) do
     if event > 30 then
       local deck = getObjectFromGUID(Event.DECKS[deckName].deckGuid)
-      local info = Utils.findObjectInfoInStack(deck, {name=string.format("%02d", event)})
-      if not info then
+      local eventCard = Utils.findObjectIn(deck, {name=string.format("%02d", event)})
+      if not eventCard then
         Error.add("An event with number '%s' does not exist for deck '%s'.",
                   event, deckName)
         events[i] = nil
@@ -81,8 +81,8 @@ function Event.findBottomDeck(events, deck)
   local eventsToAdd = {}
   for i, event in pairs(events.bottomUp) do
     local eventName = string.format("%02d", event)
-    local eventCard = Utils.findObjectInfoInStack(deck, {name=eventName})
-    table.insert(eventsToAdd, eventCard.guid)
+    local eventCard = Utils.findObjectIn(deck, {name=eventName})
+    table.insert(eventsToAdd, eventCard.getGUID())
   end
 
   return eventsToAdd

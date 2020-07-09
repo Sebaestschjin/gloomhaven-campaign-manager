@@ -64,7 +64,10 @@
     }, {
       "number": 8,
       "state": "Open"
-    } ]
+    }, {
+      "number": 66,
+      "state": "Open"
+    }  ]
   },
   "party": {
     "achievements": [ "First Steps", "Jerkserah's Plans" ],

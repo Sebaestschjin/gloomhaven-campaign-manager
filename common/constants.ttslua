@@ -16,3 +16,8 @@ Tag = {}
 Tag.CARD = "Card"
 Tag.DECK = "Deck"
 Tag.FIGURINE = "Figurine"
+
+Cast = {}
+Cast.RAY = 1
+Cast.SPHERE = 2
+Cast.BOX = 3

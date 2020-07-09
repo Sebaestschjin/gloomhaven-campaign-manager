@@ -25,7 +25,7 @@ function Quest.getIndex(quest)
     local cardIdIndex = tonumber(tostring(cardId):sub(-2, -1))
 
     if cardIdIndex == questId then
-      return card.index - 1 -- card ids start with 0, but index in decks with 1
+      return card.index
     end
   end
 end

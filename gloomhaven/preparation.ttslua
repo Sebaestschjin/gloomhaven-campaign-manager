@@ -61,7 +61,7 @@ end
 
 function Preparation.verifyContent(guid, content, name)
   assert(getObjectFromGUID(content)
-         or Utils.findObjectInfoInStack(getObjectFromGUID(guid), {guid=content}),
+         or Utils.findObjectIn(guid, {guid=content}),
          name .. " is missing")
 end
 

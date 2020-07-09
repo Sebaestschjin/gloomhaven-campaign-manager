@@ -1,5 +1,7 @@
 Task = {}
 
+Task.saveMode = false
+
 function Task.load(name, input, validator, executor)
   if not input then
     return
@@ -11,9 +13,13 @@ function Task.load(name, input, validator, executor)
     return
   end
 
-  local status, message = pcall(function() executor(input) end)
-  if not status then
-    Log.errorMessage("Error loading " .. name, message)
+  if Task.saveMode then
+    local status, message = pcall(function() executor(input) end)
+    if not status then
+      Log.errorMessage("Error loading " .. name, message)
+    end
+  else
+    executor(input)
   end
 end
 

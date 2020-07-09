@@ -1,3 +1,5 @@
+local DeckUtil = require("common/DeckUtil")
+
 Utils = {}
 
 --- Reads the body of the notebook with the given name.
@@ -18,12 +20,39 @@ end
 
 
 function Utils.waitForObjectInZone(zone, search, callback, timeout, timeout_callback)
-  local waiter = function() return Utils.findObjectInZone(zone, search) ~= nil end
+  local waiter = function() return Utils.findObjectIn(zone, search) ~= nil end
   Wait.condition(callback, waiter, timeout, timeout_callback)
 end
 
+function Utils.findObjectIn(container, search)
+  if StringUtil.isGuid(container) then
+    container = getObjectFromGUID(container)
+  end
 
--- TODO this looks quite ugly now...
+  local objects = nil
+  if container.tag == "Deck" or container.tag == "Bag" then
+    objects = DeckUtil.getContainedObjects(container)
+  elseif container.getObjects then
+    objects = container.getObjects()
+  end
+
+  for _, object in TableUtil.pairs(objects) do
+    if Utils.matchesSearch(object, search) then
+      return object
+    end
+  end
+end
+
+function Utils.matchesSearch(object, search)
+  return Utils.findNonEmpty(object.getName(), search.name, search.plain)
+         and Utils.findNonEmpty(object.getDescription(), search.description, search.plain)
+         and Utils.findNonEmpty(object.getGUID(), search.guid, search.plain)
+         and Utils.findNonEmpty(object.tag, search.tag, search.plain)
+         and Utils.findNonEmpty(tostring(object.getData().CardID), search.cardId, search.plain)
+end
+
+
+-- @deprecated Use findObjectIn (doesn't support functions yet, though)
 function Utils.findObjectInZone(zone_guid, search)
   local zone = getObjectFromGUID(zone_guid)
   local plain = search.plain
@@ -44,22 +73,6 @@ function Utils.findObjectInZone(zone_guid, search)
   for _, object in pairs(zone.getObjects()) do
     if tester(object) then
       return object
-    end
-  end
-  return nil
-end
-
-
-function Utils.findObjectInfoInStack(stack, search)
-  local plain = search.plain
-  if not plain then plain = false end
-
-  for _, objectInfo in pairs(stack.getObjects()) do
-    if Utils.findNonEmpty(objectInfo.guid, search.guid, plain)
-       and Utils.findNonEmpty(objectInfo.name, search.name, plain)
-       and Utils.findNonEmpty(objectInfo.description, search.description, plain)
-    then
-      return objectInfo
     end
   end
   return nil

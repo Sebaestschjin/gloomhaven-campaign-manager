@@ -112,7 +112,7 @@ function Character.loadMaxHp(playerZone, character)
   Character.loadFigureHealth(playerZone, character.class, maxHealth)
   if maxHealth > startingHealth then
     local tokenName = startingHealth .. " hp"
-    local healthToken = Utils.findObjectInZone(playerZone, {name=tokenName})
+    local healthToken = Utils.findObjectIn(playerZone, {name=tokenName})
     healthToken.setState(maxHealth)
   end
 
@@ -124,7 +124,7 @@ end
 
 
 function Character.loadFigureHealth(playerZone, name, health)
-  local figure = Utils.findObjectInZone(playerZone, {name=name, tag=Tag.FIGURINE})
+  local figure = Utils.findObjectIn(playerZone, {name=name, tag=Tag.FIGURINE})
 
   figure.getVar("health")["max"] = health
   figure.getVar("health")["value"] = health
@@ -136,11 +136,11 @@ function Character.loadAbilities(playerZone, character)
 
   local abilityDeck = Component.abilityDeck(playerZone)
   for _, ability in pairs(character.abilities) do
-    local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=ability})
+    local abilityCard = Utils.findObjectIn(abilityDeck, {name=ability})
     if abilityCard then
       abilityDeck.takeObject({
         position = positions.relativeToZone(playerZone, positions.SECOND_HAND),
-        guid = abilityCard.guid
+        guid = abilityCard.getGUID()
       })
     else
       Log.error("An ability named '%s' does not exist for the character class '%s'",
@@ -166,7 +166,7 @@ end
 function Character.loadPerks(playerZone, character)
   local perkInfo = Game.CLASSES[character.class].perks
   local characterSheet = Component.characterSheet(playerZone)
-  local modifierDeck = Utils.findObjectInZone(playerZone, {name=names.MODIFIER_DECK, description="Player"})
+  local modifierDeck = Utils.findObjectIn(playerZone, {name=names.MODIFIER_DECK, description="Player"})
   local isOtherDeck = function(obj) return obj.getName():find(names.MODIFIER_DECK)
                                            and obj.getGUID() ~= modifierDeck.getGUID()
                                     end
@@ -199,9 +199,9 @@ function Character.adjustAttackModifierDeck(character, modifierDeck, additionalM
     end
     local foundCard = Character.findModifierCard(additionalModifierDeck, card)
     if foundCard then
-      Log.verbose(character.class .. ": Adding " .. foundCard.name)
+      Log.verbose(character.class .. ": Adding " .. foundCard.getName())
       additionalModifierDeck.takeObject({
-        guid = foundCard.guid,
+        guid = foundCard.getGUID(),
         position = positions.getSafe(),
         smooth = false,
         callback_function = function(card) card.putObject(modifierDeck) end
@@ -220,9 +220,9 @@ function Character.adjustAttackModifierDeck(character, modifierDeck, additionalM
   for _, card in TableUtil.pairs(info.remove) do
     local foundCard = Character.findModifierCard(modifierDeck, card)
     if foundCard then
-      Log.verbose(character.class .. ": Removing " .. foundCard.name)
+      Log.verbose(character.class .. ": Removing " .. foundCard.getName())
       modifierDeck.takeObject({
-        guid = foundCard.guid,
+        guid = foundCard.getGUID(),
         position = positions.getSafe(),
         smooth = false,
         callback_function = function(card)
@@ -241,7 +241,7 @@ end
 
 function Character.findModifierCard(deck, name)
   local searchPattern = "^" .. names.ATTACK_MODIFIER .. " " .. StringUtil.escapePattern(name) .. "$"
-  return Utils.findObjectInfoInStack(deck, {name=searchPattern})
+  return Utils.findObjectIn(deck, {name=searchPattern})
 end
 
 
@@ -367,7 +367,7 @@ end
 
 
 function Character.saveItems(playerZone)
-  local playerMat = Utils.findObjectInZone(playerZone, {name=names.PLAYER_MAT})
+  local playerMat = Utils.findObjectIn(playerZone, {name=names.PLAYER_MAT})
   local items = {}
   local zoneObjects = getObjectFromGUID(playerZone).getObjects()
   Character.saveItemFromObjects(zoneObjects, playerMat, items)

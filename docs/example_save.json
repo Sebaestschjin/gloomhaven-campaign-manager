@@ -10,7 +10,8 @@
           { "number": 1, "state": "Done" },
           { "number": 2, "state": "Open" },
           { "number": 3, "state": "Locked" },
-          { "number": 8, "state": "Open" }
+          { "number": 8, "state": "Open" },
+          { "number": 66, "state": "Open" }
         ]
     },
     "unlocked": {

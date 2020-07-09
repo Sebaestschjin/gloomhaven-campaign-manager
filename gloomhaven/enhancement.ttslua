@@ -88,14 +88,14 @@ function Enhancement.loadForClass(className, abilities)
     local abilityName, enhancements = ability.name, ability.enhancements
     local enhancementInfo = Game.CLASSES[className].abilities[abilityName].enhancements
 
-    local abilityCard = Utils.findObjectInZone(playerZone, {name=abilityName})
+    local abilityCard = Utils.findObjectIn(playerZone, {name=abilityName})
     if abilityCard then
       Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
     else
       local abilityDeck = Component.abilityDeck(playerZone)
-      local abilityCard = Utils.findObjectInfoInStack(abilityDeck, {name=abilityName})
+      local abilityCard = Utils.findObjectIn(abilityDeck, {name=abilityName})
       abilityDeck.takeObject({
-        guid = abilityCard.guid,
+        guid = abilityCard.getGUID(),
         position = positions.getSafe(),
         rotation = abilityDeck.getRotation(),
         smooth = false,

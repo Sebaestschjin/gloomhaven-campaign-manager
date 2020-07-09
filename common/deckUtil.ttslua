@@ -8,7 +8,7 @@ function DeckUtil.getContainedObjects(deck)
   local objects = {}
   for i, object in pairs(deckData.ContainedObjects) do
     local wrappedObject = ObjectUtil.wrapOject(object)
-    wrappedObject.index = i
+    wrappedObject.index = i - 1
     wrappedObject.getPosition = function() return ObjectUtil.wrapPosition(deckData) end
     table.insert(objects, wrappedObject)
   end

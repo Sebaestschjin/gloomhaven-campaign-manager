@@ -35,6 +35,18 @@ Game.ITEMS = {
   },
 }
 
+Game.RANDOM_SCENARIOS = {
+  [63] = 0,
+  [64] = 1,
+  [65] = 2,
+  [66] = 3,
+  [67] = 4,
+  [68] = 5,
+  [69] = 6,
+  [70] = 7,
+  [71] = 8,
+}
+
 -- Information about all character classes.
 -- Contains: name (as the key)
 --           GUID of the box containing the character

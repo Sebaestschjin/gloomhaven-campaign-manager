@@ -42,6 +42,11 @@ function StringUtil.chars(bytes)
   return text
 end
 
+function StringUtil.isGuid(text)
+  return type(text) == "string"
+         and text:find("^[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]$")
+end
+
 function StringUtil.isBase64(text)
   return text:find("^[a-zA-Z0-9+/]+=?=?$")
 end

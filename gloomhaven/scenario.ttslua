@@ -34,6 +34,10 @@ function Scenario.doLoad(scenarios)
     local number, state = scenario.number, scenario.state
     local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
     Wait.time(function() Scenario.placeSticker(stickerGuid, number, state) end, 1.1, 1)
+
+    if Component.isRandomScenario(number) then
+      Component.removeRandomScenario(number)
+    end
   end
 end
 

@@ -65,8 +65,9 @@ function positions.getSafe()
   return vector(-43 + (positions.counter * 3), 2, -85)
 end
 
-
 snaps = {}
+
+-- Player Mat
 snaps.Head = 15
 snaps.Armor = 16
 snaps.HandLeft = 17
@@ -80,8 +81,13 @@ snaps.Active2 = 7
 snaps.Active3 = 8
 snaps.Active4 = 9
 
+-- Deck Mat
+snaps.RANDOM_SCENARIOS = 8
+
+-- City Mat
 snaps.SHOP = 1
 
+-- Event Mat
 snaps.ROAD_EVENTS_DECK = 1
 snaps.CITY_EVENTS_DECK = 2
 snaps.RIFT_EVENTS = 3
@@ -98,19 +104,19 @@ function Component.isDeck(object)
 end
 
 function Component.playerMat(playerZone)
-  return Utils.findObjectInZone(playerZone, {name=names.PLAYER_MAT})
+  return Utils.findObjectIn(playerZone, {name=names.PLAYER_MAT})
 end
 
 function Component.characterMat(playerZone)
-  return Utils.findObjectInZone(playerZone, {name=names.CHARACTER_MAT})
+  return Utils.findObjectIn(playerZone, {name=names.CHARACTER_MAT})
 end
 
 function Component.characterSheet(playerZone)
-  return Utils.findObjectInZone(playerZone, {name=names.CHARACTER_SHEET})
+  return Utils.findObjectIn(playerZone, {name=names.CHARACTER_SHEET})
 end
 
 function Component.abilityDeck(playerZone)
-  return Utils.findObjectInZone(playerZone, {name=names.ABILITY_DECK})
+  return Utils.findObjectIn(playerZone, {name=names.ABILITY_DECK})
 end
 
 function Component.isAbilityDeck(object)
@@ -183,4 +189,52 @@ function Component.getQuestInfo(object)
   end
 
   return nil
+end
+
+function Component.isRandomScenario(number)
+  return Game.RANDOM_SCENARIOS[number] ~= nil
+end
+
+function Component.removeRandomScenario(number)
+  local deck, isSingleCard = Component.getDeck(snaps.RANDOM_SCENARIOS)
+  if not deck then
+    Log.error("Can't remove random scenario " .. number .. ". Nothing found at expected position.")
+    return
+  end
+
+  local cardId = string.format("%d%02d", 1930, Game.RANDOM_SCENARIOS[number])
+  local scenarioCard = Utils.findObjectIn(deck, {cardId = cardId})
+  if not scenarioCard then
+    Log.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
+    return
+  end
+
+  if isSingleCard then
+    scenarioCard.destruct()
+  else
+    deck.takeObject({
+      index = scenarioCard.index,
+      position = positions.getSafe(),
+      callback_function = function(obj) obj.destruct() end,
+    })
+  end
+end
+
+function Component.getDeck(snapPoint)
+  local deckMat = getObjectFromGUID(guids.DECK_MAT)
+  local position = Utils.getSnapPosition(deckMat, snapPoint)
+  local hit = Physics.cast({
+    origin = position + vector(0, 3, 0),
+    direction = Direction.DOWN,
+    type = Cast.RAY,
+  })
+
+  for _, hitInfo in TableUtil.pairs(hit) do
+    local object = hitInfo.hit_object
+    if Component.isCard(object) then
+      return { object }, true
+    elseif Component.isDeck(object) then
+      return object, false
+    end
+  end
 end
