@@ -1,0 +1,27 @@
+local Chain = {}
+
+function Chain.create(...)
+  local chain = {}
+  chain.args = table.pack(...)
+  chain.callbacks = {}
+  chain.add = function(callback) Chain.add(chain, callback) end
+  chain.proceed = function() Chain.proceed(chain) end
+
+  return chain
+end
+
+function Chain.add(chain, callback)
+  table.insert(chain.callbacks, callback)
+end
+
+function Chain.proceed(chain)
+  if TableUtil.isNotEmpty(chain.callbacks) then
+    local nextCallback = table.remove(chain.callbacks, 1)
+    if nextCallback(chain, table.unpack(chain.args)) then
+      Chain.proceed(chain)
+    end
+  end
+end
+
+
+return Chain
