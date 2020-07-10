@@ -1,3 +1,5 @@
+local DeckUtil = require("common/DeckUtil")
+
 Shop = {}
 
 
@@ -52,8 +54,8 @@ function Shop.takeItem(name, toPosition, toRotation, startAt)
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
 
   for i=startAt, 14 do
-    local pos = Utils.getSnapPosition(cityMat, i)
-    local deck = cityMat.call('checkForDeck', pos)
+    local deckPosition = Utils.getSnapPosition(cityMat, i)
+    local deck = DeckUtil.wrapAt(deckPosition)
     if deck then
       local item = Utils.findObjectIn(deck, {name=name, plain=true})
       if item then

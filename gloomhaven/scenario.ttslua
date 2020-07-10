@@ -33,10 +33,10 @@ function Scenario.doLoad(scenarios)
   for _, scenario in pairs(scenarios) do
     local number, state = scenario.number, scenario.state
     local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
-    Wait.time(function() Scenario.placeSticker(stickerGuid, number, state) end, 1.1, 1)
+    Scenario.placeSticker(stickerGuid, number, state)
 
-    if Component.isRandomScenario(number) then
-      Component.removeRandomScenario(number)
+    if Scenario.isRandomScenario(number) then
+      Scenario.removeRandomScenario(number)
     end
   end
 end
@@ -63,6 +63,31 @@ function Scenario.placeSticker(stickerGuid, number, state)
     map.call("clickedML", stickerGuid)
     map.call("triClick", { stickerGuid })
   end
+end
+
+function Scenario.isRandomScenario(number)
+  return Game.RANDOM_SCENARIOS[number]
+end
+
+function Scenario.removeRandomScenario(number)
+  local deck = Component.fromDeckMat(snaps.RANDOM_SCENARIOS)
+  if not deck then
+    Log.error("Can't remove random scenarios. Nothing found at expected position.")
+    return
+  end
+
+  local cardId = Component.getCardId(deckIds.RANDOM_SCENARIOS, Game.RANDOM_SCENARIOS[number])
+  local scenarioCard = Utils.findObjectIn(deck, {cardId=cardId})
+  if not scenarioCard then
+    Log.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
+    return
+  end
+
+  deck.takeObject({
+    index = scenarioCard.index,
+    position = positions.getSafe(),
+    callback_function = function(obj) obj.destruct() end,
+  })
 end
 
 

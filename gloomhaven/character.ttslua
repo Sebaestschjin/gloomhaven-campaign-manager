@@ -172,7 +172,7 @@ function Character.loadPerks(playerZone, character)
                                            and obj.getGUID() ~= currentDeck.getGUID()
                                     end
   local additionalDeck = Utils.findObjectInZone(playerZone, {func=isOtherDeck})
-  local additionalDeck = {deck = additionalDeck}
+  local additionalDeck = DeckUtil.wrap(additionalDeck)
 
   local chain = Chain.create()
   for _, perk in TableUtil.pairs(character.perks) do
@@ -200,24 +200,19 @@ end
 
 function Character.addModifierCard(chain, character, additionalDeck, currentDeck, card)
   Log.verbose(character.class .. ": Adding " .. card)
-  if additionalDeck.deck.tag == Tag.CARD then
-    additionalDeck.deck.putObject(currentDeck)
-    return true
-  end
 
-  local foundCard = Character.findModifierCard(additionalDeck.deck, card)
+  local foundCard = Character.findModifierCard(additionalDeck, card)
   if not foundCard then
     Log.error(character.class .. ", adding: Can't find modifier card " .. card .. ".")
     return true
   end
 
-  additionalDeck.deck.takeObject({
+  additionalDeck.takeObject({
     guid = foundCard.getGUID(),
     position = positions.getSafe(),
     smooth = false,
-    callback_function = function(card) card.putObject(currentDeck) chain.proceed() end
+    callback_function = function(card) currentDeck.putObject(card) chain.proceed() end
   })
-  additionalDeck.deck = additionalDeck.deck.remainder or additionalDeck.deck
 
   return false
 end

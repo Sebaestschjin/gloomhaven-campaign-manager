@@ -1,3 +1,5 @@
+local DeckUtil = require("common/DeckUtil")
+
 Event = {}
 
 Event.DECKS = {
@@ -62,7 +64,7 @@ end
 
 function Event.load(events)
   local eventsInfo = Event.DECKS[events.deck]
-  local deck = getObjectFromGUID(eventsInfo.deckGuid)
+  local deck = DeckUtil.wrap(getObjectFromGUID(eventsInfo.deckGuid))
   deck.putObject(getObjectFromGUID(eventsInfo.initialDeckGuid))
 
   local bottomCards = Event.findBottomDeck(events, deck)
@@ -119,7 +121,7 @@ end
 function Event.dealEvents(deck, eventCards, snapPoint)
   local eventPosition = Event.getPosition(snapPoint)
   for i, event in pairs(eventCards) do
-    local offset = i * 0.2
+    local offset = i * 0.1
     deck.takeObject({
       guid = event,
       position = eventPosition + vector(0, offset, 0),

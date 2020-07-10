@@ -1,12 +1,14 @@
 Quest = {}
 
 function Quest.take(quest, callback)
-  local questIndex = Quest.getIndex(quest)
-  if not questIndex then
+  local questDeck = Component.fromDeckMat(snaps.QUESTS)
+  local cardId = Component.getCardId(deckIds.QUESTS, Quest.getCardIndex(quest))
+  local questCard = Utils.findObjectIn(questDeck, {cardId=cardId})
+  if not questCard then
     return false
   end
 
-  getObjectFromGUID(guids.QUEST_DECK).takeObject({
+  questDeck.takeObject({
     index = questIndex,
     smooth = false,
     rotation = Rotation.NORTH_FLIPPED,
@@ -15,22 +17,7 @@ function Quest.take(quest, callback)
   return true
 end
 
-
-function Quest.getIndex(quest)
-  local questId = Quest.getCardId(quest)
-
-  local questDeck = getObjectFromGUID(guids.QUEST_DECK)
-  for _, card in pairs(DeckUtil.getContainedObjects(questDeck)) do
-    local cardId = card.getData().CardID
-    local cardIdIndex = tonumber(tostring(cardId):sub(-2, -1))
-
-    if cardIdIndex == questId then
-      return card.index
-    end
-  end
-end
-
-function Quest.getCardId(quest)
+function Quest.getCardIndex(quest)
     local questByName = Game.QUESTS[quest]
     if questByName then
       return questByName.index

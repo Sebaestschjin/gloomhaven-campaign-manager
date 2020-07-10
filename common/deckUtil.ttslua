@@ -17,4 +17,119 @@ function DeckUtil.getContainedObjects(deck)
 end
 
 
+function DeckUtil.wrap(object)
+  if not object then
+    return nil
+  end
+
+  local wrapped = {}
+
+  wrapped.takeObject = function(parameters) return DeckUtil.takeObject(wrapped, parameters) end
+  wrapped.putObject = function(object) return DeckUtil.putObject(wrapped, object) end
+  wrapped.tag = "Deck"
+
+  if object.tag == "Deck" then
+    if object.remainder then
+      DeckUtil.makeWrappedCard(wrapped, object.remainder)
+    else
+      DeckUtil.makeWrappedDeck(wrapped, object)
+    end
+  elseif object.tag == "Card" then
+    DeckUtil.makeWrappedCard(wrapped, object)
+  end
+
+  return wrapped
+end
+
+function DeckUtil.wrapAt(position)
+  local hit = Physics.cast({
+    origin = position + vector(0, 3, 0),
+    direction = Direction.DOWN,
+    type = Cast.RAY,
+  })
+
+  for _, hitInfo in TableUtil.pairs(hit) do
+    local object = hitInfo.hit_object
+    if object.tag == "Deck" or object.tag == "Card" then
+      return DeckUtil.wrap(object)
+    end
+  end
+
+  return nil
+end
+
+function DeckUtil.makeWrappedDeck(wrapped, deck)
+  wrapped.object = deck
+  wrapped.isDeck = true
+  wrapped.isEmpty = false
+  wrapped.getObjects = function() return deck.getObjects() end
+  wrapped.getData = function() return deck.getData() end
+end
+
+function DeckUtil.makeWrappedCard(wrapped, card)
+  local cardData = card.getData()
+  cardData.ContainedObjects = { cardData }
+
+  wrapped.object = card
+  wrapped.isDeck = false
+  wrapped.isEmpty = false
+  wrapped.getObjects = function() return card end
+  wrapped.getData = function() return cardData end
+end
+
+
+function DeckUtil.takeObject(wrapped, parameters)
+  if wrapped.isDeck then
+    local result = wrapped.object.takeObject(parameters)
+    if wrapped.object.remainder then
+      DeckUtil.makeWrappedCard(wrapped, wrapped.object.remainder)
+    end
+    return result
+  elseif not wrapped.isEmpty then
+    wrapped.lastPosition = wrapped.object.getPosition()
+    wrapped.lastRotation = wrapped.object.getRotation()
+    DeckUtil.takeObjectForSingleObject(wrapped.object, parameters)
+  end
+end
+
+function DeckUtil.putObject(wrapped, object)
+  if wrapped.isEmpty then
+    object.setPosition(wrapped.lastPosition)
+    object.setRotation(wrapped.lastRotation)
+    DeckUtil.makeWrappedCard(wrapped, object)
+    return wrapped.object
+  elseif wrapped.isDeck then
+    return wrapped.object.putObject(object)
+  else
+    local formedDeck = wrapped.object.putObject(object)
+    DeckUtil.makeWrappedDeck(wrapped, formedDeck)
+    return formedDeck
+  end
+end
+
+
+function DeckUtil.takeObjectForSingleObject(object, parameters)
+  if parameters.guid and object.getGUID() ~= parameters.guid then
+    error("Deck doesn't contain guid " .. parameters.guid)
+  end
+
+  if parameters.position then
+    if parameters.smooth then
+      object.setPositionSmooth(parameters.position)
+    else
+      object.setPosition(parameters.position)
+    end
+  end
+
+  if parameters.rotation then
+    object.setRotation(parameters.rotation)
+  elseif parameters.flip then
+    object.setRotation(object.getRotation() * vector(1, -1, 1))
+  end
+
+  if parameters.callback_function then
+    parameters.callback_function(object)
+  end
+end
+
 return DeckUtil

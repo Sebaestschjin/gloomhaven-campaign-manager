@@ -27,7 +27,7 @@
   "party": {
     "achievements": [],
     "characters": [ {
-      "abilities": [ "Blood Hunger", "Earthen Spikes", "Energizing Strike", "Jaws of Death", "Lash out", "Natural Remedy", "Primal Blessing", "Punch Through", "Rampage", "Stone Sigil", "Storm Sigil", "Tribal Sigil", "Tyrannical Force", "Unstoppable Beast", "Vicious Ally" ],
+      "abilities": [ "Ancient Ward", "Blood Hunger", "Earthen Spikes", "Energizing Strike", "Jaws of Death", "Lash out", "Natural Remedy", "Primal Blessing", "Punch Through", "Rampage", "Stone Sigil", "Storm Sigil", "Tribal Sigil", "Tyrannical Force", "Unstoppable Beast", "Vicious Ally" ],
       "checkmarks": 0,
       "class": "Beast Tyrant",
       "gold": 0,
@@ -38,7 +38,7 @@
       "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
       "xp": 0
     }, {
-      "abilities": [ "Captivating Performance", "Change Tempo", "Commanding Presence", "Crippling Chrous", "Disorienting Dirge", "Echoing Aria", "Inspiring Anthem", "Melody and Harmony", "Mobilizing Measure", "Nightmare Serenade", "Provoke Terror", "Pull the Strings", "Shadow Puppets", "Soothing Lullaby", "Tranquil Trill" ],
+      "abilities": [ "Booming Proclamation", "Captivating Performance", "Change Tempo", "Commanding Presence", "Crippling Chrous", "Disorienting Dirge", "Echoing Aria", "Inspiring Anthem", "Melody and Harmony", "Mobilizing Measure", "Nightmare Serenade", "Provoke Terror", "Pull the Strings", "Shadow Puppets", "Soothing Lullaby", "Tranquil Trill" ],
       "checkmarks": 0,
       "class": "Soothsinger",
       "gold": 0,
@@ -49,7 +49,7 @@
       "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
       "xp": 0
     }, {
-      "abilities": [ "Airborne Toxin", "Baneful Hex", "Black Tides", "Convert the Flock", "Fetid Flurry", "Grim Bargain", "Mass Extinction", "Nightmarish Affliction", "Rot Maggots", "Spreading Scrouge", "Stinging Cloud", "Storm of Wings", "Succumb to the Gift", "Under the Skin", "Willing Sacrifice" ],
+      "abilities": [ "Accelerated End", "Airborne Toxin", "Baneful Hex", "Black Tides", "Convert the Flock", "Fetid Flurry", "Grim Bargain", "Mass Extinction", "Nightmarish Affliction", "Rot Maggots", "Spreading Scrouge", "Stinging Cloud", "Storm of Wings", "Succumb to the Gift", "Under the Skin", "Willing Sacrifice" ],
       "checkmarks": 0,
       "class": "Plagueherald",
       "gold": 0,
@@ -60,7 +60,7 @@
       "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
       "xp": 0
     }, {
-      "abilities": [ "Armor of the Night", "Black Arrow", "Claws of the Night", "Eyes of the Night", "Gloom Darts", "Grim Sustenance", "Lurking Ruin", "Nightfall", "Prepare for the Kill", "Quiet Frenzy", "Soulfire", "Swallowed by Fear", "Terror Blade", "Unseen Dread", "Voice of the Night" ],
+      "abilities": [ "Angel of Death", "Armor of the Night", "Black Arrow", "Claws of the Night", "Eyes of the Night", "Gloom Darts", "Grim Sustenance", "Lurking Ruin", "Nightfall", "Prepare for the Kill", "Quiet Frenzy", "Soulfire", "Swallowed by Fear", "Terror Blade", "Unseen Dread", "Voice of the Night" ],
       "checkmarks": 0,
       "class": "Nightshroud",
       "gold": 0,
