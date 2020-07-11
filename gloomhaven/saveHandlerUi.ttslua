@@ -1,3 +1,5 @@
+local ChatCommands = require("ge_tts/ChatCommands")
+
 #include saveHandler
 
 function onLoad(save_state)
@@ -30,6 +32,9 @@ function onLoad(save_state)
     font_color = colors.black,
     tooltip = "Saves the current game progress into the notebook 'Savefile'"
   })
+
+  ChatCommands.addCommand("save", save)
+  ChatCommands.addCommand("load", load)
 end
 
 
