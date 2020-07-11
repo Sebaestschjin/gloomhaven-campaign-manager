@@ -1,22 +1,5 @@
 {
   "unlocked": {
-    "items": [
-      "Battle-Axe",
-      "Battle-Axe",
-      "Boots of Speed",
-      "Boots of Speed",
-      "Cloak of Pockets",
-      "Cloak of Pockets",
-      "Empowering Talisman",
-      "Empowering Talisman",
-      "Minor Mana Potion",
-      "Minor Mana Potion",
-      "Minor Mana Potion",
-      "Minor Mana Potion",
-      "Stun Powder",
-      "Stun Powder",
-      "Weighted Net",
-      "Weighted Net"
-    ]
+    "items": [ "Battle-Axe", "Battle-Axe", "Boots of Speed", "Boots of Speed", "Cloak of Pockets", "Cloak of Pockets", "Empowering Talisman", "Empowering Talisman", "Minor Mana Potion", "Minor Mana Potion", "Minor Mana Potion", "Minor Mana Potion", "Stun Powder", "Stun Powder", "Weighted Net", "Weighted Net" ]
   }
 }

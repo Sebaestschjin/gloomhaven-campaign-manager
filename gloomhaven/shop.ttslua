@@ -26,11 +26,11 @@ function Shop.save()
   local items = {}
   for _, item in pairs(shopDeck.getObjects()) do
     if Component.isRewardItemCard(item) then
-      items[item.name] = true
+      table.insert(items, item.name)
     end
   end
 
-  return table.sort(TableUtil.setToList(items))
+  return table.sort(items)
 end
 
 
@@ -46,6 +46,8 @@ function Shop.findItem(name)
       end
     end
   end
+
+  return nil
 end
 
 
@@ -72,7 +74,6 @@ function Shop.takeItem(name, toPosition, toRotation, startAt)
 
   return false
 end
-
 
 function Shop.takeRewardItem(name, toPosition, toRotation)
   return Shop.takeItem(name, toPosition, toRotation, 2)
