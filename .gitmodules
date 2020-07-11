@@ -1,3 +1,6 @@
 [submodule "ge_tts"]
 	path = ge_tts
 	url = https://github.com/Benjamin-Dobell/ge_tts.git
+[submodule "tts-types.git"]
+	path = tts-types
+	url = https://github.com/Benjamin-Dobell/tts-types.git
