@@ -184,7 +184,7 @@ function Enhancement.saveForCard(card, class, classEnhancements)
   end
 
   if TableUtil.isNotEmpty(cardEnhancements) then
-    cardEnhancements = TableUtil.sort(cardEnhancements, "position")
+    cardEnhancements = TableUtil.sortByAttribute (cardEnhancements, "position")
     table.insert(classEnhancements, { name=ability, enhancements=cardEnhancements })
   end
 end

@@ -9,7 +9,7 @@ function Quest.take(quest, callback)
   end
 
   questDeck.takeObject({
-    index = questIndex,
+    index = questCard.index,
     smooth = false,
     rotation = Rotation.NORTH_FLIPPED,
     callback_function = callback
@@ -18,16 +18,16 @@ function Quest.take(quest, callback)
 end
 
 function Quest.getCardIndex(quest)
-    local questByName = Game.QUESTS[quest]
-    if questByName then
-      return questByName.index
-    end
+  local questByName = Game.QUESTS[quest]
+  if questByName then
+    return questByName.index
+  end
 
-    for _, questInfo in pairs(Game.QUESTS) do
-      if questInfo.number == quest then
-        return questInfo.index
-      end
+  for _, questInfo in pairs(Game.QUESTS) do
+    if questInfo.number == quest then
+      return questInfo.index
     end
+  end
 
-    return nil
+  return nil
 end

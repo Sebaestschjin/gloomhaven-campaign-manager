@@ -26,6 +26,8 @@ function DeckUtil.wrap(object)
 
   wrapped.takeObject = function(parameters) return DeckUtil.takeObject(wrapped, parameters) end
   wrapped.putObject = function(object) return DeckUtil.putObject(wrapped, object) end
+  wrapped.getPosition = function() return wrapped.object.getPosition() end
+  wrapped.getRotation = function() return wrapped.object.getRotation() end
   wrapped.tag = "Deck"
 
   if object.tag == "Deck" then
