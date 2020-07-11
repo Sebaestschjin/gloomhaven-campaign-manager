@@ -12,7 +12,6 @@ function Shop.load()
   cityMat.call("layOut", 0)
 end
 
-
 function Shop.save()
   local cityMat = getObjectFromGUID(guids.CITY_MAT)
   local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
@@ -20,7 +19,7 @@ function Shop.save()
   if not shopDeck then
     Log.warning("Can't find shop deck, which means unlocked items can't be saved."
                 .." If the shop is currently layed out, please recall it and try again.")
-    return {}
+    return nil
   end
 
   local items = {}

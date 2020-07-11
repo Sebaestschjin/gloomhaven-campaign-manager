@@ -46,7 +46,7 @@ function Retirement.save()
   Retirement.saveRetirementSheet(retired)
   Retirement.saveCompletedQuests(retired)
 
-  return retired
+  return TableUtil.emptyToNil(retired)
 end
 
 function Retirement.saveRetirementSheet(retired)

@@ -137,11 +137,13 @@ function Event.save()
 
   for name, info in pairs(Event.DECKS) do
     local eventDeck = Event.saveEventsFromDeck(info.snapPoint)
-    eventDeck.deck = name
-    table.insert(events, eventDeck)
+    if eventDeck then
+      eventDeck.deck = name
+      table.insert(events, eventDeck)
+    end
   end
 
-  return events
+  return TableUtil.emptyToNil(events)
 end
 
 
@@ -164,6 +166,9 @@ function Event.saveEventsFromDeck(snapPoint)
     end
   end
 
+  if TableUtil.isEmpty(eventsFromDeck.bottomUp) then
+    return nil
+  end
   return eventsFromDeck
 end
 

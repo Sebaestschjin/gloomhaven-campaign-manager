@@ -368,7 +368,7 @@ function Character.saveItems(playerZone)
   local zoneObjects = getObjectFromGUID(playerZone).getObjects()
   Character.saveItemFromObjects(zoneObjects, playerMat, items)
 
-  return table.sort(items, function(l, r) return l.name < r.name end)
+  return TableUtil.sortByAttribute(items, "name")
 end
 
 

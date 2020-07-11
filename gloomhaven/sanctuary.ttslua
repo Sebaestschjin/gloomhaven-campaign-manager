@@ -27,7 +27,7 @@ end
 function Sanctuary.save()
   local sanctuarySticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
   if not sanctuarySticker then
-    return 0
+    return nil
   end
 
   local checkmarks = sanctuarySticker.getTable("Pros")

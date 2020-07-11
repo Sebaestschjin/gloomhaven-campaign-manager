@@ -117,12 +117,12 @@ end
 
 
 function Unlocked.saveAll()
-  return {
+  return TableUtil.emptyToNil({
     classes = Unlocked.saveClasses(),
     items = Shop.save(),
     sanctuary = Sanctuary.save(),
     specialConditions = Unlocked.saveOpeningConditions()
-  }
+  })
 end
 
 function Unlocked.saveClasses()
@@ -134,7 +134,7 @@ function Unlocked.saveClasses()
     end
   end
 
-  return classes
+  return TableUtil.emptyToNil(classes)
 end
 
 
@@ -142,7 +142,7 @@ end
 function Unlocked.saveOpeningConditions()
   local openingConditionsSheet = getObjectFromGUID(guids.OPENING_CONDITIONS)
   if not openingConditionsSheet then
-    return {}
+    return nil
   end
 
   local openingConditions = {}

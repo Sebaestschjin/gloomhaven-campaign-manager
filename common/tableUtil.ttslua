@@ -40,15 +40,26 @@ function TableUtil.append(t1, t2)
 end
 
 --- Checks whether a table is empty.
--- A nil value is also considered an empty table.
+--- A nil value is also considered an empty table.
 function TableUtil.isEmpty(table)
   return not table or not next(table)
 end
 
 --- Checks whether a table is not empty.
--- Also works for nil values, for which this is always false.
+--- Also works for nil values, for which this is always false.
 function TableUtil.isNotEmpty(table)
   return not TableUtil.isEmpty(table)
+end
+
+function TableUtil.emptyToNil(table)
+  if TableUtil.isEmpty(table) then
+    return nil
+  end
+  return table
+end
+
+function TableUtil.sortByAttribute(tableToSort, attributeName)
+  return table.sort(tableToSort, function(l, r) return l[attributeName] < r[attributeName] end)
 end
 
 --- Converts a table given as a set into a list.

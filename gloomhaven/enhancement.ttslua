@@ -130,7 +130,8 @@ function Enhancement.save()
     Enhancement.saveInZone(playerZone, enhancements)
   end
 
-  return table.sort(enhancements, function(l, r) return l.class < r.class end)
+  enhancements = TableUtil.sortByAttribute(enhancements, "class")
+  return TableUtil.emptyToNil(enhancements)
 end
 
 
@@ -146,7 +147,7 @@ function Enhancement.saveInZone(playerZone, enhancements)
   local zoneObjects = getObjectFromGUID(playerZone).getObjects()
   Enhancement.saveInContainer(zoneObjects, class, classEnhancements.abilities)
 
-  classEnhancements = table.sort(classEnhancements.abilities, function(l, r) return l.name < r.name end)
+  classEnhancements = TableUtil.sortByAttribute(classEnhancements.abilities, "name")
 end
 
 function Enhancement.saveInContainer(objects, class, classEnhancements)
@@ -183,7 +184,7 @@ function Enhancement.saveForCard(card, class, classEnhancements)
   end
 
   if TableUtil.isNotEmpty(cardEnhancements) then
-    cardEnhancements = table.sort(cardEnhancements, function(l, r) return l.position < r.position end)
+    cardEnhancements = TableUtil.sort(cardEnhancements, "position")
     table.insert(classEnhancements, { name=ability, enhancements=cardEnhancements })
   end
 end

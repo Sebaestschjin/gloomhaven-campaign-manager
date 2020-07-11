@@ -92,7 +92,7 @@ end
 
 
 function Scenario.save()
-  local content = {}
+  local scenarios = {}
   local map = getObjectFromGUID(guids.MAP)
   local scenarioStickers = map.getTable("tableML")
   local unlockedScenarios = map.getTable("locations")
@@ -107,9 +107,9 @@ function Scenario.save()
           state = Scenario.DONE
         end
       end
-      table.insert(content, {number=info.number, state=state})
+      table.insert(scenarios, {number=info.number, state=state})
     end
   end
 
-  return content
+  return TableUtil.emptyToNil(scenarios)
 end
