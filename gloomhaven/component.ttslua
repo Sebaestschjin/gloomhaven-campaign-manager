@@ -34,7 +34,7 @@ guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}
 guids.ADD_PLAYERS = {"3f0cda", "4d61da", "f98ff8", "d0f661"}
 
 deckIds = {}
-deckIds.QUESTS = 1997
+deckIds.QUESTS = {1753, 1997}
 deckIds.RANDOM_SCENARIOS = 1930
 
 names = {}
@@ -109,6 +109,9 @@ function Component.isDeck(object)
 end
 
 function Component.getCardId(customDeck, index)
+  if type(customDeck) == "table" then
+    customDeck = customDeck[#customDeck]
+  end
   return string.format("%d%02d", customDeck, index)
 end
 
@@ -191,7 +194,7 @@ function Component.isPersonalQuestCard(object)
   end
 
   for key, _ in pairs(object.getData().CustomDeck) do
-    return key == deckIds.QUESTS
+    return TableUtil.contains(deckIds.QUESTS, key)
   end
 end
 

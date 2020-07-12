@@ -7,11 +7,13 @@ Event.DECKS = {
     initialDeckGuid = guids.CITY_EVENTS_DECK_INITIAL,
     deckGuid = guids.CITY_EVENTS_DECK,
     snapPoint = snaps.CITY_EVENTS_DECK,
+    oldMat = "b53fb2",
   },
   ["road"] = {
     initialDeckGuid = guids.ROAD_EVENTS_DECK_INITIAL,
     deckGuid = guids.ROAD_EVENTS_DECK,
     snapPoint = snaps.ROAD_EVENTS_DECK,
+    oldMat = "41393b",
   },
 }
 
@@ -73,7 +75,7 @@ function Event.load(events)
   TableUtil.shuffle(addedCards)
   local eventCards = TableUtil.append(bottomCards, addedCards)
 
-  Event.dealEvents(deck, eventCards, eventsInfo.snapPoint)
+  Event.dealEvents(deck, eventCards, eventsInfo)
 end
 
 
@@ -118,8 +120,8 @@ function Event.isAdded(events, eventNumber)
 end
 
 
-function Event.dealEvents(deck, eventCards, snapPoint)
-  local eventPosition = Event.getPosition(snapPoint)
+function Event.dealEvents(deck, eventCards, info)
+  local eventPosition = Event.getPosition(info)
   for i, event in pairs(eventCards) do
     local offset = i * 0.1
     deck.takeObject({
@@ -136,7 +138,7 @@ function Event.save()
   events = {}
 
   for name, info in pairs(Event.DECKS) do
-    local eventDeck = Event.saveEventsFromDeck(info.snapPoint)
+    local eventDeck = Event.saveEventsFromDeck(info)
     if eventDeck then
       eventDeck.deck = name
       table.insert(events, eventDeck)
@@ -147,9 +149,9 @@ function Event.save()
 end
 
 
-function Event.saveEventsFromDeck(snapPoint)
+function Event.saveEventsFromDeck(info)
   local hitObjects = Physics.cast({
-    origin = Event.getPosition(snapPoint) + vector(0, -0.05, 0),
+    origin = Event.getPosition(info) + vector(0, -0.05, 0),
     direction = Direction.UP,
     max_distance = 0.1
   })
@@ -173,6 +175,10 @@ function Event.saveEventsFromDeck(snapPoint)
 end
 
 
-function Event.getPosition(snapPoint)
-  return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), snapPoint)
+function Event.getPosition(info)
+  if getObjectFromGUID(info.oldMat) then
+    return Utils.getSnapPosition(getObjectFromGUID(info.oldMat), 1)
+  end
+
+  return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), info.snapPoint)
 end
