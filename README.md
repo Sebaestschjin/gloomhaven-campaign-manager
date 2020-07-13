@@ -31,12 +31,13 @@ This code contains some mild spoilers for Gloomhaven. The names of all available
 
 \* Envelope B is included
 
-| Expansion Features                   | Done |
-| ------------------------------------ | :--: |
-| Forgotten Circle - Diviner class     | ✔️*   |
-| Forgotten Circle - Events            | ❌  |
-| Forgotten Circle - Replacement Cards | ❌  |
-| Forgotten Circle - Items             | ❌  |
+| Expansion Features                    | Done |
+| ------------------------------------- | :--: |
+| Forgotten Circles - Diviner class     | ✔️*   |
+| Forgotten Circles - City-/Road-Events | ✔️    |
+| Forgotten Circles - Rift-Events       | ❌  |
+| Forgotten Circles - Replacement Cards | ❌  |
+| Forgotten Circles - Reward Items      | ✔️    |
 
 \* Second printing cards might not work correctly yet
 

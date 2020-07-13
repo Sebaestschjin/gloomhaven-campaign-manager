@@ -1,0 +1,81 @@
+local Chain = require("common/Chain")
+local DeckUtil = require("common/DeckUtil")
+
+local Expansion = {}
+
+Expansion.START_EVENT = 82
+Expansion.NEW_ITEMS = "Forgotten Circles Items"
+
+function Expansion.unpack(callback)
+  local chain = Chain.create()
+
+  for name, info in pairs(Event.DECKS) do
+    local deck = getObjectFromGUID(info.deckGuid)
+    chain.add(function(chain) Expansion.unpackEvents(chain, deck, info.name) end)
+  end
+
+  chain.add(Expansion.unpackItems)
+
+  chain.add(callback)
+  chain.proceed()
+end
+
+
+function Expansion.unpackEvents(chain, targetDeck, name)
+  local forgottenCirclesBox = getObjectFromGUID(guids.FORGOTTEN_CIRCLES_BOX)
+  local newEvents = Utils.findObjectIn(forgottenCirclesBox, {name=name})
+
+  forgottenCirclesBox.takeObject({
+    guid = newEvents.getGUID(),
+    position = positions.getSafe(),
+    rotation = targetDeck.getRotation(),
+    smooth = false,
+    callback_function = function(obj) Expansion.nameEventCards(chain, obj, targetDeck) end,
+  })
+end
+
+
+function Expansion.nameEventCards(chain, deck, targetDeck)
+  local deck = DeckUtil.wrap(deck)
+  for i, card in ipairs(deck.getObjects()) do
+    chain.addNext(function(chain) Expansion.placeEventCard(chain, deck, targetDeck, i) end)
+  end
+
+  chain.proceed()
+end
+
+
+function Expansion.placeEventCard(chain, deck, targetDeck, index)
+  deck.takeObject({
+    index = index - 1,
+    position = positions.getSafe(),
+    smooth = false,
+    callback_function = function(card)
+                          card.setName(tostring((index - 1) + Expansion.START_EVENT))
+                          targetDeck.putObject(card)
+                          Wait.frames(chain.proceed, 1)
+                        end
+  })
+  return false
+end
+
+function Expansion.unpackItems(chain)
+  local forgottenCirclesBox = getObjectFromGUID(guids.FORGOTTEN_CIRCLES_BOX)
+  local newItems = Utils.findObjectIn(forgottenCirclesBox, {name=Expansion.NEW_ITEMS})
+  local targetDeck = Component.fromCityMat(snaps.REWARD_ITEMS)
+
+  forgottenCirclesBox.takeObject({
+    guid = newItems.getGUID(),
+    position = positions.getSafe(),
+    rotation = targetDeck.getRotation(),
+    smooth = false,
+    callback_function = function(obj)
+                          targetDeck.putObject(obj)
+                          Wait.frames(chain.proceed, 1)
+                        end
+  })
+
+  return true
+end
+
+return Expansion

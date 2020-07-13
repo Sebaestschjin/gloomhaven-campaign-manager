@@ -93,6 +93,7 @@ snaps.QUESTS = 11
 
 -- City Mat
 snaps.SHOP = 1
+snaps.REWARD_ITEMS = 13
 
 -- Event Mat
 snaps.ROAD_EVENTS_DECK = 1
@@ -120,6 +121,13 @@ end
 function Component.fromDeckMat(snapPoint)
   local deckMat = getObjectFromGUID(guids.DECK_MAT)
   local deckPosition = Utils.getSnapPosition(deckMat, snapPoint)
+
+  return DeckUtil.wrapAt(deckPosition)
+end
+
+function Component.fromCityMat(snapPoint)
+  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  local deckPosition = Utils.getSnapPosition(cityMat, snapPoint)
 
   return DeckUtil.wrapAt(deckPosition)
 end

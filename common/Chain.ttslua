@@ -5,6 +5,7 @@ function Chain.create(...)
   chain.args = table.pack(...)
   chain.callbacks = {}
   chain.add = function(callback) Chain.add(chain, callback) end
+  chain.addNext = function(callback) Chain.addNext(chain, callback) end
   chain.proceed = function() Chain.proceed(chain) end
 
   return chain
@@ -12,6 +13,10 @@ end
 
 function Chain.add(chain, callback)
   table.insert(chain.callbacks, callback)
+end
+
+function Chain.addNext(chain, callback)
+  table.insert(chain.callbacks, 1, callback)
 end
 
 function Chain.proceed(chain)
