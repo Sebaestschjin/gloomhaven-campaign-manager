@@ -44,6 +44,8 @@ names.CHARACTER_SHEET = "Character Sheet"
 names.ABILITY_DECK = "Advanced Abilities"
 names.MODIFIER_DECK = "Attack Modifiers"
 names.ATTACK_MODIFIER = "Attack Modifier"
+names.ROAD_EVENTS = "Road Events"
+names.CITY_EVENTS = "City Events"
 
 
 positions = {}
