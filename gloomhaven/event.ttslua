@@ -14,7 +14,7 @@ Event.DECKS = {
     deckGuid = guids.ROAD_EVENTS_DECK,
     snapPoint = snaps.ROAD_EVENTS_DECK,
     name = names.ROAD_EVENTS,
-    oldMat = "41393b",
+    oldMat = guids.OLD_EVENT_MAT,
   },
 }
 
@@ -177,9 +177,13 @@ end
 
 
 function Event.getPosition(info)
-  if info.oldMat and getObjectFromGUID(info.oldMat) then
-    return Utils.getSnapPosition(getObjectFromGUID(info.oldMat), 1)
+  if getObjectFromGUID(guids.OLD_EVENT_MAT) then
+    if info.oldMat then
+      return Utils.getSnapPosition(getObjectFromGUID(info.oldMat), 1)
+    else
+      return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), 1)
+    end
+  else
+    return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), info.snapPoint)
   end
-
-  return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), info.snapPoint)
 end

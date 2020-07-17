@@ -24,6 +24,7 @@ guids.ROAD_EVENTS_DECK_INITIAL = "83de73"
 guids.ROAD_EVENTS_DECK = "f08b69"
 guids.CITY_MAT = "f3ffb7"
 guids.EVENTS_MAT = "b53fb2"
+guids.OLD_EVENT_MAT = "41393b"
 guids.PARTY_SHEET = "6d3de2"
 
 -- TODO this could be determined on the fly instead of hardcoding it here

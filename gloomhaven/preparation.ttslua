@@ -67,7 +67,7 @@ function Preparation.verifyTable(guid, table, name)
 end
 
 function Preparation.revealLockedCharacters(callback)
-  Preparation.takeFromGamebox(guids.LOCKED_CLASSES, nil,
+  Preparation.takeFromGamebox(guids.LOCKED_CLASSES, positions.getSafe(),
                               function(obj)
                                 Preparation.putDivinierIntoBox(obj)
                                 Expansion.unpack(function()
@@ -116,6 +116,8 @@ end
 
 function Preparation.fix()
   Preparation.fixAbility("Brute", "Devasttating Hack", "Devastating Hack")
+  Preparation.fixAbility("Diviner", "Dimensinal Divide", "Dimensional Divide")
+  Preparation.fixAbility("Diviner", "Clayrvoiance", "Clairvoyance")
 end
 
 function Preparation.fixAbility(class, name, realName)
