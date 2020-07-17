@@ -142,12 +142,15 @@ function Enhancement.saveInZone(playerZone, enhancements)
   end
 
   local classEnhancements = { class=class, abilities={} }
-  table.insert(enhancements, classEnhancements)
 
   local zoneObjects = getObjectFromGUID(playerZone).getObjects()
   Enhancement.saveInContainer(zoneObjects, class, classEnhancements.abilities)
 
   classEnhancements = TableUtil.sortByAttribute(classEnhancements.abilities, "name")
+
+  if TableUtil.isNotEmpty(classEnhancements.abilities) then
+    table.insert(enhancements, classEnhancements)
+  end
 end
 
 function Enhancement.saveInContainer(objects, class, classEnhancements)

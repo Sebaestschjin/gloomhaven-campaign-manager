@@ -124,7 +124,7 @@ end
 function Event.dealEvents(deck, eventCards, info)
   local eventPosition = Event.getPosition(info)
   for i, event in pairs(eventCards) do
-    local offset = i * 0.1
+    local offset = i * 0.2
     deck.takeObject({
       guid = event,
       position = eventPosition + vector(0, offset, 0),

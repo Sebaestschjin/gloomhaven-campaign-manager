@@ -31,7 +31,6 @@ saveHandler.SAVE_FILE = "Savefile"
 
 function saveHandler.loadAll()
   local saveFile = Utils.readNotebook(saveHandler.SAVE_FILE)
-
   if not saveFile then
     Log.error("No notebook found containing the save file!"
               .. " Please add a notebook named " .. saveHandler.SAVE_FILE .. ".")
@@ -71,6 +70,7 @@ function saveHandler.saveAll()
 
   Wait.time(function()
               local content = JSON.encode_pretty(saveFile)
+              content = content .. "\n" -- to conform to POSIX :-)
               Notes.addNotebookTab({ title="New Savefile", body=content })
             end, 3)
 end

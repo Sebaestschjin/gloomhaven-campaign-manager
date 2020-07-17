@@ -1,24 +1,4 @@
 {
-  "enhancements": [ {
-    "abilities": [],
-    "class": "Diviner"
-  }, {
-    "abilities": [],
-    "class": "Doomstalker"
-  }, {
-    "abilities": [],
-    "class": "Summoner"
-  }, {
-    "abilities": [],
-    "class": "Sunkeeper"
-  } ],
-  "events": [ {
-    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
-    "deck": "city"
-  }, {
-    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
-    "deck": "road"
-  } ],
   "global": {
     "prosperity": 0
   },
@@ -76,7 +56,6 @@
   "unlocked": {
     "classes": [ "Sunkeeper", "Summoner", "Doomstalker", "Diviner" ],
     "items": [],
-    "sanctuary": 0,
     "specialConditions": {
       "ancientTechnology": false,
       "donations": 0,
