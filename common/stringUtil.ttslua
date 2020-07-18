@@ -50,3 +50,53 @@ end
 function StringUtil.isBase64(text)
   return text:find("^[a-zA-Z0-9+/]+=?=?$")
 end
+
+function StringUtil.findNearest(value, others, maxDistance)
+  local minDistance, otherValue = nil
+
+  for _, other in pairs(others) do
+    local distance = StringUtil.distance(value, other)
+    if not minDistance or minDistance > distance then
+      minDistance = distance
+      otherValue = other
+    end
+  end
+
+  if minDistance and minDistance > maxDistance then
+    return nil
+  end
+  return otherValue
+end
+
+function StringUtil.distance(first, second)
+  local firstLength, secondLength = #first, #second
+
+  if firstLength == 0 then return secondLength end
+  if secondLength == 0 then return firstLength end
+  if first == second then return 0 end
+
+  first = StringUtil.bytes(first)
+  second = StringUtil.bytes(second)
+
+  local matrix = {}
+  for i = 0, firstLength do
+    matrix[i] = {[0]=i}
+  end
+  for j = 0, secondLength do
+    matrix[0][j] = j
+  end
+
+  for i=1, firstLength do
+    for j=1, secondLength do
+      if first[i] == second[j] then
+        matrix[i][j] = matrix[i-1][j-1]
+      else
+        matrix[i][j] = math.min(matrix[i-1][j] + 1,
+                                matrix[i][j-1] + 1,
+                                matrix[i-1][j-1] + 1)
+      end
+    end
+  end
+
+  return matrix[firstLength][secondLength]
+end

@@ -2,6 +2,42 @@
 -- all classes and their perks).
 Game = {}
 
+function Game.class(class)
+  local classInfo = Game.CLASSES[class]
+  if not classInfo then
+    Log.error("Tried to get class information for class '%s', but it doesn't exist!", class)
+  end
+  return classInfo
+end
+
+function Game.ability(class, name)
+  local classInfo = Game.class(class)
+  if classInfo then
+    local abilityInfo = classInfo.abilities[name]
+    if not abilityInfo then
+      local allNames = TableUtil.keys(classInfo.abilities)
+      local nearestName = StringUtil.findNearest(name, allNames, 3)
+      if nearestName then
+        Log.warning("Tried to get ability information for '%s' of class '%s', but it doesn't exist."
+                    .. " However, found the ability '%s' which is similar in name which will be used instead."
+                    .. " Maybe there's a typo in the ability name."
+                    .. " Please verify that this assumption is correct.",
+                    name, class, nearestName)
+        abilityInfo = classInfo.abilities[nearestName]
+        abilityInfo.name = nearestName
+      else
+        Log.error("Tried to get ability information for '%s' of class '%s', but it doesn't exist!"
+                  .. " Also couldn't find any ability that is similar. Avaible abilities are: [%s].",
+                  name, class, table.concat(allNames, ", "))
+      end
+    else
+      abilityInfo.name = name
+    end
+
+    return abilityInfo
+  end
+end
+
 -- Mapping from a player's scripting zone GUID to PlayerColor
 Game.PLAYERS = {
   [guids.ZONES[1]] = "Red",

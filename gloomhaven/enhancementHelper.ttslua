@@ -21,7 +21,7 @@ function addDecals(obj)
   local name = obj.getName():gsub("%s?%(%d+%)", "")
   log(name)
 
-  local abs = Game.CLASSES["Doomstalker"].abilities[name]
+  local abs = Game.ability("Doomstalker", name)
   local positions = abs.enhancements
   for i, position in pairs(positions) do
     position = {position[1], 0.36, position[2]}

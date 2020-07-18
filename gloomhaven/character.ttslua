@@ -420,8 +420,8 @@ end
 function Character.saveAbilitiesFromObjects(objects, class, abilities)
   for _, object in pairs(objects) do
     if Component.isAbilityCardForClass(object, class) then
-      local name = Component.getAbilityName(object)
-      if not Component.isStartingAbility(name, class) then
+      local name = Component.getAbilityName(class, object)
+      if not Component.isStartingAbility(class, name) then
         table.insert(abilities, name)
       end
     elseif Component.isDeck(object) and not Component.isAbilityDeck(object) then

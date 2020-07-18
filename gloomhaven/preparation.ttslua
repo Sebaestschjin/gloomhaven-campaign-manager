@@ -115,11 +115,4 @@ end
 
 
 function Preparation.fix()
-  Preparation.fixAbility("Brute", "Devasttating Hack", "Devastating Hack")
-  Preparation.fixAbility("Diviner", "Dimensinal Divide", "Dimensional Divide")
-  Preparation.fixAbility("Diviner", "Clayrvoiance", "Clairvoyance")
-end
-
-function Preparation.fixAbility(class, name, realName)
-  Game.CLASSES[class].abilities[name] = Game.CLASSES[class].abilities[realName]
 end

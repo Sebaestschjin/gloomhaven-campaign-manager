@@ -8,6 +8,14 @@ function TableUtil.pairs(table)
   return pairs({})
 end
 
+function TableUtil.keys(tab)
+  local keys = {}
+  for key, _ in TableUtil.pairs(tab) do
+    table.insert(keys, key)
+  end
+  return keys
+end
+
 --- Checks whether a given value is part of the given table.
 function TableUtil.contains(table, value)
   for _, v in pairs(table) do

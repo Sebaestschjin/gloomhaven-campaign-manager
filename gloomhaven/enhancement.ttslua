@@ -86,7 +86,7 @@ function Enhancement.loadForClass(className, abilities)
   end
   for _, ability in pairs(abilities) do
     local abilityName, enhancements = ability.name, ability.enhancements
-    local enhancementInfo = Game.CLASSES[className].abilities[abilityName].enhancements
+    local enhancementInfo = Game.ability(className, abilityName).enhancements
 
     local abilityCard = Utils.findObjectIn(playerZone, {name=abilityName})
     if abilityCard then
@@ -167,8 +167,8 @@ end
 
 function Enhancement.saveForCard(card, class, classEnhancements)
   Log.verbose("Saving enhancements for " .. card.getName())
-  local ability = Component.getAbilityName(card)
-  local enhancementInfo = Game.CLASSES[class].abilities[ability].enhancements
+  local ability = Component.getAbilityName(class, card)
+  local enhancementInfo = Game.ability(class, ability).enhancements
   local cardEnhancements = {}
 
   for _, decal in TableUtil.pairs(card.getDecals()) do

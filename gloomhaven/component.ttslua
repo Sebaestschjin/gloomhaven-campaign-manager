@@ -162,17 +162,18 @@ function Component.isAbilityCardForClass(object, class)
          and not object.getName():find(names.ATTACK_MODIFIER)
 end
 
-function Component.isStartingAbility(name, class)
-  local abilityInfo = Game.CLASSES[class].abilities
-  return abilityInfo[name].level == 1 or abilityInfo[name].level == "X"
+function Component.isStartingAbility(class, abilityName)
+  local ability = Game.ability(class, abilityName)
+  return ability.level == 1 or ability.level == "X"
 end
 
-function Component.getAbilityName(abilityCard)
+function Component.getAbilityName(class, abilityCard)
   -- quickfix for a typo in Elementalists ability card
   if abilityCard.getName() == "Eternal Equilibrium (27(" then
     return "Eternal Equilibrium"
   end
-  return abilityCard.getName():gsub("%s?%(%d+%)", "")
+  local cardName = abilityCard.getName():gsub("%s?%(%d+%)", "")
+  return Game.ability(class, cardName).name
 end
 
 --- Returns true if the given object is an item card.
