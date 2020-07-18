@@ -1,0 +1,24 @@
+{
+  "party": {
+    "characters": [ {
+      "abilities": [ "Blind Destruction", "Blunt Force", "Brutal Momentum", "Cataclysm", "Clear the Way", "Dig Pit", "Explosive Punch", "Kinetic Assault", "Lumbering Bash", "Meteor", "Petrify", "Pulverize", "Rock Slide", "Rocky End", "Sentient Growth", "Stone Pummel" ],
+      "class": "Cragheart",
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+    }, {
+      "abilities": [ "Auto Turret", "Chimeric Formula", "Crank Bow", "Curative Aerosol", "Dangerous Contraption", "Disintegration Beam", "Disorienting Flash", "Gas Canister", "Harsh Stimulants", "Jet Propulsion", "Lethal Injection", "Micro Bots", "Murderous Contraption", "Noxious Vials", "Stamina Booster", "Tinkerer's Tools" ],
+      "class": "Tinkerer",
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+    }, {
+      "abilities": [ "Bag of Holding", "Bladed Boomerang", "Catastrophic Bomb", "Continual Supply", "Fortified Position", "Giant Club", "Portable Balliswta", "Quiver of Arrows", "Reforge", "Refreshments", "Reinforced Steel", "Scroll of Annihilation", "Scroll of Blizzards", "Scroll of Judgement", "Scroll of Lightning", "Side Pouch" ],
+      "class": "Quartermaster",
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+    }, {
+      "abilities": [ "Bone Breaker", "Break the Chains", "Burning Hatred", "Careless Charge", "Devil Horns", "Fatal Fury", "Final Fight", "Flurry of Axes", "Immortality", "Reckless Offensive", "Seeing Red", "Shiny Distraction", "Spiked Armor", "The Maw of Madness", "Unstoppable Destruction", "Vengeful Barrage" ],
+      "class": "Berserker",
+      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
+    } ]
+  },
+  "unlocked": {
+    "classes": [ "Berserker", "Quartermaster" ]
+  }
+}

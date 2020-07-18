@@ -1,28 +1,6 @@
 {
-  "enhancements": [ {
-    "abilities": [],
-    "class": "Beast Tyrant"
-  }, {
-    "abilities": [],
-    "class": "Nightshroud"
-  }, {
-    "abilities": [],
-    "class": "Plagueherald"
-  }, {
-    "abilities": [],
-    "class": "Soothsinger"
-  } ],
-  "events": [ {
-    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
-    "deck": "city"
-  }, {
-    "bottomUp": [ 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 14, 13, 11, 10, 15, 12, 9, 8, 7, 6, 5, 4, 3, 2, 1 ],
-    "deck": "road"
-  } ],
   "global": {
-    "achievements": [],
-    "prosperity": 0,
-    "scenarios": []
+    "prosperity": 0
   },
   "party": {
     "achievements": [],
@@ -76,11 +54,9 @@
     "notes": [],
     "reputation": 0
   },
-  "retired": [],
   "unlocked": {
     "classes": [ "Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud" ],
     "items": [],
-    "sanctuary": 0,
     "specialConditions": {
       "ancientTechnology": false,
       "donations": 0,
