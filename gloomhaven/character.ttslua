@@ -335,7 +335,7 @@ function Character.save(playerZone)
   if characterSheetInputs then
     -- this is an older version of the sheet, without the inputs where you can directly set
     -- the values
-    character.name = characterSheetInputs["Name"].label
+    character.name = characterSheetInputs["Name"]
     character.xp = tonumber(characterSheetButtons["xp"].label)
     character.gold = tonumber(characterSheetButtons["gold"].label)
   else
@@ -348,7 +348,7 @@ function Character.save(playerZone)
 
   local totalCheckmarks = 0
   for i=1, 18 do
-    if characterSheetButtons["notes"..i].label ~= "" then
+    if characterSheetButtons["notes" .. i].label ~= "" then
       totalCheckmarks = totalCheckmarks + 1
     end
   end
@@ -356,7 +356,7 @@ function Character.save(playerZone)
 
   character.perks = {}
   for i=1, 15 do
-    if characterSheetButtons["perk"..i].label ~= "" then
+    if characterSheetButtons["perk" .. i].label ~= "" then
       table.insert(character.perks, i)
     end
   end
