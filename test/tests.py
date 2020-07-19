@@ -67,6 +67,11 @@ class GloomhavenCampaignManagerTest(unittest.TestCase):
 
         self.verify_load_and_save(savefile)
 
+    def test_typos(self):
+        savefile = "typos"
+
+        self.verify_load_and_save(savefile)
+
     def load_file(self, filename):
         with open(f"input/{filename}.json", "r", encoding="utf-8") as file:
             return file.read()

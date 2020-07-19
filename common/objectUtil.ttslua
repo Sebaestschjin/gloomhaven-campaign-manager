@@ -1,6 +1,6 @@
 local ObjectUtil = {}
 
-function ObjectUtil.wrapOject(objectData)
+function ObjectUtil.wrapObject(objectData)
   local object = {}
 
   object.tag = objectData.Name

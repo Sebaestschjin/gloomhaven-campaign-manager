@@ -92,11 +92,9 @@ function Retirement.saveCompletedQuests(retired)
   end
 
   local questDeck = Component.fromDeckMat(snaps.QUESTS)
-  if questDeck then
-    for _, quest in pairs(DeckUtil.getContainedObjects(questDeck)) do
-      local questName = Component.getQuestInfo(quest)
-      completedQuests[questName] = nil
-    end
+  for _, quest in pairs(DeckUtil.getContainedObjects(questDeck)) do
+    local questName = Component.getQuestInfo(quest)
+    completedQuests[questName] = nil
   end
 
   for _, playerZone in pairs(guids.ZONES) do

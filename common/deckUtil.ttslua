@@ -7,7 +7,7 @@ function DeckUtil.getContainedObjects(deck)
 
   local objects = {}
   for i, object in pairs(deckData.ContainedObjects) do
-    local wrappedObject = ObjectUtil.wrapOject(object)
+    local wrappedObject = ObjectUtil.wrapObject(object)
     wrappedObject.index = i - 1
     wrappedObject.getPosition = function() return ObjectUtil.wrapPosition(deckData) end
     table.insert(objects, wrappedObject)
@@ -22,14 +22,7 @@ function DeckUtil.wrap(object)
     return nil
   end
 
-  local wrapped = {}
-
-  wrapped.takeObject = function(parameters) return DeckUtil.takeObject(wrapped, parameters) end
-  wrapped.putObject = function(object) return DeckUtil.putObject(wrapped, object) end
-  wrapped.getPosition = function() return wrapped.object.getPosition() end
-  wrapped.getRotation = function() return wrapped.object.getRotation() end
-  wrapped.tag = "Deck"
-
+  local wrapped = DeckUtil.createWrapped()
   if object.tag == "Deck" then
     if object.remainder then
       DeckUtil.makeWrappedCard(wrapped, object.remainder)
@@ -57,7 +50,31 @@ function DeckUtil.wrapAt(position)
     end
   end
 
-  return nil
+  local wrapped = DeckUtil.createWrapped()
+  DeckUtil.makeWrappedEmpty(wrapped, position)
+  return wrapped
+end
+
+function DeckUtil.createWrapped()
+  local wrapped = {}
+
+  wrapped.takeObject = function(parameters) return DeckUtil.takeObject(wrapped, parameters) end
+  wrapped.putObject = function(object) return DeckUtil.putObject(wrapped, object) end
+  wrapped.getPosition = function() return DeckUtil.getPosition(wrapped) end
+  wrapped.getRotation = function() return DeckUtil.getRotation(wrapped) end
+  wrapped.tag = "Deck"
+
+  return wrapped
+end
+
+function DeckUtil.makeWrappedEmpty(wrapped, position, rotation)
+  wrapped.object = nil
+  wrapped.isDeck = false
+  wrapped.isEmpty = true
+  wrapped.getObjects = function() return {} end
+  wrapped.getData = function() return {ContainedObjects={}} end
+  wrapped.lastPosition = position
+  wrapped.lastRotation = Utils.nvl(rotation, Rotation.NORTH)
 end
 
 function DeckUtil.makeWrappedDeck(wrapped, deck)
@@ -88,9 +105,8 @@ function DeckUtil.takeObject(wrapped, parameters)
     end
     return result
   elseif not wrapped.isEmpty then
-    wrapped.lastPosition = wrapped.object.getPosition()
-    wrapped.lastRotation = wrapped.object.getRotation()
     DeckUtil.takeObjectForSingleObject(wrapped.object, parameters)
+    DeckUtil.makeWrappedEmpty(wrapped, wrapped.object.getPosition(), wrapped.object.getRotation())
   end
 end
 
@@ -107,6 +123,22 @@ function DeckUtil.putObject(wrapped, object)
     DeckUtil.makeWrappedDeck(wrapped, formedDeck)
     return formedDeck
   end
+end
+
+function DeckUtil.getPosition(wrapped)
+  if wrapped.object then
+    return wrapped.object.getPosition()
+  end
+
+  return wrapped.lastPosition
+end
+
+function DeckUtil.getRotation(wrapped)
+  if wrapped.object then
+    return wrapped.object.getRotation()
+  end
+
+  return wrapped.lastRotation
 end
 
 

@@ -122,14 +122,17 @@ end
 
 
 function Event.dealEvents(deck, eventCards, info)
-  local eventPosition = Event.getPosition(info)
+  local eventDeck = Event.getTargetDeck(info)
   for i, event in pairs(eventCards) do
     local offset = i * 0.2
     deck.takeObject({
       guid = event,
-      position = eventPosition + vector(0, offset, 0),
+      position = positions.getSafe(),
       rotation = Rotation.NORTH,
-      smooth = false
+      smooth = false,
+      callback_function = function(card)
+                            eventDeck.putObject(card)
+                          end
     })
   end
 end
@@ -151,22 +154,11 @@ end
 
 
 function Event.saveEventsFromDeck(info)
-  local hitObjects = Physics.cast({
-    origin = Event.getPosition(info) + vector(0, -0.05, 0),
-    direction = Direction.UP,
-    max_distance = 0.1
-  })
+  local eventDeck = Event.getTargetDeck(info)
+  local eventsFromDeck = {bottomUp={}}
 
-  local eventsFromDeck = {}
-  eventsFromDeck.bottomUp = {}
-  for _, object in pairs(hitObjects) do
-    object = object.hit_object
-    if object.tag == "Deck" then
-      local eventNumbers = {}
-      for _, card in pairs(object.getObjects()) do
-        table.insert(eventsFromDeck.bottomUp, tonumber(card.name))
-      end
-    end
+  for _, card in pairs(eventDeck.getObjects()) do
+    table.insert(eventsFromDeck.bottomUp, tonumber(card.name))
   end
 
   if TableUtil.isEmpty(eventsFromDeck.bottomUp) then
@@ -176,14 +168,17 @@ function Event.saveEventsFromDeck(info)
 end
 
 
-function Event.getPosition(info)
+function Event.getTargetDeck(info)
+  local position
   if getObjectFromGUID(guids.OLD_EVENT_MAT) then
     if info.oldMat then
-      return Utils.getSnapPosition(getObjectFromGUID(info.oldMat), 1)
+      position = Utils.getSnapPosition(getObjectFromGUID(info.oldMat), 1)
     else
-      return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), 1)
+      position = Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), 1)
     end
   else
-    return Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), info.snapPoint)
+    position = Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), info.snapPoint)
   end
+
+  return DeckUtil.wrapAt(position)
 end

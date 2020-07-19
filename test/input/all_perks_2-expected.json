@@ -5,7 +5,7 @@
   "party": {
     "achievements": [],
     "characters": [ {
-      "abilities": [ "Brute Force", "Crippling Offensive", "Defensive Tactics", "Devasttating Hack", "Face Your End", "Fatal Advance", "Frenzied Onslaught", "Hook and Chain", "Immovable Phalanx", "Juggernaut", "King of the Hill", "Quietus", "Selfish Retribution", "Skirmishing Maneuver", "Unstoppable Charge", "Whirlwind" ],
+      "abilities": [ "Brute Force", "Crippling Offensive", "Defensive Tactics", "Devastating Hack", "Face Your End", "Fatal Advance", "Frenzied Onslaught", "Hook and Chain", "Immovable Phalanx", "Juggernaut", "King of the Hill", "Quietus", "Selfish Retribution", "Skirmishing Maneuver", "Unstoppable Charge", "Whirlwind" ],
       "checkmarks": 0,
       "class": "Brute",
       "gold": 0,
