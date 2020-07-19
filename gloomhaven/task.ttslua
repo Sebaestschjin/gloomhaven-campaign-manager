@@ -1,6 +1,6 @@
 Task = {}
 
-Task.saveMode = false
+Task.saveMode = true
 
 function Task.load(name, input, validator, executor)
   if not input then

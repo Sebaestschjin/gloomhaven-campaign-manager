@@ -1,6 +1,6 @@
 saveHandler = {}
 
-saveHandler.VERSION = {1, 1, 0}
+saveHandler.VERSION = {1, 1, 1}
 
 #include !/common/constants
 #include !/common/tableUtil
