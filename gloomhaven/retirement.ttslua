@@ -16,7 +16,8 @@ function Retirement.validate(retired)
 end
 
 function Retirement.doLoad(retired)
-  Utils.waitForObject(guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
+  Preparation.takeFromGamebox(guids.RETIREMENT_SHEET, positions.RETIREMENT_SHEET,
+                      function() Retirement.startLoading(retired) end)
 end
 
 function Retirement.startLoading(retired)

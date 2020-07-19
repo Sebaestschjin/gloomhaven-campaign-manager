@@ -29,7 +29,7 @@ function Shop.save()
     end
   end
 
-  return table.sort(items)
+  return TableUtil.emptyToNil(table.sort(items))
 end
 
 

@@ -4,7 +4,6 @@ Preparation = {}
 
 function Preparation.start(callback)
   Preparation.verifyLoad()
-  Preparation.fix()
   Preparation.revealLockedCharacters(callback)
 
   Preparation.takeFromGamebox(guids.SCENARIO_BOOK, positions.SCENARIO_BOOK)
@@ -71,7 +70,7 @@ function Preparation.revealLockedCharacters(callback)
                               function(obj)
                                 Preparation.putDivinierIntoBox(obj)
                                 Expansion.unpack(function()
-                                  Preparation.revealOpeningConditions(callback)
+                                  Preparation.finish(callback)
                                 end)
                               end)
 end
@@ -85,34 +84,15 @@ function Preparation.putDivinierIntoBox(classes)
   })
 end
 
-
-function Preparation.revealOpeningConditions(callback)
-  Preparation.takeFromGamebox(guids.OPENING_CONDITIONS, positions.OPENING_CONDITIONS,
-                              function() Preparation.revealRetirementSheet(callback) end)
-end
-
-
-function Preparation.revealRetirementSheet(callback)
-  Preparation.takeFromGamebox(guids.RETIREMENT_SHEET, positions.RETIREMENT_SHEET,
-                              function() Preparation.finish(callback) end)
-end
-
-
 function Preparation.finish(callback)
     callback()
 end
 
-
 function Preparation.prepareSave()
-  Preparation.fix()
   for _, zoneGuid in pairs(guids.ZONES) do
     local zone = getObjectFromGUID(zoneGuid)
     local zonePosition = zone.getPosition()
     zonePosition:setAt("y", 4.22)
     zone.setPosition(zonePosition)
   end
-end
-
-
-function Preparation.fix()
 end

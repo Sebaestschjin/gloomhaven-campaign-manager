@@ -55,17 +55,6 @@
     "reputation": 0
   },
   "unlocked": {
-    "classes": [ "Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud" ],
-    "items": [],
-    "specialConditions": {
-      "ancientTechnology": false,
-      "donations": 0,
-      "drakeAided": false,
-      "highestReputation": false,
-      "highReputation": false,
-      "lowestReputation": false,
-      "lowReputation": false,
-      "retired": false
-    }
+    "classes": [ "Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud" ]
   }
 }

@@ -50,18 +50,5 @@
     "name": "",
     "notes": [],
     "reputation": 0
-  },
-  "unlocked": {
-    "items": [],
-    "specialConditions": {
-      "ancientTechnology": false,
-      "donations": 0,
-      "drakeAided": false,
-      "highestReputation": false,
-      "highReputation": false,
-      "lowestReputation": false,
-      "lowReputation": false,
-      "retired": false
-    }
   }
 }

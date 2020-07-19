@@ -78,7 +78,8 @@ function Unlocked.validateOpeningConditions()
 end
 
 function Unlocked.loadOpeningConditions(openingConditions)
-  Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.doLoadOpeningConditions(openingConditions) end)
+  Preparation.takeFromGamebox(guids.OPENING_CONDITIONS, positions.OPENING_CONDITIONS,
+                      function() Unlocked.doLoadOpeningConditions(openingConditions) end)
 end
 
 function Unlocked.doLoadOpeningConditions(openingConditions)

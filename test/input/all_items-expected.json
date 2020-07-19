@@ -11,16 +11,6 @@
     "reputation": 0
   },
   "unlocked": {
-    "items": [ "Battle-Axe", "Battle-Axe", "Boots of Speed", "Boots of Speed", "Cloak of Pockets", "Cloak of Pockets", "Empowering Talisman", "Empowering Talisman", "Minor Mana Potion", "Minor Mana Potion", "Minor Mana Potion", "Minor Mana Potion", "Stun Powder", "Stun Powder", "Weighted Net", "Weighted Net" ],
-    "specialConditions": {
-      "ancientTechnology": false,
-      "donations": 0,
-      "drakeAided": false,
-      "highestReputation": false,
-      "highReputation": false,
-      "lowestReputation": false,
-      "lowReputation": false,
-      "retired": false
-    }
+    "items": [ "Battle-Axe", "Battle-Axe", "Boots of Speed", "Boots of Speed", "Cloak of Pockets", "Cloak of Pockets", "Empowering Talisman", "Empowering Talisman", "Minor Mana Potion", "Minor Mana Potion", "Minor Mana Potion", "Minor Mana Potion", "Stun Powder", "Stun Powder", "Weighted Net", "Weighted Net" ]
   }
 }

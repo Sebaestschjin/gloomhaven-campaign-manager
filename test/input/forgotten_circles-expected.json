@@ -19,16 +19,6 @@
   },
   "unlocked": {
     "classes": [ "Diviner" ],
-    "items": [ "Major Antidote", "Minor Antidote" ],
-    "specialConditions": {
-      "ancientTechnology": false,
-      "donations": 0,
-      "drakeAided": false,
-      "highestReputation": false,
-      "highReputation": false,
-      "lowestReputation": false,
-      "lowReputation": false,
-      "retired": false
-    }
+    "items": [ "Major Antidote", "Minor Antidote" ]
   }
 }

@@ -33,17 +33,6 @@
     "reputation": 0
   },
   "unlocked": {
-    "classes": [ "Elementalist", "Sawbones" ],
-    "items": [],
-    "specialConditions": {
-      "ancientTechnology": false,
-      "donations": 0,
-      "drakeAided": false,
-      "highestReputation": false,
-      "highReputation": false,
-      "lowestReputation": false,
-      "lowReputation": false,
-      "retired": false
-    }
+    "classes": [ "Elementalist", "Sawbones" ]
   }
 }
