@@ -4,7 +4,8 @@ local DeckUtil = require("common/deckUtil")
 
 Character = {}
 
-Character.ABILITY_MAX_DISTANCE = 7
+Character.ABILITY_DEFAULT_DISTANCE = 5
+Character.ABILITY_MAX_DISTANCE = Character.ABILITY_DEFAULT_DISTANCE + 2
 
 function Character.load(index, character)
   local taskName = "Character " .. tostring(character.class) .. " at " .. index
@@ -140,7 +141,7 @@ function Character.loadAbilities(playerZone, character)
   for _, abilityName in pairs(character.abilities) do
     local abilityCard, distance = Utils.findNearestObjectIn(abilityDeck, abilityName, Character.ABILITY_MAX_DISTANCE)
     if abilityCard then
-      if distance ~= 0 then
+      if distance ~= Character.ABILITY_DEFAULT_DISTANCE then
         Log.warning("Tried to load the ability '%s' for class '%s', but couldn't find it in the ability deck."
                     .. " However, found a similar ability named '%s' which will be used instead."
                     .. " Please verify if this assumption is correct.",
