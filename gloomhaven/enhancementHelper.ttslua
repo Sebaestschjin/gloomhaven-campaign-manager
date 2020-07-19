@@ -60,7 +60,7 @@ function printDecals(obj)
         z = lastZ
       end
 
-      if z == lastZ and lastX and lastX != x and math.abs(x - lastX) < 0.2 then
+      if z == lastZ and lastX and lastX ~= x and math.abs(x - lastX) < 0.2 then
         x = lastX - 0.2
       end
 

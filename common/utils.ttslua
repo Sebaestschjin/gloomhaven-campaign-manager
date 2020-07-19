@@ -25,22 +25,43 @@ function Utils.waitForObjectInZone(zone, search, callback, timeout, timeout_call
 end
 
 function Utils.findObjectIn(container, search)
-  if StringUtil.isGuid(container) then
-    container = getObjectFromGUID(container)
-  end
-
-  local objects = nil
-  if container.tag == "Deck" or container.tag == "Bag" then
-    objects = DeckUtil.getContainedObjects(container)
-  elseif container.getObjects then
-    objects = container.getObjects()
-  end
+  local objects = Utils.getObjects(container)
 
   for _, object in TableUtil.pairs(objects) do
     if Utils.matchesSearch(object, search) then
       return object
     end
   end
+end
+
+function Utils.findNearestObjectIn(container, name, maxDistance)
+  local objects = Utils.getObjects(container)
+  local nearestDistance, nearestObject = nil
+
+  for _, object in TableUtil.pairs(objects) do
+    local distance = StringUtil.distance(object.getName(), name)
+    if (not maxDistance or distance <= maxDistance)
+        and (not nearestDistance or distance < nearestDistance) then
+      nearestDistance = distance
+      nearestObject = object
+    end
+  end
+
+  return nearestObject, nearestDistance
+end
+
+function Utils.getObjects(container)
+  if StringUtil.isGuid(container) then
+    container = getObjectFromGUID(container)
+  end
+
+  if container.tag == "Deck" or container.tag == "Bag" then
+    return DeckUtil.getContainedObjects(container)
+  elseif container.getObjects then
+    return container.getObjects()
+  end
+
+  return container
 end
 
 function Utils.matchesSearch(object, search)

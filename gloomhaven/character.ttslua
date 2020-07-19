@@ -4,6 +4,7 @@ local DeckUtil = require("common/deckUtil")
 
 Character = {}
 
+Character.ABILITY_MAX_DISTANCE = 7
 
 function Character.load(index, character)
   local taskName = "Character " .. tostring(character.class) .. " at " .. index
@@ -136,16 +137,22 @@ function Character.loadAbilities(playerZone, character)
   if not character.abilities then return end
 
   local abilityDeck = Component.abilityDeck(playerZone)
-  for _, ability in pairs(character.abilities) do
-    local abilityCard = Utils.findObjectIn(abilityDeck, {name=ability})
+  for _, abilityName in pairs(character.abilities) do
+    local abilityCard, distance = Utils.findNearestObjectIn(abilityDeck, abilityName, Character.ABILITY_MAX_DISTANCE)
     if abilityCard then
+      if distance ~= 0 then
+        Log.warning("Tried to load the ability '%s' for class '%s', but couldn't find it in the ability deck."
+                    .. " However, found a similar ability named '%s' which will be used instead."
+                    .. " Please verify if this assumption is correct.",
+                    abilityName, character.class, abilityCard.getName())
+      end
       abilityDeck.takeObject({
         position = positions.relativeToZone(playerZone, positions.SECOND_HAND),
-        guid = abilityCard.getGUID()
+        guid = abilityCard.getGUID(),
       })
     else
-      Log.error("An ability named '%s' does not exist for the character class '%s'",
-                ability, character.class)
+      Log.error("An ability named '%s' does not exist for the character class '%s'!",
+                abilityName, character.class)
     end
   end
 end

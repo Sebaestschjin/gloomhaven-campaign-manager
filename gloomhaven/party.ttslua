@@ -35,7 +35,7 @@ function Party.loadCharacters(characters)
   print("Loading characters")
 
   for i, character in pairs(characters) do
-    if next(character) != nil then
+    if TableUtil.isNotEmpty(character) then
       Character.load(i, character)
       Party.setPartySheetCharacter(i, character)
     end
@@ -61,7 +61,7 @@ function Party.setPartySheetAverageLevel(characters)
   local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
   local sum, numPlayers = 0, 0
   for i, character in pairs(characters) do
-    if next(character) != nil then
+    if TableUtil.isNotEmpty(character) then
       sum = sum + Character.getLevel(character.xp)
       numPlayers = numPlayers + 1
     end
