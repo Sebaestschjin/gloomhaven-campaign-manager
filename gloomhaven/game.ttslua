@@ -83,7 +83,7 @@ Game.RANDOM_SCENARIOS = {
   [71] = 8,
 }
 
--- Information about all character classes.
+--- Information about all character classes.
 -- Contains: name (as the key)
 --           GUID of the box containing the character
 --           max HP progression per level

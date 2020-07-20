@@ -1,6 +1,9 @@
 StringUtil = {}
 
 
+---@param text string
+---@param seperators string[]
+---@return string[]
 function StringUtil.split(text, seperators)
   if not text then
     return {}

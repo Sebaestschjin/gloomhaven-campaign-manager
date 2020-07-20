@@ -1,3 +1,7 @@
+---@shape common_Chain
+
+---@alias common_Chain_continue boolean
+
 local Chain = {}
 
 function Chain.create(...)

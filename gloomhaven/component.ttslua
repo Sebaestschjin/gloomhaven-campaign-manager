@@ -31,7 +31,9 @@ guids.PARTY_SHEET = "6d3de2"
 guids.LAST_BOX = "fdef02" -- tinkerer
 guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
 
+---@type GUID[]
 guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}
+---@type GUID[]
 guids.ADD_PLAYERS = {"3f0cda", "4d61da", "f98ff8", "d0f661"}
 
 deckIds = {}
@@ -145,6 +147,7 @@ function Component.characterSheet(playerZone)
   return Utils.findObjectIn(playerZone, {name=names.CHARACTER_SHEET})
 end
 
+---@return tts__Object
 function Component.abilityDeck(playerZone)
   return DeckUtil.wrap(Utils.findObjectIn(playerZone, {name=names.ABILITY_DECK}))
 end
@@ -167,6 +170,7 @@ function Component.isStartingAbility(class, abilityName)
   return ability.level == 1 or ability.level == "X"
 end
 
+---@return string
 function Component.getAbilityName(class, abilityCard)
   -- quickfix for a typo in Elementalists ability card
   if abilityCard.getName() == "Eternal Equilibrium (27(" then
