@@ -1,3 +1,5 @@
+--- @alias GUID string
+
 local ObjectUtil = {}
 
 function ObjectUtil.wrapObject(objectData)

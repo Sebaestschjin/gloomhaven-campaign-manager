@@ -1,0 +1,42 @@
+{
+  "global": {
+    "prosperity": 0
+  },
+  "party": {
+    "achievements": [],
+    "characters": [ {
+      "abilities": [],
+      "checkmarks": 0,
+      "class": "Brute",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [ {
+        "name": "Boots of Striding",
+        "position": "Unequipped"
+      } ],
+      "name": "",
+      "notes": [],
+      "perks": [],
+      "quest": 532,
+      "xp": 0
+    }, {
+      "abilities": [],
+      "checkmarks": 0,
+      "class": "Scoundrel",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [ {
+        "name": "Boots of Speed",
+        "position": "Unequipped"
+      } ],
+      "notes": [],
+      "perks": [],
+      "quest": 514,
+      "xp": 0
+    }, [], [] ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  }
+}

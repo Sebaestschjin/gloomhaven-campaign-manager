@@ -6,9 +6,6 @@ import win32clipboard
 ui.PAUSE = 0.5
 
 
-# load_game("gloomhaven")
-# load_saved_object("campaign_manager")
-
 def create_singleplayer():
     click_image("res/menu/create.png")
     click_image("res/menu/singleplayer.png")
@@ -19,6 +16,15 @@ def load_workshop(name, folders=[]):
     for folder in folders:
         click_image(f"res/folder/game/{folder}.png")
     click_image(f"res/game/{name}.png")
+    click_image("res/button/load.png")
+    wait_for_image("res/chat/loading_complete.png")
+
+
+def load_save(name, folders=[]):
+    click_image("res/menu/save_and_load.png")
+    for folder in folders:
+        click_image(f"res/folder/save/{folder}.png")
+    click_image(f"res/save/{name}.png")
     click_image("res/button/load.png")
     wait_for_image("res/chat/loading_complete.png")
 

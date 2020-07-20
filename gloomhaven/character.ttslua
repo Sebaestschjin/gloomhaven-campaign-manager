@@ -1,12 +1,18 @@
 local Base64 = require("ge_tts/Base64")
 local Chain = require("common/Chain")
 local DeckUtil = require("common/deckUtil")
+local TableUtils = require("ge_tts/TableUtils")
 
 Character = {}
 
 Character.ABILITY_DEFAULT_DISTANCE = 5
 Character.ABILITY_MAX_DISTANCE = Character.ABILITY_DEFAULT_DISTANCE + 2
 
+---@shape Gloomhaven_Character
+---@field class string
+---@field perks number[]
+
+---@param character Gloomhaven_Character
 function Character.load(index, character)
   local taskName = "Character " .. tostring(character.class) .. " at " .. index
   Task.load(taskName, character, Character.validate, function(input)
@@ -14,7 +20,7 @@ function Character.load(index, character)
                                                      end)
 end
 
-
+---@param character Gloomhaven_Character
 function Character.validate(character)
   if not Game.CLASSES[character.class] then
     Error.add("A class named '%s' does not exist.", character.class)
@@ -39,6 +45,7 @@ function Character.startLoading(index, character)
                             function() Character.unpackCharacterBox(playerZone, character) end)
 end
 
+--- @param playerZone GUID
 function Character.unpackCharacterBox(playerZone, character)
   local playerMat = Component.playerMat(playerZone)
   local characterBox = getObjectFromGUID(Game.CLASSES[character.class].boxGuid)
@@ -52,7 +59,7 @@ function Character.unpackCharacterBox(playerZone, character)
                             function() Character.doLoad(playerZone, character) end)
 end
 
-
+--- @param playerZone GUID
 function Character.doLoad(playerZone, character)
   -- still need more waiting to init the UI of the sheet :-(
   Wait.time(function() Character.loadCharacterSheet(playerZone, character) end, 1)
@@ -61,7 +68,7 @@ function Character.doLoad(playerZone, character)
   Character.loadQuest(playerZone, character)
 end
 
-
+--- @param playerZone GUID
 function Character.loadCharacterSheet(playerZone, character)
   local characterSheet = Component.characterSheet(playerZone)
 
@@ -105,7 +112,7 @@ function Character.loadHiddenNotes(characterSheet, hiddenNotes)
   characterSheet.UI.setAttribute("Notes", "text", table.concat(decodedNotes, "\n"))
 end
 
-
+--- @param playerZone GUID
 function Character.loadMaxHp(playerZone, character)
   local characterInfo = Game.CLASSES[character.class]
   local level = Character.getLevel(character.xp)
@@ -125,7 +132,7 @@ function Character.loadMaxHp(playerZone, character)
   end
 end
 
-
+--- @param playerZone GUID
 function Character.loadFigureHealth(playerZone, name, health)
   local figure = Utils.findObjectIn(playerZone, {name=name, tag=Tag.FIGURINE})
 
@@ -134,6 +141,7 @@ function Character.loadFigureHealth(playerZone, name, health)
   figure.call("setHealth")
 end
 
+--- @param playerZone GUID
 function Character.loadAbilities(playerZone, character)
   if not character.abilities then return end
 
@@ -158,7 +166,7 @@ function Character.loadAbilities(playerZone, character)
   end
 end
 
-
+--- @param playerZone GUID
 function Character.loadQuest(playerZone, character)
   if not character.quest then return end
 
@@ -171,7 +179,7 @@ function Character.loadQuest(playerZone, character)
   end
 end
 
-
+--- @param playerZone GUID
 function Character.loadPerks(playerZone, character)
   local perkInfo = Game.CLASSES[character.class].perks
   local characterSheet = Component.characterSheet(playerZone)
@@ -248,7 +256,7 @@ function Character.findModifierCard(deck, name)
   return Utils.findObjectIn(deck, {name=searchPattern})
 end
 
-
+--- @param playerZone GUID
 function Character.loadItems(playerZone, character)
   local items = {}
 
@@ -266,7 +274,7 @@ function Character.loadItems(playerZone, character)
   Component.characterSheet(playerZone).UI.setAttribute("Items", "text", table.concat(items, "\n"))
 end
 
-
+--- @param playerZone GUID
 function Character.calculateItemPosition(playerZone, item)
   if item.position and snaps[item.position] then
     return Utils.getSnapPosition(Component.playerMat(playerZone), snaps[item.position])
@@ -302,6 +310,7 @@ function Character.dealNegativeItemEffectCard(itemPosition)
   })
 end
 
+--- @param playerZone GUID
 function Character.moveToHand(object, playerZone, hand)
   local playerName = Game.PLAYERS[playerZone]
   object.deal(1, playerName, hand)
@@ -318,7 +327,7 @@ function Character.getLevel(curXP)
   return 9
 end
 
-
+--- @param playerZone GUID
 function Character.save(playerZone)
   local characterMat = Component.characterMat(playerZone)
   if not characterMat then
@@ -378,11 +387,11 @@ function Character.saveHiddenNotes(characterSheet)
   return notes
 end
 
-
+--- @param playerZone GUID
 function Character.saveItems(playerZone)
   local playerMat = Utils.findObjectIn(playerZone, {name=names.PLAYER_MAT})
   local items = {}
-  local zoneObjects = getObjectFromGUID(playerZone).getObjects()
+  local zoneObjects = Character.getObjects(playerZone)
   Character.saveItemFromObjects(zoneObjects, playerMat, items)
 
   return TableUtil.sortByAttribute(items, "name")
@@ -415,7 +424,7 @@ function Character.getItemPosition(playerMat, object)
   return "Unequipped"
 end
 
-
+--- @param playerZone GUID
 function Character.saveAbilities(playerZone)
   local class = Character.findClassInZone(playerZone)
   local abilities = {}
@@ -439,7 +448,7 @@ function Character.saveAbilitiesFromObjects(objects, class, abilities)
   end
 end
 
-
+--- @param playerZone GUID
 function Character.saveQuest(playerZone)
   local quest, info = Character.findQuest(playerZone)
   if info then
@@ -458,7 +467,7 @@ function Character.findZoneForClass(className)
   return nil
 end
 
-
+--- @param playerZone GUID
 function Character.findClassInZone(playerZone)
   local characterMat = Component.characterMat(playerZone)
   if characterMat then
@@ -467,11 +476,40 @@ function Character.findClassInZone(playerZone)
   return nil
 end
 
+--- @param playerZone GUID
 function Character.findQuest(playerZone)
-  for _, object in pairs(getObjectFromGUID(playerZone).getObjects()) do
+  for _, object in pairs(Character.getObjects(playerZone)) do
     if Component.isPersonalQuestCard(object) then
       return Component.getQuestInfo(object)
     end
   end
   return nil
+end
+
+--- Returns all objects of the given playerZone. Only objects which center is within the planar bounds of the zone are
+--- returned. This avoids duplicated items that overlap multiple zones.
+--- @param playerZone GUID
+--- @return tts__Object[]
+function Character.getObjects(playerZone)
+  local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
+  return TableUtils.select(zone.getObjects(),
+                     function(object, _)
+                              return Character.isObjectInPlayerZone(zone, --[[---@type tts__Object]] object)
+                           end)
+end
+
+--- @param playerZone tts__ScriptingTrigger
+--- @param object tts__Object
+--- @return boolean
+function Character.isObjectInPlayerZone(playerZone, object)
+  local width = playerZone.getScale().x
+  local height = playerZone.getScale().z
+  local zoneCenter = playerZone.getBounds().center
+  local left = zoneCenter.x - width/ 2
+  local right = zoneCenter.x + width / 2
+  local top = zoneCenter.z + height / 2
+  local bottom = zoneCenter.z - height / 2
+  local objectCenter = object.getBounds().center
+
+  return objectCenter.x > left and objectCenter.x < right and objectCenter.z > bottom and objectCenter.z < top
 end
