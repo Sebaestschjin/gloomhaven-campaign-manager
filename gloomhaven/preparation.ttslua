@@ -20,7 +20,7 @@ function Preparation.takeFromGamebox(guid, position, callback)
       rotation = Rotation.NORTH,
       callback_function = callback
     })
-  else
+  elseif callback then
     callback(object)
   end
 end

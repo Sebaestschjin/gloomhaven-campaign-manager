@@ -14,13 +14,8 @@ class GloomhavenCampaignManagerTest(unittest.TestCase):
     def tearDown(self):
         tts.goto_main_menu()
 
-    def test_all_events(self):
-        savefile = "all_events"
-
-        self.verify_load_and_save(savefile)
-
-    def test_all_items(self):
-        savefile = "all_items"
+    def test_all_of_it(self):
+        savefile = "all_of_it"
 
         self.verify_load_and_save(savefile)
 
@@ -46,16 +41,6 @@ class GloomhavenCampaignManagerTest(unittest.TestCase):
 
     def test_all_perks_5(self):
         savefile = "all_perks_5"
-
-        self.verify_load_and_save(savefile)
-
-    def test_all_quests(self):
-        savefile = "all_quests"
-
-        self.verify_load_and_save(savefile)
-
-    def test_all_random_scenarios(self):
-        savefile = "all_random_scenarios"
 
         self.verify_load_and_save(savefile)
 
