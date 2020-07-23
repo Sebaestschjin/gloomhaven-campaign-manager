@@ -1,6 +1,14 @@
-local DeckUtil = require("common/deckUtil")
+local Character = require("gloomhaven/Character")
+local Component = require("gloomhaven/Component")
+local Constant = require("common/Constant")
+local Error = require("common/Error")
+local Game = require("gloomhaven/Game")
+local Log = require("common/Log")
+local TableUtil = require("common/TableUtil")
+local Task = require("gloomhaven/Task")
+local Utils = require("common/Utils")
 
-Enhancement = {}
+local Enhancement = {}
 
 Enhancement.DECALS = {
   ["Air"] = "http://cloud-3.steamusercontent.com/ugc/938309024726768884/CC8308C7D7DD6185F3EFA99F452C83101E1E95E3/",
@@ -96,7 +104,7 @@ function Enhancement.loadForClass(className, abilities)
       local abilityCard = Utils.findObjectIn(abilityDeck, {name=abilityName})
       abilityDeck.takeObject({
         guid = abilityCard.getGUID(),
-        position = positions.getSafe(),
+        position = Component.positions.getSafe(),
         rotation = abilityDeck.getRotation(),
         smooth = false,
         callback_function = function(obj)
@@ -126,7 +134,7 @@ end
 function Enhancement.save()
   enhancements = {}
 
-  for _, playerZone in pairs(guids.ZONES) do
+  for _, playerZone in pairs(Component.guids.ZONES) do
     Enhancement.saveInZone(playerZone, enhancements)
   end
 
@@ -159,8 +167,8 @@ function Enhancement.saveInContainer(objects, class, classEnhancements)
        and TableUtil.isNotEmpty(object.getDecals())
     then
       Enhancement.saveForCard(object, class, classEnhancements)
-    elseif object.tag == Tag.DECK then
-      Enhancement.saveInContainer(DeckUtil.getContainedObjects(object), class, classEnhancements)
+    elseif object.tag == Constant.Tag.DECK then
+      Enhancement.saveInContainer(Utils.getContainedObjects(object), class, classEnhancements)
     end
   end
 end
@@ -207,3 +215,5 @@ function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
 
   return nearestIndex, nearestDistance
 end
+
+return Enhancement

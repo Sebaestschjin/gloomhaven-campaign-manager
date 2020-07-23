@@ -1,4 +1,4 @@
-TableUtil = {}
+local TableUtil = {}
 
 --- Variant of pairs that also works for nil values.
 function TableUtil.pairs(table)
@@ -81,3 +81,5 @@ function TableUtil.setToList(set)
 
   return list
 end
+
+return TableUtil

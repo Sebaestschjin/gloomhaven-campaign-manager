@@ -1,4 +1,12 @@
-Scenario = {}
+local Component = require("gloomhaven/Component")
+local Error = require("common/Error")
+local Game = require("gloomhaven/Game")
+local Log = require("common/Log")
+local TableUtil = require("common/TableUtil")
+local Task = require("gloomhaven/Task")
+local Utils = require("common/Utils")
+
+local Scenario = {}
 
 Scenario.MAX_VALUE = 115
 Scenario.OPEN = "Open"
@@ -28,7 +36,7 @@ function Scenario.validate(scenarios)
 end
 
 function Scenario.doLoad(scenarios)
-  local scenarioStickers = getObjectFromGUID(guids.MAP).getTable("tableML")
+  local scenarioStickers = getObjectFromGUID(Component.guids.MAP).getTable("tableML")
 
   for _, scenario in pairs(scenarios) do
     local number, state = scenario.number, scenario.state
@@ -53,7 +61,7 @@ end
 
 function Scenario.placeSticker(stickerGuid, number, state)
   Log.verbose("Placing scenario " .. tostring(number) .. " as " .. state)
-  local map = getObjectFromGUID(guids.MAP)
+  local map = getObjectFromGUID(Component.guids.MAP)
   if state == Scenario.OPEN then
     map.call("clickedML", stickerGuid)
   elseif state == Scenario.DONE then
@@ -70,13 +78,13 @@ function Scenario.isRandomScenario(number)
 end
 
 function Scenario.removeRandomScenario(number)
-  local deck = Component.fromDeckMat(snaps.RANDOM_SCENARIOS)
+  local deck = Component.fromDeckMat(Component.snaps.RANDOM_SCENARIOS)
   if not deck then
     Log.error("Can't remove random scenarios. Nothing found at expected position.")
     return
   end
 
-  local cardId = Component.getCardId(deckIds.RANDOM_SCENARIOS, Game.RANDOM_SCENARIOS[number])
+  local cardId = Component.getCardId(Component.deckIds.RANDOM_SCENARIOS, Game.RANDOM_SCENARIOS[number])
   local scenarioCard = Utils.findObjectIn(deck, {cardId=cardId})
   if not scenarioCard then
     Log.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
@@ -85,7 +93,7 @@ function Scenario.removeRandomScenario(number)
 
   deck.takeObject({
     index = scenarioCard.index,
-    position = positions.getSafe(),
+    position = Component.positions.getSafe(),
     callback_function = function(obj) obj.destruct() end,
   })
 end
@@ -93,7 +101,7 @@ end
 
 function Scenario.save()
   local scenarios = {}
-  local map = getObjectFromGUID(guids.MAP)
+  local map = getObjectFromGUID(Component.guids.MAP)
   local scenarioStickers = map.getTable("tableML")
   local unlockedScenarios = map.getTable("locations")
 
@@ -113,3 +121,5 @@ function Scenario.save()
 
   return TableUtil.emptyToNil(scenarios)
 end
+
+return Scenario

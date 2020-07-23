@@ -1,4 +1,14 @@
-Retirement = {}
+local Character = require("gloomhaven/Character")
+local Component = require("gloomhaven/Component")
+local Error = require("common/Error")
+local Game = require("gloomhaven/Game")
+local Preparation = require("gloomhaven/Preparation")
+local Quest = require("gloomhaven/Quest")
+local TableUtil = require("common/TableUtil")
+local Task = require("gloomhaven/Task")
+local Utils = require("common/Utils")
+
+local Retirement = {}
 
 Retirement.COLUMNS = 5
 
@@ -16,12 +26,12 @@ function Retirement.validate(retired)
 end
 
 function Retirement.doLoad(retired)
-  Preparation.takeFromGamebox(guids.RETIREMENT_SHEET, positions.RETIREMENT_SHEET)
-  Utils.waitForObject(guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
+  Preparation.takeFromGamebox(Component.guids.RETIREMENT_SHEET, Component.positions.RETIREMENT_SHEET)
+  Utils.waitForObject(Component.guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
 end
 
 function Retirement.startLoading(retired)
-  local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
+  local retirementSheet = getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
 
   for i, retirement in pairs(retired) do
     local row = (i - 1) % Retirement.COLUMNS
@@ -51,7 +61,7 @@ function Retirement.save()
 end
 
 function Retirement.saveRetirementSheet(retired)
-  local retirementSheet = getObjectFromGUID(guids.RETIREMENT_SHEET)
+  local retirementSheet = getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
   if not retirementSheet then
     return
   end
@@ -92,13 +102,13 @@ function Retirement.saveCompletedQuests(retired)
     completedQuests[name] = 1
   end
 
-  local questDeck = Component.fromDeckMat(snaps.QUESTS)
-  for _, quest in pairs(DeckUtil.getContainedObjects(questDeck)) do
+  local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
+  for _, quest in pairs(Utils.getContainedObjects(questDeck)) do
     local questName = Component.getQuestInfo(quest)
     completedQuests[questName] = nil
   end
 
-  for _, playerZone in pairs(guids.ZONES) do
+  for _, playerZone in pairs(Component.guids.ZONES) do
     local playerQuest = Character.findQuest(playerZone)
     if playerQuest then
       completedQuests[playerQuest] = nil
@@ -114,3 +124,5 @@ function Retirement.saveCompletedQuests(retired)
     i = i + 1
   end
 end
+
+return Retirement

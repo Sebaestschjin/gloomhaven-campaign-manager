@@ -1,6 +1,10 @@
+local Log = require("common/Log")
+local StringUtil = require("common/StringUtil")
+local TableUtil = require("common/TableUtil")
+
 -- Contains information about different parts of the Gloomhaven mod and Gloomhaven components (e.g.
 -- all classes and their perks).
-Game = {}
+local Game = {}
 
 function Game.class(class)
   local classInfo = Game.CLASSES[class]
@@ -38,13 +42,7 @@ function Game.ability(class, name)
   end
 end
 
--- Mapping from a player's scripting zone GUID to PlayerColor
-Game.PLAYERS = {
-  [guids.ZONES[1]] = "Red",
-  [guids.ZONES[2]] = "White",
-  [guids.ZONES[3]] = "Blue",
-  [guids.ZONES[4]] = "Green"
-}
+Game.PLAYERS = {"Red", "White", "Blue", "Green", }
 
 -- Max HP per level.
 Game.HP = {
@@ -2262,3 +2260,5 @@ Game.QUESTS = {
     number = 527
   },
 }
+
+return Game

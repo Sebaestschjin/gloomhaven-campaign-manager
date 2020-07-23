@@ -1,4 +1,6 @@
-Task = {}
+local Log = require("common/Log")
+
+local Task = {}
 
 Task.saveMode = true
 
@@ -34,3 +36,5 @@ function Task.validate(name, input, validator)
 
   return status
 end
+
+return Task

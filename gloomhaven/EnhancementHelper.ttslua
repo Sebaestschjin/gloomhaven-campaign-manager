@@ -1,4 +1,4 @@
-#include saveHandler
+require("gloomhaven/CampaignManager")
 
 Enhancement.NUMBERS = {
   "http://cloud-3.steamusercontent.com/ugc/929311677225889607/DFA4EF43DC2D1A8B6F1C7F22E7C31718E35CCB31/",

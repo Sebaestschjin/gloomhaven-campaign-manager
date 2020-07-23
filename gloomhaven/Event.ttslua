@@ -1,20 +1,26 @@
+local Component = require("gloomhaven/Component")
+local Constant = require("common/Constant")
 local DeckUtil = require("common/DeckUtil")
+local Error = require("common/Error")
+local TableUtil = require("common/TableUtil")
+local Task = require("gloomhaven/Task")
+local Utils = require("common/Utils")
 
-Event = {}
+local Event = {}
 
 Event.DECKS = {
   ["city"] = {
-    initialDeckGuid = guids.CITY_EVENTS_DECK_INITIAL,
-    deckGuid = guids.CITY_EVENTS_DECK,
-    snapPoint = snaps.CITY_EVENTS_DECK,
-    name = names.CITY_EVENTS,
+    initialDeckGuid = Component.guids.CITY_EVENTS_DECK_INITIAL,
+    deckGuid = Component.guids.CITY_EVENTS_DECK,
+    snapPoint = Component.snaps.CITY_EVENTS_DECK,
+    name = Component.names.CITY_EVENTS,
   },
   ["road"] = {
-    initialDeckGuid = guids.ROAD_EVENTS_DECK_INITIAL,
-    deckGuid = guids.ROAD_EVENTS_DECK,
-    snapPoint = snaps.ROAD_EVENTS_DECK,
-    name = names.ROAD_EVENTS,
-    oldMat = guids.OLD_EVENT_MAT,
+    initialDeckGuid = Component.guids.ROAD_EVENTS_DECK_INITIAL,
+    deckGuid = Component.guids.ROAD_EVENTS_DECK,
+    snapPoint = Component.snaps.ROAD_EVENTS_DECK,
+    name = Component.names.ROAD_EVENTS,
+    oldMat = Component.guids.OLD_EVENT_MAT,
   },
 }
 
@@ -127,8 +133,8 @@ function Event.dealEvents(deck, eventCards, info)
     local offset = i * 0.2
     deck.takeObject({
       guid = event,
-      position = positions.getSafe(),
-      rotation = Rotation.NORTH,
+      position = Component.positions.getSafe(),
+      rotation = Constant.Rotation.NORTH,
       smooth = false,
       callback_function = function(card)
                             eventDeck.putObject(card)
@@ -170,15 +176,17 @@ end
 
 function Event.getTargetDeck(info)
   local position
-  if getObjectFromGUID(guids.OLD_EVENT_MAT) then
+  if getObjectFromGUID(Component.guids.OLD_EVENT_MAT) then
     if info.oldMat then
       position = Utils.getSnapPosition(getObjectFromGUID(info.oldMat), 1)
     else
-      position = Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), 1)
+      position = Utils.getSnapPosition(getObjectFromGUID(Component.guids.EVENTS_MAT), 1)
     end
   else
-    position = Utils.getSnapPosition(getObjectFromGUID(guids.EVENTS_MAT), info.snapPoint)
+    position = Utils.getSnapPosition(getObjectFromGUID(Component.guids.EVENTS_MAT), info.snapPoint)
   end
 
   return DeckUtil.wrapAt(position)
 end
+
+return Event

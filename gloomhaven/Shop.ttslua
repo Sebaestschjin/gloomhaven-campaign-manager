@@ -1,10 +1,15 @@
+local Component = require("gloomhaven/Component")
 local DeckUtil = require("common/DeckUtil")
+local Log = require("common/Log")
+local Prosperity = require("gloomhaven/Prosperity")
+local TableUtil = require("common/TableUtil")
+local Utils = require("common/Utils")
 
-Shop = {}
+local Shop = {}
 
 
 function Shop.load()
-  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
 
   for i=1, Prosperity.getLevel() do
     cityMat.call("layOut", i)
@@ -13,8 +18,8 @@ function Shop.load()
 end
 
 function Shop.save()
-  local cityMat = getObjectFromGUID(guids.CITY_MAT)
-  local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
+  local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
+  local shopPosition = Utils.getSnapPosition(cityMat, Component.snaps.SHOP)
   local shopDeck = cityMat.call('checkForDeck', shopPosition)
   if not shopDeck then
     Log.warning("Can't find shop deck, which means unlocked items can't be saved."
@@ -24,7 +29,7 @@ function Shop.save()
 
   local items = {}
   for _, item in pairs(shopDeck.getObjects()) do
-    if Component.isRewardItemCard(item) then
+    if Component.isRewardItemCard(item, Prosperity.getLevel()) then
       table.insert(items, item.name)
     end
   end
@@ -34,7 +39,7 @@ end
 
 
 function Shop.findItem(name)
-  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
   for i=1, 14 do
     local pos = Utils.getSnapPosition(cityMat, i)
     local deck = cityMat.call('checkForDeck', pos)
@@ -52,7 +57,7 @@ end
 
 function Shop.takeItem(name, toPosition, toRotation, startAt)
   startAt = startAt or 1
-  local cityMat = getObjectFromGUID(guids.CITY_MAT)
+  local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
 
   for i=startAt, 14 do
     local deckPosition = Utils.getSnapPosition(cityMat, i)
@@ -77,3 +82,5 @@ end
 function Shop.takeRewardItem(name, toPosition, toRotation)
   return Shop.takeItem(name, toPosition, toRotation, 2)
 end
+
+return Shop

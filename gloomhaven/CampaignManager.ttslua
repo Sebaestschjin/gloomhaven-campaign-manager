@@ -1,39 +1,26 @@
-saveHandler = {}
+local Achievement = require("gloomhaven/Achievement")
+local Enhancement = require("gloomhaven/Enhancement")
+local Event = require("gloomhaven/Event")
+local Log = require("common/Log")
+local Party = require("gloomhaven/Party")
+local Preparation = require("gloomhaven/Preparation")
+local Prosperity = require("gloomhaven/Prosperity")
+local Retirement = require("gloomhaven/Retirement")
+local Scenario = require("gloomhaven/Scenario")
+local Shop = require("gloomhaven/Shop")
+local Unlocked = require("gloomhaven/Unlocked")
+local Utils = require("common/Utils")
 
-saveHandler.VERSION = {1, 1, 1}
+local CampaignManager = {}
 
-#include !/common/constants
-#include !/common/tableUtil
-#include !/common/stringUtil
-#include !/common/utils
+CampaignManager.VERSION = {1, 1, 1}
+CampaignManager.SAVE_FILE = "Savefile"
 
-#include component
-#include game
-#include log
-#include task
-#include error
-
-#include achievement
-#include character
-#include enhancement
-#include event
-#include party
-#include preparation
-#include prosperity
-#include quest
-#include retirement
-#include sanctuary
-#include scenario
-#include shop
-#include unlocked
-
-saveHandler.SAVE_FILE = "Savefile"
-
-function saveHandler.loadAll()
-  local saveFile = Utils.readNotebook(saveHandler.SAVE_FILE)
+function CampaignManager.loadAll()
+  local saveFile = Utils.readNotebook(CampaignManager.SAVE_FILE)
   if not saveFile then
     Log.error("No notebook found containing the save file!"
-              .. " Please add a notebook named " .. saveHandler.SAVE_FILE .. ".")
+              .. " Please add a notebook named " .. CampaignManager.SAVE_FILE .. ".")
     return
   end
 
@@ -46,11 +33,11 @@ function saveHandler.loadAll()
     return
   end
 
-  Preparation.start(function() saveHandler.doLoadAll(content) end)
+  Preparation.start(function() CampaignManager.doLoadAll(content) end)
 end
 
 
-function saveHandler.doLoadAll(content)
+function CampaignManager.doLoadAll(content)
   if content.global then
     Scenario.loadAll(content.global.scenarios)
     Achievement.loadAll(content.global.achievements)
@@ -65,8 +52,8 @@ function saveHandler.doLoadAll(content)
 end
 
 
-function saveHandler.saveAll()
-  local saveFile = saveHandler.createSaveFile()
+function CampaignManager.saveAll()
+  local saveFile = CampaignManager.createSaveFile()
 
   Wait.time(function()
               local content = JSON.encode_pretty(saveFile)
@@ -76,19 +63,19 @@ function saveHandler.saveAll()
 end
 
 
-function saveHandler.createSaveFile()
+function CampaignManager.createSaveFile()
   local saveFile = {}
 
   Preparation.prepareSave()
   -- TODO change to task based, this wait is necessary, because the scripting zones have to be
   -- adjusted, otherwise they won't detect cards lying on the table
-  Wait.time(function() saveHandler.doCreateSaveFile(saveFile) end, 1)
+  Wait.time(function() CampaignManager.doCreateSaveFile(saveFile) end, 1)
 
   return saveFile
 end
 
 
-function saveHandler.doCreateSaveFile(saveFile)
+function CampaignManager.doCreateSaveFile(saveFile)
   saveFile.global = {
     prosperity = Prosperity.save(),
     scenarios = Scenario.save(),
@@ -100,3 +87,5 @@ function saveHandler.doCreateSaveFile(saveFile)
   saveFile.retired = Retirement.save()
   saveFile.events = Event.save()
 end
+
+return CampaignManager

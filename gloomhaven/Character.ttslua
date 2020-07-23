@@ -1,9 +1,20 @@
 local Base64 = require("ge_tts/Base64")
 local Chain = require("common/Chain")
-local DeckUtil = require("common/deckUtil")
+local Component = require("gloomhaven/Component")
+local Constant = require("common/Constant")
+local DeckUtil = require("common/DeckUtil")
+local Error = require("common/Error")
+local Game = require("gloomhaven/Game")
+local Log = require("common/Log")
 local TableUtils = require("ge_tts/TableUtils")
+local Quest = require("gloomhaven/Quest")
+local Shop = require("gloomhaven/Shop")
+local StringUtil = require("common/StringUtil")
+local TableUtil = require("common/TableUtil")
+local Task = require("gloomhaven/Task")
+local Utils = require("common/Utils")
 
-Character = {}
+local Character = {}
 
 Character.ABILITY_DEFAULT_DISTANCE = 5
 Character.ABILITY_MAX_DISTANCE = Character.ABILITY_DEFAULT_DISTANCE + 2
@@ -54,10 +65,10 @@ end
 ---@param index number
 ---@param character gh_Character
 function Character.startLoading(index, character)
-  local playerZone = guids.ZONES[index]
-  getObjectFromGUID(guids.ADD_PLAYERS[index]).call("addPlayer")
+  local playerZone = Component.guids.ZONES[index]
+  getObjectFromGUID(Component.guids.ADD_PLAYERS[index]).call("addPlayer")
 
-  Utils.waitForObjectInZone(playerZone, {name=names.PLAYER_MAT},
+  Utils.waitForObjectInZone(playerZone, {name=Component.names.PLAYER_MAT},
                             function() Character.unpackCharacterBox(playerZone, character) end)
 end
 
@@ -73,7 +84,7 @@ function Character.unpackCharacterBox(playerZone, character)
     smooth = false,
   })
 
-  Utils.waitForObjectInZone(playerZone, {name=names.CHARACTER_SHEET},
+  Utils.waitForObjectInZone(playerZone, {name=Component.names.CHARACTER_SHEET},
                             function() Character.doLoad(playerZone, character) end)
 end
 
@@ -160,7 +171,7 @@ end
 ---@param name string
 ---@param health number
 function Character.loadFigureHealth(playerZone, name, health)
-  local figure = Utils.findObjectIn(playerZone, {name=name, tag=Tag.FIGURINE})
+  local figure = Utils.findObjectIn(playerZone, {name=name, tag=Constant.Tag.FIGURINE})
 
   figure.getVar("health")["max"] = health
   figure.getVar("health")["value"] = health
@@ -183,7 +194,7 @@ function Character.loadAbilities(playerZone, character)
                     abilityName, character.class, abilityCard.getName())
       end
       abilityDeck.takeObject({
-        position = positions.relativeToZone(playerZone, positions.SECOND_HAND),
+        position = Component.positions.relativeToZone(playerZone, Component.positions.SECOND_HAND),
         guid = abilityCard.getGUID(),
       })
     else
@@ -199,7 +210,7 @@ function Character.loadQuest(playerZone, character)
   if not character.quest then return end
 
   local callback = function(card)
-                     card.setPosition(positions.relativeToZone(playerZone, positions.QUEST_CARD))
+                     card.setPosition(Component.positions.relativeToZone(playerZone, Component.positions.QUEST_CARD))
                    end
   if not Quest.take(character.quest, callback) then
     Log.error("A quest named '%s' does not exist. Can't draw the quest from the deck.",
@@ -212,8 +223,8 @@ end
 function Character.loadPerks(playerZone, character)
   local perkInfo = Game.class(character.class).perks
   local characterSheet = Component.characterSheet(playerZone)
-  local currentDeck = Utils.findObjectIn(playerZone, {name=names.MODIFIER_DECK, description="Player"})
-  local isOtherDeck = function(obj) return obj.getName():find(names.MODIFIER_DECK)
+  local currentDeck = Utils.findObjectIn(playerZone, {name=Component.names.MODIFIER_DECK, description="Player"})
+  local isOtherDeck = function(obj) return obj.getName():find(Component.names.MODIFIER_DECK)
                                            and obj.getGUID() ~= currentDeck.getGUID()
                                     end
   local additionalDeck = Utils.findObjectInZone(playerZone, {func=isOtherDeck})
@@ -260,7 +271,7 @@ function Character.addModifierCard(chain, character, additionalDeck, currentDeck
 
   additionalDeck.takeObject({
     guid = foundCard.getGUID(),
-    position = positions.getSafe(),
+    position = Component.positions.getSafe(),
     smooth = false,
     callback_function = function(card) currentDeck.putObject(card) chain.proceed() end
   })
@@ -284,7 +295,7 @@ function Character.removeModifierCard(chain, character, currentDeck, card)
 
   currentDeck.takeObject({
     guid = foundCard.getGUID(),
-    position = positions.getSafe(),
+    position = Component.positions.getSafe(),
     smooth = false,
     callback_function = function(card) card.destruct() chain.proceed() end})
 
@@ -294,7 +305,7 @@ end
 ---@param deck tts__Deck
 ---@param name string
 function Character.findModifierCard(deck, name)
-  local searchPattern = "^" .. names.ATTACK_MODIFIER .. " " .. StringUtil.escapePattern(name) .. "$"
+  local searchPattern = "^" .. Component.names.ATTACK_MODIFIER .. " " .. StringUtil.escapePattern(name) .. "$"
   return Utils.findObjectIn(deck, {name=searchPattern})
 end
 
@@ -306,7 +317,7 @@ function Character.loadItems(playerZone, character)
   for _, item in TableUtil.pairs(character.items) do
     local itemPosition = Character.calculateItemPosition(playerZone, item)
 
-    if Shop.takeItem(item.name, itemPosition, Rotation.NORTH) then
+    if Shop.takeItem(item.name, itemPosition, Constant.Rotation.NORTH) then
       table.insert(items, item.name)
       Character.checkForNegativeItemEffects(character, item, itemPosition)
     else
@@ -320,10 +331,10 @@ end
 ---@param playerZone GUID
 ---@param item gh_Item
 function Character.calculateItemPosition(playerZone, item)
-  if item.position and snaps[item.position] then
-    return Utils.getSnapPosition(Component.playerMat(playerZone), snaps[item.position])
+  if item.position and Component.snaps[item.position] then
+    return Utils.getSnapPosition(Component.playerMat(playerZone), Component.snaps[item.position])
   end
-  return positions.relativeToZone(playerZone, positions.ITEM_UNEQUIPPED)
+  return Component.positions.relativeToZone(playerZone, Component.positions.ITEM_UNEQUIPPED)
 end
 
 ---@param character gh_Character
@@ -351,7 +362,7 @@ end
 
 ---@param itemPosition tts__Vector
 function Character.dealNegativeItemEffectCard(itemPosition)
-  local deck = --[[---@type tts__Deck]] getObjectFromGUID(guids.PLAYER_MINUS_ONE_DECK)
+  local deck = --[[---@type tts__Deck]] getObjectFromGUID(Component.guids.PLAYER_MINUS_ONE_DECK)
   deck.takeObject({
     smooth = false,
     -- position set to ensure PLayer -1 cards placed on top.
@@ -432,7 +443,7 @@ end
 
 ---@param playerZone GUID
 function Character.saveItems(playerZone)
-  local playerMat = Utils.findObjectIn(playerZone, {name=names.PLAYER_MAT})
+  local playerMat = Utils.findObjectIn(playerZone, {name=Component.names.PLAYER_MAT})
   local items = {}
   local zoneObjects = Character.getObjects(playerZone)
   Character.saveItemFromObjects(zoneObjects, playerMat, items)
@@ -449,7 +460,7 @@ function Character.saveItemFromObjects(objects, playerMat, items)
       local item = {name=object.getName(), position=Character.getItemPosition(playerMat, object)}
       table.insert(items, item)
     elseif Component.isDeck(object) then
-      local deckObjects = DeckUtil.getContainedObjects(object)
+      local deckObjects = Utils.getContainedObjects(object)
       Character.saveItemFromObjects(deckObjects, playerMat, items)
     end
   end
@@ -461,7 +472,7 @@ function Character.getItemPosition(playerMat, object)
   -- TODO The snap module is used for all snap points not only player mat snaps. So this currently
   -- only works, because the player mat snaps are defined first. This should be changed, so that it
   -- works regardless of definition order
-  for name, snap in pairs(snaps) do
+  for name, snap in pairs(Component.snaps) do
     if Utils.getSnapPosition(playerMat, snap) == object.getPosition() then
       return name
     end
@@ -491,7 +502,7 @@ function Character.saveAbilitiesFromObjects(objects, class, abilities)
         table.insert(abilities, name)
       end
     elseif Component.isDeck(object) and not Component.isAbilityDeck(object) then
-      local deckObjects = DeckUtil.getContainedObjects(object)
+      local deckObjects = Utils.getContainedObjects(object)
       Character.saveAbilitiesFromObjects(deckObjects, class, abilities)
     end
   end
@@ -507,7 +518,7 @@ end
 
 ---@param className string
 function Character.findZoneForClass(className)
-  for _, playerZone in pairs(guids.ZONES) do
+  for _, playerZone in pairs(Component.guids.ZONES) do
     local characterMat = Component.characterMat(playerZone)
     if characterMat and characterMat.getDescription() == className then
       return playerZone
@@ -562,3 +573,5 @@ function Character.isObjectInPlayerZone(playerZone, object)
 
   return objectCenter.x > left and objectCenter.x < right and objectCenter.z > bottom and objectCenter.z < top
 end
+
+return Character

@@ -1,4 +1,9 @@
-Party = {}
+local Character = require("gloomhaven/Character")
+local Component = require("gloomhaven/Component")
+local StringUtil = require("common/StringUtil")
+local TableUtil = require("common/TableUtil")
+
+local Party = {}
 
 function Party.load(party)
   if party then
@@ -9,7 +14,7 @@ end
 
 
 function Party.loadPartySheet(party)
-  local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
 
   if party.name then
     partySheet.UI.setAttribute("partyName", "text", party.name)
@@ -45,7 +50,7 @@ end
 
 
 function Party.setPartySheetCharacter(position, character)
-  local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
   local partySheetAttributeNames = {"playerone", "playertwo", "playerthree", "playerfour"}
   local attributeName = partySheetAttributeNames[position]
   local attributeLvlName = attributeName .. 'lvl'
@@ -58,7 +63,7 @@ end
 
 -- TODO It should be easier than this. :()
 function Party.setPartySheetAverageLevel(characters)
-  local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
   local sum, numPlayers = 0, 0
   for i, character in pairs(characters) do
     if TableUtil.isNotEmpty(character) then
@@ -76,7 +81,7 @@ end
 function Party.save()
   local party = {}
 
-  local partySheet = getObjectFromGUID(guids.PARTY_SHEET)
+  local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
   party.name = partySheet.UI.getAttribute("partyName", "text")
   party.location = partySheet.UI.getAttribute("location", "text")
   party.notes = StringUtil.split(partySheet.UI.getAttribute("notes", "text"), {"\n"})
@@ -84,9 +89,11 @@ function Party.save()
   party.reputation = tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
 
   party.characters = {}
-  for _, zoneGuid in pairs(guids.ZONES) do
+  for _, zoneGuid in pairs(Component.guids.ZONES) do
     table.insert(party.characters, Character.save(zoneGuid))
   end
 
   return party
 end
+
+return Party

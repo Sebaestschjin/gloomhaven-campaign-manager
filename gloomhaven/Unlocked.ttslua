@@ -1,4 +1,15 @@
-Unlocked = {}
+local Component = require("gloomhaven/Component")
+local Constant = require("common/Constant")
+local Error = require("common/Error")
+local Game = require("gloomhaven/Game")
+local Preparation = require("gloomhaven/Preparation")
+local Sanctuary = require("gloomhaven/Sanctuary")
+local Shop = require("gloomhaven/Shop")
+local TableUtil = require("common/TableUtil")
+local Task = require("gloomhaven/Task")
+local Utils = require("common/Utils")
+
+local Unlocked = {}
 
 function Unlocked.loadAll(unlocked)
   if unlocked then
@@ -25,7 +36,7 @@ function Unlocked.validateClasses(classes)
 end
 
 function Unlocked.loadClasses(classes)
-  Utils.waitForObject(guids.LOCKED_CLASSES, function() Unlocked.doLoadClasses(classes) end)
+  Utils.waitForObject(Component.guids.LOCKED_CLASSES, function() Unlocked.doLoadClasses(classes) end)
 end
 
 function Unlocked.doLoadClasses(classes)
@@ -33,13 +44,13 @@ function Unlocked.doLoadClasses(classes)
     Unlocked.loadClass(i, class)
   end
 
-  getObjectFromGUID(guids.GAMEBOX).putObject(getObjectFromGUID(guids.LOCKED_CLASSES))
+  getObjectFromGUID(Component.guids.GAMEBOX).putObject(getObjectFromGUID(Component.guids.LOCKED_CLASSES))
 end
 
 function Unlocked.loadClass(number, class)
-  local characterBoxes = getObjectFromGUID(guids.LOCKED_CLASSES)
-  local lastBox = getObjectFromGUID(guids.LAST_BOX)
-  local beforeLastBox = getObjectFromGUID(guids.BEFORE_LAST_BOX)
+  local characterBoxes = getObjectFromGUID(Component.guids.LOCKED_CLASSES)
+  local lastBox = getObjectFromGUID(Component.guids.LAST_BOX)
+  local beforeLastBox = getObjectFromGUID(Component.guids.BEFORE_LAST_BOX)
   local delta = (lastBox.getPosition() - beforeLastBox.getPosition()) * number
 
   characterBoxes.takeObject({
@@ -65,8 +76,8 @@ end
 
 
 function Unlocked.loadItems(items)
-  local cityMat = getObjectFromGUID(guids.CITY_MAT)
-  local shopPosition = Utils.getSnapPosition(cityMat, snaps.SHOP)
+  local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
+  local shopPosition = Utils.getSnapPosition(cityMat, Component.snaps.SHOP)
 
   for _, item in pairs(items) do
     Shop.takeRewardItem(item, shopPosition)
@@ -78,8 +89,8 @@ function Unlocked.validateOpeningConditions()
 end
 
 function Unlocked.loadOpeningConditions(openingConditions)
-  Preparation.takeFromGamebox(guids.OPENING_CONDITIONS, positions.OPENING_CONDITIONS)
-  Utils.waitForObject(guids.OPENING_CONDITIONS, function() Unlocked.doLoadOpeningConditions(openingConditions) end)
+  Preparation.takeFromGamebox(Component.guids.OPENING_CONDITIONS, Component.positions.OPENING_CONDITIONS)
+  Utils.waitForObject(Component.guids.OPENING_CONDITIONS, function() Unlocked.doLoadOpeningConditions(openingConditions) end)
 end
 
 function Unlocked.doLoadOpeningConditions(openingConditions)
@@ -91,11 +102,11 @@ function Unlocked.doLoadOpeningConditions(openingConditions)
   Unlocked.setOpeningCondition(openingConditions.highestReputation, "Rep20")
 
   if openingConditions.retired then
-    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", "Retire")
-    getObjectFromGUID(guids.GAMEBOX).takeObject({
-      guid = guids.TOWN_RECORDS,
-      position = positions.TOWN_RECORDS,
-      rotation = Rotation.NORTH,
+    getObjectFromGUID(Component.guids.OPENING_CONDITIONS).call("clickedToggle", "Retire")
+    getObjectFromGUID(Component.guids.GAMEBOX).takeObject({
+      guid = Component.guids.TOWN_RECORDS,
+      position = Component.positions.TOWN_RECORDS,
+      rotation = Constant.Rotation.NORTH,
       smooth = false
     })
   end
@@ -112,7 +123,7 @@ end
 
 function Unlocked.setOpeningCondition(condition, name)
   if condition then
-    getObjectFromGUID(guids.OPENING_CONDITIONS).call("clickedToggle", name)
+    getObjectFromGUID(Component.guids.OPENING_CONDITIONS).call("clickedToggle", name)
   end
 end
 
@@ -141,7 +152,7 @@ end
 
 
 function Unlocked.saveOpeningConditions()
-  local openingConditionsSheet = getObjectFromGUID(guids.OPENING_CONDITIONS)
+  local openingConditionsSheet = getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
   if not openingConditionsSheet then
     return nil
   end
@@ -165,3 +176,5 @@ function Unlocked.saveOpeningConditions()
 
   return openingConditions
 end
+
+return Unlocked

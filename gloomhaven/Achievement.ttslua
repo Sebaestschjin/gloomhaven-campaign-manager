@@ -1,4 +1,11 @@
-Achievement = {}
+local Component = require("gloomhaven/Component")
+local Constant = require("common/Constant")
+local Error = require("common/Error")
+local Game = require("gloomhaven/Game")
+local Task = require("gloomhaven/Task")
+local TableUtil = require("common/TableUtil")
+
+local Achievement = {}
 
 function Achievement.loadAll(achievements)
   Task.load("Achievements", achievements, Achievement.validate, Achievement.doLoad)
@@ -45,10 +52,10 @@ function Achievement.doLoad(achievements)
 end
 
 function Achievement.loadGroup(i, achievementGroup)
-  local globalAchievementsBag = getObjectFromGUID(guids.ACHIEVEMENTS_BAG)
+  local globalAchievementsBag = getObjectFromGUID(Component.guids.ACHIEVEMENTS_BAG)
 
   globalAchievementsBag.takeObject({
-    guid = guids.ACHIEVEMENT_BOARD,
+    guid = Component.guids.ACHIEVEMENT_BOARD,
     callback_function = function(obj)
       for _, achievement in pairs(achievementGroup) do
         local index = Achievement.findIndex(obj, achievement)
@@ -60,11 +67,11 @@ end
 
 
 function Achievement.saveAll(saveFile)
-  local bag = getObjectFromGUID(guids.ACHIEVEMENTS_BAG)
+  local bag = getObjectFromGUID(Component.guids.ACHIEVEMENTS_BAG)
   bag.takeObject({
-    guid = guids.ACHIEVEMENT_BOARD,
-    position = positions.ACHIEVEMENT_BOARD,
-    rotation = Rotation.NORTH,
+    guid = Component.guids.ACHIEVEMENT_BOARD,
+    position = Component.positions.ACHIEVEMENT_BOARD,
+    rotation = Constant.Rotation.NORTH,
     callback_function = function(obj)
                           Achievement.doSave(saveFile, obj)
                           bag.putObject(obj)
@@ -102,3 +109,5 @@ function Achievement.findIndex(board, achievement)
   end
   return nil
 end
+
+return Achievement

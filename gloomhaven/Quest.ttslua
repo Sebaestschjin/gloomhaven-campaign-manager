@@ -1,8 +1,13 @@
-Quest = {}
+local Component = require("gloomhaven/Component")
+local Constant = require("common/Constant")
+local Game = require("gloomhaven/Game")
+local Utils = require("common/Utils")
+
+local Quest = {}
 
 function Quest.take(quest, callback)
-  local questDeck = Component.fromDeckMat(snaps.QUESTS)
-  local cardId = Component.getCardId(deckIds.QUESTS, Quest.getCardIndex(quest))
+  local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
+  local cardId = Component.getCardId(Component.deckIds.QUESTS, Quest.getCardIndex(quest))
   local questCard = Utils.findObjectIn(questDeck, {cardId=cardId})
   if not questCard then
     return false
@@ -11,7 +16,7 @@ function Quest.take(quest, callback)
   questDeck.takeObject({
     index = questCard.index,
     smooth = false,
-    rotation = Rotation.NORTH_FLIPPED,
+    rotation = Constant.Rotation.NORTH_FLIPPED,
     callback_function = callback
   })
   return true
@@ -31,3 +36,5 @@ function Quest.getCardIndex(quest)
 
   return nil
 end
+
+return Quest

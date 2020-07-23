@@ -1,4 +1,7 @@
-Prosperity = {}
+local Component = require("gloomhaven/Component")
+local Task = require("gloomhaven/Task")
+
+local Prosperity = {}
 
 Prosperity.MAX_VALUE = 63
 
@@ -15,14 +18,14 @@ function Prosperity.validate(value)
 end
 
 function Prosperity.doLoad(value)
-  local map = getObjectFromGUID(guids.MAP)
+  local map = getObjectFromGUID(Component.guids.MAP)
   for i = 1, value do
     map.call("clickedPros", i)
   end
 end
 
 function Prosperity.save()
-  local checkmarks = getObjectFromGUID(guids.MAP).getTable("Pros")
+  local checkmarks = getObjectFromGUID(Component.guids.MAP).getTable("Pros")
   local maxValue = -1
   for i, checked in pairs(checkmarks) do
     if checked and tonumber(i) > maxValue then
@@ -34,5 +37,7 @@ function Prosperity.save()
 end
 
 function Prosperity.getLevel()
-  return getObjectFromGUID(guids.MAP).call("getProsLevel", {})
+  return getObjectFromGUID(Component.guids.MAP).call("getProsLevel", {})
 end
+
+return Prosperity

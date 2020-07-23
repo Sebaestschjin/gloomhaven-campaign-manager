@@ -1,4 +1,6 @@
-StringUtil = {}
+local TableUtil = require("common/TableUtil")
+
+local StringUtil = {}
 
 
 ---@param text string
@@ -103,3 +105,5 @@ function StringUtil.distance(first, second)
 
   return matrix[firstLength][secondLength]
 end
+
+return StringUtil

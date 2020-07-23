@@ -1,0 +1,104 @@
+local Component = require("gloomhaven/Component")
+local Constant = require("common/Constant")
+local Expansion = require("gloomhaven/Expansion")
+local Game = require("gloomhaven/Game")
+local Utils = require("common/Utils")
+
+local Preparation = {}
+
+function Preparation.start(callback)
+  Preparation.verifyLoad()
+  Preparation.revealLockedCharacters(callback)
+
+  Preparation.takeFromGamebox(Component.guids.SCENARIO_BOOK, Component.positions.SCENARIO_BOOK)
+  Preparation.takeFromGamebox(Component.guids.RULE_BOOK, Component.positions.RULE_BOOK)
+end
+
+function Preparation.takeFromGamebox(guid, position, callback)
+  local object = getObjectFromGUID(guid)
+  if object == nil then
+    getObjectFromGUID(Component.guids.GAMEBOX).takeObject({
+      guid = guid,
+      smooth = false,
+      position = position,
+      rotation = Constant.Rotation.NORTH,
+      callback_function = callback
+    })
+  elseif callback then
+    callback(object)
+  end
+end
+
+-- Verifies that the script can actually run, by checking if needed objects exists.
+function Preparation.verifyLoad()
+  Preparation.verifyObject(Component.guids.GAMEBOX, "Gamebox")
+  Preparation.verifyContent(Component.guids.GAMEBOX, Component.guids.LOCKED_CLASSES, "Locked classes")
+  Preparation.verifyContent(Component.guids.GAMEBOX, Component.guids.SCENARIO_BOOK, "Scenario book")
+  Preparation.verifyContent(Component.guids.GAMEBOX, Component.guids.RULE_BOOK, "Rule book")
+  Preparation.verifyContent(Component.guids.GAMEBOX, Component.guids.OPENING_CONDITIONS, "Opening Conditions")
+  Preparation.verifyContent(Component.guids.GAMEBOX, Component.guids.RETIREMENT_SHEET, "Retirement Sheet")
+  Preparation.verifyContent(Component.guids.GAMEBOX, Component.guids.TOWN_RECORDS, "Town Records")
+  Preparation.verifyObject(Component.guids.MAP, "Map")
+  Preparation.verifyTable(Component.guids.MAP, "tableML", "Scenario information")
+  Preparation.verifyTable(Component.guids.MAP, "Pros", "Prosperity information")
+  Preparation.verifyObject(Component.guids.ACHIEVEMENTS_BAG, "Achievements bag")
+  Preparation.verifyObject(Component.guids.DECK_MAT, "Deck Mat")
+  Preparation.verifyObject(Component.guids.PLAYER_MINUS_ONE_DECK, "-1 Deck")
+  Preparation.verifyObject(Component.guids.CITY_MAT, "City Mat")
+  Preparation.verifyObject(Component.guids.EVENTS_MAT, "Events Mat")
+  Preparation.verifyObject(Component.guids.PARTY_SHEET, "Party Sheet")
+  for i, zone in pairs(Component.guids.ZONES) do
+    Preparation.verifyObject(zone, "Player zone " .. i)
+  end
+  for i, zone in pairs(Component.guids.ADD_PLAYERS) do
+    Preparation.verifyObject(zone, "Add Player button " .. i)
+  end
+end
+
+function Preparation.verifyObject(guid, name)
+  assert(getObjectFromGUID(guid), name .. " is missing (" .. guid .. ")")
+end
+
+function Preparation.verifyContent(guid, content, name)
+  assert(getObjectFromGUID(content)
+         or Utils.findObjectIn(guid, {guid=content}),
+         name .. " is missing")
+end
+
+function Preparation.verifyTable(guid, table, name)
+  assert(getObjectFromGUID(guid).getTable(table), name .. " is missing")
+end
+
+function Preparation.revealLockedCharacters(callback)
+  Preparation.takeFromGamebox(Component.guids.LOCKED_CLASSES, Component.positions.getSafe(),
+                              function(obj)
+                                Preparation.putDivinierIntoBox(obj)
+                                Expansion.unpack(function()
+                                  Preparation.finish(callback)
+                                end)
+                              end)
+end
+
+
+function Preparation.putDivinierIntoBox(classes)
+  getObjectFromGUID(Component.guids.FORGOTTEN_CIRCLES_BOX).takeObject({
+    guid = Game.class("Diviner").boxGuid,
+    smooth = false,
+    callback_function = function(obj) classes.putObject(obj) end
+  })
+end
+
+function Preparation.finish(callback)
+    callback()
+end
+
+function Preparation.prepareSave()
+  for _, zoneGuid in pairs(Component.guids.ZONES) do
+    local zone = getObjectFromGUID(zoneGuid)
+    local zonePosition = zone.getPosition()
+    zonePosition:setAt("y", 4.22)
+    zone.setPosition(zonePosition)
+  end
+end
+
+return Preparation

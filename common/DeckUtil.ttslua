@@ -1,21 +1,8 @@
-local ObjectUtil = require("common/objectUtil")
+local Constant = require("common/Constant")
+local TableUtil = require("common/TableUtil")
+local Utils = require("common/Utils")
 
 local DeckUtil = {}
-
-function DeckUtil.getContainedObjects(deck)
-  local deckData = deck.getData()
-
-  local objects = {}
-  for i, object in pairs(deckData.ContainedObjects) do
-    local wrappedObject = ObjectUtil.wrapObject(object)
-    wrappedObject.index = i - 1
-    wrappedObject.getPosition = function() return ObjectUtil.wrapPosition(deckData) end
-    table.insert(objects, wrappedObject)
-  end
-
-  return objects
-end
-
 
 function DeckUtil.wrap(object)
   if not object then
@@ -39,8 +26,8 @@ end
 function DeckUtil.wrapAt(position)
   local hit = Physics.cast({
     origin = position + vector(0, 3, 0),
-    direction = Direction.DOWN,
-    type = Cast.RAY,
+    direction = Constant.Direction.DOWN,
+    type = Constant.Cast.RAY,
   })
 
   for _, hitInfo in TableUtil.pairs(hit) do
@@ -74,7 +61,7 @@ function DeckUtil.makeWrappedEmpty(wrapped, position, rotation)
   wrapped.getObjects = function() return {} end
   wrapped.getData = function() return {ContainedObjects={}} end
   wrapped.lastPosition = position
-  wrapped.lastRotation = Utils.nvl(rotation, Rotation.NORTH)
+  wrapped.lastRotation = Utils.nvl(rotation, Constant.Rotation.NORTH)
 end
 
 function DeckUtil.makeWrappedDeck(wrapped, deck)

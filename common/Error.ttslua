@@ -1,4 +1,4 @@
-Error = {}
+local Error = {}
 
 Error.currentErrors = {}
 
@@ -15,3 +15,5 @@ function Error.pop()
   Error.currentErrors = {}
   return errors
 end
+
+return Error

@@ -1,0 +1,229 @@
+local Constant = require("common/Constant")
+local DeckUtil = require("common/DeckUtil")
+local Game = require("gloomhaven/Game")
+local TableUtil = require("common/TableUtil")
+local Utils = require("common/Utils")
+
+local Component = {}
+
+Component.guids = {}
+
+Component.guids.GAMEBOX = "346ed5"
+Component.guids.LOCKED_CLASSES = "1e6549"
+Component.guids.SCENARIO_BOOK = "f3404a"
+Component.guids.RULE_BOOK = "c9d3f5"
+Component.guids.OPENING_CONDITIONS = "30ae8e"
+Component.guids.RETIREMENT_SHEET = "a30c94"
+Component.guids.TOWN_RECORDS = "a6c771"
+Component.guids.FORGOTTEN_CIRCLES_BOX = "5e28e8"
+Component.guids.MAP = "9cc037"
+Component.guids.ACHIEVEMENTS_BAG = "3ea749" -- Bag containing the Achievement board
+Component.guids.ACHIEVEMENT_BOARD = "43d5b8"
+Component.guids.SANCTUARY_STICKER = "800847"
+Component.guids.DECK_MAT = "a75fcd"
+Component.guids.PLAYER_MINUS_ONE_DECK = "74a2ed"
+Component.guids.CITY_EVENTS_DECK_INITIAL = "759349"
+Component.guids.CITY_EVENTS_DECK = "f13efd"
+Component.guids.ROAD_EVENTS_DECK_INITIAL = "83de73"
+Component.guids.ROAD_EVENTS_DECK = "f08b69"
+Component.guids.CITY_MAT = "f3ffb7"
+Component.guids.EVENTS_MAT = "b53fb2"
+Component.guids.OLD_EVENT_MAT = "41393b"
+Component.guids.PARTY_SHEET = "6d3de2"
+Component.guids.LAST_BOX = "fdef02" -- tinkerer
+Component.guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
+---@type GUID[]
+Component.guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}
+---@type GUID[]
+Component.guids.ADD_PLAYERS = {"3f0cda", "4d61da", "f98ff8", "d0f661"}
+
+
+Component.deckIds = {}
+Component.deckIds.QUESTS = {1753, 1997}
+Component.deckIds.RANDOM_SCENARIOS = 1930
+
+Component.names = {}
+Component.names.PLAYER_MAT = "Player Mat"
+Component.names.CHARACTER_MAT = "Character Mat"
+Component.names.CHARACTER_SHEET = "Character Sheet"
+Component.names.ABILITY_DECK = "Advanced Abilities"
+Component.names.MODIFIER_DECK = "Attack Modifiers"
+Component.names.ATTACK_MODIFIER = "Attack Modifier"
+Component.names.ROAD_EVENTS = "Road Events"
+Component.names.CITY_EVENTS = "City Events"
+
+
+Component.positions = {}
+Component.positions.QUEST_CARD = Vector(1, 2, -19) -- relative to player zone
+Component.positions.ITEM_UNEQUIPPED = Vector(-7, 2, -7) -- relative to player zone
+Component.positions.SECOND_HAND = Vector(0, 3, -2) -- relative to player zone
+
+Component.positions.ACHIEVEMENT_BOARD = {87.26, 2, 26.12}
+Component.positions.OPENING_CONDITIONS = Vector(65.19, 1.70, -29.55)
+Component.positions.RETIREMENT_SHEET = Vector(77.88, 1.70, -33.34)
+Component.positions.SCENARIO_BOOK = {63.88, 2, 37.89}
+Component.positions.RULE_BOOK = {-64.31, 2, -41.68}
+Component.positions.TOWN_RECORDS = {73.94, 2, 34.10}
+
+function Component.positions.relativeToZone(zoneGuid, position)
+  return getObjectFromGUID(zoneGuid).getPosition() + position
+end
+
+-- TODO this has to become better...
+---@type number
+Component.positions.counter = 0
+function Component.positions.getSafe()
+  Component.positions.counter = Component.positions.counter + 1
+  return vector(-43 + (Component.positions.counter * 3), 2, -85)
+end
+
+Component.snaps = {}
+
+-- Player Mat
+Component.snaps.Head = 15
+Component.snaps.Armor = 16
+Component.snaps.HandLeft = 17
+Component.snaps.HandRight = 18
+Component.snaps.Boots = 19
+Component.snaps.Bag1 = 12
+Component.snaps.Bag2 = 13
+Component.snaps.Bag3 = 14
+Component.snaps.Active4 = 9
+Component.snaps.Active1 = 6
+Component.snaps.Active2 = 7
+Component.snaps.Active3 = 8
+
+-- Deck Mat
+Component.snaps.RANDOM_SCENARIOS = 8
+Component.snaps.QUESTS = 11
+
+-- City Mat
+Component.snaps.SHOP = 1
+Component.snaps.REWARD_ITEMS = 13
+
+-- Event Mat
+Component.snaps.ROAD_EVENTS_DECK = 1
+Component.snaps.CITY_EVENTS_DECK = 2
+Component.snaps.RIFT_EVENTS = 3
+
+
+function Component.isCard(object)
+  return object.tag == Constant.Tag.CARD
+end
+
+function Component.isDeck(object)
+  return object.tag == Constant.Tag.DECK
+end
+
+function Component.getCardId(customDeck, index)
+  if type(customDeck) == "table" then
+    customDeck = customDeck[#customDeck]
+  end
+  return string.format("%d%02d", customDeck, index)
+end
+
+function Component.fromDeckMat(snapPoint)
+  local deckMat = getObjectFromGUID(Component.guids.DECK_MAT)
+  local deckPosition = Utils.getSnapPosition(deckMat, snapPoint)
+
+  return DeckUtil.wrapAt(deckPosition)
+end
+
+function Component.fromCityMat(snapPoint)
+  local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
+  local deckPosition = Utils.getSnapPosition(cityMat, snapPoint)
+
+  return DeckUtil.wrapAt(deckPosition)
+end
+
+function Component.playerMat(playerZone)
+  return Utils.findObjectIn(playerZone, {name=Component.names.PLAYER_MAT})
+end
+
+function Component.characterMat(playerZone)
+  return Utils.findObjectIn(playerZone, {name=Component.names.CHARACTER_MAT})
+end
+
+function Component.characterSheet(playerZone)
+  return Utils.findObjectIn(playerZone, {name=Component.names.CHARACTER_SHEET})
+end
+
+---@return tts__Object
+function Component.abilityDeck(playerZone)
+  return DeckUtil.wrap(Utils.findObjectIn(playerZone, {name=Component.names.ABILITY_DECK}))
+end
+
+function Component.isAbilityDeck(object)
+  return Component.isDeck(object)
+         and object.getName():find(Component.names.ABILITY_DECK)
+end
+
+function Component.isAbilityCardForClass(object, class)
+  return Component.isCard(object)
+         and object.getDescription():find(class)
+         and (object.getName():find("%(%d%d%)")
+              or object.getName() == "Eternal Equilibrium (27(") -- quickfix for a typo in Elementalists ability card
+         and not object.getName():find(Component.names.ATTACK_MODIFIER)
+end
+
+function Component.isStartingAbility(class, abilityName)
+  local ability = Game.ability(class, abilityName)
+  return ability.level == 1 or ability.level == "X"
+end
+
+---@return string
+function Component.getAbilityName(class, abilityCard)
+  -- quickfix for a typo in Elementalists ability card
+  if abilityCard.getName() == "Eternal Equilibrium (27(" then
+    return "Eternal Equilibrium"
+  end
+  local cardName = abilityCard.getName():gsub("%s?%(%d+%)", "")
+  return Game.ability(class, cardName).name
+end
+
+--- Returns true if the given object is an item card.
+function Component.IsItemCard(object)
+  return Component.isCard(object)
+         and Component.IsItemCardDescription(object.getDescription())
+end
+
+--- Returns true if the given item card object is an item from the rewards or item design deck.
+function Component.isRewardItemCard(item, prosperityLevel)
+  prosperityLevel = prosperityLevel or 1
+  local description = item.description
+  description = string.gsub(description, "red", "")
+  description = string.gsub(description, "blue", "")
+
+  return tonumber(description) > Game.ITEMS.Prosperity[prosperityLevel]
+end
+
+--- Returns true if the given object description is a possible item card's description.
+function Component.IsItemCardDescription(description)
+  return description:find("^%d+$")
+         or description:find("^%d+ red$")
+         or description:find("^%d+ blue$")
+end
+
+function Component.isPersonalQuestCard(object)
+  if object.tag ~= Constant.Tag.CARD or not object.getData().CustomDeck then
+    return false
+  end
+
+  for key, _ in pairs(object.getData().CustomDeck) do
+    return TableUtil.contains(Component.deckIds.QUESTS, key)
+  end
+end
+
+function Component.getQuestInfo(object)
+  local cardId = object.getData().CardID
+  local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+  for name, quest in pairs(Game.QUESTS) do
+    if quest.index == cardIndex then
+      return name, quest
+    end
+  end
+
+  return nil
+end
+
+return Component

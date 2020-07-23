@@ -1,4 +1,4 @@
-Log = {}
+local Log = {}
 
 function Log.fatal(text)
   text = "Fatal Error! This is definitely a bug!\n    " .. text
@@ -40,3 +40,5 @@ function Log.buildMessage(...)
   end
   return string.format(table.unpack(args))
 end
+
+return Log

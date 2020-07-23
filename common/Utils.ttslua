@@ -1,6 +1,22 @@
-local DeckUtil = require("common/DeckUtil")
+local ObjectUtil = require("common/ObjectUtil")
+local StringUtil = require("common/StringUtil")
+local TableUtil = require("common/TableUtil")
 
-Utils = {}
+local Utils = {}
+
+function Utils.getContainedObjects(deck)
+  local deckData = deck.getData()
+
+  local objects = {}
+  for i, object in pairs(deckData.ContainedObjects) do
+    local wrappedObject = ObjectUtil.wrapObject(object)
+    wrappedObject.index = i - 1
+    wrappedObject.getPosition = function() return ObjectUtil.wrapPosition(deckData) end
+    table.insert(objects, wrappedObject)
+  end
+
+  return objects
+end
 
 --- Reads the body of the notebook with the given name.
 function Utils.readNotebook(name)
@@ -56,7 +72,7 @@ function Utils.getObjects(container)
   end
 
   if container.tag == "Deck" or container.tag == "Bag" then
-    return DeckUtil.getContainedObjects(container)
+    return Utils.getContainedObjects(container)
   elseif container.getObjects then
     return container.getObjects()
   end
@@ -116,3 +132,5 @@ function Utils.nvl(value, default)
   end
   return default
 end
+
+return Utils

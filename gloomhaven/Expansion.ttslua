@@ -1,5 +1,8 @@
 local Chain = require("common/Chain")
+local Component = require("gloomhaven/Component")
 local DeckUtil = require("common/DeckUtil")
+local Event = require("gloomhaven/Event")
+local Utils = require("common/Utils")
 
 local Expansion = {}
 
@@ -22,12 +25,12 @@ end
 
 
 function Expansion.unpackEvents(chain, targetDeck, name)
-  local forgottenCirclesBox = getObjectFromGUID(guids.FORGOTTEN_CIRCLES_BOX)
+  local forgottenCirclesBox = getObjectFromGUID(Component.guids.FORGOTTEN_CIRCLES_BOX)
   local newEvents = Utils.findObjectIn(forgottenCirclesBox, {name=name})
 
   forgottenCirclesBox.takeObject({
     guid = newEvents.getGUID(),
-    position = positions.getSafe(),
+    position = Component.positions.getSafe(),
     rotation = targetDeck.getRotation(),
     smooth = false,
     callback_function = function(obj) Expansion.nameEventCards(chain, obj, targetDeck) end,
@@ -48,7 +51,7 @@ end
 function Expansion.placeEventCard(chain, deck, targetDeck, index)
   deck.takeObject({
     index = index - 1,
-    position = positions.getSafe(),
+    position = Component.positions.getSafe(),
     smooth = false,
     callback_function = function(card)
                           card.setName(tostring((index - 1) + Expansion.START_EVENT))
@@ -60,13 +63,13 @@ function Expansion.placeEventCard(chain, deck, targetDeck, index)
 end
 
 function Expansion.unpackItems(chain)
-  local forgottenCirclesBox = getObjectFromGUID(guids.FORGOTTEN_CIRCLES_BOX)
+  local forgottenCirclesBox = getObjectFromGUID(Component.guids.FORGOTTEN_CIRCLES_BOX)
   local newItems = Utils.findObjectIn(forgottenCirclesBox, {name=Expansion.NEW_ITEMS})
-  local targetDeck = Component.fromCityMat(snaps.REWARD_ITEMS)
+  local targetDeck = Component.fromCityMat(Component.snaps.REWARD_ITEMS)
 
   forgottenCirclesBox.takeObject({
     guid = newItems.getGUID(),
-    position = positions.getSafe(),
+    position = Component.positions.getSafe(),
     rotation = targetDeck.getRotation(),
     smooth = false,
     callback_function = function(obj)

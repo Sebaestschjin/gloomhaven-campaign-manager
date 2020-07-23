@@ -1,4 +1,8 @@
-Sanctuary = {}
+local Component = require("gloomhaven/Component")
+local Task = require("gloomhaven/Task")
+local Utils = require("common/Utils")
+
+local Sanctuary = {}
 
 Sanctuary.MAX_VALUE = 90
 
@@ -13,19 +17,19 @@ function Sanctuary.validate(value)
 end
 
 function Sanctuary.doLoad(value)
-  getObjectFromGUID(guids.MAP).call('unseal')
-  Utils.waitForObject(guids.SANCTUARY_STICKER, function() Sanctuary.setLevel(value) end)
+  getObjectFromGUID(Component.guids.MAP).call('unseal')
+  Utils.waitForObject(Component.guids.SANCTUARY_STICKER, function() Sanctuary.setLevel(value) end)
 end
 
 function Sanctuary.setLevel(value)
-  local sanctuarySticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
+  local sanctuarySticker = getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
   for i = 0, value-1 do
     sanctuarySticker.call("clickedPros", i)
   end
 end
 
 function Sanctuary.save()
-  local sanctuarySticker = getObjectFromGUID(guids.SANCTUARY_STICKER)
+  local sanctuarySticker = getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
   if not sanctuarySticker then
     return nil
   end
@@ -40,3 +44,5 @@ function Sanctuary.save()
 
   return maxValue + 1
 end
+
+return Sanctuary

@@ -1,3 +1,5 @@
+local TableUtil = require("common/TableUtil")
+
 --- @alias GUID string
 
 local ObjectUtil = {}

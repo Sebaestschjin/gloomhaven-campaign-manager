@@ -1,6 +1,5 @@
 local ChatCommands = require("ge_tts/ChatCommands")
-
-#include saveHandler
+local CampaignManager = require("gloomhaven/CampaignManager")
 
 function onLoad(save_state)
   self.setPosition(self.getPosition() + vector(0, 2, 0))
@@ -9,7 +8,7 @@ function onLoad(save_state)
   self.createButton({
     click_function = "noop",
     function_owner = self,
-    label = "v " .. table.concat(saveHandler.VERSION, "."),
+    label = "v " .. table.concat(CampaignManager.VERSION, "."),
     position = {0, 0.6, -6},
     scale = {2.5, 1.5, 4.5},
     width = 0,
@@ -52,11 +51,11 @@ end
 
 
 function load()
-  saveHandler.loadAll()
+  CampaignManager.loadAll()
 end
 
 function save()
-  saveHandler.saveAll()
+  CampaignManager.saveAll()
 end
 
 function noop()
