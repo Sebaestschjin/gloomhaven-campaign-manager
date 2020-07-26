@@ -12,7 +12,6 @@ function Party.load(party)
   end
 end
 
-
 function Party.loadPartySheet(party)
   local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
 

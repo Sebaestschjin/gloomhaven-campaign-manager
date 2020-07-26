@@ -2,7 +2,13 @@ local Constant = require("common/Constant")
 local TableUtil = require("common/TableUtil")
 local Utils = require("common/Utils")
 
+---@shape common_DeckZone
+---@field putObject fun(object:tts__Object):tts__Deck
+---@field getObjects fun():tts__IndexedSimpleObjectState[]
+
+
 local DeckUtil = {}
+
 
 function DeckUtil.wrap(object)
   if not object then
@@ -23,6 +29,7 @@ function DeckUtil.wrap(object)
   return wrapped
 end
 
+---@return common_DeckZone
 function DeckUtil.wrapAt(position)
   local hit = Physics.cast({
     origin = position + vector(0, 3, 0),
@@ -79,7 +86,7 @@ function DeckUtil.makeWrappedCard(wrapped, card)
   wrapped.object = card
   wrapped.isDeck = false
   wrapped.isEmpty = false
-  wrapped.getObjects = function() return card end
+  wrapped.getObjects = function() return { card } end
   wrapped.getData = function() return cardData end
 end
 

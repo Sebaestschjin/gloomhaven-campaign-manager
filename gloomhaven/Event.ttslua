@@ -6,8 +6,17 @@ local TableUtil = require("common/TableUtil")
 local Task = require("gloomhaven/Task")
 local Utils = require("common/Utils")
 
+---@alias gh_Event number
+
+---@shape gh_EventDeck
+---@field deck string
+---@field bottomUp gh_Event[]
+---@field add gh_Event[]
+---@field remove gh_Event[]
+
 local Event = {}
 
+---@type table<string,any>
 Event.DECKS = {
   ["city"] = {
     initialDeckGuid = Component.guids.CITY_EVENTS_DECK_INITIAL,
@@ -24,10 +33,12 @@ Event.DECKS = {
   },
 }
 
+---@param events gh_EventDeck[]
 function Event.loadAll(events)
   Task.load("Events", events, Event.validate, Event.doLoad)
 end
 
+---@param events gh_EventDeck[]
 function Event.validate(events)
   for i, eventDeck in pairs(events) do
     if not Event.DECKS[eventDeck.deck] then
@@ -43,7 +54,8 @@ function Event.validate(events)
   return true, Error.pop()
 end
 
-
+---@param deckName string
+---@param events gh_Event[]
 function Event.validateEventNumbers(deckName, events)
   if not events then
     return
@@ -62,15 +74,14 @@ function Event.validateEventNumbers(deckName, events)
   end
 end
 
-
-
+---@param events gh_EventDeck[]
 function Event.doLoad(events)
-  for _, eventDeck in pairs(events) do
+  for _, eventDeck in ipairs(events) do
     Event.load(eventDeck)
   end
 end
 
-
+---@param events gh_EventDeck
 function Event.load(events)
   local eventsInfo = Event.DECKS[events.deck]
   local deck = DeckUtil.wrap(getObjectFromGUID(eventsInfo.deckGuid))
@@ -85,12 +96,14 @@ function Event.load(events)
   Event.dealEvents(deck, eventCards, eventsInfo)
 end
 
-
+---@param events gh_EventDeck
+---@param deck common_DeckZone
+---@return GUID[]
 function Event.findBottomDeck(events, deck)
   if not events.bottomUp then return {} end
 
   local eventsToAdd = {}
-  for i, event in pairs(events.bottomUp) do
+  for _, event in ipairs(events.bottomUp) do
     local eventName = string.format("%02d", event)
     local eventCard = Utils.findObjectIn(deck, {name=eventName})
     table.insert(eventsToAdd, eventCard.getGUID())
@@ -99,10 +112,13 @@ function Event.findBottomDeck(events, deck)
   return eventsToAdd
 end
 
-
+---@param events gh_EventDeck
+---@param deck tts__Deck
+---@param alreadyAdded GUID[]
+---@return GUID[]
 function Event.findAddedCards(events, deck, alreadyAdded)
   local eventsToAdd = {}
-  for _, eventCard in pairs(deck.getObjects()) do
+  for _, eventCard in ipairs(deck.getObjects()) do
     local eventNumber = tonumber(eventCard.name)
     if not TableUtil.contains(alreadyAdded, eventCard.guid)
        and Event.isAdded(events, eventNumber)
@@ -115,18 +131,21 @@ function Event.findAddedCards(events, deck, alreadyAdded)
   return eventsToAdd
 end
 
-
+---@param events gh_EventDeck
+---@param eventNumber gh_Event
 function Event.isRemoved(events, eventNumber)
   return events.remove and TableUtil.contains(events.remove, eventNumber)
 end
 
-
+---@param events gh_EventDeck
+---@param eventNumber gh_Event
 function Event.isAdded(events, eventNumber)
   return eventNumber <= 30
          or (events.add and TableUtil.contains(events.add, eventNumber))
 end
 
-
+---@param deck tts__Deck
+---@param eventCards
 function Event.dealEvents(deck, eventCards, info)
   local eventDeck = Event.getTargetDeck(info)
   for i, event in pairs(eventCards) do
@@ -145,6 +164,7 @@ end
 
 
 function Event.save()
+  ---@type gh_EventDeck[]
   events = {}
 
   for name, info in pairs(Event.DECKS) do
@@ -158,13 +178,22 @@ function Event.save()
   return TableUtil.emptyToNil(events)
 end
 
-
+---@return gh_EventDeck|nil
 function Event.saveEventsFromDeck(info)
   local eventDeck = Event.getTargetDeck(info)
-  local eventsFromDeck = {bottomUp={}}
+  local eventsFromDeck = --[[---@type gh_EventDeck]] {bottomUp={}, remove={}}
 
   for _, card in pairs(eventDeck.getObjects()) do
     table.insert(eventsFromDeck.bottomUp, tonumber(card.name))
+  end
+
+  for i=1, 30 do
+    if not TableUtil.contains(eventsFromDeck.bottomUp, i) then
+      table.insert(eventsFromDeck.remove, i)
+    end
+  end
+  if TableUtil.isEmpty(eventsFromDeck.remove) then
+    TableUtil.removeKey(eventsFromDeck, "remove")
   end
 
   if TableUtil.isEmpty(eventsFromDeck.bottomUp) then
@@ -173,7 +202,7 @@ function Event.saveEventsFromDeck(info)
   return eventsFromDeck
 end
 
-
+---@return common_DeckZone
 function Event.getTargetDeck(info)
   local position
   if getObjectFromGUID(Component.guids.OLD_EVENT_MAT) then

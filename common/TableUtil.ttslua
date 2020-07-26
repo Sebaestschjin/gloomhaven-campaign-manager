@@ -66,6 +66,13 @@ function TableUtil.emptyToNil(table)
   return table
 end
 
+---@param key string
+function TableUtil.removeKey(table, key)
+  local element = table[key]
+  table[key] = nil
+  return element
+end
+
 function TableUtil.sortByAttribute(tableToSort, attributeName)
   return table.sort(tableToSort, function(l, r) return l[attributeName] < r[attributeName] end)
 end
