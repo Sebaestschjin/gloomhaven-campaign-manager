@@ -154,8 +154,7 @@ function Enhancement.saveInZone(playerZone, enhancements)
   local zoneObjects = getObjectFromGUID(playerZone).getObjects()
   Enhancement.saveInContainer(zoneObjects, class, classEnhancements.abilities)
 
-  classEnhancements = TableUtil.sortByAttribute(classEnhancements.abilities, "name")
-
+  classEnhancements.abilities = TableUtil.sortByAttribute(classEnhancements.abilities, "name")
   if TableUtil.isNotEmpty(classEnhancements.abilities) then
     table.insert(enhancements, classEnhancements)
   end
