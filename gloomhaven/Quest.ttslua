@@ -3,8 +3,13 @@ local Constant = require("common/Constant")
 local Game = require("gloomhaven/Game")
 local Utils = require("common/Utils")
 
+---@alias gh_Quest string|number
+
 local Quest = {}
 
+---@param quest gh_Quest
+---@param callback fun(deck:common_DeckZone, card:tts__Object)
+---@return boolean
 function Quest.take(quest, callback)
   local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
   local cardId = Component.getCardId(Component.deckIds.QUESTS, Quest.getCardIndex(quest))
@@ -22,8 +27,10 @@ function Quest.take(quest, callback)
   return true
 end
 
+---@param quest gh_Quest
+---@return number|nil
 function Quest.getCardIndex(quest)
-  local questByName = Game.QUESTS[quest]
+  local questByName = Game.QUESTS[--[[---@type string]]quest]
   if questByName then
     return questByName.index
   end

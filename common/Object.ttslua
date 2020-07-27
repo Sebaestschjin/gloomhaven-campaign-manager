@@ -1,0 +1,27 @@
+local GeObject = require("ge_tts/Object")
+
+local Object = {}
+
+Object.Tag = GeObject.Tag
+
+---@param object tts__Object
+function Object.isCard(object)
+    return object.tag == Object.Tag.Card
+end
+
+---@param object tts__Object
+function Object.isDeck(object)
+    return object.tag == Object.Tag.Deck
+end
+
+---@param object tts__Object
+function Object.isBag(object)
+    return object.tag == Object.Tag.Bag
+end
+
+---@param object tts__Object
+function Object.isContainer(object)
+    return Object.isDeck(object) or Object.isBag(object)
+end
+
+return Object

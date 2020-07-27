@@ -4,6 +4,7 @@ local Constant = require("common/Constant")
 local Error = require("common/Error")
 local Game = require("gloomhaven/Game")
 local Log = require("common/Log")
+local Object = require("common/Object")
 local TableUtil = require("common/TableUtil")
 local Task = require("gloomhaven/Task")
 local Utils = require("common/Utils")
@@ -166,7 +167,7 @@ function Enhancement.saveInContainer(objects, class, classEnhancements)
        and TableUtil.isNotEmpty(object.getDecals())
     then
       Enhancement.saveForCard(object, class, classEnhancements)
-    elseif object.tag == Constant.Tag.DECK then
+    elseif Object.isDeck(object) then
       Enhancement.saveInContainer(Utils.getContainedObjects(object), class, classEnhancements)
     end
   end

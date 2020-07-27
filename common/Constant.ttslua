@@ -14,11 +14,6 @@ Constant.Direction = {}
 Constant.Direction.UP = {0, 1, 0}
 Constant.Direction.DOWN = {0, -1, 0}
 
-Constant.Tag = {}
-Constant.Tag.CARD = "Card"
-Constant.Tag.DECK = "Deck"
-Constant.Tag.FIGURINE = "Figurine"
-
 Constant.Cast = {}
 Constant.Cast.RAY = 1
 Constant.Cast.SPHERE = 2

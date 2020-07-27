@@ -85,13 +85,13 @@ end
 function Event.load(events)
   local eventsInfo = Event.DECKS[events.deck]
   local deck = DeckUtil.wrap(getObjectFromGUID(eventsInfo.deckGuid))
-  deck.putObject(getObjectFromGUID(eventsInfo.initialDeckGuid))
+  deck.putObject(--[[---@not nil]]getObjectFromGUID(eventsInfo.initialDeckGuid))
 
   local bottomCards = Event.findBottomDeck(events, deck)
   local addedCards = Event.findAddedCards(events, deck, bottomCards)
 
   TableUtil.shuffle(addedCards)
-  local eventCards = TableUtil.append(bottomCards, addedCards)
+  local eventCards = TableUtil.merge(bottomCards, addedCards)
 
   Event.dealEvents(deck, eventCards, eventsInfo)
 end
@@ -100,10 +100,8 @@ end
 ---@param deck common_DeckZone
 ---@return GUID[]
 function Event.findBottomDeck(events, deck)
-  if not events.bottomUp then return {} end
-
   local eventsToAdd = {}
-  for _, event in ipairs(events.bottomUp) do
+  for _, event in TableUtil.pairs(events.bottomUp) do
     local eventName = string.format("%02d", event)
     local eventCard = Utils.findObjectIn(deck, {name=eventName})
     table.insert(eventsToAdd, eventCard.getGUID())
@@ -113,7 +111,7 @@ function Event.findBottomDeck(events, deck)
 end
 
 ---@param events gh_EventDeck
----@param deck tts__Deck
+---@param deck common_DeckZone
 ---@param alreadyAdded GUID[]
 ---@return GUID[]
 function Event.findAddedCards(events, deck, alreadyAdded)
@@ -144,20 +142,17 @@ function Event.isAdded(events, eventNumber)
          or (events.add and TableUtil.contains(events.add, eventNumber))
 end
 
----@param deck tts__Deck
----@param eventCards
+---@param deck common_DeckZone
+---@param eventCards GUID[]
 function Event.dealEvents(deck, eventCards, info)
   local eventDeck = Event.getTargetDeck(info)
-  for i, event in pairs(eventCards) do
-    local offset = i * 0.2
+  for _, event in pairs(eventCards) do
     deck.takeObject({
       guid = event,
       position = Component.positions.getSafe(),
       rotation = Constant.Rotation.NORTH,
       smooth = false,
-      callback_function = function(card)
-                            eventDeck.putObject(card)
-                          end
+      callback_function = function(card) eventDeck.putObject(card) end
     })
   end
 end

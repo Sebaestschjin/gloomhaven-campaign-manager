@@ -1,32 +1,44 @@
 local Constant = require("common/Constant")
+local Object = require("common/Object")
 local TableUtil = require("common/TableUtil")
 local Utils = require("common/Utils")
 
----@shape common_DeckZone
+---@shape common_DeckZone_Partial
+---@field tag "Deck"
+---@field takeObject fun(parameters:tts__Object_GuidTakeObjectParameters|tts__Object_IndexTakeObjectParameters): tts__Object|nil
 ---@field putObject fun(object:tts__Object):tts__Deck
----@field getObjects fun():tts__IndexedSimpleObjectState[]
+---@field getRotation fun():tts__Vector
+---@field getPosition fun():tts__Vector
 
+---@shape common_DeckZone: common_DeckZone_Partial
+---@field object tts__Card|tts__Deck|nil
+---@field isDeck boolean
+---@field isEmpty boolean
+---@field getObjects fun():tts__IndexedSimpleObjectState[]
+---@field getData fun(): tts__ObjectState|common_DeckZone_EmptyState
+---@field lastPosition tts__Vector|nil
+---@field lastRotation tts__Vector|nil
+
+---@shape common_DeckZone_EmptyState
+---@field ContainedObjects table
 
 local DeckUtil = {}
 
-
+---@param object tts__Deck|tts__Card
+---@return common_DeckZone
 function DeckUtil.wrap(object)
-  if not object then
-    return nil
-  end
-
   local wrapped = DeckUtil.createWrapped()
-  if object.tag == "Deck" then
+  if Object.isDeck(object) then
     if object.remainder then
       DeckUtil.makeWrappedCard(wrapped, object.remainder)
     else
       DeckUtil.makeWrappedDeck(wrapped, object)
     end
-  elseif object.tag == "Card" then
+  elseif Object.isCard(object) then
     DeckUtil.makeWrappedCard(wrapped, object)
   end
 
-  return wrapped
+  return --[[---@type common_DeckZone]] wrapped
 end
 
 ---@return common_DeckZone
@@ -49,23 +61,28 @@ function DeckUtil.wrapAt(position)
   return wrapped
 end
 
+---@return common_DeckZone_Partial
 function DeckUtil.createWrapped()
-  local wrapped = {}
+  local wrapped = --[[---@type common_DeckZone_Partial]] {}
 
   wrapped.takeObject = function(parameters) return DeckUtil.takeObject(wrapped, parameters) end
   wrapped.putObject = function(object) return DeckUtil.putObject(wrapped, object) end
   wrapped.getPosition = function() return DeckUtil.getPosition(wrapped) end
   wrapped.getRotation = function() return DeckUtil.getRotation(wrapped) end
-  wrapped.tag = "Deck"
+  wrapped.tag = Object.Tag.Deck
 
   return wrapped
 end
 
+---@param wrapped common_DeckZone_Partial|common_DeckZone
+---@param position tts__Vector|nil
+---@param rotation tts__Vector|nil
 function DeckUtil.makeWrappedEmpty(wrapped, position, rotation)
+  ---@alias SimpleObjectStateArray tts__IndexedSimpleObjectState[]
   wrapped.object = nil
   wrapped.isDeck = false
   wrapped.isEmpty = true
-  wrapped.getObjects = function() return {} end
+  wrapped.getObjects = function() --[[---@type SimpleObjectStateArray]] return {} end
   wrapped.getData = function() return {ContainedObjects={}} end
   wrapped.lastPosition = position
   wrapped.lastRotation = Utils.nvl(rotation, Constant.Rotation.NORTH)
@@ -86,7 +103,16 @@ function DeckUtil.makeWrappedCard(wrapped, card)
   wrapped.object = card
   wrapped.isDeck = false
   wrapped.isEmpty = false
-  wrapped.getObjects = function() return { card } end
+  wrapped.getObjects = function() return {
+                                    name = card.getName(),
+                                    nickname = card.nickname,
+                                    description = card.getDescription(),
+                                    gm_notes = card.gm_notes,
+                                    guid = card.getGUID(),
+                                    lua_script = card.lua_script,
+                                    lua_script_state = card.lua_script_state,
+                                    index = 1,
+                       } end
   wrapped.getData = function() return cardData end
 end
 

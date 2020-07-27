@@ -6,7 +6,7 @@ local DeckUtil = require("common/DeckUtil")
 local Error = require("common/Error")
 local Game = require("gloomhaven/Game")
 local Log = require("common/Log")
-local TableUtils = require("ge_tts/TableUtils")
+local Object = require("common/Object")
 local Quest = require("gloomhaven/Quest")
 local Shop = require("gloomhaven/Shop")
 local StringUtil = require("common/StringUtil")
@@ -171,7 +171,7 @@ end
 ---@param name string
 ---@param health number
 function Character.loadFigureHealth(playerZone, name, health)
-  local figure = Utils.findObjectIn(playerZone, {name=name, tag=Constant.Tag.FIGURINE})
+  local figure = Utils.findObjectIn(playerZone, {name=name, tag=Object.Tag.Figurine})
 
   figure.getVar("health")["max"] = health
   figure.getVar("health")["value"] = health
@@ -459,7 +459,7 @@ function Character.saveItemFromObjects(objects, playerMat, items)
     if Component.IsItemCard(object) then
       local item = {name=object.getName(), position=Character.getItemPosition(playerMat, object)}
       table.insert(items, item)
-    elseif Component.isDeck(object) then
+    elseif Object.isDeck(object) then
       local deckObjects = Utils.getContainedObjects(object)
       Character.saveItemFromObjects(deckObjects, playerMat, items)
     end
@@ -501,7 +501,7 @@ function Character.saveAbilitiesFromObjects(objects, class, abilities)
       if not Component.isStartingAbility(class, name) then
         table.insert(abilities, name)
       end
-    elseif Component.isDeck(object) and not Component.isAbilityDeck(object) then
+    elseif Object.isDeck(object) and not Component.isAbilityDeck(object) then
       local deckObjects = Utils.getContainedObjects(object)
       Character.saveAbilitiesFromObjects(deckObjects, class, abilities)
     end
@@ -552,10 +552,10 @@ end
 ---@return tts__Object[]
 function Character.getObjects(playerZone)
   local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
-  return TableUtils.select(zone.getObjects(),
-                     function(object, _)
-                              return Character.isObjectInPlayerZone(zone, --[[---@type tts__Object]] object)
-                           end)
+  return TableUtil.filter(zone.getObjects(),
+                          function(object, _)
+                             return Character.isObjectInPlayerZone(zone, --[[---@type tts__Object]] object)
+                          end)
 end
 
 ---@param playerZone tts__ScriptingTrigger

@@ -1,6 +1,7 @@
 local Constant = require("common/Constant")
 local DeckUtil = require("common/DeckUtil")
 local Game = require("gloomhaven/Game")
+local Object = require("common/Object")
 local TableUtil = require("common/TableUtil")
 local Utils = require("common/Utils")
 
@@ -74,7 +75,7 @@ end
 Component.positions.counter = 0
 function Component.positions.getSafe()
   Component.positions.counter = Component.positions.counter + 1
-  return vector(-43 + (Component.positions.counter * 3), 2, -85)
+  return Vector(-43 + (Component.positions.counter * 3), 2, -85)
 end
 
 Component.snaps = {}
@@ -107,14 +108,6 @@ Component.snaps.CITY_EVENTS_DECK = 2
 Component.snaps.RIFT_EVENTS = 3
 
 
-function Component.isCard(object)
-  return object.tag == Constant.Tag.CARD
-end
-
-function Component.isDeck(object)
-  return object.tag == Constant.Tag.DECK
-end
-
 function Component.getCardId(customDeck, index)
   if type(customDeck) == "table" then
     customDeck = customDeck[#customDeck]
@@ -122,6 +115,7 @@ function Component.getCardId(customDeck, index)
   return string.format("%d%02d", customDeck, index)
 end
 
+---@return common_DeckZone
 function Component.fromDeckMat(snapPoint)
   local deckMat = getObjectFromGUID(Component.guids.DECK_MAT)
   local deckPosition = Utils.getSnapPosition(deckMat, snapPoint)
@@ -154,12 +148,12 @@ function Component.abilityDeck(playerZone)
 end
 
 function Component.isAbilityDeck(object)
-  return Component.isDeck(object)
+  return Object.isDeck(object)
          and object.getName():find(Component.names.ABILITY_DECK)
 end
 
 function Component.isAbilityCardForClass(object, class)
-  return Component.isCard(object)
+  return Object.isCard(object)
          and object.getDescription():find(class)
          and (object.getName():find("%(%d%d%)")
               or object.getName() == "Eternal Equilibrium (27(") -- quickfix for a typo in Elementalists ability card
@@ -183,7 +177,7 @@ end
 
 --- Returns true if the given object is an item card.
 function Component.IsItemCard(object)
-  return Component.isCard(object)
+  return Object.isCard(object)
          and Component.IsItemCardDescription(object.getDescription())
 end
 
@@ -205,7 +199,7 @@ function Component.IsItemCardDescription(description)
 end
 
 function Component.isPersonalQuestCard(object)
-  if object.tag ~= Constant.Tag.CARD or not object.getData().CustomDeck then
+  if not Object.isCard(object.tag) or not object.getData().CustomDeck then
     return false
   end
 

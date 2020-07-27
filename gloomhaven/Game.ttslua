@@ -2161,7 +2161,12 @@ Game.ACHIEVEMENTS = {
   },
 }
 
--- Information about Personal quests.
+---@shape gh_QuestInfo
+---@field index number Index in the quest deck
+---@field number number Card number
+
+---Information about Personal quests.
+---@type table<string, gh_QuestInfo>
 Game.QUESTS = {
   ["A Helping Hand"] = {
     index = 0,
