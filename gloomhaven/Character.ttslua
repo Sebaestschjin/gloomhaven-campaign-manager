@@ -7,6 +7,7 @@ local Error = require("common/Error")
 local Game = require("gloomhaven/Game")
 local Log = require("common/Log")
 local Object = require("common/Object")
+local ObjectUtil = require("common/ObjectUtil")
 local Quest = require("gloomhaven/Quest")
 local Shop = require("gloomhaven/Shop")
 local StringUtil = require("common/StringUtil")
@@ -31,7 +32,7 @@ Character.ABILITY_MAX_DISTANCE = Character.ABILITY_DEFAULT_DISTANCE + 2
 ---@field quest string|number
 ---@field checkmarks number
 ---@field perks number[]
----@field items gh_Item
+---@field items gh_Item[]
 ---@field abilities string[]
 ---@field notes string[]
 ---@field hiddenNotes string[]
@@ -66,7 +67,7 @@ end
 ---@param character gh_Character
 function Character.startLoading(index, character)
   local playerZone = Component.guids.ZONES[index]
-  getObjectFromGUID(Component.guids.ADD_PLAYERS[index]).call("addPlayer")
+  Component.playerButton(index).call("addPlayer")
 
   Utils.waitForObjectInZone(playerZone, {name=Component.names.PLAYER_MAT},
                             function() Character.unpackCharacterBox(playerZone, character) end)
@@ -77,7 +78,7 @@ end
 function Character.unpackCharacterBox(playerZone, character)
   local playerMat = Component.playerMat(playerZone)
   local boxGuid = Game.class(character.class).boxGuid
-  local characterBox = --[[---@type tts__Object]] getObjectFromGUID(boxGuid)
+  local characterBox = --[[---@not nil]] getObjectFromGUID(boxGuid)
 
    characterBox.takeObject({
     position = playerMat.getPosition(),
@@ -173,8 +174,7 @@ end
 function Character.loadFigureHealth(playerZone, name, health)
   local figure = Utils.findObjectIn(playerZone, {name=name, tag=Object.Tag.Figurine})
 
-  figure.getVar("health")["max"] = health
-  figure.getVar("health")["value"] = health
+  figure.setTable("health", {value=health, max=health})
   figure.call("setHealth")
 end
 
@@ -259,7 +259,7 @@ end
 ---@param additionalDeck tts__Deck
 ---@param currentDeck tts__Deck
 ---@param card string
----@return common_Chain_continue
+---@return boolean
 function Character.addModifierCard(chain, character, additionalDeck, currentDeck, card)
   Log.verbose(character.class .. ": Adding " .. card)
 
@@ -283,7 +283,7 @@ end
 ---@param character gh_Character
 ---@param currentDeck tts__Deck
 ---@param card string
----@return common_Chain_continue
+---@return boolean
 function Character.removeModifierCard(chain, character, currentDeck, card)
   Log.verbose(character.class .. ": Removing " .. card)
 
@@ -343,7 +343,7 @@ end
 function Character.checkForNegativeItemEffects(character, item, itemPosition)
   if not Character.hasNegItemEffectsPerk(character) then
     local negativeEffect = Game.ITEMS.NegativeEffects[item.name]
-    for i = 1, Utils.nvl(negativeEffect, 0) do
+    for i = 1, negativeEffect or 0 do
       Character.dealNegativeItemEffectCard(itemPosition)
     end
   end
@@ -392,15 +392,15 @@ function Character.save(playerZone)
   character.class = characterMat.getDescription()
 
   local characterSheet = Component.characterSheet(playerZone)
-  local characterSheetButtons = characterSheet.getTable("buttons")
-  local characterSheetInputs = characterSheet.getTable("inputs")
+  local characterSheetButtons = --[[---@not nil]] characterSheet.getTable("buttons")
+  local characterSheetInputs = --[[---@not nil]] characterSheet.getTable("inputs")
 
   if characterSheetInputs then
     -- this is an older version of the sheet, without the inputs where you can directly set
     -- the values
-    character.name = characterSheetInputs["Name"]
-    character.xp = tonumber(characterSheetButtons["xp"].label)
-    character.gold = tonumber(characterSheetButtons["gold"].label)
+    character.name = characterSheetInputs.Name
+    character.xp = tonumber(characterSheetButtons.xp.label)
+    character.gold = tonumber(characterSheetButtons.gold.label)
   else
     character.name = characterSheet.UI.getAttribute("Name", "text")
     character.xp = tonumber(characterSheet.UI.getAttribute("xp", "text"))
@@ -456,11 +456,11 @@ end
 ---@param items gh_Item[]
 function Character.saveItemFromObjects(objects, playerMat, items)
   for _, object in pairs(objects) do
-    if Component.IsItemCard(object) then
+    if Component.isItemCard(object) then
       local item = {name=object.getName(), position=Character.getItemPosition(playerMat, object)}
       table.insert(items, item)
     elseif Object.isDeck(object) then
-      local deckObjects = Utils.getContainedObjects(object)
+      local deckObjects = ObjectUtil.getContainedObjects(object)
       Character.saveItemFromObjects(deckObjects, playerMat, items)
     end
   end
@@ -483,10 +483,10 @@ end
 
 ---@param playerZone GUID
 function Character.saveAbilities(playerZone)
-  local class = Character.findClassInZone(playerZone)
+  local class = --[[---@not nil]] Character.findClassInZone(playerZone)
   local abilities = {}
-  local zoneObjects = getObjectFromGUID(playerZone).getObjects()
-  Character.saveAbilitiesFromObjects(zoneObjects, class, abilities)
+  local zoneObjects = (--[[---@not nil]]getObjectFromGUID(playerZone)).getObjects()
+  Character.saveAbilitiesFromObjects(--[[---@type tts__Object[] ]]zoneObjects, class, abilities)
 
   return table.sort(abilities)
 end
@@ -502,7 +502,7 @@ function Character.saveAbilitiesFromObjects(objects, class, abilities)
         table.insert(abilities, name)
       end
     elseif Object.isDeck(object) and not Component.isAbilityDeck(object) then
-      local deckObjects = Utils.getContainedObjects(object)
+      local deckObjects = ObjectUtil.getContainedObjects(object)
       Character.saveAbilitiesFromObjects(deckObjects, class, abilities)
     end
   end

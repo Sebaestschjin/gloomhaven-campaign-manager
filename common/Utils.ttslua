@@ -1,24 +1,13 @@
+local Object = require("common/Object")
 local ObjectUtil = require("common/ObjectUtil")
 local StringUtil = require("common/StringUtil")
 local TableUtil = require("common/TableUtil")
 
 local Utils = {}
 
-function Utils.getContainedObjects(deck)
-  local deckData = deck.getData()
-
-  local objects = {}
-  for i, object in pairs(deckData.ContainedObjects) do
-    local wrappedObject = ObjectUtil.wrapObject(object)
-    wrappedObject.index = i - 1
-    wrappedObject.getPosition = function() return ObjectUtil.wrapPosition(deckData) end
-    table.insert(objects, wrappedObject)
-  end
-
-  return objects
-end
-
 --- Reads the body of the notebook with the given name.
+---@param name string
+---@return nil | string
 function Utils.readNotebook(name)
   for _, notebook in pairs(Notes.getNotebookTabs()) do
     if notebook.title == name then
@@ -28,10 +17,15 @@ function Utils.readNotebook(name)
   return nil
 end
 
-
-function Utils.waitForObject(guid, callback, timeout, timeout_callback)
+---@overload fun(guid, callback: (fun(): void), timeout: number): void
+---@overload fun(guid, callback: (fun(): void)): void
+---@param guid GUID
+---@param callback fun(): void
+---@param timeout number
+---@param timeoutCallback fun(): void
+function Utils.waitForObject(guid, callback, timeout, timeoutCallback)
   local waiter = function() return getObjectFromGUID(guid) ~= nil end
-  Wait.condition(callback, waiter, timeout, timeout_callback)
+  Wait.condition(callback, waiter, timeout, timeoutCallback)
 end
 
 
@@ -40,6 +34,7 @@ function Utils.waitForObjectInZone(zone, search, callback, timeout, timeout_call
   Wait.condition(callback, waiter, timeout, timeout_callback)
 end
 
+---@param container GUID | tts__Container
 function Utils.findObjectIn(container, search)
   local objects = Utils.getObjects(container)
 
@@ -66,13 +61,15 @@ function Utils.findNearestObjectIn(container, name, maxDistance)
   return nearestObject, nearestDistance
 end
 
+---@param container GUID | tts__Container | tts__Object[]
+---@return tts__Object[]
 function Utils.getObjects(container)
   if StringUtil.isGuid(container) then
     container = getObjectFromGUID(container)
   end
 
-  if container.tag == "Deck" or container.tag == "Bag" then
-    return Utils.getContainedObjects(container)
+  if Object.isContainer(container) then
+    return ObjectUtil.getContainedObjects(container)
   elseif container.getObjects then
     return container.getObjects()
   end
@@ -89,7 +86,7 @@ function Utils.matchesSearch(object, search)
 end
 
 
--- @deprecated Use findObjectIn (doesn't support functions yet, though)
+---@deprecated Use findObjectIn (doesn't support functions yet, though)
 function Utils.findObjectInZone(zone_guid, search)
   local zone = getObjectFromGUID(zone_guid)
   local plain = search.plain
@@ -120,17 +117,11 @@ function Utils.findNonEmpty(value, pattern, plain)
   return pattern == nil or value:find(pattern, nil, plain)
 end
 
-
+---@param object tts__Object
+---@param snapPoint number
+---@return tts__Vector
 function Utils.getSnapPosition(object, snapPoint)
   return object.positionToWorld(object.getSnapPoints()[snapPoint].position)
-end
-
-
-function Utils.nvl(value, default)
-  if value ~= nil then
-    return value
-  end
-  return default
 end
 
 return Utils

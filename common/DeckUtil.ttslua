@@ -85,7 +85,7 @@ function DeckUtil.makeWrappedEmpty(wrapped, position, rotation)
   wrapped.getObjects = function() --[[---@type SimpleObjectStateArray]] return {} end
   wrapped.getData = function() return {ContainedObjects={}} end
   wrapped.lastPosition = position
-  wrapped.lastRotation = Utils.nvl(rotation, Constant.Rotation.NORTH)
+  wrapped.lastRotation = rotation or Constant.Rotation.NORTH
 end
 
 function DeckUtil.makeWrappedDeck(wrapped, deck)

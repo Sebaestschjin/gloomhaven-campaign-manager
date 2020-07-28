@@ -6,7 +6,7 @@ local TableUtil = require("common/TableUtil")
 ---@field addNext fun(callback:common_ChainCallback) Adds the given callback to the front of the chain.
 ---@field proceed fun() Calls the next callback function in the chain
 
----@alias common_ChainCallback fun(chain:common_Chain, vararg any):boolean
+---@alias common_ChainCallback fun(chain:common_Chain, vararg any):boolean|fun(chain:common_Chain, vararg any):void
 
 local Chain = {}
 

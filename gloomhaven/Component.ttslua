@@ -7,36 +7,36 @@ local Utils = require("common/Utils")
 
 local Component = {}
 
-Component.guids = {}
-
-Component.guids.GAMEBOX = "346ed5"
-Component.guids.LOCKED_CLASSES = "1e6549"
-Component.guids.SCENARIO_BOOK = "f3404a"
-Component.guids.RULE_BOOK = "c9d3f5"
-Component.guids.OPENING_CONDITIONS = "30ae8e"
-Component.guids.RETIREMENT_SHEET = "a30c94"
-Component.guids.TOWN_RECORDS = "a6c771"
-Component.guids.FORGOTTEN_CIRCLES_BOX = "5e28e8"
-Component.guids.MAP = "9cc037"
-Component.guids.ACHIEVEMENTS_BAG = "3ea749" -- Bag containing the Achievement board
-Component.guids.ACHIEVEMENT_BOARD = "43d5b8"
-Component.guids.SANCTUARY_STICKER = "800847"
-Component.guids.DECK_MAT = "a75fcd"
-Component.guids.PLAYER_MINUS_ONE_DECK = "74a2ed"
-Component.guids.CITY_EVENTS_DECK_INITIAL = "759349"
-Component.guids.CITY_EVENTS_DECK = "f13efd"
-Component.guids.ROAD_EVENTS_DECK_INITIAL = "83de73"
-Component.guids.ROAD_EVENTS_DECK = "f08b69"
-Component.guids.CITY_MAT = "f3ffb7"
-Component.guids.EVENTS_MAT = "b53fb2"
-Component.guids.OLD_EVENT_MAT = "41393b"
-Component.guids.PARTY_SHEET = "6d3de2"
-Component.guids.LAST_BOX = "fdef02" -- tinkerer
-Component.guids.BEFORE_LAST_BOX = "ec1d2a" -- cragheart
----@type GUID[]
-Component.guids.ZONES = {"49a4e0", "dac936", "62cd94", "963318"}
----@type GUID[]
-Component.guids.ADD_PLAYERS = {"3f0cda", "4d61da", "f98ff8", "d0f661"}
+Component.guids = {
+  GAMEBOX = "346ed5",
+  LOCKED_CLASSES = "1e6549",
+  SCENARIO_BOOK = "f3404a",
+  RULE_BOOK = "c9d3f5",
+  OPENING_CONDITIONS = "30ae8e",
+  RETIREMENT_SHEET = "a30c94",
+  TOWN_RECORDS = "a6c771",
+  FORGOTTEN_CIRCLES_BOX = "5e28e8",
+  MAP = "9cc037",
+  ACHIEVEMENTS_BAG = "3ea749", -- Bag containing the Achievement board
+  ACHIEVEMENT_BOARD = "43d5b8",
+  SANCTUARY_STICKER = "800847",
+  DECK_MAT = "a75fcd",
+  PLAYER_MINUS_ONE_DECK = "74a2ed",
+  CITY_EVENTS_DECK_INITIAL = "759349",
+  CITY_EVENTS_DECK = "f13efd",
+  ROAD_EVENTS_DECK_INITIAL = "83de73",
+  ROAD_EVENTS_DECK = "f08b69",
+  CITY_MAT = "f3ffb7",
+  EVENTS_MAT = "b53fb2",
+  OLD_EVENT_MAT = "41393b",
+  PARTY_SHEET = "6d3de2",
+  LAST_BOX = "fdef02", -- tinkerer
+  BEFORE_LAST_BOX = "ec1d2a", -- cragheart
+  ---@type GUID[]
+  ZONES = { "49a4e0", "dac936", "62cd94", "963318" },
+  ---@type GUID[]
+  ADD_PLAYERS = { "3f0cda", "4d61da", "f98ff8", "d0f661" },
+}
 
 
 Component.deckIds = {}
@@ -130,6 +130,12 @@ function Component.fromCityMat(snapPoint)
   return DeckUtil.wrapAt(deckPosition)
 end
 
+---@param index number
+---@return tts__Object
+function Component.playerButton(index)
+  return --[[---@not nil]] getObjectFromGUID(Component.guids.ADD_PLAYERS[index])
+end
+
 function Component.playerMat(playerZone)
   return Utils.findObjectIn(playerZone, {name=Component.names.PLAYER_MAT})
 end
@@ -176,30 +182,36 @@ function Component.getAbilityName(class, abilityCard)
 end
 
 --- Returns true if the given object is an item card.
-function Component.IsItemCard(object)
+---@param object tts__Object | common__WrappedObject
+function Component.isItemCard(object)
   return Object.isCard(object)
-         and Component.IsItemCardDescription(object.getDescription())
+         and Component.isItemCardDescription(object.getDescription())
 end
 
 --- Returns true if the given item card object is an item from the rewards or item design deck.
+---@param item tts__Object | common__WrappedObject
+---@param prosperityLevel number
 function Component.isRewardItemCard(item, prosperityLevel)
+  if not Component.isItemCard(item) then
+    return false
+  end
   prosperityLevel = prosperityLevel or 1
-  local description = item.description
-  description = string.gsub(description, "red", "")
-  description = string.gsub(description, "blue", "")
+  local description = item.getDescription()
+  description = description:gsub("red", "")
+  description = description:gsub("blue", "")
 
   return tonumber(description) > Game.ITEMS.Prosperity[prosperityLevel]
 end
 
 --- Returns true if the given object description is a possible item card's description.
-function Component.IsItemCardDescription(description)
+function Component.isItemCardDescription(description)
   return description:find("^%d+$")
          or description:find("^%d+ red$")
          or description:find("^%d+ blue$")
 end
 
 function Component.isPersonalQuestCard(object)
-  if not Object.isCard(object.tag) or not object.getData().CustomDeck then
+  if not Object.isCard(object) or not object.getData().CustomDeck then
     return false
   end
 

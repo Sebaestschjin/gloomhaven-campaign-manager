@@ -5,6 +5,7 @@ local Error = require("common/Error")
 local Game = require("gloomhaven/Game")
 local Log = require("common/Log")
 local Object = require("common/Object")
+local ObjectUtil = require("common/ObjectUtil")
 local TableUtil = require("common/TableUtil")
 local Task = require("gloomhaven/Task")
 local Utils = require("common/Utils")
@@ -84,7 +85,7 @@ function Enhancement.doLoad(enhancements)
               for _, enhancement in pairs(enhancements) do
                 Enhancement.loadForClass(enhancement.class, enhancement.abilities)
               end
-            end, 7)
+            end, 10)
 end
 
 
@@ -168,7 +169,7 @@ function Enhancement.saveInContainer(objects, class, classEnhancements)
     then
       Enhancement.saveForCard(object, class, classEnhancements)
     elseif Object.isDeck(object) then
-      Enhancement.saveInContainer(Utils.getContainedObjects(object), class, classEnhancements)
+      Enhancement.saveInContainer(ObjectUtil.getContainedObjects(object), class, classEnhancements)
     end
   end
 end
