@@ -13,7 +13,7 @@ local Utils = require("common/Utils")
 
 local CampaignManager = {}
 
-CampaignManager.VERSION = {1, 1, 1}
+CampaignManager.VERSION = {1, 1, 2}
 CampaignManager.SAVE_FILE = "Savefile"
 
 function CampaignManager.loadAll()

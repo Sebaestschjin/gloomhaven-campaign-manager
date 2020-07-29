@@ -1,4 +1,38 @@
 {
+  "enhancements": [ {
+    "abilities": [ {
+      "enhancements": [ {
+        "enhancement": "Plus 1",
+        "position": 1
+      }, {
+        "enhancement": "Ice",
+        "position": 2
+      } ],
+      "name": "Eye for an Eye"
+    }, {
+      "enhancements": [ {
+        "enhancement": "Jump",
+        "position": 1
+      } ],
+      "name": "Fatal Advance"
+    }, {
+      "enhancements": [ {
+        "enhancement": "Plus 1",
+        "position": 1
+      } ],
+      "name": "Hook and Chain"
+    } ],
+    "class": "Brute"
+  }, {
+    "abilities": [ {
+      "enhancements": [ {
+        "enhancement": "Fire",
+        "position": 1
+      } ],
+      "name": "Ink Bomb"
+    } ],
+    "class": "Tinkerer"
+  } ],
   "events": [ {
     "bottomUp": [ 1, 2, 3, 4, 55, 6, 39, 26, 10, 29, 7, 28, 16, 14, 21, 20, 11, 25, 13, 23, 9, 17, 5, 24, 30, 18, 19, 8, 15, 27, 22, 12 ],
     "deck": "city"

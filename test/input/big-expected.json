@@ -308,6 +308,7 @@
       "name": "Shakrae",
       "notes": [],
       "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15 ],
+      "quest": 533,
       "xp": 584
     }, {
       "abilities": [ "Burial", "Crystallizing Blast", "Obsidian Shards", "Primal Duality", "Vengeance", "Winter's Edge" ],
@@ -346,6 +347,7 @@
       "name": "Hu Bris",
       "notes": [],
       "perks": [ 1, 2, 3, 4, 5, 10, 11, 14, 15 ],
+      "quest": 515,
       "xp": 411
     }, {
       "abilities": [ "Chromatic Explosion", "Cold Fire", "Engulfed in Flames", "Flashing Burst", "Forked Beam", "Living Torch" ],
@@ -381,6 +383,7 @@
       "name": "",
       "notes": [],
       "perks": [ 1, 2, 3, 6, 7, 9, 10, 11, 12, 13 ],
+      "quest": 523,
       "xp": 417
     }, {
       "abilities": [ "Anguish and Salvation", "Call of the Nether", "Enfeebling Hex", "Ethereal Vortex", "Gift of the Void", "Revitalizing Fount ", "Seal Their Fate" ],
@@ -410,6 +413,7 @@
       "name": "Amaterasu",
       "notes": [],
       "perks": [ 1, 2, 4, 6, 7, 9, 12, 14, 15 ],
+      "quest": 528,
       "xp": 469
     } ],
     "location": "Gloomhaven",
@@ -430,85 +434,77 @@
     "level": 5,
     "perks": 8,
     "player": "Andrew",
-    "quest": "Aberrant Slayer"
+    "quest": "Battle Legend"
   }, {
     "character": "Nova",
     "class": "Spellweaver",
     "level": 5,
     "perks": 6,
     "player": "Nicole",
-    "quest": "Battle Legend"
+    "quest": "Elemental Samples"
   }, {
     "character": "Aerik Quickneedle",
     "class": "Sawbones",
     "level": 8,
     "perks": 12,
     "player": "Doug",
-    "quest": "Elemental Samples"
+    "quest": "Eternal Wanderer"
   }, {
     "character": "Kiriani Kris",
     "class": "Scoundrel",
     "level": 8,
     "perks": 12,
     "player": "Steven",
-    "quest": "Eternal Wanderer"
+    "quest": "Fearless Stand"
   }, {
     "character": "Ratzen & Bunny",
     "class": "Beast Tyrant",
     "level": 9,
     "perks": 13,
     "player": "Doug",
-    "quest": "Fearless Stand"
+    "quest": "Greed is Good"
   }, {
     "character": "Hammerspace",
     "class": "Quartermaster",
     "level": 9,
     "perks": 13,
     "player": "Nicole",
-    "quest": "Goliath Toppler"
+    "quest": "Implement of Light"
   }, {
     "character": "Quid Pro Quo",
     "class": "Soothsinger",
     "level": 9,
     "perks": 15,
     "player": "Andrew",
-    "quest": "Greed is Good"
+    "quest": "Merchant Class"
   }, {
     "character": "Toph",
     "class": "Cragheart",
     "level": 8,
     "perks": 11,
     "player": "Nicole",
-    "quest": "Implement of Light"
+    "quest": "Piety in All Things"
   }, {
     "character": "Wistful Memory",
     "class": "Summoner",
     "level": 9,
     "perks": 15,
     "player": "Doug",
-    "quest": "Law Bringer"
+    "quest": "Pounds of Flesh"
   }, {
     "character": "Ingra Bøkersdottir",
     "class": "Berserker",
     "level": 9,
     "perks": 11,
     "player": "Andrew",
-    "quest": "Merchant Class"
+    "quest": "Take Back the Trees"
   }, {
     "character": "Yuri Lowell",
     "class": "Nightshadow",
     "level": 8,
     "perks": 12,
     "player": "Nicole",
-    "quest": "Piety in All Things"
-  }, {
-    "quest": "Pounds of Flesh"
-  }, {
-    "quest": "Take Back the Trees"
-  }, {
     "quest": "The Fall of Man"
-  }, {
-    "quest": "The Perfect Poison"
   }, {
     "quest": "Trophy Hunt"
   }, {
@@ -518,7 +514,7 @@
   } ],
   "unlocked": {
     "classes": [ "Berserker", "Elementalist", "Quartermaster", "Beast Tyrant", "Soothsinger", "Nightshroud", "Sawbones", "Sunkeeper", "Summoner", "Doomstalker", "Diviner" ],
-    "items": [ "Circlet of Elements", "Circlet of Elements", "Curious Gear", "Doctor's Coat", "Doomed Compass", "Drakescale Boots", "Drakescale Helm", "Endurance Footwraps", "Fueled Falchion", "Fueled Falchion", "Heart of the Betrayer", "Helix Ring", "Horned Helm", "Horned Helm", "Inferno Blade", "Inferno Blade", "Magma Waders", "Major Cure Potion", "Major Cure Potion", "Master's Lute", "Minor Cure Potion", "Minor Cure Potion", "Mountain Hammer", "Phasing Idol", "Power Core", "Ring of Skulls", "Ring of Skulls", "Robes of Summoning", "Rocket Boots", "Rocket Boots", "Sacrificial Robes", "Scroll of Healing", "Scroll of Healing", "Second Skin", "Skullbane Axe", "Staff of Command", "Steam Armor", "Sun Shield", "Swordedge Armor", "Swordedge Armor", "Wand of Frost", "Wand of Frost", "Wand of Infernos", "Wand of Infernos", "Wand of Tremors", "Wand of Tremors" ],
+    "items": [ "Circlet of Elements", "Circlet of Elements", "Curious Gear", "Doctor's Coat", "Doomed Compass", "Drakescale Boots", "Drakescale Helm", "Endurance Footwraps", "Fueled Falchion", "Fueled Falchion", "Heart of the Betrayer", "Helix Ring", "Horned Helm", "Horned Helm", "Inferno Blade", "Inferno Blade", "Magma Waders", "Major Cure Potion", "Major Cure Potion", "Master's Lute", "Minor Cure Potion", "Mountain Hammer", "Phasing Idol", "Power Core", "Ring of Skulls", "Ring of Skulls", "Robes of Summoning", "Rocket Boots", "Rocket Boots", "Scroll of Healing", "Scroll of Healing", "Second Skin", "Skullbane Axe", "Staff of Command", "Steam Armor", "Sun Shield", "Swordedge Armor", "Wand of Frost", "Wand of Frost", "Wand of Infernos", "Wand of Infernos", "Wand of Tremors", "Wand of Tremors" ],
     "sanctuary": 39,
     "specialConditions": {
       "ancientTechnology": true,
