@@ -59,8 +59,8 @@ class GloomhavenCampaignManagerTest(unittest.TestCase):
 
         self.verify_load_and_save(savefile)
 
-    def test_overlapped(self):
-        savefile = "overlapped"
+    def test_edge_cases(self):
+        savefile = "edge_cases"
 
         self.verify_save(savefile)
 
