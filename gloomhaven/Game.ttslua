@@ -2077,6 +2077,10 @@ Game.CLASSES = {
   }
 }
 
+---@shape gh__Achievement_Info
+---@field maxCount number
+
+---@type table<string, gh__Achievement_Info>
 Game.ACHIEVEMENTS = {
   ["Ancient Technology"] = {
     maxCount = 5

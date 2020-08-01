@@ -5,18 +5,28 @@ local Game = require("gloomhaven/Game")
 local Task = require("gloomhaven/Task")
 local TableUtil = require("common/TableUtil")
 
+---@shape gh__Achievement
+---@field name string
+---@field count nil | number
+
+---@shape fs__Achievement_Info
+---@field name string
+---@field guids GUID[]
+
 local Achievement = {}
 
+---@param achievements gh__Achievement[]
 function Achievement.loadAll(achievements)
   Task.load("Achievements", achievements, Achievement.validate, Achievement.doLoad)
 end
 
+---@param achievements gh__Achievement[]
 function Achievement.validate(achievements)
   for i, achievement in pairs(achievements) do
     local name, count = achievement.name, achievement.count
     if not Game.ACHIEVEMENTS[name] then
       Error.add("Achievement with name '%s' does not exist. Achievement won't be loaded.", name)
-      achievements[i] = nil
+      TableUtil.removeKey(achievements, i)
     else
       local maxCount = Game.ACHIEVEMENTS[name].maxCount
       if count and (count < 1 or count > maxCount) then
@@ -31,7 +41,9 @@ function Achievement.validate(achievements)
   return true, Error.pop()
 end
 
+---@param achievements gh__Achievement[]
 function Achievement.doLoad(achievements)
+  ---@type boolean[]
   Achievement.groupReady = {true}
 
   for i=1,5 do
@@ -51,8 +63,10 @@ function Achievement.doLoad(achievements)
   end
 end
 
+---@param i number
+---@param achievementGroup string[]
 function Achievement.loadGroup(i, achievementGroup)
-  local globalAchievementsBag = getObjectFromGUID(Component.guids.ACHIEVEMENTS_BAG)
+  local globalAchievementsBag = --[[---@not nil]] getObjectFromGUID(Component.guids.ACHIEVEMENTS_BAG)
 
   globalAchievementsBag.takeObject({
     guid = Component.guids.ACHIEVEMENT_BOARD,
@@ -67,21 +81,26 @@ end
 
 
 function Achievement.saveAll(saveFile)
-  local bag = getObjectFromGUID(Component.guids.ACHIEVEMENTS_BAG)
-  bag.takeObject({
-    guid = Component.guids.ACHIEVEMENT_BOARD,
-    position = Component.positions.ACHIEVEMENT_BOARD,
-    rotation = Constant.Rotation.NORTH,
-    callback_function = function(obj)
-                          Achievement.doSave(saveFile, obj)
-                          bag.putObject(obj)
-                        end
-  })
+  local achievementBoard = getObjectFromGUID(Component.guids.ACHIEVEMENT_BOARD)
+  if achievementBoard then
+    Achievement.doSave(saveFile, achievementBoard)
+  else
+    local bag = --[[---@not nil]] getObjectFromGUID(Component.guids.ACHIEVEMENTS_BAG)
+    bag.takeObject({
+      guid = Component.guids.ACHIEVEMENT_BOARD,
+      position = Component.positions.ACHIEVEMENT_BOARD,
+      rotation = Constant.Rotation.NORTH,
+      callback_function = function(obj)
+        Achievement.doSave(saveFile, obj)
+        bag.putObject(obj)
+      end
+    })
+  end
 end
 
 
 function Achievement.doSave(saveFile, achievementBoard)
-  local achievementInfo = achievementBoard.getTable("flags")
+  local achievementInfo = --[[---@type fs__Achievement_Info[] ]] achievementBoard.getTable("flags")
 
   local result = {}
   for _, achievement in pairs(achievementInfo) do
@@ -99,8 +118,10 @@ function Achievement.doSave(saveFile, achievementBoard)
 end
 
 
+---@param board tts__Object
+---@param achievement string
 function Achievement.findIndex(board, achievement)
-  local achievementInfo = board.getTable("flags")
+  local achievementInfo = --[[---@type fs__Achievement_Info[] ]] board.getTable("flags")
 
   for i, flag in pairs(achievementInfo) do
     if flag.name == achievement then
