@@ -1,0 +1,58 @@
+{
+  "events": [ {
+    "bottomUp": [ 1, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4 ],
+    "deck": "city",
+    "remove": [ 2, 3 ]
+  }, {
+    "bottomUp": [ 3, 2, 1, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6 ],
+    "deck": "road",
+    "remove": [ 4, 5 ]
+  } ],
+  "global": {
+    "achievements": [ {
+      "count": 1,
+      "name": "City Rule: Militaristic"
+    } ],
+    "prosperity": 0
+  },
+  "party": {
+    "achievements": [],
+    "characters": [ {
+      "abilities": [],
+      "checkmarks": 0,
+      "class": "Brute",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [ {
+        "name": "Boots of Striding",
+        "position": "Unequipped"
+      } ],
+      "name": "",
+      "notes": [],
+      "perks": [],
+      "quest": 532,
+      "xp": 0
+    }, {
+      "abilities": [],
+      "checkmarks": 0,
+      "class": "Scoundrel",
+      "gold": 0,
+      "hiddenNotes": [],
+      "items": [ {
+        "name": "Boots of Speed",
+        "position": "Unequipped"
+      } ],
+      "notes": [],
+      "perks": [],
+      "quest": 514,
+      "xp": 0
+    }, [], [] ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  },
+  "unlocked": {
+    "items": [ "Boots of Speed", "Boots of Speed" ]
+  }
+}
