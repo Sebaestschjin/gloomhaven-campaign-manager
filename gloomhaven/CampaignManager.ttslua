@@ -81,7 +81,7 @@ function CampaignManager.doCreateSaveFile(saveFile)
     scenarios = Scenario.save(),
   }
   Achievement.saveAll(saveFile.global)
-  saveFile.unlocked = Unlocked.saveAll()
+  Unlocked.saveAll(saveFile)
   saveFile.party = Party.save()
   saveFile.enhancements = Enhancement.save()
   saveFile.retired = Retirement.save()

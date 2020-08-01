@@ -128,13 +128,13 @@ function Unlocked.setOpeningCondition(condition, name)
 end
 
 
-function Unlocked.saveAll()
-  return TableUtil.emptyToNil({
+function Unlocked.saveAll(saveFile)
+  saveFile.unlocked = {
     classes = Unlocked.saveClasses(),
-    items = Shop.save(),
     sanctuary = Sanctuary.save(),
     specialConditions = Unlocked.saveOpeningConditions()
-  })
+  }
+  Shop.save(saveFile.unlocked)
 end
 
 function Unlocked.saveClasses()

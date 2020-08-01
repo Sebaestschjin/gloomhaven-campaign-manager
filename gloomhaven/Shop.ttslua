@@ -10,7 +10,7 @@ local Shop = {}
 
 
 function Shop.load()
-  local cityMat = --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
+  local cityMat = Component.cityMat()
 
   for i=1, Prosperity.getLevel() do
     cityMat.call("layOut", i)
@@ -18,24 +18,31 @@ function Shop.load()
   cityMat.call("layOut", 0)
 end
 
-function Shop.save()
-  local cityMat = --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
-  local shopPosition = Utils.getSnapPosition(cityMat, Component.snaps.SHOP)
-  local shopDeck = --[[---@type tts__Deck]] cityMat.call('checkForDeck', shopPosition)
-  if not shopDeck then
-    Log.warning("Can't find shop deck, which means unlocked items can't be saved."
-                .." If the shop is currently layed out, please recall it and try again.")
-    return nil
+function Shop.save(unlocked)
+  local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
+  if shopDeck.isEmpty then
+    Component.cityMat().call("layOut", 0)
+    Wait.time(function() Shop.doSave(unlocked) end, 1)
+  else
+    Shop.doSave(unlocked)
+  end
+end
+
+function Shop.doSave(unlocked)
+  local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
+  if shopDeck.isEmpty then
+    Log.warning("Can't find shop deck, even after trying to recalling it."
+                .." This means unlocked items can't be saved.")
+    return
   end
 
   local items = {}
   Shop.saveFromObjects(ObjectUtil.getContainedObjects(shopDeck), items)
   for _, zoneGuid in pairs(Component.guids.ZONES) do
-    local zone = --[[---@not nil]] getObjectFromGUID(zoneGuid)
-    Shop.saveFromObjects(--[[---@type tts__Object[] ]] zone.getObjects(), items)
+    Shop.saveFromObjects(Component.getObjectsInZone(zoneGuid), items)
   end
 
-  return TableUtil.emptyToNil(table.sort(items))
+  unlocked.items = TableUtil.emptyToNil(table.sort(items))
 end
 
 ---@param objects common__WrappedDeck | tts__Object[]

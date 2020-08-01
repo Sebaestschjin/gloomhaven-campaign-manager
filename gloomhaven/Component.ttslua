@@ -115,18 +115,24 @@ function Component.getCardId(customDeck, index)
   return string.format("%d%02d", customDeck, index)
 end
 
+---@param snapPoint number
 ---@return common_DeckZone
 function Component.fromDeckMat(snapPoint)
-  local deckMat = getObjectFromGUID(Component.guids.DECK_MAT)
+  local deckMat = --[[---@not nil]] getObjectFromGUID(Component.guids.DECK_MAT)
   local deckPosition = Utils.getSnapPosition(deckMat, snapPoint)
 
   return DeckUtil.wrapAt(deckPosition)
 end
 
-function Component.fromCityMat(snapPoint)
-  local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
-  local deckPosition = Utils.getSnapPosition(cityMat, snapPoint)
+---@return tts__Object
+function Component.cityMat()
+  return --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
+end
 
+---@param snapPoint number
+---@return common_DeckZone
+function Component.fromCityMat(snapPoint)
+  local deckPosition = Utils.getSnapPosition(Component.cityMat(), snapPoint)
   return DeckUtil.wrapAt(deckPosition)
 end
 
@@ -230,6 +236,34 @@ function Component.getQuestInfo(object)
   end
 
   return nil
+end
+
+--- Returns all objects of the given playerZone. Only objects which center is within the planar bounds of the zone are
+--- returned. This avoids duplicated items that overlap multiple zones.
+---@param zoneGuid GUID
+---@return tts__Object[]
+function Component.getObjectsInZone(zoneGuid)
+  local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(zoneGuid)
+  return TableUtil.filter(zone.getObjects(),
+          function(object, _)
+            return Component.isObjectInZone(zone, --[[---@type tts__Object]] object)
+          end)
+end
+
+---@param playerZone tts__ScriptingTrigger
+---@param object tts__Object
+---@return boolean
+function Component.isObjectInZone(playerZone, object)
+  local width = playerZone.getScale().x
+  local height = playerZone.getScale().z
+  local zoneCenter = playerZone.getBounds().center
+  local left = zoneCenter.x - width/ 2
+  local right = zoneCenter.x + width / 2
+  local top = zoneCenter.z + height / 2
+  local bottom = zoneCenter.z - height / 2
+  local objectCenter = object.getBounds().center
+
+  return objectCenter.x > left and objectCenter.x < right and objectCenter.z > bottom and objectCenter.z < top
 end
 
 return Component

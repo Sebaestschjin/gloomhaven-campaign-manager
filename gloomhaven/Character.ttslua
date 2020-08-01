@@ -445,7 +445,7 @@ end
 function Character.saveItems(playerZone)
   local playerMat = Utils.findObjectIn(playerZone, {name=Component.names.PLAYER_MAT})
   local items = {}
-  local zoneObjects = Character.getObjects(playerZone)
+  local zoneObjects = Component.getObjectsInZone(playerZone)
   Character.saveItemFromObjects(zoneObjects, playerMat, items)
 
   return TableUtil.sortByAttribute(items, "name")
@@ -538,40 +538,12 @@ end
 
 ---@param playerZone GUID
 function Character.findQuest(playerZone)
-  for _, object in pairs(Character.getObjects(playerZone)) do
+  for _, object in pairs(Component.getObjectsInZone(playerZone)) do
     if Component.isPersonalQuestCard(object) then
       return Component.getQuestInfo(object)
     end
   end
   return nil
-end
-
---- Returns all objects of the given playerZone. Only objects which center is within the planar bounds of the zone are
---- returned. This avoids duplicated items that overlap multiple zones.
----@param playerZone GUID
----@return tts__Object[]
-function Character.getObjects(playerZone)
-  local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
-  return TableUtil.filter(zone.getObjects(),
-                          function(object, _)
-                             return Character.isObjectInPlayerZone(zone, --[[---@type tts__Object]] object)
-                          end)
-end
-
----@param playerZone tts__ScriptingTrigger
----@param object tts__Object
----@return boolean
-function Character.isObjectInPlayerZone(playerZone, object)
-  local width = playerZone.getScale().x
-  local height = playerZone.getScale().z
-  local zoneCenter = playerZone.getBounds().center
-  local left = zoneCenter.x - width/ 2
-  local right = zoneCenter.x + width / 2
-  local top = zoneCenter.z + height / 2
-  local bottom = zoneCenter.z - height / 2
-  local objectCenter = object.getBounds().center
-
-  return objectCenter.x > left and objectCenter.x < right and objectCenter.z > bottom and objectCenter.z < top
 end
 
 return Character
