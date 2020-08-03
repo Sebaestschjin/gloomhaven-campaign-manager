@@ -1,10 +1,10 @@
-local Component = require("gloomhaven/Component")
-local DeckUtil = require("common/DeckUtil")
-local Log = require("common/Log")
-local ObjectUtil = require("common/ObjectUtil")
-local Prosperity = require("gloomhaven/Prosperity")
-local TableUtil = require("common/TableUtil")
-local Utils = require("common/Utils")
+local Component = require("gloomhaven.Component")
+local DeckUtil = require("common.DeckUtil")
+local Log = require("common.Log")
+local ObjectUtil = require("common.ObjectUtil")
+local Prosperity = require("gloomhaven.Prosperity")
+local TableUtil = require("common.TableUtil")
+local Utils = require("common.Utils")
 
 local Shop = {}
 

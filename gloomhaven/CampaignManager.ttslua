@@ -1,16 +1,17 @@
-local Achievement = require("gloomhaven/Achievement")
-local Enhancement = require("gloomhaven/Enhancement")
-local Event = require("gloomhaven/Event")
-local Log = require("common/Log")
-local Party = require("gloomhaven/Party")
-local Preparation = require("gloomhaven/Preparation")
-local Prosperity = require("gloomhaven/Prosperity")
-local Retirement = require("gloomhaven/Retirement")
-local Scenario = require("gloomhaven/Scenario")
-local Shop = require("gloomhaven/Shop")
-local Unlocked = require("gloomhaven/Unlocked")
-local Utils = require("common/Utils")
+local Achievement = require("gloomhaven.Achievement")
+local Enhancement = require("gloomhaven.Enhancement")
+local Event = require("gloomhaven.Event")
+local Log = require("common.Log")
+local Party = require("gloomhaven.Party")
+local Preparation = require("gloomhaven.Preparation")
+local Prosperity = require("gloomhaven.Prosperity")
+local Retirement = require("gloomhaven.Retirement")
+local Scenario = require("gloomhaven.Scenario")
+local Shop = require("gloomhaven.Shop")
+local Unlocked = require("gloomhaven.Unlocked")
+local Utils = require("common.Utils")
 
+-- 2163619993
 local CampaignManager = {}
 
 CampaignManager.VERSION = {1, 1, 3}

@@ -1,6 +1,6 @@
-local Component = require("gloomhaven/Component")
-local Task = require("gloomhaven/Task")
-local Utils = require("common/Utils")
+local Component = require("gloomhaven.Component")
+local Task = require("gloomhaven.Task")
+local Utils = require("common.Utils")
 
 local Sanctuary = {}
 

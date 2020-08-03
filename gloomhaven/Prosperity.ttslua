@@ -1,5 +1,5 @@
-local Component = require("gloomhaven/Component")
-local Task = require("gloomhaven/Task")
+local Component = require("gloomhaven.Component")
+local Task = require("gloomhaven.Task")
 
 local Prosperity = {}
 

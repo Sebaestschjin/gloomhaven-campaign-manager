@@ -1,10 +1,11 @@
-local Component = require("gloomhaven/Component")
-local Constant = require("common/Constant")
-local DeckUtil = require("common/DeckUtil")
-local Error = require("common/Error")
-local TableUtil = require("common/TableUtil")
-local Task = require("gloomhaven/Task")
-local Utils = require("common/Utils")
+local Component = require("gloomhaven.Component")
+local Constant = require("common.Constant")
+local DeckUtil = require("common.DeckUtil")
+local Error = require("common.Error")
+local ObjectUtil = require("common.ObjectUtil")
+local TableUtil = require("common.TableUtil")
+local Task = require("gloomhaven.Task")
+local Utils = require("common.Utils")
 
 ---@alias gh_Event number
 
@@ -159,8 +160,7 @@ end
 
 
 function Event.save()
-  ---@type gh_EventDeck[]
-  events = {}
+  events = --[[---@type gh_EventDeck[] ]]{}
 
   for name, info in pairs(Event.DECKS) do
     local eventDeck = Event.saveEventsFromDeck(info)
@@ -178,8 +178,9 @@ function Event.saveEventsFromDeck(info)
   local eventDeck = Event.getTargetDeck(info)
   local eventsFromDeck = --[[---@type gh_EventDeck]] {bottomUp={}, remove={}}
 
-  for _, card in pairs(eventDeck.getObjects()) do
-    table.insert(eventsFromDeck.bottomUp, tonumber(card.name))
+  for _, card in pairs(ObjectUtil.getContainedObjects(eventDeck)) do
+    local eventNumber = Event.getNumber(card)
+    table.insert(eventsFromDeck.bottomUp, eventNumber)
   end
 
   for i=1, 30 do
@@ -197,17 +198,34 @@ function Event.saveEventsFromDeck(info)
   return eventsFromDeck
 end
 
+---@param card common__WrappedObject
+---@return number
+function Event.getNumber(card)
+  local numberFromName = tonumber(card.getName())
+  if numberFromName then
+    return numberFromName
+  end
+
+  local cardId = card.getData().CardID
+  local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+  if cardIndex >= 22 then
+    return cardIndex + 60
+  end
+  return cardIndex + 82
+end
+
 ---@return common_DeckZone
 function Event.getTargetDeck(info)
+  ---@type tts__Vector
   local position
   if getObjectFromGUID(Component.guids.OLD_EVENT_MAT) then
     if info.oldMat then
-      position = Utils.getSnapPosition(getObjectFromGUID(info.oldMat), 1)
+      position = Utils.getSnapPosition(--[[---@not nil]]getObjectFromGUID(info.oldMat), 1)
     else
-      position = Utils.getSnapPosition(getObjectFromGUID(Component.guids.EVENTS_MAT), 1)
+      position = Utils.getSnapPosition(--[[---@not nil]]getObjectFromGUID(Component.guids.EVENTS_MAT), 1)
     end
   else
-    position = Utils.getSnapPosition(getObjectFromGUID(Component.guids.EVENTS_MAT), info.snapPoint)
+    position = Utils.getSnapPosition(--[[---@not nil]]getObjectFromGUID(Component.guids.EVENTS_MAT), info.snapPoint)
   end
 
   return DeckUtil.wrapAt(position)

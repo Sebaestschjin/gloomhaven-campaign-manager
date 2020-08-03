@@ -22,7 +22,7 @@ local ObjectUtil = {}
 
 ---@alias common__WrappedDeck common__WrappedContainedObject[]
 
----@param deck tts__Container
+---@param deck tts__Container | common_DeckZone
 ---@return common__WrappedDeck
 function ObjectUtil.getContainedObjects(deck)
   local deckData = --[[---@type tts__ContainerState]] deck.getData()

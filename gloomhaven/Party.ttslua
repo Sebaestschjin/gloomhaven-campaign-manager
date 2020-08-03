@@ -1,7 +1,7 @@
-local Character = require("gloomhaven/Character")
-local Component = require("gloomhaven/Component")
-local StringUtil = require("common/StringUtil")
-local TableUtil = require("common/TableUtil")
+local Character = require("gloomhaven.Character")
+local Component = require("gloomhaven.Component")
+local StringUtil = require("common.StringUtil")
+local TableUtil = require("common.TableUtil")
 
 local Party = {}
 

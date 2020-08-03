@@ -1,14 +1,14 @@
-local Character = require("gloomhaven/Character")
-local Component = require("gloomhaven/Component")
-local Constant = require("common/Constant")
-local Error = require("common/Error")
-local Game = require("gloomhaven/Game")
-local Log = require("common/Log")
-local Object = require("common/Object")
-local ObjectUtil = require("common/ObjectUtil")
-local TableUtil = require("common/TableUtil")
-local Task = require("gloomhaven/Task")
-local Utils = require("common/Utils")
+local Character = require("gloomhaven.Character")
+local Component = require("gloomhaven.Component")
+local Constant = require("common.Constant")
+local Error = require("common.Error")
+local Game = require("gloomhaven.Game")
+local Log = require("common.Log")
+local Object = require("common.Object")
+local ObjectUtil = require("common.ObjectUtil")
+local TableUtil = require("common.TableUtil")
+local Task = require("gloomhaven.Task")
+local Utils = require("common.Utils")
 
 local Enhancement = {}
 
@@ -201,13 +201,14 @@ function Enhancement.saveForCard(card, class, classEnhancements)
   end
 end
 
-
+---@param decalPosition tts__Vector
 function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
   local nearestDistance = 42
   local nearestIndex = 1
-  for i, enhancement in pairs(enhancementInfo) do
+  decalPosition:setAt("y", 0)
+  for i, enhancement in ipairs(enhancementInfo) do
     local x, z = enhancement[1], enhancement[2]
-    local distance = decalPosition:distance(vector(x, Enhancement.Y_COORDINATE, z))
+    local distance = decalPosition:distance(Vector(x, 0, z))
     if distance < nearestDistance then
       nearestDistance = distance
       nearestIndex = i

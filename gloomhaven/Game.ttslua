@@ -1,6 +1,6 @@
-local Log = require("common/Log")
-local StringUtil = require("common/StringUtil")
-local TableUtil = require("common/TableUtil")
+local Log = require("common.Log")
+local StringUtil = require("common.StringUtil")
+local TableUtil = require("common.TableUtil")
 
 -- Contains information about different parts of the Gloomhaven mod and Gloomhaven components (e.g.
 -- all classes and their perks).
@@ -67,6 +67,34 @@ Game.ITEMS = {
     ["Swordedge Armor"] = 4,
     ["Chain Hood"] = 1,
   },
+  -- In older versions of the mod, some items don't have a description, so it won't be identified as an item card.
+  -- Thus, the items are listed here with their information.
+  List = {
+    ["Boots of Striding"] = {
+      prosperity = 1,
+    },
+    ["Empowering Talisman"] = {
+      prosperity = 2,
+    },
+    ["Minor Mana Potion"] = {
+      prosperity = 2,
+    },
+    ["Minor Stamina Potion"] = {
+      prosperity = 1,
+    },
+    ["Minor Power Potion"] = {
+      prosperity = 1,
+    },
+    ["Sacrificial Robes"] = {
+      reward = "loot",
+    },
+    ["Volatile Bomb"] = {
+      prosperity = 4,
+    },
+    ["Wand of Tremors"] = {
+      reward = "random",
+    },
+  }
 }
 
 Game.RANDOM_SCENARIOS = {
@@ -1344,7 +1372,7 @@ Game.CLASSES = {
       ["Vile Pestilence"] = { level = 1,
         enhancements = {[1]={-0.41, 0.75}}
       },
-      ["Winnged Congregation"] = { level = 1,
+      ["Winged Congregation"] = { level = 1,
         enhancements = {[1]={-0.41, 0.57}, [2]={-0.37, 0.83}}
       },
       ["Creeping Curse"] = { level = 1,

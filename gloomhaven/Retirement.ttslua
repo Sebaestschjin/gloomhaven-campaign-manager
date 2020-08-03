@@ -1,13 +1,13 @@
-local Character = require("gloomhaven/Character")
-local Component = require("gloomhaven/Component")
-local Error = require("common/Error")
-local Game = require("gloomhaven/Game")
-local ObjectUtil = require("common/ObjectUtil")
-local Preparation = require("gloomhaven/Preparation")
-local Quest = require("gloomhaven/Quest")
-local TableUtil = require("common/TableUtil")
-local Task = require("gloomhaven/Task")
-local Utils = require("common/Utils")
+local Character = require("gloomhaven.Character")
+local Component = require("gloomhaven.Component")
+local Error = require("common.Error")
+local Game = require("gloomhaven.Game")
+local ObjectUtil = require("common.ObjectUtil")
+local Preparation = require("gloomhaven.Preparation")
+local Quest = require("gloomhaven.Quest")
+local TableUtil = require("common.TableUtil")
+local Task = require("gloomhaven.Task")
+local Utils = require("common.Utils")
 
 local Retirement = {}
 

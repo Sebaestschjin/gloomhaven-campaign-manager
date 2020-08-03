@@ -64,6 +64,11 @@ class GloomhavenCampaignManagerTest(unittest.TestCase):
 
         self.verify_save(savefile)
 
+    def test_v1(self):
+        savefile = "v1"
+
+        self.verify_save(savefile)
+
     def load_file(self, filename):
         with open(f"input/{filename}.json", "r", encoding="utf-8") as file:
             return file.read()

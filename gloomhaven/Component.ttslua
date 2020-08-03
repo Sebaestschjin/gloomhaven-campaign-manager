@@ -1,9 +1,9 @@
-local Constant = require("common/Constant")
-local DeckUtil = require("common/DeckUtil")
-local Game = require("gloomhaven/Game")
-local Object = require("common/Object")
-local TableUtil = require("common/TableUtil")
-local Utils = require("common/Utils")
+local Constant = require("common.Constant")
+local DeckUtil = require("common.DeckUtil")
+local Game = require("gloomhaven.Game")
+local Object = require("common.Object")
+local TableUtil = require("common.TableUtil")
+local Utils = require("common.Utils")
 
 local Component = {}
 
@@ -17,8 +17,8 @@ Component.guids = {
   TOWN_RECORDS = "a6c771",
   FORGOTTEN_CIRCLES_BOX = "5e28e8",
   MAP = "9cc037",
-  ACHIEVEMENTS_BAG = "3ea749", -- Bag containing the Achievement board
-  ACHIEVEMENT_BOARD = "43d5b8",
+  AchievementBag = "3ea749", -- Bag containing the Achievement board
+  AchievementBoard = { "43d5b8", "546b57"},
   SANCTUARY_STICKER = "800847",
   DECK_MAT = "a75fcd",
   PLAYER_MINUS_ONE_DECK = "74a2ed",
@@ -52,6 +52,7 @@ Component.names.MODIFIER_DECK = "Attack Modifiers"
 Component.names.ATTACK_MODIFIER = "Attack Modifier"
 Component.names.ROAD_EVENTS = "Road Events"
 Component.names.CITY_EVENTS = "City Events"
+Component.names.AchievementBoard = "Achievements"
 
 
 Component.positions = {}
@@ -136,6 +137,20 @@ function Component.fromCityMat(snapPoint)
   return DeckUtil.wrapAt(deckPosition)
 end
 
+---@return GUID
+function Component.achievementBoardGuid()
+  for _, achievementBoard in ipairs(Component.guids.AchievementBoard) do
+    local board = getObjectFromGUID(achievementBoard)
+    if board then
+      return achievementBoard
+    end
+  end
+
+  local achievementBag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
+  local achievementBoard = Utils.findObjectIn(achievementBag, {name=Component.names.AchievementBoard})
+  return achievementBoard.guid
+end
+
 ---@param index number
 ---@return tts__Object
 function Component.playerButton(index)
@@ -191,7 +206,8 @@ end
 ---@param object tts__Object | common__WrappedObject
 function Component.isItemCard(object)
   return Object.isCard(object)
-         and Component.isItemCardDescription(object.getDescription())
+         and (Component.isItemCardDescription(object.getDescription())
+              or Game.ITEMS.List[object.getName()] ~= nil)
 end
 
 --- Returns true if the given item card object is an item from the rewards or item design deck.
@@ -201,12 +217,17 @@ function Component.isRewardItemCard(item, prosperityLevel)
   if not Component.isItemCard(item) then
     return false
   end
-  prosperityLevel = prosperityLevel or 1
-  local description = item.getDescription()
-  description = description:gsub("red", "")
-  description = description:gsub("blue", "")
 
-  return tonumber(description) > Game.ITEMS.Prosperity[prosperityLevel]
+  prosperityLevel = prosperityLevel or 1
+  if item.getDescription() == "" then
+    local itemInfo = Game.ITEMS.List[item.getName()]
+    return itemInfo.reward ~= nil or itemInfo.prosperity > prosperityLevel
+  else
+    local description = item.getDescription()
+    description = description:gsub("red", "")
+    description = description:gsub("blue", "")
+    return tonumber(description) > Game.ITEMS.Prosperity[prosperityLevel]
+  end
 end
 
 --- Returns true if the given object description is a possible item card's description.

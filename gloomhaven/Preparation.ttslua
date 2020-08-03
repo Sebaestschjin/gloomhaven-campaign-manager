@@ -1,8 +1,8 @@
-local Component = require("gloomhaven/Component")
-local Constant = require("common/Constant")
-local Expansion = require("gloomhaven/Expansion")
-local Game = require("gloomhaven/Game")
-local Utils = require("common/Utils")
+local Component = require("gloomhaven.Component")
+local Constant = require("common.Constant")
+local Expansion = require("gloomhaven.Expansion")
+local Game = require("gloomhaven.Game")
+local Utils = require("common.Utils")
 
 local Preparation = {}
 
@@ -41,7 +41,7 @@ function Preparation.verifyLoad()
   Preparation.verifyObject(Component.guids.MAP, "Map")
   Preparation.verifyTable(Component.guids.MAP, "tableML", "Scenario information")
   Preparation.verifyTable(Component.guids.MAP, "Pros", "Prosperity information")
-  Preparation.verifyObject(Component.guids.ACHIEVEMENTS_BAG, "Achievements bag")
+  Preparation.verifyObject(Component.guids.AchievementBag, "Achievements bag")
   Preparation.verifyObject(Component.guids.DECK_MAT, "Deck Mat")
   Preparation.verifyObject(Component.guids.PLAYER_MINUS_ONE_DECK, "-1 Deck")
   Preparation.verifyObject(Component.guids.CITY_MAT, "City Mat")

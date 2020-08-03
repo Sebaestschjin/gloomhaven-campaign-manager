@@ -1,7 +1,7 @@
-local Component = require("gloomhaven/Component")
-local Constant = require("common/Constant")
-local Game = require("gloomhaven/Game")
-local Utils = require("common/Utils")
+local Component = require("gloomhaven.Component")
+local Constant = require("common.Constant")
+local Game = require("gloomhaven.Game")
+local Utils = require("common.Utils")
 
 ---@alias gh_Quest string|number
 

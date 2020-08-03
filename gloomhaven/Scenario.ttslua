@@ -1,10 +1,10 @@
-local Component = require("gloomhaven/Component")
-local Error = require("common/Error")
-local Game = require("gloomhaven/Game")
-local Log = require("common/Log")
-local TableUtil = require("common/TableUtil")
-local Task = require("gloomhaven/Task")
-local Utils = require("common/Utils")
+local Component = require("gloomhaven.Component")
+local Error = require("common.Error")
+local Game = require("gloomhaven.Game")
+local Log = require("common.Log")
+local TableUtil = require("common.TableUtil")
+local Task = require("gloomhaven.Task")
+local Utils = require("common.Utils")
 
 local Scenario = {}
 
