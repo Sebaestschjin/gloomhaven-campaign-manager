@@ -1,6 +1,6 @@
-local Log = require("common.Log")
-local StringUtil = require("common.StringUtil")
-local TableUtil = require("common.TableUtil")
+local Log = require("sebaestschjin-tts.src.Log")
+local StringUtil = require("sebaestschjin-tts.src.StringUtil")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 
 -- Contains information about different parts of the Gloomhaven mod and Gloomhaven components (e.g.
 -- all classes and their perks).

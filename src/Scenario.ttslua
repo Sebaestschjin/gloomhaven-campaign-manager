@@ -1,10 +1,10 @@
-local Component = require("gloomhaven.Component")
-local Error = require("common.Error")
-local Game = require("gloomhaven.Game")
-local Log = require("common.Log")
-local TableUtil = require("common.TableUtil")
-local Task = require("gloomhaven.Task")
-local Utils = require("common.Utils")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local Error = require("sebaestschjin-tts.src.Error")
+local Game = require("gloomhaven-campaign-manager.src.Game")
+local Log = require("sebaestschjin-tts.src.Log")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Task = require("gloomhaven-campaign-manager.src.Task")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Scenario = {}
 

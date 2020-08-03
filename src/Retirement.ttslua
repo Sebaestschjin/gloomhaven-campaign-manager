@@ -1,13 +1,13 @@
-local Character = require("gloomhaven.Character")
-local Component = require("gloomhaven.Component")
-local Error = require("common.Error")
-local Game = require("gloomhaven.Game")
-local ObjectUtil = require("common.ObjectUtil")
-local Preparation = require("gloomhaven.Preparation")
-local Quest = require("gloomhaven.Quest")
-local TableUtil = require("common.TableUtil")
-local Task = require("gloomhaven.Task")
-local Utils = require("common.Utils")
+local Character = require("gloomhaven-campaign-manager.src.Character")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local Error = require("sebaestschjin-tts.src.Error")
+local Game = require("gloomhaven-campaign-manager.src.Game")
+local ObjectUtil = require("sebaestschjin-tts.src.ObjectUtil")
+local Preparation = require("gloomhaven-campaign-manager.src.Preparation")
+local Quest = require("gloomhaven-campaign-manager.src.Quest")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Task = require("gloomhaven-campaign-manager.src.Task")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Retirement = {}
 

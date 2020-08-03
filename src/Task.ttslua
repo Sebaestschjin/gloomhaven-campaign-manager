@@ -1,4 +1,4 @@
-local Log = require("common.Log")
+local Log = require("sebaestschjin-tts.src.Log")
 
 local Task = {}
 

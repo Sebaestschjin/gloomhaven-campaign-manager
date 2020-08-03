@@ -1,11 +1,11 @@
-local Component = require("gloomhaven.Component")
-local Constant = require("common.Constant")
-local DeckUtil = require("common.DeckUtil")
-local Error = require("common.Error")
-local ObjectUtil = require("common.ObjectUtil")
-local TableUtil = require("common.TableUtil")
-local Task = require("gloomhaven.Task")
-local Utils = require("common.Utils")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local Constant = require("sebaestschjin-tts.src.Constant")
+local DeckUtil = require("sebaestschjin-tts.src.DeckUtil")
+local Error = require("sebaestschjin-tts.src.Error")
+local ObjectUtil = require("sebaestschjin-tts.src.ObjectUtil")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Task = require("gloomhaven-campaign-manager.src.Task")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 ---@alias gh_Event number
 

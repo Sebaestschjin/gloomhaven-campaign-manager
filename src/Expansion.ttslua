@@ -1,8 +1,8 @@
-local Chain = require("common.Chain")
-local Component = require("gloomhaven.Component")
-local DeckUtil = require("common.DeckUtil")
-local Event = require("gloomhaven.Event")
-local Utils = require("common.Utils")
+local Chain = require("sebaestschjin-tts.src.Chain")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local DeckUtil = require("sebaestschjin-tts.src.DeckUtil")
+local Event = require("gloomhaven-campaign-manager.src.Event")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Expansion = {}
 

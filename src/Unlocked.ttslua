@@ -1,13 +1,13 @@
-local Component = require("gloomhaven.Component")
-local Constant = require("common.Constant")
-local Error = require("common.Error")
-local Game = require("gloomhaven.Game")
-local Preparation = require("gloomhaven.Preparation")
-local Sanctuary = require("gloomhaven.Sanctuary")
-local Shop = require("gloomhaven.Shop")
-local TableUtil = require("common.TableUtil")
-local Task = require("gloomhaven.Task")
-local Utils = require("common.Utils")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local Constant = require("sebaestschjin-tts.src.Constant")
+local Error = require("sebaestschjin-tts.src.Error")
+local Game = require("gloomhaven-campaign-manager.src.Game")
+local Preparation = require("gloomhaven-campaign-manager.src.Preparation")
+local Sanctuary = require("gloomhaven-campaign-manager.src.Sanctuary")
+local Shop = require("gloomhaven-campaign-manager.src.Shop")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Task = require("gloomhaven-campaign-manager.src.Task")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Unlocked = {}
 

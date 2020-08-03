@@ -1,6 +1,6 @@
-local Component = require("gloomhaven.Component")
-local Task = require("gloomhaven.Task")
-local Utils = require("common.Utils")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local Task = require("gloomhaven-campaign-manager.src.Task")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Sanctuary = {}
 

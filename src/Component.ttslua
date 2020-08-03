@@ -1,9 +1,9 @@
-local Constant = require("common.Constant")
-local DeckUtil = require("common.DeckUtil")
-local Game = require("gloomhaven.Game")
-local Object = require("common.Object")
-local TableUtil = require("common.TableUtil")
-local Utils = require("common.Utils")
+local Constant = require("sebaestschjin-tts.src.Constant")
+local DeckUtil = require("sebaestschjin-tts.src.DeckUtil")
+local Game = require("gloomhaven-campaign-manager.src.Game")
+local Object = require("sebaestschjin-tts.src.Object")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Component = {}
 

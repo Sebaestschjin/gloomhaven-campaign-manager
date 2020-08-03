@@ -1,5 +1,5 @@
 local ChatCommands = require("ge_tts.ChatCommands")
-local CampaignManager = require("gloomhaven.CampaignManager")
+local CampaignManager = require("gloomhaven-campaign-manager.src.CampaignManager")
 
 function onLoad(save_state)
   self.setPosition(self.getPosition() + vector(0, 2, 0))

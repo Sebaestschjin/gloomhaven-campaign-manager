@@ -1,8 +1,8 @@
-local Component = require("gloomhaven.Component")
-local Constant = require("common.Constant")
-local Expansion = require("gloomhaven.Expansion")
-local Game = require("gloomhaven.Game")
-local Utils = require("common.Utils")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local Constant = require("sebaestschjin-tts.src.Constant")
+local Expansion = require("gloomhaven-campaign-manager.src.Expansion")
+local Game = require("gloomhaven-campaign-manager.src.Game")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Preparation = {}
 

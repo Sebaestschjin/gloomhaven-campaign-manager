@@ -1,9 +1,9 @@
-local Component = require("gloomhaven.Component")
-local Constant = require("common.Constant")
-local Error = require("common.Error")
-local Game = require("gloomhaven.Game")
-local Task = require("gloomhaven.Task")
-local TableUtil = require("common.TableUtil")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local Constant = require("sebaestschjin-tts.src.Constant")
+local Error = require("sebaestschjin-tts.src.Error")
+local Game = require("gloomhaven-campaign-manager.src.Game")
+local Task = require("gloomhaven-campaign-manager.src.Task")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 
 ---@shape gh__Achievement
 ---@field name string

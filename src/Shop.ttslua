@@ -1,10 +1,10 @@
-local Component = require("gloomhaven.Component")
-local DeckUtil = require("common.DeckUtil")
-local Log = require("common.Log")
-local ObjectUtil = require("common.ObjectUtil")
-local Prosperity = require("gloomhaven.Prosperity")
-local TableUtil = require("common.TableUtil")
-local Utils = require("common.Utils")
+local Component = require("gloomhaven-campaign-manager.src.Component")
+local DeckUtil = require("sebaestschjin-tts.src.DeckUtil")
+local Log = require("sebaestschjin-tts.src.Log")
+local ObjectUtil = require("sebaestschjin-tts.src.ObjectUtil")
+local Prosperity = require("gloomhaven-campaign-manager.src.Prosperity")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Shop = {}
 
