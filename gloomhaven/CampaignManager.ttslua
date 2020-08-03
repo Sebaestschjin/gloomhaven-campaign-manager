@@ -14,7 +14,7 @@ local Utils = require("common.Utils")
 -- 2163619993
 local CampaignManager = {}
 
-CampaignManager.VERSION = {1, 1, 3}
+CampaignManager.VERSION = {1, 2, 0}
 CampaignManager.SAVE_FILE = "Savefile"
 
 function CampaignManager.loadAll()
