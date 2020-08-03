@@ -47,3 +47,11 @@ This code contains some mild spoilers for Gloomhaven. The names of all available
 | Customizable component positions    | ❌  |
 | Include extended battle goals       | ❌  |
 | Additional components (e.g. Timer)  | ❌  |
+
+
+# How to use the code
+* Install Atom and the [Atom TTS Plugin](https://api.tabletopsimulator.com/atom/)
+* Configure the _Base path for files you wish to bundle or #include_ in Atom (under `Settings > Packages > Tabletopsimulator Lua`) to the path where you'd like to save your TTS code (like this repository)
+* Clone this repository to the configured path
+* Also clone the repositories [sebaestschjin-tts](https://github.com/Sebaestschjin/sebaestschjin-tts) and [ge_tts](https://github.com/Benjamin-Dobell/ge_tts) to this path, as those are required libaries
+* Create an object in TTS (or use the existing [Workshop object](https://steamcommunity.com/id/sebaestschjin/myworkshopfiles/?appid=286160)) and put the code `require('gloomhaven-campaign-manager/src/CampaignManagerUI')` into the object's script
