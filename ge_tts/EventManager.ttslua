@@ -1,0 +1,79 @@
+local TableUtils = require('ge_tts/TableUtils')
+local Logger = require('ge_tts/Logger')
+
+---@type table<string, function[]>
+local eventHandlers = {}
+
+---@param event string
+local function listen(event)
+    local previousGlobalHandler = --[[---@type nil | function]] _G[event]
+
+    _G[event] = function(...)
+        local handlers = TableUtils.copy(eventHandlers[event]) -- Copied in case we add/remove handlers during a handler callback
+
+        ---@type std__Packed<any>
+        local finalResult = --[[---@type std__Packed<any>]] {n = 0}
+
+        for _, handler in ipairs(handlers) do
+            local result = table.pack(handler(...))
+
+            if result.n > 0 then
+                finalResult = result
+            end
+        end
+
+        return table.unpack(finalResult, 1, finalResult.n)
+    end
+
+    ---@type function[]
+    local handlers = {}
+
+    eventHandlers[event] = handlers
+
+    Logger.log('EventManager now listening for ' .. event, Logger.VERBOSE)
+
+    if previousGlobalHandler then
+        table.insert(handlers, --[[---@not nil]] previousGlobalHandler)
+        Logger.log('Pre-existing global ' .. event .. ' handler preserved as the first handler', Logger.VERBOSE)
+    end
+
+    return handlers
+end
+
+local SAVE_MANAGER_EVENTS = {'onSave', 'onLoad'}
+
+---@class ge_tts__EventManager
+local EventManager = {}
+
+---@param event string @Event name
+---@param handler function @Function that will be called when the event fires. Parameters vary depending on the event.
+function EventManager.addHandler(event, handler)
+    assert(not TableUtils.find(SAVE_MANAGER_EVENTS, event), 'EventManager cannot handle ' .. event .. '. Please use SaveManager instead.')
+
+    local handlers = eventHandlers[event] or listen(event)
+
+    if not TableUtils.find(handlers, handler) then
+        table.insert(handlers, handler)
+    end
+end
+
+---@param event string @Event name
+---@param handler function @A previously registered handler that you wish to remove.
+function EventManager.removeHandler(event, handler)
+    assert(not TableUtils.find(SAVE_MANAGER_EVENTS, event), 'EventManager cannot handle ' .. event .. '. Please use SaveManager instead.')
+
+    local handlers = eventHandlers[event]
+    local handlerIndex = handlers and TableUtils.find(handlers, handler)
+
+    if handlerIndex then
+        table.remove(handlers, --[[---@not nil]] handlerIndex)
+    end
+end
+
+---@param event string @Event name
+---@vararg any
+function EventManager.triggerEvent(event, ...)
+    (--[[---@type function]] _G[event])(...)
+end
+
+return EventManager
