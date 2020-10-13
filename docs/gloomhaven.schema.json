@@ -607,7 +607,7 @@
          "deck": {
             "title": "Deck",
             "type": "string",
-            "enum": ["City Events", "Road Events"]
+            "enum": ["city", "road"]
           },
           "add": {
             "title": "Added events",
