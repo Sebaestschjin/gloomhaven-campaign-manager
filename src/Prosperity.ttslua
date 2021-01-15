@@ -3,7 +3,7 @@ local Task = require("gloomhaven-campaign-manager.src.Task")
 
 local Prosperity = {}
 
-Prosperity.MAX_VALUE = 63
+Prosperity.MAX_VALUE = 64
 
 function Prosperity.load(value)
   Task.load("Prosperity", value, Prosperity.validate, Prosperity.doLoad)
