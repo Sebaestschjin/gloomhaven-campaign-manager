@@ -21,6 +21,7 @@ function Unlocked.loadAll(unlocked)
         Task.load("Unlocked Classes", unlocked.classes, Unlocked.validateClasses, Unlocked.loadClasses)
         Task.load("Unlocked Items", unlocked.items, Unlocked.validateItems, Unlocked.loadItems)
         Task.load("Opening Conditions", unlocked.specialConditions, Unlocked.validateOpeningConditions, Unlocked.loadOpeningConditions)
+        Task.load("Unlocked Treasure", unlocked.treasures, Unlocked.validateTreasures, Unlocked.loadTreasures)
         Sanctuary.load(unlocked.sanctuary)
     end
 end
@@ -128,6 +129,32 @@ function Unlocked.setOpeningCondition(condition, name)
     if condition then
         getObjectFromGUID(Component.guids.OPENING_CONDITIONS).call("clickedToggle", name)
     end
+end
+
+function Unlocked.validateTreasures(treasures)
+    for i, treasure in ipairs(treasures) do
+        if treasure < 0 or treasure > Unlocked.TOTAL_TREASURE then
+            treasures[i] = nil
+            Error.add("Treasure '%s' does not exist. Treasure won't be loaded.", treasure)
+        end
+    end
+
+    return true, Error.pop()
+end
+
+function Unlocked.loadTreasures(treasures)
+    local treasureDeck = getObjectFromGUID(Component.guids.TREASURE_DECK)
+
+    for _, treasure in ipairs(treasures) do
+        local treasureCard = Utils.findObjectIn(treasureDeck, { name = tostring(treasure) })
+        treasureDeck.takeObject({
+            index = treasureCard.index,
+            position = Component.positions.getSafe(),
+            callback_function = function(obj) obj.destruct() end,
+        })
+    end
+
+    getObjectFromGUID(Component.guids.GAMEBOX).putObject(getObjectFromGUID(Component.guids.TREASURE_DECK))
 end
 
 function Unlocked.saveAll(saveFile)

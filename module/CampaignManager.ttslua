@@ -15,12 +15,12 @@ local Unlocked = require("gloomhaven-campaign-manager.module.Unlocked")
 -- 2163619993
 local CampaignManager = {}
 
-CampaignManager.VERSION = { 1, 2, 0 }
+CampaignManager.VERSION = { 1, 3, 0 }
 CampaignManager.SAVE_FILE = "Savefile"
 
 function CampaignManager.loadAll()
     local saveFile = Utils.readNotebook(CampaignManager.SAVE_FILE)
-    if not saveFile then
+    if not saveFile or #saveFile == 0 then
         Logger.error("No notebook found containing the save file!"
                 .. " Please add a notebook named %s.", CampaignManager.SAVE_FILE)
         return

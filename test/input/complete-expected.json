@@ -156,6 +156,11 @@
       "lowestReputation": true,
       "lowReputation": true,
       "retired": true
-    }
+    },
+    "treasures": [
+      7,
+      15,
+      95
+    ]
   }
 }
