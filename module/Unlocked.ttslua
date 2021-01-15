@@ -1,8 +1,9 @@
 local Constant = require("sebaestschjin-tts.src.Constant")
 local Error = require("sebaestschjin-tts.src.Error")
+local Logger = require('sebaestschjin-tts.module.Logger')
+local ObjectUtil = require('sebaestschjin-tts.src.ObjectUtil')
 local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 local Utils = require("sebaestschjin-tts.src.Utils")
-local Logger = require('sebaestschjin-tts.module.Logger')
 
 local Component = require("gloomhaven-campaign-manager.module.Component")
 local Game = require("gloomhaven-campaign-manager.module.Game")
@@ -12,6 +13,8 @@ local Shop = require("gloomhaven-campaign-manager.module.Shop")
 local Task = require("gloomhaven-campaign-manager.module.Task")
 
 local Unlocked = {}
+
+Unlocked.TOTAL_TREASURE = 96
 
 function Unlocked.loadAll(unlocked)
     if unlocked then
@@ -178,14 +181,26 @@ end
 function Unlocked.saveTreasures()
     local treasureDeck = getObjectFromGUID(Component.guids.TREASURE_DECK)
     if not treasureDeck then
-        treasureDeck = Utils.findObjectIn(getObjectFromGUID(Component.guids.GAMEBOX))
+        treasureDeck = Utils.findObjectIn(getObjectFromGUID(Component.guids.GAMEBOX), { guid = Component.guids.TREASURE_DECK })
     end
+
     if not treasureDeck then
         Logger.warn('Could not find the treasure deck in the gamebox or on the board. Can not save unlocked treasures.')
         return {}
     end
 
-    print(logString(treasureDeck))
+    local treasure = {}
+    for i = 1, Unlocked.TOTAL_TREASURE do
+        treasure[i] = true
+    end
+
+    local treasureCards = ObjectUtil.getContainedObjects(treasureDeck)
+    for _, treasureCard in pairs(treasureCards) do
+        local treasureNumber = tonumber(treasureCard.getName():sub(-2))
+        treasure[treasureNumber] = false
+    end
+
+    return TableUtil.setToList(treasure)
 end
 
 return Unlocked

@@ -31,7 +31,7 @@ end
 function Shop.doSave(unlocked)
     local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
     if shopDeck.isEmpty then
-        Logger.warning("Can't find shop deck, even after trying to recalling it."
+        Logger.warn("Can't find shop deck, even after trying to recalling it."
                 .. " This means unlocked items can't be saved.")
         return
     end

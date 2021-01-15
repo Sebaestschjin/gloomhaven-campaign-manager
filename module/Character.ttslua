@@ -190,7 +190,7 @@ function Character.loadAbilities(playerZone, character)
         local abilityCard, distance = Utils.findNearestObjectIn(abilityDeck, abilityName, Character.ABILITY_MAX_DISTANCE)
         if abilityCard then
             if distance ~= Character.ABILITY_DEFAULT_DISTANCE then
-                Logger.warning("Tried to load the ability '%s' for class '%s', but couldn't find it in the ability deck."
+                Logger.warn("Tried to load the ability '%s' for class '%s', but couldn't find it in the ability deck."
                         .. " However, found a similar ability named '%s' which will be used instead."
                         .. " Please verify if this assumption is correct.",
                         abilityName, character.class, abilityCard.getName())

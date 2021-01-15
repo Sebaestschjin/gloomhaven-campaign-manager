@@ -29,7 +29,7 @@ function Task.validate(name, input, validator)
     local status, messages = validator(input)
     if messages then
         for _, message in pairs(messages) do
-            Logger.warning(name .. "\n    " .. message)
+            Logger.warn(name .. "\n    " .. message)
         end
     end
 

@@ -1,10 +1,10 @@
 local Error = require("sebaestschjin-tts.src.Error")
 local Logger = require("sebaestschjin-tts.module.Logger")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Component = require("gloomhaven-campaign-manager.module.Component")
 local Game = require("gloomhaven-campaign-manager.module.Game")
-local TableUtil = require("sebaestschjin-tts.module.TableUtil")
 local Task = require("gloomhaven-campaign-manager.module.Task")
 
 local Scenario = {}

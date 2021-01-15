@@ -22,7 +22,7 @@ function Game.ability(class, name)
             local allNames = TableUtil.keys(classInfo.abilities)
             local nearestName = StringUtil.findNearest(name, allNames, 3)
             if nearestName then
-                Logger.warning("Tried to get ability information for '%s' of class '%s', but it doesn't exist."
+                Logger.warn("Tried to get ability information for '%s' of class '%s', but it doesn't exist."
                         .. " However, found the ability '%s' which is similar in name which will be used instead."
                         .. " Maybe there's a typo in the ability name."
                         .. " Please verify that this assumption is correct.",
