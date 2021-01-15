@@ -1,0 +1,89 @@
+local Logger = require("sebaestschjin-tts.module.Logger")
+local Utils = require("sebaestschjin-tts.src.Utils")
+
+local Achievement = require("gloomhaven-campaign-manager.module.Achievement")
+local Enhancement = require("gloomhaven-campaign-manager.module.Enhancement")
+local Event = require("gloomhaven-campaign-manager.module.Event")
+local Party = require("gloomhaven-campaign-manager.module.Party")
+local Preparation = require("gloomhaven-campaign-manager.module.Preparation")
+local Prosperity = require("gloomhaven-campaign-manager.module.Prosperity")
+local Retirement = require("gloomhaven-campaign-manager.module.Retirement")
+local Scenario = require("gloomhaven-campaign-manager.module.Scenario")
+local Shop = require("gloomhaven-campaign-manager.module.Shop")
+local Unlocked = require("gloomhaven-campaign-manager.module.Unlocked")
+
+-- 2163619993
+local CampaignManager = {}
+
+CampaignManager.VERSION = { 1, 2, 0 }
+CampaignManager.SAVE_FILE = "Savefile"
+
+function CampaignManager.loadAll()
+    local saveFile = Utils.readNotebook(CampaignManager.SAVE_FILE)
+    if not saveFile then
+        Logger.error("No notebook found containing the save file!"
+                .. " Please add a notebook named %s.", CampaignManager.SAVE_FILE)
+        return
+    end
+
+    local status, content = pcall(function() return JSON.decode(saveFile) end)
+    if not status then
+        Logger.error("The provided save file contains errors."
+                .. " The error message from Lua is also very cryptic and doesn't really help. :-("
+                .. " Make sure your save file is a valid JSON file and try again."
+                .. "\n" .. content)
+        return
+    end
+
+    Preparation.start(function() CampaignManager.doLoadAll(content) end)
+end
+
+function CampaignManager.doLoadAll(content)
+    if content.global then
+        Scenario.loadAll(content.global.scenarios)
+        Achievement.loadAll(content.global.achievements)
+        Prosperity.load(content.global.prosperity)
+    end
+    Unlocked.loadAll(content.unlocked)
+    Party.load(content.party)
+    Retirement.load(content.retired)
+    Shop.load()
+    Event.loadAll(content.events)
+    Enhancement.loadAll(content.enhancements)
+end
+
+function CampaignManager.saveAll()
+    local saveFile = CampaignManager.createSaveFile()
+
+    Wait.time(function()
+        local content = JSON.encode_pretty(saveFile)
+        content = content .. "\n" -- to conform to POSIX :-)
+        Notes.addNotebookTab({ title = "New Savefile", body = content })
+    end, 3)
+end
+
+function CampaignManager.createSaveFile()
+    local saveFile = {}
+
+    Preparation.prepareSave()
+    -- TODO change to task based, this wait is necessary, because the scripting zones have to be
+    -- adjusted, otherwise they won't detect cards lying on the table
+    Wait.time(function() CampaignManager.doCreateSaveFile(saveFile) end, 1)
+
+    return saveFile
+end
+
+function CampaignManager.doCreateSaveFile(saveFile)
+    saveFile.global = {
+        prosperity = Prosperity.save(),
+        scenarios = Scenario.save(),
+    }
+    Achievement.saveAll(saveFile.global)
+    Unlocked.saveAll(saveFile)
+    saveFile.party = Party.save()
+    saveFile.enhancements = Enhancement.save()
+    saveFile.retired = Retirement.save()
+    saveFile.events = Event.save()
+end
+
+return CampaignManager

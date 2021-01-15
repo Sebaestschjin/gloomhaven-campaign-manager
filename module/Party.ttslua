@@ -1,7 +1,8 @@
-local Character = require("gloomhaven-campaign-manager.src.Character")
-local Component = require("gloomhaven-campaign-manager.src.Component")
 local StringUtil = require("sebaestschjin-tts.src.StringUtil")
 local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+
+local Character = require("gloomhaven-campaign-manager.module.Character")
+local Component = require("gloomhaven-campaign-manager.module.Component")
 
 local Party = {}
 
@@ -64,7 +65,7 @@ end
 function Party.setPartySheetAverageLevel(characters)
   local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
   local sum, numPlayers = 0, 0
-  for i, character in pairs(characters) do
+  for _, character in pairs(characters) do
     if TableUtil.isNotEmpty(character) then
       sum = sum + Character.getLevel(character.xp)
       numPlayers = numPlayers + 1

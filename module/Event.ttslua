@@ -1,0 +1,234 @@
+local Constant = require("sebaestschjin-tts.src.Constant")
+local DeckUtil = require("sebaestschjin-tts.src.DeckUtil")
+local Error = require("sebaestschjin-tts.src.Error")
+local ObjectUtil = require("sebaestschjin-tts.src.ObjectUtil")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Utils = require("sebaestschjin-tts.src.Utils")
+
+local Component = require("gloomhaven-campaign-manager.module.Component")
+local Task = require("gloomhaven-campaign-manager.module.Task")
+
+---@alias gh_Event number
+
+---@shape gh_EventDeck
+---@field deck string
+---@field bottomUp gh_Event[]
+---@field add gh_Event[]
+---@field remove gh_Event[]
+
+local Event = {}
+
+---@type table<string,any>
+Event.DECKS = {
+    ["city"] = {
+        initialDeckGuid = Component.guids.CITY_EVENTS_DECK_INITIAL,
+        deckGuid = Component.guids.CITY_EVENTS_DECK,
+        snapPoint = Component.snaps.CITY_EVENTS_DECK,
+        name = Component.names.CITY_EVENTS,
+    },
+    ["road"] = {
+        initialDeckGuid = Component.guids.ROAD_EVENTS_DECK_INITIAL,
+        deckGuid = Component.guids.ROAD_EVENTS_DECK,
+        snapPoint = Component.snaps.ROAD_EVENTS_DECK,
+        name = Component.names.ROAD_EVENTS,
+        oldMat = Component.guids.OLD_EVENT_MAT,
+    },
+}
+
+---@param events gh_EventDeck[]
+function Event.loadAll(events)
+    Task.load("Events", events, Event.validate, Event.doLoad)
+end
+
+---@param events gh_EventDeck[]
+function Event.validate(events)
+    for i, eventDeck in pairs(events) do
+        if not Event.DECKS[eventDeck.deck] then
+            Error.add("An event deck named '%s' does not exist.", eventDeck.deck)
+            events[i] = nil
+        else
+            Event.validateEventNumbers(eventDeck.deck, eventDeck.add)
+            Event.validateEventNumbers(eventDeck.deck, eventDeck.remove)
+            Event.validateEventNumbers(eventDeck.deck, eventDeck.bottomUp)
+        end
+    end
+
+    return true, Error.pop()
+end
+
+---@param deckName string
+---@param events gh_Event[]
+function Event.validateEventNumbers(deckName, events)
+    if not events then
+        return
+    end
+
+    for i, event in pairs(events) do
+        if event > 30 then
+            local deck = getObjectFromGUID(Event.DECKS[deckName].deckGuid)
+            local eventCard = Utils.findObjectIn(deck, { name = string.format("%02d", event) })
+            if not eventCard then
+                Error.add("An event with number '%s' does not exist for deck '%s'.",
+                        event, deckName)
+                events[i] = nil
+            end
+        end
+    end
+end
+
+---@param events gh_EventDeck[]
+function Event.doLoad(events)
+    for _, eventDeck in ipairs(events) do
+        Event.load(eventDeck)
+    end
+end
+
+---@param events gh_EventDeck
+function Event.load(events)
+    local eventsInfo = Event.DECKS[events.deck]
+    local deck = DeckUtil.wrap(getObjectFromGUID(eventsInfo.deckGuid))
+    deck.putObject(--[[---@not nil]] getObjectFromGUID(eventsInfo.initialDeckGuid))
+
+    local bottomCards = Event.findBottomDeck(events, deck)
+    local addedCards = Event.findAddedCards(events, deck, bottomCards)
+
+    TableUtil.shuffle(addedCards)
+    local eventCards = TableUtil.merge(bottomCards, addedCards)
+
+    Event.dealEvents(deck, eventCards, eventsInfo)
+end
+
+---@param events gh_EventDeck
+---@param deck common_DeckZone
+---@return GUID[]
+function Event.findBottomDeck(events, deck)
+    local eventsToAdd = {}
+    for _, event in TableUtil.pairs(events.bottomUp) do
+        local eventName = string.format("%02d", event)
+        local eventCard = Utils.findObjectIn(deck, { name = eventName })
+        table.insert(eventsToAdd, eventCard.getGUID())
+    end
+
+    return eventsToAdd
+end
+
+---@param events gh_EventDeck
+---@param deck common_DeckZone
+---@param alreadyAdded GUID[]
+---@return GUID[]
+function Event.findAddedCards(events, deck, alreadyAdded)
+    local eventsToAdd = {}
+    for _, eventCard in ipairs(deck.getObjects()) do
+        local eventNumber = tonumber(eventCard.name)
+        if not TableUtil.contains(alreadyAdded, eventCard.guid)
+                and Event.isAdded(events, eventNumber)
+                and not Event.isRemoved(events, eventNumber)
+        then
+            table.insert(eventsToAdd, eventCard.guid)
+        end
+    end
+
+    return eventsToAdd
+end
+
+---@param events gh_EventDeck
+---@param eventNumber gh_Event
+function Event.isRemoved(events, eventNumber)
+    return events.remove and TableUtil.contains(events.remove, eventNumber)
+end
+
+---@param events gh_EventDeck
+---@param eventNumber gh_Event
+function Event.isAdded(events, eventNumber)
+    return eventNumber <= 30
+            or (events.add and TableUtil.contains(events.add, eventNumber))
+end
+
+---@param deck common_DeckZone
+---@param eventCards GUID[]
+function Event.dealEvents(deck, eventCards, info)
+    local eventDeck = Event.getTargetDeck(info)
+    for _, event in pairs(eventCards) do
+        deck.takeObject({
+            guid = event,
+            position = Component.positions.getSafe(),
+            rotation = Constant.Rotation.NORTH,
+            smooth = false,
+            callback_function = function(card) eventDeck.putObject(card) end
+        })
+    end
+end
+
+function Event.save()
+    events = --[[---@type gh_EventDeck[] ]]{}
+
+    for name, info in pairs(Event.DECKS) do
+        local eventDeck = Event.saveEventsFromDeck(info)
+        if eventDeck then
+            eventDeck.deck = name
+            table.insert(events, eventDeck)
+        end
+    end
+
+    return TableUtil.emptyToNil(events)
+end
+
+---@return gh_EventDeck|nil
+function Event.saveEventsFromDeck(info)
+    local eventDeck = Event.getTargetDeck(info)
+    local eventsFromDeck = --[[---@type gh_EventDeck]] { bottomUp = {}, remove = {} }
+
+    for _, card in pairs(ObjectUtil.getContainedObjects(eventDeck)) do
+        local eventNumber = Event.getNumber(card)
+        table.insert(eventsFromDeck.bottomUp, eventNumber)
+    end
+
+    for i = 1, 30 do
+        if not TableUtil.contains(eventsFromDeck.bottomUp, i) then
+            table.insert(eventsFromDeck.remove, i)
+        end
+    end
+    if TableUtil.isEmpty(eventsFromDeck.remove) then
+        TableUtil.removeKey(eventsFromDeck, "remove")
+    end
+
+    if TableUtil.isEmpty(eventsFromDeck.bottomUp) then
+        return nil
+    end
+    return eventsFromDeck
+end
+
+---@param card common__WrappedObject
+---@return number
+function Event.getNumber(card)
+    local numberFromName = tonumber(card.getName())
+    if numberFromName then
+        return numberFromName
+    end
+
+    local cardId = card.getData().CardID
+    local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+    if cardIndex >= 22 then
+        return cardIndex + 60
+    end
+    return cardIndex + 82
+end
+
+---@return common_DeckZone
+function Event.getTargetDeck(info)
+    ---@type tts__Vector
+    local position
+    if getObjectFromGUID(Component.guids.OLD_EVENT_MAT) then
+        if info.oldMat then
+            position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(info.oldMat), 1)
+        else
+            position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(Component.guids.EVENTS_MAT), 1)
+        end
+    else
+        position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(Component.guids.EVENTS_MAT), info.snapPoint)
+    end
+
+    return DeckUtil.wrapAt(position)
+end
+
+return Event

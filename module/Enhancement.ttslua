@@ -1,0 +1,214 @@
+local Error = require("sebaestschjin-tts.src.Error")
+local Logger = require("sebaestschjin-tts.module.Logger")
+local Object = require("sebaestschjin-tts.src.Object")
+local ObjectUtil = require("sebaestschjin-tts.src.ObjectUtil")
+local TableUtil = require("sebaestschjin-tts.src.TableUtil")
+local Utils = require("sebaestschjin-tts.src.Utils")
+
+local Component = require("gloomhaven-campaign-manager.module.Component")
+local Character = require("gloomhaven-campaign-manager.module.Character")
+local Game = require("gloomhaven-campaign-manager.module.Game")
+local Task = require("gloomhaven-campaign-manager.module.Task")
+local Enhancement = {}
+
+Enhancement.DECALS = {
+    ["Air"] = "http://cloud-3.steamusercontent.com/ugc/938309024726768884/CC8308C7D7DD6185F3EFA99F452C83101E1E95E3/",
+    ["Earth"] = "http://cloud-3.steamusercontent.com/ugc/938309024726773039/E83D1E9F06938B3B5355F0A6A49D98B78B1F2594/",
+    ["Fire"] = "http://cloud-3.steamusercontent.com/ugc/938309024726770166/CD369CF7C22FAD932A71C65BA811AE137234270D/",
+    ["Frost"] = "http://cloud-3.steamusercontent.com/ugc/938309024726771564/3C69B7D1E66E8FC022B2BD77CC427E8AEC5D9331/",
+    ["Dark"] = "http://cloud-3.steamusercontent.com/ugc/938309024726982499/9C14793623433565A9D6E5B3C608C1F6FBB84C76/",
+    ["Light"] = "http://cloud-3.steamusercontent.com/ugc/938309024726774294/5BBAC718ED55E90563D2B24848DE3ACAEBD76FE9/",
+    ["Any Element"] = "http://cloud-3.steamusercontent.com/ugc/938309024726984504/2F962A64E2A9888C90856D9C150EF81089745137/",
+    ["Curse"] = "http://cloud-3.steamusercontent.com/ugc/938309024726987796/ABB2E197E22015077D39A378AA9A9E7A317C69FE/",
+    ["Bless"] = "http://cloud-3.steamusercontent.com/ugc/938309024726986639/FDF514FDA20826ACA054BE5CBA579AE6FB25A263/",
+    ["Disarm"] = "http://cloud-3.steamusercontent.com/ugc/938309024726989091/DB993A58BC37C60B64A2F2CCDAED888F6176BC43/",
+    ["Immobilize"] = "http://cloud-3.steamusercontent.com/ugc/938309024726990928/14B27BE1DC8F226D05FDB7D7D5D420FFCA6919B0/",
+    ["Muddle"] = "http://cloud-3.steamusercontent.com/ugc/938309024726993395/820BE84906894B87F0C0DAC77C3BFBCD9B1AD504/",
+    ["Poison"] = "http://cloud-3.steamusercontent.com/ugc/938309024726994202/6EAECD4A8A6A56F42834D486A21219002B883C53/",
+    ["Regenerate"] = "http://cloud-3.steamusercontent.com/ugc/791986676667649885/92F7F934D298524F6F72997095DDBA073D9A15BF/",
+    ["Strengthen"] = "http://cloud-3.steamusercontent.com/ugc/938309024726995467/72FC8E8918F788646DBD0C571FDAB214D7A36445/",
+    ["Stun"] = "http://cloud-3.steamusercontent.com/ugc/83721958671678940/616CC0951CB17024448D3CBC7E5CA9D3A05D7555/",
+    ["Wound"] = "http://cloud-3.steamusercontent.com/ugc/938309024726992099/9B90EEDC5B68B4FFD04C0037008F9C96BA603C24/",
+    ["Plus 1"] = "http://cloud-3.steamusercontent.com/ugc/938309024726761532/C3BB327E15466B74ED256A0BD7B66C20A8825861/",
+    ["Area"] = "http://cloud-3.steamusercontent.com/ugc/938309024726997997/041C0C738331AA8B4D8281BE8E9BE2C2963D823D/",
+    ["Jump"] = "http://cloud-3.steamusercontent.com/ugc/938309024726767406/7C34D7EA30D5E6FF90BBA88A767ACB98467FC557/"
+}
+Enhancement.DECALS["Ice"] = Enhancement.DECALS["Frost"] -- makes more sense, since the element is also called Ice
+
+Enhancement.MAX_DISTANCE = 0.1
+Enhancement.Y_COORDINATE = 0.36
+Enhancement.ROTATION = { 90, 180, 0 }
+Enhancement.SCALE = { 0.16, 0.16, 3.07 }
+
+function Enhancement.loadAll(enhancements)
+    Task.load("Enhancements", enhancements, Enhancement.validate, Enhancement.doLoad)
+end
+
+function Enhancement.validate(enhancements)
+    for i, enhancement in pairs(enhancements) do
+        local classInfo = Game.CLASSES[enhancement.class]
+        if not classInfo then
+            Error.add("The class '%s' does not exist. Enhancements won't be loaded.", enhancement.class)
+            enhancements[i] = nil
+        else
+            for j, enhancedAbility in pairs(enhancement.abilities) do
+                local abilityInfo = classInfo.abilities[enhancedAbility.name]
+                if not abilityInfo then
+                    Error.add("The class '%s' does not have an ability named '%s'. Enhancements won't be loaded.",
+                            enhancement.class, enhancedAbility.name)
+                    enhancement.abilities[j] = nil
+                else
+                    for k, decal in pairs(enhancedAbility.enhancements) do
+                        if not abilityInfo.enhancements[decal.position] then
+                            Error.add("The ability '%s' does not have an enhancement position '%s'",
+                                    enhancedAbility.name, decal.position)
+                            enhancedAbility.enhancements[k] = nil
+                        elseif not Enhancement.DECALS[decal.enhancement] then
+                            Error.add("An enhancement named '%s' does not exist for ability '%s'.",
+                                    decal.enhancement, enhancedAbility.name)
+                            enhancedAbility.enhancements[k] = nil
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return true, Error.pop()
+end
+
+function Enhancement.doLoad(enhancements)
+    Wait.time(function()
+        for _, enhancement in pairs(enhancements) do
+            Enhancement.loadForClass(enhancement.class, enhancement.abilities)
+        end
+    end, 10)
+end
+
+function Enhancement.loadForClass(className, abilities)
+    local playerZone = Character.findZoneForClass(className)
+    if not playerZone then
+        return
+    end
+    for _, ability in pairs(abilities) do
+        local abilityName, enhancements = ability.name, ability.enhancements
+        local enhancementInfo = Game.ability(className, abilityName).enhancements
+
+        local abilityCard = Utils.findObjectIn(playerZone, { name = abilityName })
+        if abilityCard then
+            Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
+        else
+            local abilityDeck = Component.abilityDeck(playerZone)
+            local abilityCardObject = Utils.findObjectIn(abilityDeck, { name = abilityName })
+            abilityDeck.takeObject({
+                guid = abilityCardObject.getGUID(),
+                position = Component.positions.getSafe(),
+                rotation = abilityDeck.getRotation(),
+                smooth = false,
+                callback_function = function(obj)
+                    Enhancement.loadForCard(obj, enhancements, enhancementInfo)
+                    abilityDeck.putObject(obj)
+                end
+            })
+        end
+    end
+end
+
+function Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
+    for _, enhancement in pairs(enhancements) do
+        local position = enhancementInfo[enhancement.position]
+        abilityCard.addDecal({
+            name = "Enhancement " .. enhancement.enhancement,
+            url = Enhancement.DECALS[enhancement.enhancement],
+            position = { position[1], Enhancement.Y_COORDINATE, position[2] },
+            rotation = Enhancement.ROTATION,
+            scale = Enhancement.SCALE
+        })
+    end
+end
+
+function Enhancement.save()
+    enhancements = {}
+
+    for _, playerZone in pairs(Component.guids.ZONES) do
+        Enhancement.saveInZone(playerZone, enhancements)
+    end
+
+    enhancements = TableUtil.sortByAttribute(enhancements, "class")
+    return TableUtil.emptyToNil(enhancements)
+end
+
+function Enhancement.saveInZone(playerZone, enhancements)
+    local class = Character.findClassInZone(playerZone)
+    if not class then
+        return
+    end
+
+    local classEnhancements = { class = class, abilities = {} }
+
+    local zoneObjects = getObjectFromGUID(playerZone).getObjects()
+    Enhancement.saveInContainer(zoneObjects, class, classEnhancements.abilities)
+
+    classEnhancements.abilities = TableUtil.sortByAttribute(classEnhancements.abilities, "name")
+    if TableUtil.isNotEmpty(classEnhancements.abilities) then
+        table.insert(enhancements, classEnhancements)
+    end
+end
+
+function Enhancement.saveInContainer(objects, class, classEnhancements)
+    for _, object in TableUtil.pairs(objects) do
+        if Component.isAbilityCardForClass(object, class)
+                and TableUtil.isNotEmpty(object.getDecals())
+        then
+            Enhancement.saveForCard(object, class, classEnhancements)
+        elseif Object.isDeck(object) then
+            Enhancement.saveInContainer(ObjectUtil.getContainedObjects(object), class, classEnhancements)
+        end
+    end
+end
+
+function Enhancement.saveForCard(card, class, classEnhancements)
+    Logger.verbose("Saving enhancements for " .. card.getName())
+    local ability = Component.getAbilityName(class, card)
+    local enhancementInfo = Game.ability(class, ability).enhancements
+    local cardEnhancements = {}
+
+    for _, decal in TableUtil.pairs(card.getDecals()) do
+        local name = decal.name:gsub("Enhancement ", "")
+        local nearestIndex, distance = Enhancement.findNearestIndex(decal.position, enhancementInfo)
+        table.insert(cardEnhancements, { position = nearestIndex, enhancement = name })
+
+        if distance > Enhancement.MAX_DISTANCE then
+            Logger.warn("Enhancement for ability " .. character.class .. "\n"
+                    .. "The distance to any known ennhancement position for this ability is bigger"
+                    .. " than expected (" .. distance .. "). This might mean, that the known"
+                    .. " information is outdated (e.g. a newer printing of the card exists),"
+                    .. " the card shouldn't have enhancements or that the decal was added"
+                    .. " rather sloppy. Please verify that the enhancement loads correctly.")
+        end
+    end
+
+    if TableUtil.isNotEmpty(cardEnhancements) then
+        cardEnhancements = TableUtil.sortByAttribute(cardEnhancements, "position")
+        table.insert(classEnhancements, { name = ability, enhancements = cardEnhancements })
+    end
+end
+
+---@param decalPosition tts__Vector
+function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
+    local nearestDistance = 42
+    local nearestIndex = 1
+    decalPosition:setAt("y", 0)
+    for i, enhancement in ipairs(enhancementInfo) do
+        local x, z = enhancement[1], enhancement[2]
+        local distance = decalPosition:distance(Vector(x, 0, z))
+        if distance < nearestDistance then
+            nearestDistance = distance
+            nearestIndex = i
+        end
+    end
+
+    return nearestIndex, nearestDistance
+end
+
+return Enhancement
