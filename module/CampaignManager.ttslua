@@ -1,6 +1,9 @@
+local EventManager = require('ge_tts.EventManager')
 local Logger = require("sebaestschjin-tts.module.Logger")
 local Utils = require("sebaestschjin-tts.src.Utils")
 
+local Cleanup = require('gloomhaven-campaign-manager.module.Cleanup')
+local Game = require('gloomhaven-campaign-manager.module.Game')
 local Achievement = require("gloomhaven-campaign-manager.module.Achievement")
 local Enhancement = require("gloomhaven-campaign-manager.module.Enhancement")
 local Event = require("gloomhaven-campaign-manager.module.Event")
@@ -9,7 +12,6 @@ local Preparation = require("gloomhaven-campaign-manager.module.Preparation")
 local Prosperity = require("gloomhaven-campaign-manager.module.Prosperity")
 local Retirement = require("gloomhaven-campaign-manager.module.Retirement")
 local Scenario = require("gloomhaven-campaign-manager.module.Scenario")
-local Shop = require("gloomhaven-campaign-manager.module.Shop")
 local Unlocked = require("gloomhaven-campaign-manager.module.Unlocked")
 
 -- 2163619993
@@ -26,7 +28,7 @@ function CampaignManager.loadAll()
         return
     end
 
-    local status, content = pcall(function() return JSON.decode(saveFile) end)
+    local status, content = pcall(function() return JSON.decode(--[[---@not nil]] saveFile) end)
     if not status then
         Logger.error("The provided save file contains errors."
                 .. " The error message from Lua is also very cryptic and doesn't really help. :-("
@@ -38,18 +40,32 @@ function CampaignManager.loadAll()
     Preparation.start(function() CampaignManager.doLoadAll(content) end)
 end
 
+---@param content gh_Savefile
 function CampaignManager.doLoadAll(content)
+    CampaignManager.setupEventHandlers(content)
+
+    for name, _ in pairs(Game.CLASSES) do
+        EventManager.triggerEvent('class_ready', name)
+    end
     if content.global then
         Scenario.loadAll(content.global.scenarios)
         Achievement.loadAll(content.global.achievements)
         Prosperity.load(content.global.prosperity)
     end
-    Unlocked.loadAll(content.unlocked)
+    --Unlocked.loadAll(content.unlocked)
     Party.load(content.party)
-    Retirement.load(content.retired)
-    Shop.load()
-    Event.loadAll(content.events)
-    Enhancement.loadAll(content.enhancements)
+    --Retirement.load(content.retired)
+    --Shop.load()
+    --Event.loadAll(content.events)
+    --Enhancement.loadAll(content.enhancements)
+end
+
+---@param content gh_Savefile
+function CampaignManager.setupEventHandlers(content)
+    EventManager.addHandler('class_ready', function(className) Enhancement.mayLoadForClass(content, className) end)
+    EventManager.addHandler('class_enhanced', function(className) Unlocked.mayLoadClass(content, className) end)
+    EventManager.addHandler('class_unlocked', function(className) Party.mayLoadCharacter(content, className) end)
+    EventManager.addHandler('class_unlocked', Cleanup.onClassUnlocked)
 end
 
 function CampaignManager.saveAll()

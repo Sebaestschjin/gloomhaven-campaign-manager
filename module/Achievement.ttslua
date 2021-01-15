@@ -6,22 +6,18 @@ local Component = require("gloomhaven-campaign-manager.module.Component")
 local Game = require("gloomhaven-campaign-manager.module.Game")
 local Task = require("gloomhaven-campaign-manager.module.Task")
 
----@shape gh__Achievement
----@field name string
----@field count nil | number
-
 ---@shape fs__Achievement_Info
 ---@field name string
 ---@field guids GUID[]
 
 local Achievement = {}
 
----@param achievements gh__Achievement[]
+---@param achievements gh_Achievement[]
 function Achievement.loadAll(achievements)
     Task.load("Achievements", achievements, Achievement.validate, Achievement.doLoad)
 end
 
----@param achievements gh__Achievement[]
+---@param achievements gh_Achievement[]
 function Achievement.validate(achievements)
     for i, achievement in pairs(achievements) do
         local name, count = achievement.name, achievement.count
@@ -42,7 +38,7 @@ function Achievement.validate(achievements)
     return true, Error.pop()
 end
 
----@param achievements gh__Achievement[]
+---@param achievements gh_Achievement[]
 function Achievement.doLoad(achievements)
     ---@type boolean[]
     Achievement.groupReady = { true }

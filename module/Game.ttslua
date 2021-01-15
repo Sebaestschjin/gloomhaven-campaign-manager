@@ -6,6 +6,7 @@ local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 -- all classes and their perks).
 local Game = {}
 
+---@param class string
 function Game.class(class)
     local classInfo = Game.CLASSES[class]
     if not classInfo then

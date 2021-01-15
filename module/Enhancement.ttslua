@@ -1,3 +1,4 @@
+local EventManager = require('ge_tts.EventManager')
 local Error = require("sebaestschjin-tts.src.Error")
 local Logger = require("sebaestschjin-tts.module.Logger")
 local Object = require("sebaestschjin-tts.src.Object")
@@ -35,13 +36,36 @@ Enhancement.DECALS = {
 }
 Enhancement.DECALS["Ice"] = Enhancement.DECALS["Frost"] -- makes more sense, since the element is also called Ice
 
+---@type number
 Enhancement.MAX_DISTANCE = 0.1
+---@type number
 Enhancement.Y_COORDINATE = 0.36
+---@type tts__VectorShape
 Enhancement.ROTATION = { 90, 180, 0 }
+---@type tts__VectorShape
 Enhancement.SCALE = { 0.16, 0.16, 3.07 }
 
 function Enhancement.loadAll(enhancements)
     Task.load("Enhancements", enhancements, Enhancement.validate, Enhancement.doLoad)
+end
+
+---@param content gh_Savefile
+---@param className string
+function Enhancement.mayLoadForClass(content, className)
+    for _, classEnhancements in TableUtil.ipairs(content.enhancements) do
+        if classEnhancements.class == className then
+            Enhancement.loadClass(classEnhancements, className)
+            return
+        end
+    end
+    EventManager.triggerEvent('class_enhanced', className)
+end
+
+---@param classEnhancements gh_Enhanced_Class
+---@param className string
+function Enhancement.loadClass(classEnhancements, className)
+    Logger.info('Loading enhancements for class %s', className)
+    EventManager.triggerEvent('class_enhanced', className)
 end
 
 function Enhancement.validate(enhancements)

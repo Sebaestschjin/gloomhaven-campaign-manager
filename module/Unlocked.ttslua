@@ -1,4 +1,5 @@
 local Constant = require("sebaestschjin-tts.src.Constant")
+local EventManager = require('ge_tts.EventManager')
 local Error = require("sebaestschjin-tts.src.Error")
 local Logger = require('sebaestschjin-tts.module.Logger')
 local ObjectUtil = require('sebaestschjin-tts.src.ObjectUtil')
@@ -41,6 +42,24 @@ function Unlocked.validateClasses(classes)
     return true, Error.pop()
 end
 
+---@param content gh_Savefile
+---@param className string
+function Unlocked.mayLoadClass(content, className)
+    local class = Game.class(className)
+    if class and class.isStartingClass then
+        EventManager.triggerEvent('class_unlocked', className)
+        return
+    end
+
+    for i, unlockedClass in TableUtil.ipairs(content.unlocked.classes) do
+        if unlockedClass == className then
+            Unlocked.loadClass(i, className)
+            return
+        end
+    end
+    EventManager.triggerEvent('class_unlocked', className)
+end
+
 function Unlocked.loadClasses(classes)
     Utils.waitForObject(Component.guids.LOCKED_CLASSES, function() Unlocked.doLoadClasses(classes) end)
 end
@@ -49,11 +68,13 @@ function Unlocked.doLoadClasses(classes)
     for i, class in pairs(classes) do
         Unlocked.loadClass(i, class)
     end
-
-    getObjectFromGUID(Component.guids.GAMEBOX).putObject(getObjectFromGUID(Component.guids.LOCKED_CLASSES))
 end
 
-function Unlocked.loadClass(number, class)
+---@param number number
+---@param className string
+function Unlocked.loadClass(number, className)
+    Logger.info('Unlocking class %s', className)
+
     local characterBoxes = getObjectFromGUID(Component.guids.LOCKED_CLASSES)
     local lastBox = getObjectFromGUID(Component.guids.LAST_BOX)
     local beforeLastBox = getObjectFromGUID(Component.guids.BEFORE_LAST_BOX)
@@ -63,8 +84,11 @@ function Unlocked.loadClass(number, class)
         position = lastBox.getPosition() + delta,
         rotation = lastBox.getRotation(),
         smooth = false,
-        guid = Game.CLASSES[class].boxGuid,
-        callback_function = function(obj) obj.setLock(true) end
+        guid = Game.CLASSES[className].boxGuid,
+        callback_function = function(obj)
+            obj.setLock(true)
+            EventManager.triggerEvent('class_unlocked', className)
+        end
     })
 end
 

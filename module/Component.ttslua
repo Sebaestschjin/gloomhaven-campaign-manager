@@ -6,7 +6,6 @@ local Utils = require("sebaestschjin-tts.src.Utils")
 local Game = require("gloomhaven-campaign-manager.module.Game")
 local Component = {}
 
----@type table<string, GUID|GUID[]>
 Component.guids = {
     GAMEBOX = "346ed5",
     LOCKED_CLASSES = "1e6549",

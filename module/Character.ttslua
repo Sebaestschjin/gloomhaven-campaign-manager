@@ -22,23 +22,6 @@ local Character = {}
 Character.ABILITY_DEFAULT_DISTANCE = 5
 Character.ABILITY_MAX_DISTANCE = Character.ABILITY_DEFAULT_DISTANCE + 2
 
----@shape gh_Item
----@field name string
----@field position string
-
----@shape gh_Character
----@field class string
----@field name string
----@field xp number
----@field gold number
----@field quest string|number
----@field checkmarks number
----@field perks number[]
----@field items gh_Item[]
----@field abilities string[]
----@field notes string[]
----@field hiddenNotes string[]
-
 ---@param index number
 ---@param character gh_Character
 function Character.load(index, character)
