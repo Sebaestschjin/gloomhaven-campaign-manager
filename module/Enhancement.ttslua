@@ -149,7 +149,7 @@ function Enhancement.onDeckUpdated(deck, params)
     if params.updates == 2 then
         params.classBox.reset()
         params.classBox.putObject(params.characterBox)
-        EventManager.triggerEvent(EventType.CLASS_ENHANCED, className)
+        EventManager.triggerEvent(EventType.CLASS_ENHANCED, params.className)
     end
 end
 
