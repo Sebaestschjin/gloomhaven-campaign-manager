@@ -1,18 +1,20 @@
 local EventManager = require('ge_tts.EventManager')
-local Logger = require("sebaestschjin-tts.module.Logger")
-local Utils = require("sebaestschjin-tts.src.Utils")
+local Logger = require('sebaestschjin-tts.module.Logger')
+local Utils = require('sebaestschjin-tts.src.Utils')
 
 local Cleanup = require('gloomhaven-campaign-manager.module.Cleanup')
 local Game = require('gloomhaven-campaign-manager.module.Game')
-local Achievement = require("gloomhaven-campaign-manager.module.Achievement")
-local Enhancement = require("gloomhaven-campaign-manager.module.Enhancement")
-local Event = require("gloomhaven-campaign-manager.module.Event")
-local Party = require("gloomhaven-campaign-manager.module.Party")
-local Preparation = require("gloomhaven-campaign-manager.module.Preparation")
-local Prosperity = require("gloomhaven-campaign-manager.module.Prosperity")
-local Retirement = require("gloomhaven-campaign-manager.module.Retirement")
-local Scenario = require("gloomhaven-campaign-manager.module.Scenario")
-local Unlocked = require("gloomhaven-campaign-manager.module.Unlocked")
+local Achievement = require('gloomhaven-campaign-manager.module.Achievement')
+local Enhancement = require('gloomhaven-campaign-manager.module.Enhancement')
+local Event = require('gloomhaven-campaign-manager.module.Event')
+local EventType = require('gloomhaven-campaign-manager.module.EventType')
+local Party = require('gloomhaven-campaign-manager.module.Party')
+local Preparation = require('gloomhaven-campaign-manager.module.Preparation')
+local Prosperity = require('gloomhaven-campaign-manager.module.Prosperity')
+local Retirement = require('gloomhaven-campaign-manager.module.Retirement')
+local Scenario = require('gloomhaven-campaign-manager.module.Scenario')
+local Shop = require('gloomhaven-campaign-manager.module.Shop')
+local Unlocked = require('gloomhaven-campaign-manager.module.Unlocked')
 
 -- 2163619993
 local CampaignManager = {}
@@ -44,28 +46,30 @@ end
 function CampaignManager.doLoadAll(content)
     CampaignManager.setupEventHandlers(content)
 
-    for name, _ in pairs(Game.CLASSES) do
-        EventManager.triggerEvent('class_ready', name)
-    end
     if content.global then
         Scenario.loadAll(content.global.scenarios)
         Achievement.loadAll(content.global.achievements)
         Prosperity.load(content.global.prosperity)
     end
-    --Unlocked.loadAll(content.unlocked)
+    Shop.load()
+    Unlocked.loadAll(content.unlocked)
     Party.load(content.party)
-    --Retirement.load(content.retired)
-    --Shop.load()
-    --Event.loadAll(content.events)
-    --Enhancement.loadAll(content.enhancements)
+    Retirement.load(content.retired)
+    Event.loadAll(content.events)
 end
 
 ---@param content gh_Savefile
 function CampaignManager.setupEventHandlers(content)
-    EventManager.addHandler('class_ready', function(className) Enhancement.mayLoadForClass(content, className) end)
-    EventManager.addHandler('class_enhanced', function(className) Unlocked.mayLoadClass(content, className) end)
-    EventManager.addHandler('class_unlocked', function(className) Party.mayLoadCharacter(content, className) end)
-    EventManager.addHandler('class_unlocked', Cleanup.onClassUnlocked)
+    EventManager.addHandler(EventType.SHOP_LOADED, function() Unlocked.loadItems(content) end)
+    EventManager.addHandler(EventType.ITEMS_UNLOCKED, function()
+        for name, _ in pairs(Game.CLASSES) do
+            EventManager.triggerEvent(EventType.CLASS_READY, name)
+        end
+    end)
+    EventManager.addHandler(EventType.CLASS_READY, function(className) Enhancement.mayLoadForClass(content, className) end)
+    EventManager.addHandler(EventType.CLASS_ENHANCED, function(className) Unlocked.mayLoadClass(content, className) end)
+    EventManager.addHandler(EventType.CLASS_UNLOCKED, function(className) Party.mayLoadCharacter(content, className) end)
+    EventManager.addHandler(EventType.CLASS_UNLOCKED, Cleanup.onClassUnlocked)
 end
 
 function CampaignManager.saveAll()
@@ -82,8 +86,8 @@ function CampaignManager.createSaveFile()
     local saveFile = {}
 
     Preparation.prepareSave()
-    -- TODO change to task based, this wait is necessary, because the scripting zones have to be
-    -- adjusted, otherwise they won't detect cards lying on the table
+    -- this wait is necessary, because the scripting zones have to be adjusted, otherwise they won't detect cards lying
+    -- directly on the table
     Wait.time(function() CampaignManager.doCreateSaveFile(saveFile) end, 1)
 
     return saveFile

@@ -10,6 +10,7 @@ local Party = {}
 function Party.load(party)
     if party then
         Party.loadPartySheet(party)
+        Party.loadCharacters(party.characters)
     end
 end
 
@@ -42,7 +43,6 @@ function Party.mayLoadCharacter(content, characterClass)
 
     for i, character in TableUtil.pairs(content.party.characters) do
         if TableUtil.isNotEmpty(character) and character.class == characterClass then
-            Logger.info('Loading character %d', i)
             Character.load(i, character)
         end
     end

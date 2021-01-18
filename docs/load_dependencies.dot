@@ -3,52 +3,28 @@ digraph D {
 
     rankdir=RL
 
-    "Prosperity" -> Start
-    "Sanctuary" -> Start
-    "Achievements" -> Start
-    "Scenarios" -> Start
+    "Prosperity"
+    "Sanctuary"
+    "Achievements"
+    "Scenarios"
+    "Party Sheet"
+    "Empty Gamebox"
 
-    "Unlocked Classes" -> "Empty Gamebox"
-    "Unlocked Classes" -> "Unpack Expansion"
-    "Unlocked Items" -> "Unpack Expansion"
     "Opening Conditions" -> "Empty Gamebox"
 
-    "Party" -> "Unlocked Classes"
-    "Character Sheet" -> "Party"
-    "Character Quest" -> "Character Sheet"
-    "Character Perks" -> "Character Sheet"
-    "Character Abilities" -> "Character Sheet"
-    "Character Items" -> "Character Sheet"
-    "Character Deck" -> "Character Abilities"
+    "Unlocked Treasures" -> "Empty Gamebox"
 
-    "Character Done" -> "Character Sheet"
-    "Character Done" -> "Character Quest"
-    "Character Done" -> "Character Perks"
-    "Character Done" -> "Character Abilities"
-    "Character Done" -> "Character Items"
-    "Character Done" -> "Character Deck"
+    "Unpack Expansion" -> "Empty Gamebox"
+
+    "Unlock Class" -> "Unlock Items"
+    "Enchant Class" -> "Unlock Class"
+
+    "Unpack Class" -> "Enchant Class"
+
+    "Unlock Items" -> "Unpack Expansion"
 
     "Retirement" -> "Empty Gamebox"
 
     "Events" -> "Unpack Expansion"
 
-    "Empty Gamebox" -> Start
-    "Unpack Expansion" -> "Empty Gamebox"
-    "Repack Gamebox" -> "Unlocked Classes"
-
-    "Enhancements" -> "Character Deck"
-
-    Finish -> "Prosperity"
-    Finish -> "Sanctuary"
-    Finish -> "Achievements"
-    Finish -> "Scenarios"
-    Finish -> "Unlocked Classes"
-    Finish -> "Unlocked Items"
-    Finish -> "Opening Conditions"
-    Finish -> "Party"
-    Finish -> "Character Done"
-    Finish -> "Enhancements"
-    Finish -> "Retirement"
-    Finish -> "Events"
-    Finish -> "Repack Gamebox"
 }

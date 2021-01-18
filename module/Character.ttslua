@@ -93,14 +93,14 @@ function Character.loadCharacterSheet(playerZone, character)
         characterSheet.UI.setAttribute("Name", "text", character.name)
     end
     if character.gold then
-        characterSheet.call('addEx', { name = 'gold', amount = character.gold })
+        characterSheet.call("addEx", { name = "gold", amount = character.gold })
     end
     if character.xp then
-        characterSheet.call('addEx', { name = 'xp', amount = character.xp })
+        characterSheet.call("addEx", { name = "xp", amount = character.xp })
     end
     if character.checkmarks then
         for i = 1, character.checkmarks do
-            characterSheet.call('clickedToggle', "notes" .. tostring(i))
+            characterSheet.call("clickedToggle", "notes" .. tostring(i))
         end
     end
     if character.perks then
@@ -218,7 +218,7 @@ function Character.loadPerks(playerZone, character)
     local chain = Chain.create()
     for _, perk in TableUtil.pairs(character.perks) do
         if perkInfo[perk] then
-            characterSheet.call('clickedToggle', "perk" .. tostring(perk))
+            characterSheet.call("clickedToggle", "perk" .. tostring(perk))
 
             for _, card in TableUtil.pairs(perkInfo[perk].add) do
                 chain.add(function(c)

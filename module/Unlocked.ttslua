@@ -7,6 +7,7 @@ local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Component = require("gloomhaven-campaign-manager.module.Component")
+local EventType = require("gloomhaven-campaign-manager.module.EventType")
 local Game = require("gloomhaven-campaign-manager.module.Game")
 local Preparation = require("gloomhaven-campaign-manager.module.Preparation")
 local Sanctuary = require("gloomhaven-campaign-manager.module.Sanctuary")
@@ -19,8 +20,6 @@ Unlocked.TOTAL_TREASURE = 96
 
 function Unlocked.loadAll(unlocked)
     if unlocked then
-        Task.load("Unlocked Classes", unlocked.classes, Unlocked.validateClasses, Unlocked.loadClasses)
-        Task.load("Unlocked Items", unlocked.items, Unlocked.validateItems, Unlocked.loadItems)
         Task.load("Opening Conditions", unlocked.specialConditions, Unlocked.validateOpeningConditions, Unlocked.loadOpeningConditions)
         Task.load("Unlocked Treasure", unlocked.treasures, Unlocked.validateTreasures, Unlocked.loadTreasures)
         Sanctuary.load(unlocked.sanctuary)
@@ -45,9 +44,14 @@ end
 ---@param content gh_Savefile
 ---@param className string
 function Unlocked.mayLoadClass(content, className)
+    if not content.unlocked or not content.unlocked.classes then
+        EventManager.triggerEvent(EventType.CLASS_UNLOCKED, className)
+        return
+    end
+
     local class = Game.class(className)
     if class and class.isStartingClass then
-        EventManager.triggerEvent('class_unlocked', className)
+        EventManager.triggerEvent(EventType.CLASS_UNLOCKED, className)
         return
     end
 
@@ -57,7 +61,7 @@ function Unlocked.mayLoadClass(content, className)
             return
         end
     end
-    EventManager.triggerEvent('class_unlocked', className)
+    EventManager.triggerEvent(EventType.CLASS_UNLOCKED, className)
 end
 
 function Unlocked.loadClasses(classes)
@@ -87,7 +91,7 @@ function Unlocked.loadClass(number, className)
         guid = Game.CLASSES[className].boxGuid,
         callback_function = function(obj)
             obj.setLock(true)
-            EventManager.triggerEvent('class_unlocked', className)
+            EventManager.triggerEvent(EventType.CLASS_UNLOCKED, className)
         end
     })
 end
@@ -103,13 +107,17 @@ function Unlocked.validateItems(items)
     return true, Error.pop()
 end
 
-function Unlocked.loadItems(items)
-    local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
-    local shopPosition = Utils.getSnapPosition(cityMat, Component.snaps.SHOP)
+---@param content gh_Savefile
+function Unlocked.loadItems(content)
+    if content.unlocked and content.unlocked.items then
+        local cityMat = getObjectFromGUID(Component.guids.CITY_MAT)
+        local shopPosition = Utils.getSnapPosition(cityMat, Component.snaps.SHOP)
 
-    for _, item in pairs(items) do
-        Shop.takeRewardItem(item, shopPosition)
+        for _, item in pairs(content.unlocked.items) do
+            Shop.takeRewardItem(item, shopPosition)
+        end
     end
+    EventManager.triggerEvent(EventType.ITEMS_UNLOCKED)
 end
 
 function Unlocked.validateOpeningConditions()

@@ -1,11 +1,13 @@
-local DeckUtil = require("sebaestschjin-tts.src.DeckUtil")
-local Logger = require("sebaestschjin-tts.module.Logger")
-local ObjectUtil = require("sebaestschjin-tts.src.ObjectUtil")
-local TableUtil = require("sebaestschjin-tts.src.TableUtil")
-local Utils = require("sebaestschjin-tts.src.Utils")
+local DeckUtil = require('sebaestschjin-tts.src.DeckUtil')
+local EventManager = require('ge_tts.EventManager')
+local Logger = require('sebaestschjin-tts.module.Logger')
+local ObjectUtil = require('sebaestschjin-tts.src.ObjectUtil')
+local TableUtil = require('sebaestschjin-tts.src.TableUtil')
+local Utils = require('sebaestschjin-tts.src.Utils')
 
-local Component = require("gloomhaven-campaign-manager.module.Component")
-local Prosperity = require("gloomhaven-campaign-manager.module.Prosperity")
+local Component = require('gloomhaven-campaign-manager.module.Component')
+local EventType = require('gloomhaven-campaign-manager.module.EventType')
+local Prosperity = require('gloomhaven-campaign-manager.module.Prosperity')
 
 local Shop = {}
 
@@ -16,6 +18,8 @@ function Shop.load()
         cityMat.call("layOut", i)
     end
     cityMat.call("layOut", 0)
+
+    EventManager.triggerEvent(EventType.SHOP_LOADED)
 end
 
 function Shop.save(unlocked)

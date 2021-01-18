@@ -1,13 +1,15 @@
-local EventManager = require('ge_tts.EventManager')
-local Error = require("sebaestschjin-tts.src.Error")
+local EventManager = require("ge_tts.EventManager")
+local Json = require('ge_tts.Json')
 local Logger = require("sebaestschjin-tts.module.Logger")
 local Object = require("sebaestschjin-tts.src.Object")
+local ObjectState = require("sebaestschjin-tts.module.ObjectState")
 local ObjectUtil = require("sebaestschjin-tts.src.ObjectUtil")
 local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 local Utils = require("sebaestschjin-tts.src.Utils")
 
 local Component = require("gloomhaven-campaign-manager.module.Component")
 local Character = require("gloomhaven-campaign-manager.module.Character")
+local EventType = require("gloomhaven-campaign-manager.module.EventType")
 local Game = require("gloomhaven-campaign-manager.module.Game")
 local Task = require("gloomhaven-campaign-manager.module.Task")
 local Enhancement = {}
@@ -45,109 +47,109 @@ Enhancement.ROTATION = { 90, 180, 0 }
 ---@type tts__VectorShape
 Enhancement.SCALE = { 0.16, 0.16, 3.07 }
 
-function Enhancement.loadAll(enhancements)
-    Task.load("Enhancements", enhancements, Enhancement.validate, Enhancement.doLoad)
-end
-
 ---@param content gh_Savefile
 ---@param className string
 function Enhancement.mayLoadForClass(content, className)
     for _, classEnhancements in TableUtil.ipairs(content.enhancements) do
         if classEnhancements.class == className then
-            Enhancement.loadClass(classEnhancements, className)
+            Enhancement.loadClass(className, classEnhancements.abilities)
             return
         end
     end
-    EventManager.triggerEvent('class_enhanced', className)
+    EventManager.triggerEvent(EventType.CLASS_ENHANCED, className)
 end
 
----@param classEnhancements gh_Enhanced_Class
 ---@param className string
-function Enhancement.loadClass(classEnhancements, className)
-    Logger.info('Loading enhancements for class %s', className)
-    EventManager.triggerEvent('class_enhanced', className)
+---@param abilities gh_Enhanced_Ability[]
+function Enhancement.loadClass(className, abilities)
+    Logger.info("Loading enhancements for class %s", className)
+
+    local classBox = getObjectFromGUID(Game.class(className).boxGuid)
+    local params = { classBox = classBox,
+                     className = className,
+                     abilities = abilities,
+                     updates = 0 }
+
+    -- We could apply the decals on the infinite class box directly and respawn the whole box. However, parsing the JSON
+    -- for the character box is very slow (as it's huge), so what we do is to pull out the character box and pull out
+    -- the ability decks from it. Then apply the decals on the deck state and respawn the deck. After that put the
+    -- ability deck back into the character box. If both ability decks have been put back, reset the infinite class box
+    -- with the new character box.
+    classBox.takeObject({
+        index = 1,
+        position = Component.positions.getSafe(),
+        callback_function = function(o) Enhancement.onCharacterBoxUnpacked(o, params) end,
+    })
 end
 
-function Enhancement.validate(enhancements)
-    for i, enhancement in pairs(enhancements) do
-        local classInfo = Game.CLASSES[enhancement.class]
-        if not classInfo then
-            Error.add("The class '%s' does not exist. Enhancements won't be loaded.", enhancement.class)
-            enhancements[i] = nil
-        else
-            for j, enhancedAbility in pairs(enhancement.abilities) do
-                local abilityInfo = classInfo.abilities[enhancedAbility.name]
-                if not abilityInfo then
-                    Error.add("The class '%s' does not have an ability named '%s'. Enhancements won't be loaded.",
-                            enhancement.class, enhancedAbility.name)
-                    enhancement.abilities[j] = nil
-                else
-                    for k, decal in pairs(enhancedAbility.enhancements) do
-                        if not abilityInfo.enhancements[decal.position] then
-                            Error.add("The ability '%s' does not have an enhancement position '%s'",
-                                    enhancedAbility.name, decal.position)
-                            enhancedAbility.enhancements[k] = nil
-                        elseif not Enhancement.DECALS[decal.enhancement] then
-                            Error.add("An enhancement named '%s' does not exist for ability '%s'.",
-                                    decal.enhancement, enhancedAbility.name)
-                            enhancedAbility.enhancements[k] = nil
-                        end
-                    end
-                end
+--- Triggers, when the character box from the infinite class box has been unpacked. Unpacks the ability decks within.
+---@param characterBox tts__Bag
+function Enhancement.onCharacterBoxUnpacked(characterBox, params)
+    params.characterBox = characterBox
+
+    for _, name in pairs({ Component.names.ABILITY_DECK, Component.names.STARTING_ABILITY_DECK }) do
+        local abilityDeck = Utils.findObjectIn(characterBox, { name = name })
+        characterBox.takeObject({
+            guid = abilityDeck.getGUID(),
+            position = Component.positions.getSafe(),
+            rotation = { 0, 180, 0 },
+            smooth = false,
+            callback_function = function(d) Enhancement.onAbilityDeckUnpacked(d, params) end
+        })
+    end
+end
+
+--- Triggers, when an ability deck has been unpacked from the character box. Applies the decals to the decks object
+--- state and respawns the deck.
+---@param deck tts__Deck
+function Enhancement.onAbilityDeckUnpacked(deck, params)
+    local deckData = deck.getData()
+    deck.destruct()
+
+    for _, ability in pairs(params.abilities) do
+        for _, abilityCard in pairs(deckData.ContainedObjects) do
+            if abilityCard.Nickname:find(ability.name) then
+                Enhancement.applyEnhancementsOnCardState(abilityCard, params.className, ability)
             end
         end
     end
 
-    return true, Error.pop()
+    ObjectState.fixStates(deckData)
+    spawnObjectJSON({
+        json = Json.encode(deckData),
+        callback_function = function(d) Enhancement.onDeckUpdated(d, params) end,
+    })
 end
 
-function Enhancement.doLoad(enhancements)
-    Wait.time(function()
-        for _, enhancement in pairs(enhancements) do
-            Enhancement.loadForClass(enhancement.class, enhancement.abilities)
-        end
-    end, 10)
-end
-
-function Enhancement.loadForClass(className, abilities)
-    local playerZone = Character.findZoneForClass(className)
-    if not playerZone then
-        return
-    end
-    for _, ability in pairs(abilities) do
-        local abilityName, enhancements = ability.name, ability.enhancements
-        local enhancementInfo = Game.ability(className, abilityName).enhancements
-
-        local abilityCard = Utils.findObjectIn(playerZone, { name = abilityName })
-        if abilityCard then
-            Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
-        else
-            local abilityDeck = Component.abilityDeck(playerZone)
-            local abilityCardObject = Utils.findObjectIn(abilityDeck, { name = abilityName })
-            abilityDeck.takeObject({
-                guid = abilityCardObject.getGUID(),
-                position = Component.positions.getSafe(),
-                rotation = abilityDeck.getRotation(),
-                smooth = false,
-                callback_function = function(obj)
-                    Enhancement.loadForCard(obj, enhancements, enhancementInfo)
-                    abilityDeck.putObject(obj)
-                end
-            })
-        end
-    end
-end
-
-function Enhancement.loadForCard(abilityCard, enhancements, enhancementInfo)
-    for _, enhancement in pairs(enhancements) do
-        local position = enhancementInfo[enhancement.position]
-        abilityCard.addDecal({
+---@param abilityCard tts__CardState
+---@param className string
+---@param ability gh_Enhanced_Ability
+function Enhancement.applyEnhancementsOnCardState(abilityCard, className, ability)
+    local enhancementsInfo = Game.ability(className, ability.name).enhancements
+    for _, enhancement in pairs(ability.enhancements) do
+        local position = enhancementsInfo[enhancement.position]
+        ObjectState.addDecal(abilityCard, {
             name = "Enhancement " .. enhancement.enhancement,
             url = Enhancement.DECALS[enhancement.enhancement],
             position = { position[1], Enhancement.Y_COORDINATE, position[2] },
             rotation = Enhancement.ROTATION,
-            scale = Enhancement.SCALE
+            scale = Enhancement.SCALE,
         })
+    end
+end
+
+--- Triggers, when an ability deck has been respawned with the decals attached. Puts the deck back into the characeter
+--- box. If both decks have been put deck, it puts back the character box into the infinite class box and issues the
+--- event that the class is successfully enhanced.
+---@param deck tts__Deck
+function Enhancement.onDeckUpdated(deck, params)
+    params.characterBox.putObject(deck)
+    params.updates = params.updates + 1
+
+    if params.updates == 2 then
+        params.classBox.reset()
+        params.classBox.putObject(params.characterBox)
+        EventManager.triggerEvent(EventType.CLASS_ENHANCED, className)
     end
 end
 
