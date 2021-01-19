@@ -2175,8 +2175,8 @@ Game.CLASSES = {
             ["Sign: Yrden"] = { level = 2,
                                 enhancements = {}
             },
-            ["Witcher's Contract )18)"] = { level = 3,
-                                            enhancements = {}
+            ["Witcher's Contract"] = { level = 3,
+                                       enhancements = {}
             },
             ["Potion: Ekimmara"] = { level = 3,
                                      enhancements = { [1] = { -0.06, -0.72 } }
