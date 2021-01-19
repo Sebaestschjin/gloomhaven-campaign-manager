@@ -37,7 +37,7 @@ end
 
 function Task.finish(name, params, state, stateParams)
     if state.name then
-        --Logger.info("%s %s: %s", name, state.name, stateParams)
+        Logger.info("Finished %s %s: %s", name, state.name, stateParams)
     end
     if params.finish and state.finish then
         EventManager.triggerEvent(params.finish)

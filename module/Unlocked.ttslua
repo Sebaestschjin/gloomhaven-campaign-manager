@@ -16,8 +16,6 @@ local Task = require("gloomhaven-campaign-manager.module.Task")
 
 local Unlocked = {}
 
-Unlocked.TOTAL_TREASURE = 96
-
 function Unlocked.loadAll(unlocked)
     if unlocked then
         Task.load("Opening Conditions", unlocked.specialConditions, Unlocked.validateOpeningConditions, Unlocked.loadOpeningConditions)
@@ -25,6 +23,8 @@ function Unlocked.loadAll(unlocked)
                                        execute = Unlocked.loadTreasures,
                                        finish = EventType.TREASURE_LOADED })
         Sanctuary.load(unlocked.sanctuary)
+    else
+        EventManager.triggerEvent(EventType.TREASURE_LOADED)
     end
 end
 
@@ -181,11 +181,15 @@ function Unlocked.loadTreasures(treasures)
 
     for _, treasure in ipairs(treasures) do
         local treasureCard = Utils.findObjectIn(treasureDeck, { name = tostring(treasure) })
-        treasureDeck.takeObject({
-            index = treasureCard.index,
-            position = Component.positions.getSafe(),
-            callback_function = function(obj) obj.destruct() end,
-        })
+        if not treasureCard then
+            Logger.error("Treasure '%s' does not exist. Treasure won't be loaded.", treasure)
+        else
+            treasureDeck.takeObject({
+                index = treasureCard.index,
+                position = Component.positions.getSafe(),
+                callback_function = function(obj) obj.destruct() end,
+            })
+        end
     end
 
     EventManager.triggerEvent(EventType.TREASURE_LOADED)
