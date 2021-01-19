@@ -2103,6 +2103,121 @@ Game.CLASSES = {
                                     enhancements = {}
             }
         }
+    },
+    --- custom classes starting here
+    Witcher = {
+        boxGuid = "57b739",
+        hp = Game.HP.MEDIUM,
+        isCustomClass = true,
+        perks = {
+            [1] = { remove = { "(-1)" }, add = { "(+1) (Toxicity -1)" } },
+            [2] = { remove = { "(-1)" }, add = { "(+1) (Toxicity -1)" } },
+            [3] = { remove = { "(-1)" }, add = { "(+1) (Toxicity -1)" } },
+            [4] = { remove = { "(-2)" } },
+            [5] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" }, },
+            [6] = { add = { "(+1) (Shield 2 Self)" } },
+            [7] = { add = { "(+1) (Disarm)" } },
+            [8] = { add = { "(+1) (Disarm)" } },
+            [9] = { add = { "(+1) (Strengthen)" } },
+            [10] = { remove = { "(+2)" }, add = { "(+4)" } },
+            [11] = { add = { "(Add Target) (Rolling)" } },
+            [12] = { add = { "(Add Target) (Rolling)" } },
+            [13] = { add = { "(Heal +2 Self) (Rolling)" } },
+            [14] = { add = { "(Heal +2 Self) (Rolling)" } },
+            [15] = { ignore = "I" }
+        },
+        abilities = {
+            ["Sign: Igni"] = { level = 1,
+                               enhancements = {}
+            },
+            ["Sign: Quen"] = { level = 1,
+                               enhancements = {}
+            },
+            ["Sign: Aard"] = { level = 1,
+                               enhancements = { [1] = { 0.03, -0.75 }, [2] = { -0.31, 0.46 } }
+            },
+            ["Dancing Blade"] = { level = 1,
+                                  enhancements = {}
+            },
+            ["Potion: Blizzard"] = { level = 1,
+                                     enhancements = { [1] = { -0.3, -0.84 } }
+            },
+            ["White honey"] = { level = 1,
+                                enhancements = {}
+            },
+            ["Trial of the Grass"] = { level = 1,
+                                       enhancements = {}
+            },
+            ["Whirlwind"] = { level = 1,
+                              enhancements = { [1] = { -0.32, -0.68 } }
+            },
+            ["Potion: Swallows"] = { level = 1,
+                                     enhancements = { [1] = { -0.31, 0.4 } }
+            },
+            ["Potion: Thunderbolt"] = { level = 1,
+                                        enhancements = { [1] = { -0.28, -0.77 } }
+            },
+            ["Toss a Coin"] = { level = 1,
+                                enhancements = { [1] = { -0.32, -0.84 } }
+            },
+            ["Bomb: Devil's Puffball"] = { level = "X",
+                                           enhancements = {}
+            },
+            ["Bomb: Samun"] = { level = "X",
+                                enhancements = { [1] = { -0.3, 0.45 } }
+            },
+            ["Counterattack"] = { level = "X",
+                                  enhancements = {}
+            },
+            ["Potion: Poisoned Blades"] = { level = 2,
+                                            enhancements = { [1] = { -0.46, -0.87 }, [2] = { -0.31, 0.4 } }
+            },
+            ["Sign: Yrden"] = { level = 2,
+                                enhancements = {}
+            },
+            ["Witcher's Contract )18)"] = { level = 3,
+                                            enhancements = {}
+            },
+            ["Potion: Ekimmara"] = { level = 3,
+                                     enhancements = { [1] = { -0.06, -0.72 } }
+            },
+            ["Sign: Enhanced Quen"] = { level = 4,
+                                        enhancements = {}
+            },
+            ["Potion: Petri's philter"] = { level = 4,
+                                            enhancements = { [1] = { -0.31, 0.68 } }
+            },
+            ["Bomb: Northern Wind"] = { level = 5,
+                                        enhancements = { [1] = { -0.26, -0.88 } }
+            },
+            ["Sign: Enhanced Aard"] = { level = 5,
+                                        enhancements = { [1] = { 0.16, -0.81 }, [2] = { -0.31, 0.48 } }
+            },
+            ["Crossbow Shot"] = { level = 6,
+                                  enhancements = {}
+            },
+            ["Sign: Enhanced Igni"] = { level = 6,
+                                        enhancements = {}
+            },
+            ["Silver and Steel"] = { level = 7,
+                                     enhancements = {}
+            },
+            ["Sign: Axii"] = { level = 7,
+                               enhancements = {}
+            },
+            ["Raffard Decoction"] = { level = 8,
+                                      enhancements = { [1] = { -0.26, -0.83 } }
+            },
+            ["Hightened Tolerance"] = { level = 8,
+                                        enhancements = {}
+            },
+            ["Sign: Heliotrope"] = { level = 9,
+                                     enhancements = {}
+            },
+            ["The Wild Hunt"] = { level = 9,
+                                  enhancements = {}
+            },
+        }
     }
 }
 

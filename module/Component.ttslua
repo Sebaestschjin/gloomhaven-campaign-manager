@@ -183,7 +183,8 @@ function Component.isAbilityCardForClass(object, class)
     return Object.isCard(object)
             and object.getDescription():find(class)
             and (object.getName():find("%(%d%d%)")
-            or object.getName() == "Eternal Equilibrium (27(") -- quickfix for a typo in Elementalists ability card
+            or object.getName() == "Eternal Equilibrium (27("
+            or object.getName() == "Witcher's Contract )18)") -- quickfix for a typos in ability cards
             and not object.getName():find(Component.names.ATTACK_MODIFIER)
 end
 
@@ -197,6 +198,10 @@ function Component.getAbilityName(class, abilityCard)
     -- quickfix for a typo in Elementalists ability card
     if abilityCard.getName() == "Eternal Equilibrium (27(" then
         return "Eternal Equilibrium"
+    end
+    -- quickfix for a typo in Witchers ability card
+    if abilityCard.getName() == "Witcher's Contract )18)" then
+        return "Witcher's Contract 18"
     end
     local cardName = abilityCard.getName():gsub("%s?%(%d+%)", "")
     return Game.ability(class, cardName).name

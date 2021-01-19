@@ -154,7 +154,7 @@ function Enhancement.onDeckUpdated(deck, params)
 end
 
 function Enhancement.save()
-    enhancements = {}
+    local enhancements = {}
 
     for _, playerZone in pairs(Component.guids.ZONES) do
         Enhancement.saveInZone(playerZone, enhancements)

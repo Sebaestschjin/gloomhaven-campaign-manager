@@ -1,16 +1,127 @@
 {
   "party": {
-    "characters": [ {
-      "abilities": [ "Amputate", "Bedside Manner", "Blood Transfusion", "Do No Harm", "Euthanize", "Gentleman's Anger", "Grisley Trauma", "Hamstring", "Master Physician", "Precaution", "Prep for Surgery", "Prescription", "Regenerative Tissue", "Research the Cure", "Surgeon's Satchel", "Vital Strike" ],
-      "class": "Sawbones",
-      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
-    }, {
-      "abilities": [ "Boiling Arc", "Burial", "Chain Lightning", "Crystallizing Blast", "Elemental Aegis", "Eternal Equilibrium", "Ethereal Manifestation", "Eye of the Hurricane", "Gravel Vortex", "Obsidian Shards", "Pragmatic Reinforcement", "Primal Duality", "Simulacrum", "Vengeance", "Volatile Consumption", "Winter's Edge" ],
-      "class": "Elementalist",
-      "perks": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ]
-    } ]
+    "characters": [
+      {
+        "abilities": [
+          "Amputate",
+          "Bedside Manner",
+          "Blood Transfusion",
+          "Do No Harm",
+          "Euthanize",
+          "Gentleman's Anger",
+          "Grisley Trauma",
+          "Hamstring",
+          "Master Physician",
+          "Precaution",
+          "Prep for Surgery",
+          "Prescription",
+          "Regenerative Tissue",
+          "Research the Cure",
+          "Surgeon's Satchel",
+          "Vital Strike"
+        ],
+        "class": "Sawbones",
+        "perks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      {
+        "abilities": [
+          "Boiling Arc",
+          "Burial",
+          "Chain Lightning",
+          "Crystallizing Blast",
+          "Elemental Aegis",
+          "Eternal Equilibrium",
+          "Ethereal Manifestation",
+          "Eye of the Hurricane",
+          "Gravel Vortex",
+          "Obsidian Shards",
+          "Pragmatic Reinforcement",
+          "Primal Duality",
+          "Simulacrum",
+          "Vengeance",
+          "Volatile Consumption",
+          "Winter's Edge"
+        ],
+        "class": "Elementalist",
+        "perks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      {
+        "abilities": [
+          "Bomb: Northern Wind",
+          "Crossbow Shot",
+          "Hightened Tolerance",
+          "Potion: Ekimmara",
+          "Potion: Petri's philter",
+          "Potion: Poisoned Blades",
+          "Raffard Decoction",
+          "Sign: Axii",
+          "Sign: Enhanced Aard",
+          "Sign: Enhanced Igni",
+          "Sign: Enhanced Quen",
+          "Sign: Heliotrope",
+          "Sign: Yrden",
+          "Silver and Steel",
+          "The Wild Hunt",
+          "Witcher's Contract"
+        ],
+        "class": "Witcher",
+        "perks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ]
+      }
+    ]
   },
   "unlocked": {
-    "classes": [ "Elementalist", "Sawbones" ]
+    "classes": [
+      "Elementalist",
+      "Sawbones",
+      "Witcher"
+    ]
   }
 }
