@@ -14,4 +14,8 @@ function Cleanup.onClassUnlocked()
     end
 end
 
+function Cleanup.onTreasureLoaded()
+    getObjectFromGUID(Component.guids.GAMEBOX).putObject(getObjectFromGUID(Component.guids.TREASURE_DECK))
+end
+
 return Cleanup

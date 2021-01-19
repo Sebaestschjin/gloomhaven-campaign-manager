@@ -1,8 +1,48 @@
+local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.module.Logger")
 
 local Task = {}
 
+local State = {
+    NO_RUN = { finish = true },
+    CANCELLED = { name = "cancelled" },
+    ERROR = { name = "error" },
+    DONE = { name = "finished", finish = true },
+}
+
 Task.saveMode = true
+
+function Task.start(name, params)
+    if not params.input then
+        return Task.finish(name, params, State.NO_RUN)
+    end
+
+    Logger.info("Starting " .. name)
+
+    if params.validate and not Task.validate(name, params.input, params.validate) then
+        return Task.finish(name, params, State.CANCELLED)
+    end
+
+    if Task.saveMode then
+        local status, message = pcall(function() params.execute(params.input) end)
+        if not status then
+            return Task.finish(name, params, State.ERROR, message)
+        end
+    else
+        params.execute(params.input)
+    end
+
+    Task.finish(name, params, State.DONE)
+end
+
+function Task.finish(name, params, state, stateParams)
+    if state.name then
+        --Logger.info("%s %s: %s", name, state.name, stateParams)
+    end
+    if params.finish and state.finish then
+        EventManager.triggerEvent(params.finish)
+    end
+end
 
 function Task.load(name, input, validator, executor)
     if not input then

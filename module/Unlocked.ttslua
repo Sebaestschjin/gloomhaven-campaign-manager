@@ -21,7 +21,9 @@ Unlocked.TOTAL_TREASURE = 96
 function Unlocked.loadAll(unlocked)
     if unlocked then
         Task.load("Opening Conditions", unlocked.specialConditions, Unlocked.validateOpeningConditions, Unlocked.loadOpeningConditions)
-        Task.load("Unlocked Treasure", unlocked.treasures, Unlocked.validateTreasures, Unlocked.loadTreasures)
+        Task.start("Load Treasures", { input = unlocked.treasures,
+                                       execute = Unlocked.loadTreasures,
+                                       finish = EventType.TREASURE_LOADED })
         Sanctuary.load(unlocked.sanctuary)
     end
 end
@@ -186,7 +188,7 @@ function Unlocked.loadTreasures(treasures)
         })
     end
 
-    getObjectFromGUID(Component.guids.GAMEBOX).putObject(getObjectFromGUID(Component.guids.TREASURE_DECK))
+    EventManager.triggerEvent(EventType.TREASURE_LOADED)
 end
 
 function Unlocked.saveAll(saveFile)

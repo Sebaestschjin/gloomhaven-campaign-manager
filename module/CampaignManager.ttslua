@@ -69,7 +69,9 @@ function CampaignManager.setupEventHandlers(content)
     EventManager.addHandler(EventType.CLASS_READY, function(className) Enhancement.mayLoadForClass(content, className) end)
     EventManager.addHandler(EventType.CLASS_ENHANCED, function(className) Unlocked.mayLoadClass(content, className) end)
     EventManager.addHandler(EventType.CLASS_UNLOCKED, function(className) Party.mayLoadCharacter(content, className) end)
+
     EventManager.addHandler(EventType.CLASS_UNLOCKED, Cleanup.onClassUnlocked)
+    EventManager.addHandler(EventType.TREASURE_LOADED, Cleanup.onTreasureLoaded)
 end
 
 function CampaignManager.saveAll()
