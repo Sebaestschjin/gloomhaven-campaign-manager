@@ -6,7 +6,7 @@ local Component = require("gloomhaven-campaign-manager.module.Component")
 local Game = require("gloomhaven-campaign-manager.module.Game")
 local Task = require("gloomhaven-campaign-manager.module.Task")
 
----@shape fs__Achievement_Info
+---@shape fs_Achievement_Info
 ---@field name string
 ---@field guids GUID[]
 
@@ -69,7 +69,7 @@ function Achievement.loadGroup(i, achievementGroup)
         guid = Component.achievementBoardGuid(),
         callback_function = function(obj)
             for _, achievement in pairs(achievementGroup) do
-                local index = Achievement.findIndex(obj, achievement)
+                local index = --[[---@not nil]] Achievement.findIndex(obj, achievement)
                 obj.call('clicked', index)
             end
             Achievement.groupReady[i + 1] = true
@@ -83,7 +83,7 @@ function Achievement.saveAll(saveFile)
     if achievementBoard then
         Achievement.doSave(saveFile, achievementBoard)
     else
-        local bag = --[[---@not nil]] getObjectFromGUID(Component.guids.AchievementBag)
+        local bag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
         bag.takeObject({
             guid = achievementBoardGuid,
             position = Component.positions.ACHIEVEMENT_BOARD,
@@ -97,7 +97,7 @@ function Achievement.saveAll(saveFile)
 end
 
 function Achievement.doSave(saveFile, achievementBoard)
-    local achievementInfo = --[[---@type fs__Achievement_Info[] ]] achievementBoard.getTable("flags")
+    local achievementInfo = --[[---@type fs_Achievement_Info[] ]] achievementBoard.getTable("flags")
 
     local result = {}
     for _, achievement in pairs(achievementInfo) do
@@ -117,7 +117,7 @@ end
 ---@param board tts__Object
 ---@param achievement string
 function Achievement.findIndex(board, achievement)
-    local achievementInfo = --[[---@type fs__Achievement_Info[] ]] board.getTable("flags")
+    local achievementInfo = --[[---@type fs_Achievement_Info[] ]] board.getTable("flags")
 
     for i, flag in pairs(achievementInfo) do
         if flag.name == achievement then

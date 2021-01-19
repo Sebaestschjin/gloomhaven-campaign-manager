@@ -255,7 +255,7 @@ function Unlocked.saveTreasures()
     end
 
     local treasure = {}
-    for i = 1, Unlocked.TOTAL_TREASURE do
+    for i = 1, 96 do
         treasure[i] = true
     end
 

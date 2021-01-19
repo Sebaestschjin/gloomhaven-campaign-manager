@@ -39,6 +39,7 @@ Component.guids = {
 }
 
 Component.deckIds = {}
+---@type number[]
 Component.deckIds.QUESTS = { 1753, 1997 }
 Component.deckIds.RANDOM_SCENARIOS = 1930
 
@@ -69,7 +70,7 @@ Component.positions.TOWN_RECORDS = { 73.94, 2, 34.10 }
 Component.positions.TREASURE_DECK = { -75, 2, -5.3 }
 
 function Component.positions.relativeToZone(zoneGuid, position)
-    return getObjectFromGUID(zoneGuid).getPosition() + position
+    return (--[[---@not nil]] getObjectFromGUID(zoneGuid)).getPosition() + position
 end
 
 -- TODO this has to become better...
@@ -179,13 +180,14 @@ function Component.isAbilityDeck(object)
             and object.getName():find(Component.names.ABILITY_DECK)
 end
 
+---@param object tts__Object
 function Component.isAbilityCardForClass(object, class)
-    return Object.isCard(object)
-            and object.getDescription():find(class)
-            and (object.getName():find("%(%d%d%)")
-            or object.getName() == "Eternal Equilibrium (27("
-            or object.getName() == "Witcher's Contract )18)") -- quickfix for a typos in ability cards
-            and not object.getName():find(Component.names.ATTACK_MODIFIER)
+    local cardName, _ = string.gsub(object.getName(), "%s?[%(%)]%d+[%)%(]", "")
+
+    if Game.class(class).abilities[cardName] then
+        return true
+    end
+    return false
 end
 
 function Component.isStartingAbility(class, abilityName)
@@ -193,18 +195,12 @@ function Component.isStartingAbility(class, abilityName)
     return ability.level == 1 or ability.level == "X"
 end
 
+---@param class string
+---@param abilityCard tts__Object
 ---@return string
 function Component.getAbilityName(class, abilityCard)
-    -- quickfix for a typo in Elementalists ability card
-    if abilityCard.getName() == "Eternal Equilibrium (27(" then
-        return "Eternal Equilibrium"
-    end
-    -- quickfix for a typo in Witchers ability card
-    if abilityCard.getName() == "Witcher's Contract )18)" then
-        return "Witcher's Contract 18"
-    end
-    local cardName = abilityCard.getName():gsub("%s?%(%d+%)", "")
-    return Game.ability(class, cardName).name
+    local cardName, _ = string.gsub(abilityCard.getName(), "%s?[%(%)]%d+[%)%(]", "")
+    return --[[---@not nil]] Game.ability(class, cardName).name
 end
 
 --- Returns true if the given object is an item card.

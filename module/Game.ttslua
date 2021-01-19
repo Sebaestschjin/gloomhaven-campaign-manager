@@ -15,6 +15,8 @@ function Game.class(class)
     return classInfo
 end
 
+---@param class string
+---@param name string
 function Game.ability(class, name)
     local classInfo = Game.class(class)
     if classInfo then
@@ -28,7 +30,7 @@ function Game.ability(class, name)
                         .. " Maybe there's a typo in the ability name."
                         .. " Please verify that this assumption is correct.",
                         name, class, nearestName)
-                abilityInfo = classInfo.abilities[nearestName]
+                abilityInfo = classInfo.abilities[--[[---@not nil]]nearestName]
                 abilityInfo.name = nearestName
             else
                 Logger.error("Tried to get ability information for '%s' of class '%s', but it doesn't exist!"
@@ -45,18 +47,22 @@ end
 
 Game.PLAYERS = { "Red", "White", "Blue", "Green", }
 
--- Max HP per level.
+--- Max HP per level.
+---@type table<string, gh_Game_HpProgression>
 Game.HP = {
     LOW = { 6, 7, 8, 9, 10, 11, 12, 13, 14 },
     MEDIUM = { 8, 9, 11, 12, 14, 15, 17, 18, 20 },
     HIGH = { 10, 12, 14, 16, 18, 20, 22, 24, 26 }
 }
 
--- XP Requirements per level
+--- XP Requirements per level
+---@type number[]
 Game.XP_REQUIREMENTS = { 0, 45, 95, 150, 210, 275, 345, 420, 500 }
 
 Game.ITEMS = {
-    Prosperity = { 14, 21, 28, 35, 42, 49, 56, 63, 70 }, -- max item number per prosperity level
+    ---Max item number per prosperity level
+    ---@type number[]
+    Prosperity = { 14, 21, 28, 35, 42, 49, 56, 63, 70 },
     NegativeEffects = {
         ["Hide Armor"] = 2,
         ["Heavy Greaves"] = 1,
@@ -70,6 +76,7 @@ Game.ITEMS = {
     },
     -- In older versions of the mod, some items don't have a description, so it won't be identified as an item card.
     -- Thus, the items are listed here with their information.
+    ---@type table<string, gh_Game_Items>
     List = {
         ["Boots of Striding"] = {
             prosperity = 1,
@@ -111,11 +118,7 @@ Game.RANDOM_SCENARIOS = {
 }
 
 --- Information about all character classes.
--- Contains: name (as the key)
---           GUID of the box containing the character
---           max HP progression per level
---           list of perks and how they modify the modifier deck
---           list of abilities with their level and positions for enhancements
+---@type table<string, gh_Game_Class>
 Game.CLASSES = {
     Brute = {
         isStartingClass = true,
@@ -2221,10 +2224,7 @@ Game.CLASSES = {
     }
 }
 
----@shape gh__Achievement_Info
----@field maxCount number
-
----@type table<string, gh__Achievement_Info>
+---@type table<string, gh_Game_Achievement>
 Game.ACHIEVEMENTS = {
     ["Ancient Technology"] = {
         maxCount = 5
@@ -2309,12 +2309,8 @@ Game.ACHIEVEMENTS = {
     },
 }
 
----@shape gh_QuestInfo
----@field index number Index in the quest deck
----@field number number Card number
-
 ---Information about Personal quests.
----@type table<string, gh_QuestInfo>
+---@type table<string, gh_Game_Quest>
 Game.QUESTS = {
     ["A Helping Hand"] = {
         index = 0,

@@ -19,8 +19,12 @@ local Unlocked = require('gloomhaven-campaign-manager.module.Unlocked')
 -- 2163619993
 local CampaignManager = {}
 
+---@type number[]
 CampaignManager.VERSION = { 1, 3, 0 }
+---@type string
 CampaignManager.SAVE_FILE = "Savefile"
+---@type number[]
+CampaignManager.SAVE_FILE_VERSION = { 1, 0, 0 }
 
 function CampaignManager.loadAll()
     local saveFile = Utils.readNotebook(CampaignManager.SAVE_FILE)
