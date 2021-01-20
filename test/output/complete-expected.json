@@ -1,4 +1,7 @@
 {
+  "metadata": {
+    "version": "1.0"
+  },
   "enhancements": [
     {
       "abilities": [
@@ -210,7 +213,7 @@
         "gold": 42,
         "hiddenNotes": [
           "TXkgTm90ZQ==",
-          "Non Base64 is also possible"
+          "Tm9uIEJhc2U2NCBpcyBhbHNvIHBvc3NpYmxl"
         ],
         "items": [
           {

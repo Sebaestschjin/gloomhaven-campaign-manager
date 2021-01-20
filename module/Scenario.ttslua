@@ -93,7 +93,7 @@ function Scenario.removeRandomScenario(number)
 
     deck.takeObject({
         index = scenarioCard.index,
-        position = Component.positions.getSafe(),
+        position = Component.getSafePosition(),
         callback_function = function(obj) obj.destruct() end,
     })
 end

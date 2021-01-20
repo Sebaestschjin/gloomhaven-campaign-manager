@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "version": "1.0"
+  },
+  "global": {
+    "prosperity": 0
+  },
+  "unlocked": {
+    "classes": [
+      "Witcher"
+    ]
+  },
+  "party": {
+    "name": "",
+    "location": "",
+    "reputation": 0,
+    "achievements": [],
+    "notes": [],
+    "characters": [
+      {
+        "class": "Witcher",
+        "name": "",
+        "abilities": [
+          "Bomb: Northern Wind",
+          "Crossbow Shot",
+          "Hightened Tolerance",
+          "Potion: Ekimmara",
+          "Potion: Petri's philter",
+          "Potion: Poisoned Blades",
+          "Raffard Decoction",
+          "Sign: Axii",
+          "Sign: Enhanced Aard",
+          "Sign: Enhanced Igni",
+          "Sign: Enhanced Quen",
+          "Sign: Heliotrope",
+          "Sign: Yrden",
+          "Silver and Steel",
+          "The Wild Hunt",
+          "Witcher's Contract"
+        ],
+        "perks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "items": [],
+        "notes": [],
+        "hiddenNotes": []
+      },
+      [],
+      [],
+      []
+    ]
+  }
+}

@@ -24,7 +24,7 @@ CampaignManager.VERSION = { 1, 3, 0 }
 ---@type string
 CampaignManager.SAVE_FILE = "Savefile"
 ---@type number[]
-CampaignManager.SAVE_FILE_VERSION = { 1, 0, 0 }
+CampaignManager.SAVE_FILE_VERSION = { 1, 0 }
 
 function CampaignManager.loadAll()
     local saveFile = Utils.readNotebook(CampaignManager.SAVE_FILE)
@@ -110,6 +110,11 @@ function CampaignManager.doCreateSaveFile(saveFile)
     saveFile.enhancements = Enhancement.save()
     saveFile.retired = Retirement.save()
     saveFile.events = Event.save()
+
+    saveFile.metadata = {
+        version = table.concat(CampaignManager.SAVE_FILE_VERSION, "."),
+        date = os.date("%Y-%m-%d'T'%H:%M")
+    }
 end
 
 return CampaignManager

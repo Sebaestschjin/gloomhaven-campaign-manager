@@ -1,14 +1,26 @@
 {
+  "metadata": {
+    "version": "1.0"
+  },
   "unlocked": {
     "classes": [
       "Elementalist",
       "Sawbones"
     ]
   },
+  "global": {
+    "prosperity": 0
+  },
   "party": {
+    "name": "",
+    "location": "",
+    "reputation": 0,
+    "achievements": [],
+    "notes": [],
     "characters": [
       {
         "class": "Sawbones",
+        "name": "",
         "abilities": [
           "Amputate",
           "Bedside Manner",
@@ -43,10 +55,17 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "items": [],
+        "notes": [],
+        "hiddenNotes": []
       },
       {
         "class": "Elementalist",
+        "name": "",
         "abilities": [
           "Boiling Arc",
           "Burial",
@@ -81,8 +100,16 @@
           13,
           14,
           15
-        ]
-      }
+        ],
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "items": [],
+        "notes": [],
+        "hiddenNotes": []
+      },
+      [],
+      []
     ]
   }
 }

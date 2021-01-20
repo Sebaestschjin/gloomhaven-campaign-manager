@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "version": "1.0"
+  },
+  "global": {
+    "prosperity": 0
+  },
+  "party": {
+    "achievements": [],
+    "characters": [
+      {
+        "abilities": [
+          "Devastating Hack"
+        ],
+        "checkmarks": 0,
+        "class": "Brute",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "name": "",
+        "notes": [],
+        "perks": [],
+        "xp": 0
+      },
+      {
+        "abilities": [
+          "Dimensional Divide"
+        ],
+        "checkmarks": 0,
+        "class": "Diviner",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "notes": [],
+        "perks": [],
+        "xp": 0
+      },
+      [],
+      []
+    ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  },
+  "unlocked": {
+    "classes": [
+      "Diviner"
+    ]
+  }
+}

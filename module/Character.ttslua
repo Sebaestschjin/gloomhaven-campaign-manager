@@ -259,7 +259,7 @@ function Character.addModifierCard(chain, character, additionalDeck, currentDeck
 
     additionalDeck.takeObject({
         guid = foundCard.getGUID(),
-        position = Component.positions.getSafe(),
+        position = Component.getSafePosition(),
         smooth = false,
         callback_function = function(c)
             currentDeck.putObject(c)
@@ -286,7 +286,7 @@ function Character.removeModifierCard(chain, character, currentDeck, card)
 
     currentDeck.takeObject({
         guid = foundCard.getGUID(),
-        position = Component.positions.getSafe(),
+        position = Component.getSafePosition(),
         smooth = false,
         callback_function = function(c)
             c.destruct()

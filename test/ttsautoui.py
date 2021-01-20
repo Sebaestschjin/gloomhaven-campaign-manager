@@ -11,19 +11,27 @@ def create_singleplayer():
     click_image("res/menu/singleplayer.png")
 
 
-def load_workshop(name, folders=[]):
+def load_workshop(name, folders=[], additive=False):
+    if additive:
+        click_image("res/menu/games.png")
     click_image("res/menu/workshop.png")
-    for folder in folders:
-        click_image(f"res/folder/game/{folder}.png")
-    click_image(f"res/game/{name}.png")
-    click_image("res/button/load.png")
-    wait_for_image("res/chat/loading_complete.png")
+    goto_folder(folders, "game")
+    if additive:
+        goto_image(f"res/game/{name}.png")
+        ui.move(45, -55)
+        ui.click()
+        click_image("res/button/additive_load.png")
+        click_image("res/button/load.png")
+        time.sleep(5)
+    else:
+        click_image(f"res/game/{name}.png")
+        click_image("res/button/load.png")
+        wait_for_image("res/chat/loading_complete.png")
 
 
 def load_save(name, folders=[]):
     click_image("res/menu/save_and_load.png")
-    for folder in folders:
-        click_image(f"res/folder/save/{folder}.png")
+    goto_folder(folders, "save")
     click_image(f"res/save/{name}.png")
     click_image("res/button/load.png")
     wait_for_image("res/chat/loading_complete.png")
@@ -32,14 +40,18 @@ def load_save(name, folders=[]):
 def load_saved_object(name, folders=[]):
     click_image("res/menu/objects.png")
     click_image("res/menu/saved_objects.png")
-    for folder in folders:
-        click_image(f"res/folder/object/{folder}.png")
+    goto_folder(folders, "object")
     click_image(f"res/object/{name}.png")
     ui.move(45, -110)
     ui.click()
     ui.move(0, 35)
     ui.click()
     ui.press("esc")
+
+
+def goto_folder(folders, base):
+    for folder in folders:
+        click_image(f"res/folder/{base}/{folder}.png")
 
 
 def goto_main_menu():
@@ -90,6 +102,15 @@ def get_notebook(name):
 
 def find_image(name):
     return ui.locateCenterOnScreen(name, confidence=0.9) is not None
+
+
+def goto_image(name):
+    position = ui.locateCenterOnScreen(name, confidence=0.9)
+    if not position:
+        raise ValueError(f"Can find't image {name}")
+    x, y = position
+    ui.moveTo(x, y)
+    time.sleep(1)
 
 
 def click_image(name):

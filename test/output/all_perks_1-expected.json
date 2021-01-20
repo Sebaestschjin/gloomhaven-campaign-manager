@@ -1,4 +1,10 @@
 {
+  "metadata": {
+    "version": "1.0"
+  },
+  "global": {
+    "prosperity": 0
+  },
   "unlocked": {
     "classes": [
       "Sunkeeper",
@@ -8,9 +14,15 @@
     ]
   },
   "party": {
+    "name": "",
+    "location": "",
+    "reputation": 0,
+    "achievements": [],
+    "notes": [],
     "characters": [
       {
         "class": "Sunkeeper",
+        "name": "",
         "abilities": [
           "Angelic Ascension",
           "Bright Aegis",
@@ -45,10 +57,17 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "items": [],
+        "notes": [],
+        "hiddenNotes": []
       },
       {
         "class": "Doomstalker",
+        "name": "",
         "abilities": [
           "Camouflage",
           "Crashing Wave",
@@ -83,10 +102,17 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "items": [],
+        "notes": [],
+        "hiddenNotes": []
       },
       {
         "class": "Summoner",
+        "name": "",
         "abilities": [
           "Conjured Aid",
           "Divided Mind",
@@ -121,7 +147,13 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "items": [],
+        "notes": [],
+        "hiddenNotes": []
       },
       {
         "class": "Diviner",
@@ -159,7 +191,13 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "items": [],
+        "notes": [],
+        "hiddenNotes": []
       }
     ]
   }

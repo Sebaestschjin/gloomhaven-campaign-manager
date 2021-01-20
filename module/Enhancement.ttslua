@@ -77,7 +77,7 @@ function Enhancement.loadClass(className, abilities)
     -- with the new character box.
     classBox.takeObject({
         index = 1,
-        position = Component.positions.getSafe(),
+        position = Component.getSafePosition(),
         callback_function = function(o) Enhancement.onCharacterBoxUnpacked(o, params) end,
     })
 end
@@ -91,7 +91,7 @@ function Enhancement.onCharacterBoxUnpacked(characterBox, params)
         local abilityDeck = Utils.findObjectIn(characterBox, { name = name })
         characterBox.takeObject({
             guid = abilityDeck.getGUID(),
-            position = Component.positions.getSafe(),
+            position = Component.getSafePosition(),
             rotation = { 0, 180, 0 },
             smooth = false,
             callback_function = function(d) Enhancement.onAbilityDeckUnpacked(d, params) end

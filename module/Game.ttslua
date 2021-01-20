@@ -2,9 +2,15 @@ local Logger = require("sebaestschjin-tts.module.Logger")
 local StringUtil = require("sebaestschjin-tts.src.StringUtil")
 local TableUtil = require("sebaestschjin-tts.src.TableUtil")
 
--- Contains information about different parts of the Gloomhaven mod and Gloomhaven components (e.g.
--- all classes and their perks).
+--- Contains information about different parts of the Gloomhaven mod and Gloomhaven components (e.g.
+--- all classes and their perks).
 local Game = {}
+
+local FoundAbility = {
+    NONE = 0,
+    EXACT = 1,
+    NEAREST = 2,
+}
 
 ---@param class string
 function Game.class(class)
@@ -17,32 +23,51 @@ end
 
 ---@param class string
 ---@param name string
+---@return gh_Game_Ability
 function Game.ability(class, name)
+    local ability, state = Game.nearestAbility(class, name)
+
+    if state == FoundAbility.NEAREST then
+        Logger.warn("Tried to get ability information for '%s' of class '%s', but it doesn't exist."
+                .. " However, found the ability '%s' which is similar in name which will be used instead."
+                .. " Maybe there's a typo in the ability name."
+                .. " Please verify that this assumption is correct.",
+                name, class, (--[[---@not nil]] ability).name)
+    elseif state == FoundAbility.NONE then
+        local classInfo = Game.class(class)
+        local allNames = TableUtil.keys(classInfo.abilities)
+        Logger.error("Tried to get ability information for '%s' of class '%s', but it doesn't exist!"
+                .. " Also couldn't find any ability that is similar. Avaible abilities are: [%s].",
+                name, class, table.concat(allNames, ", "))
+    end
+
+    return ability
+end
+
+---@param class string
+---@param name string
+---@return nil | gh_Game_Ability, number
+function Game.nearestAbility(class, name)
     local classInfo = Game.class(class)
+    local state = FoundAbility.NONE
     if classInfo then
         local abilityInfo = classInfo.abilities[name]
         if not abilityInfo then
             local allNames = TableUtil.keys(classInfo.abilities)
             local nearestName = StringUtil.findNearest(name, allNames, 3)
             if nearestName then
-                Logger.warn("Tried to get ability information for '%s' of class '%s', but it doesn't exist."
-                        .. " However, found the ability '%s' which is similar in name which will be used instead."
-                        .. " Maybe there's a typo in the ability name."
-                        .. " Please verify that this assumption is correct.",
-                        name, class, nearestName)
                 abilityInfo = classInfo.abilities[--[[---@not nil]]nearestName]
                 abilityInfo.name = nearestName
-            else
-                Logger.error("Tried to get ability information for '%s' of class '%s', but it doesn't exist!"
-                        .. " Also couldn't find any ability that is similar. Avaible abilities are: [%s].",
-                        name, class, table.concat(allNames, ", "))
+                state = FoundAbility.NEAREST
             end
         else
             abilityInfo.name = name
+            state = FoundAbility.EXACT
         end
 
-        return abilityInfo
+        return abilityInfo, state
     end
+    return nil, state
 end
 
 Game.PLAYERS = { "Red", "White", "Blue", "Green", }

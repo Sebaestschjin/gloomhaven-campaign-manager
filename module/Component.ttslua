@@ -73,12 +73,10 @@ function Component.positions.relativeToZone(zoneGuid, position)
     return (--[[---@not nil]] getObjectFromGUID(zoneGuid)).getPosition() + position
 end
 
--- TODO this has to become better...
----@type number
-Component.positions.counter = 0
-function Component.positions.getSafe()
-    Component.positions.counter = Component.positions.counter + 1
-    return Vector(-43 + (Component.positions.counter * 3), 2, -85)
+local positionCounter = 0
+function Component.getSafePosition()
+    positionCounter = positionCounter + 1
+    return Vector(-43 + (positionCounter * 3), 2, -85)
 end
 
 Component.snaps = {}
@@ -182,12 +180,10 @@ end
 
 ---@param object tts__Object
 function Component.isAbilityCardForClass(object, class)
-    local cardName, _ = string.gsub(object.getName(), "%s?[%(%)]%d+[%)%(]", "")
-
-    if Game.class(class).abilities[cardName] then
-        return true
-    end
-    return false
+    return Object.isCard(object)
+            and object.getDescription():find(class) ~= nil
+            and object.getName():find("[%(%)]%d%d[%)%(]") ~= nil
+            and object.getName():find(Component.names.ATTACK_MODIFIER) == nil
 end
 
 function Component.isStartingAbility(class, abilityName)

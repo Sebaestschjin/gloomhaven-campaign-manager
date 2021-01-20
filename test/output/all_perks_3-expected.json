@@ -1,14 +1,14 @@
 {
-  "unlocked": {
-    "classes": [
-      "Berserker",
-      "Quartermaster"
-    ]
+  "metadata": {
+    "version": "1.0"
+  },
+  "global": {
+    "prosperity": 0
   },
   "party": {
+    "achievements": [],
     "characters": [
       {
-        "class": "Cragheart",
         "abilities": [
           "Blind Destruction",
           "Blunt Force",
@@ -27,6 +27,12 @@
           "Sentient Growth",
           "Stone Pummel"
         ],
+        "checkmarks": 0,
+        "class": "Cragheart",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "notes": [],
         "perks": [
           1,
           2,
@@ -43,10 +49,10 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       },
       {
-        "class": "Tinkerer",
         "abilities": [
           "Auto Turret",
           "Chimeric Formula",
@@ -65,6 +71,12 @@
           "Stamina Booster",
           "Tinkerer's Tools"
         ],
+        "checkmarks": 0,
+        "class": "Tinkerer",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "notes": [],
         "perks": [
           1,
           2,
@@ -81,10 +93,10 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       },
       {
-        "class": "Quartermaster",
         "abilities": [
           "Bag of Holding",
           "Bladed Boomerang",
@@ -103,6 +115,13 @@
           "Scroll of Lightning",
           "Side Pouch"
         ],
+        "checkmarks": 0,
+        "class": "Quartermaster",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "name": "",
+        "notes": [],
         "perks": [
           1,
           2,
@@ -119,10 +138,10 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       },
       {
-        "class": "Berserker",
         "abilities": [
           "Bone Breaker",
           "Break the Chains",
@@ -141,6 +160,13 @@
           "Unstoppable Destruction",
           "Vengeful Barrage"
         ],
+        "checkmarks": 0,
+        "class": "Berserker",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "name": "",
+        "notes": [],
         "perks": [
           1,
           2,
@@ -157,8 +183,19 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       }
+    ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  },
+  "unlocked": {
+    "classes": [
+      "Berserker",
+      "Quartermaster"
     ]
   }
 }

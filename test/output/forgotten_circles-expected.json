@@ -1,4 +1,7 @@
 {
+  "metadata": {
+    "version": "1.0"
+  },
   "events": [
     {
       "bottomUp": [
@@ -78,13 +81,29 @@
       "deck": "road"
     }
   ],
+  "global": {
+    "prosperity": 0
+  },
+  "party": {
+    "achievements": [],
+    "characters": [
+      [],
+      [],
+      [],
+      []
+    ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  },
   "unlocked": {
     "classes": [
       "Diviner"
     ],
     "items": [
-      "Minor Antidote",
-      "Major Antidote"
+      "Major Antidote",
+      "Minor Antidote"
     ]
   }
 }

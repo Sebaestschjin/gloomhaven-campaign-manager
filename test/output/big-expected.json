@@ -1,15 +1,18 @@
 {
+  "metadata": {
+    "version": "1.0"
+  },
   "enhancements": [
     {
       "abilities": [
         {
-          "name": "Aid from the Ether",
           "enhancements": [
             {
               "enhancement": "Plus 1",
               "position": 5
             }
-          ]
+          ],
+          "name": "Aid from the Ether"
         },
         {
           "enhancements": [
@@ -143,79 +146,6 @@
       ]
     }
   ],
-  "unlocked": {
-    "classes": [
-      "Berserker",
-      "Elementalist",
-      "Quartermaster",
-      "Beast Tyrant",
-      "Soothsinger",
-      "Nightshroud",
-      "Sawbones",
-      "Sunkeeper",
-      "Summoner",
-      "Doomstalker",
-      "Diviner"
-    ],
-    "items": [
-      "Circlet of Elements",
-      "Circlet of Elements",
-      "Curious Gear",
-      "Doctor's Coat",
-      "Doomed Compass",
-      "Drakescale Boots",
-      "Drakescale Helm",
-      "Endurance Footwraps",
-      "Fueled Falchion",
-      "Fueled Falchion",
-      "Heart of the Betrayer",
-      "Helix Ring",
-      "Horned Helm",
-      "Horned Helm",
-      "Inferno Blade",
-      "Inferno Blade",
-      "Magma Waders",
-      "Major Cure Potion",
-      "Major Cure Potion",
-      "Master's Lute",
-      "Minor Cure Potion",
-      "Mountain Hammer",
-      "Phasing Idol",
-      "Power Core",
-      "Ring of Skulls",
-      "Ring of Skulls",
-      "Robes of Summoning",
-      "Rocket Boots",
-      "Rocket Boots",
-      "Sacrificial Robes",
-      "Scroll of Healing",
-      "Scroll of Healing",
-      "Second Skin",
-      "Skullbane Axe",
-      "Staff of Command",
-      "Steam Armor",
-      "Sun Shield",
-      "Swordedge Armor",
-      "Swordedge Armor",
-      "Wand of Frost",
-      "Wand of Frost",
-      "Wand of Infernos",
-      "Wand of Infernos",
-      "Wand of Tremors",
-      "Wand of Tremors"
-    ],
-    "sanctuary": 39,
-    "specialConditions": {
-      "ancientTechnology": true,
-      "donations": 10,
-      "drakeAided": true,
-      "highestReputation": true,
-      "highReputation": true,
-      "lowestReputation": false,
-      "lowReputation": false,
-      "retired": true
-    }
-  },
   "global": {
     "achievements": [
       {
@@ -520,15 +450,9 @@
     ]
   },
   "party": {
-    "name": "Rock 'N' Rob!!!",
-    "location": "Gloomhaven",
-    "reputation": 20,
     "achievements": [],
-    "notes": [],
     "characters": [
       {
-        "class": "Sunkeeper",
-        "name": "Shakrae",
         "abilities": [
           "Angelic Ascension",
           "Bright Aegis",
@@ -539,25 +463,10 @@
           "Righteous Strength",
           "Weapon of Purity"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          14,
-          15
-        ],
-        "xp": 584,
-        "gold": 10,
         "checkmarks": 4,
-        "quest": 533,
+        "class": "Sunkeeper",
+        "gold": 10,
+        "hiddenNotes": [],
         "items": [
           {
             "name": "Black Knife",
@@ -603,11 +512,28 @@
             "name": "Tower Shield",
             "position": "HandLeft"
           }
-        ]
+        ],
+        "name": "Shakrae",
+        "notes": [],
+        "perks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          14,
+          15
+        ],
+        "quest": 533,
+        "xp": 584
       },
       {
-        "class": "Elementalist",
-        "name": "Hu Bris",
         "abilities": [
           "Burial",
           "Crystallizing Blast",
@@ -616,21 +542,10 @@
           "Vengeance",
           "Winter's Edge"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          10,
-          11,
-          14,
-          15
-        ],
-        "xp": 411,
-        "gold": 32,
         "checkmarks": 1,
-        "quest": 515,
+        "class": "Elementalist",
+        "gold": 32,
+        "hiddenNotes": [],
         "items": [
           {
             "name": "Circlet of Elements",
@@ -668,11 +583,24 @@
             "name": "Wand of Tremors",
             "position": "HandLeft"
           }
-        ]
+        ],
+        "name": "Hu Bris",
+        "notes": [],
+        "perks": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          10,
+          11,
+          14,
+          15
+        ],
+        "quest": 515,
+        "xp": 411
       },
       {
-        "class": "Spellweaver",
-        "name": "",
         "abilities": [
           "Chromatic Explosion",
           "Cold Fire",
@@ -681,22 +609,10 @@
           "Forked Beam",
           "Living Torch"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          6,
-          7,
-          9,
-          10,
-          11,
-          12,
-          13
-        ],
-        "xp": 417,
-        "gold": 36,
         "checkmarks": 2,
-        "quest": 523,
+        "class": "Spellweaver",
+        "gold": 36,
+        "hiddenNotes": [],
         "items": [
           {
             "name": "Boots of Striding",
@@ -730,11 +646,25 @@
             "name": "Piercing Bow",
             "position": "HandLeft"
           }
-        ]
+        ],
+        "name": "",
+        "notes": [],
+        "perks": [
+          1,
+          2,
+          3,
+          6,
+          7,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "quest": 523,
+        "xp": 417
       },
       {
-        "class": "Diviner",
-        "name": "Amaterasu",
         "abilities": [
           "Anguish and Salvation",
           "Call of the Nether",
@@ -744,21 +674,10 @@
           "Revitalizing Fount ",
           "Seal Their Fate"
         ],
-        "perks": [
-          1,
-          2,
-          4,
-          6,
-          7,
-          9,
-          12,
-          14,
-          15
-        ],
-        "xp": 469,
-        "gold": 8,
         "checkmarks": 7,
-        "quest": 528,
+        "class": "Diviner",
+        "gold": 8,
+        "hiddenNotes": [],
         "items": [
           {
             "name": "Cloak of Pockets",
@@ -784,9 +703,28 @@
             "name": "Pendant of Dark Pacts",
             "position": "Unequipped"
           }
-        ]
+        ],
+        "name": "Amaterasu",
+        "notes": [],
+        "perks": [
+          1,
+          2,
+          4,
+          6,
+          7,
+          9,
+          12,
+          14,
+          15
+        ],
+        "quest": 528,
+        "xp": 469
       }
-    ]
+    ],
+    "location": "Gloomhaven",
+    "name": "Rock 'N' Rob!!!",
+    "notes": [],
+    "reputation": 20
   },
   "retired": [
     {
@@ -894,5 +832,76 @@
     {
       "quest": "Zealot of the Blood God"
     }
-  ]
+  ],
+  "unlocked": {
+    "classes": [
+      "Berserker",
+      "Elementalist",
+      "Quartermaster",
+      "Beast Tyrant",
+      "Soothsinger",
+      "Nightshroud",
+      "Sawbones",
+      "Sunkeeper",
+      "Summoner",
+      "Doomstalker",
+      "Diviner"
+    ],
+    "items": [
+      "Circlet of Elements",
+      "Circlet of Elements",
+      "Curious Gear",
+      "Doctor's Coat",
+      "Doomed Compass",
+      "Drakescale Boots",
+      "Drakescale Helm",
+      "Endurance Footwraps",
+      "Fueled Falchion",
+      "Fueled Falchion",
+      "Heart of the Betrayer",
+      "Helix Ring",
+      "Horned Helm",
+      "Horned Helm",
+      "Inferno Blade",
+      "Inferno Blade",
+      "Magma Waders",
+      "Major Cure Potion",
+      "Major Cure Potion",
+      "Master's Lute",
+      "Minor Cure Potion",
+      "Mountain Hammer",
+      "Phasing Idol",
+      "Power Core",
+      "Ring of Skulls",
+      "Ring of Skulls",
+      "Robes of Summoning",
+      "Rocket Boots",
+      "Rocket Boots",
+      "Scroll of Healing",
+      "Scroll of Healing",
+      "Second Skin",
+      "Skullbane Axe",
+      "Staff of Command",
+      "Steam Armor",
+      "Sun Shield",
+      "Swordedge Armor",
+      "Wand of Frost",
+      "Wand of Frost",
+      "Wand of Infernos",
+      "Wand of Infernos",
+      "Wand of Tremors",
+      "Wand of Tremors"
+    ],
+    "sanctuary": 39,
+    "specialConditions": {
+      "ancientTechnology": true,
+      "donations": 10,
+      "drakeAided": true,
+      "highestReputation": true,
+      "highReputation": true,
+      "lowestReputation": false,
+      "lowReputation": false,
+      "retired": true
+    }
+  }
 }

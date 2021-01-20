@@ -151,7 +151,7 @@ function Event.dealEvents(deck, eventCards, info)
     for _, event in pairs(eventCards) do
         deck.takeObject({
             guid = event,
-            position = Component.positions.getSafe(),
+            position = Component.getSafePosition(),
             rotation = Constant.Rotation.NORTH,
             smooth = false,
             callback_function = function(card) eventDeck.putObject(card) end

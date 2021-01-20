@@ -30,7 +30,7 @@ function Expansion.unpackEvents(chain, targetDeck, name)
 
     forgottenCirclesBox.takeObject({
         guid = newEvents.getGUID(),
-        position = Component.positions.getSafe(),
+        position = Component.getSafePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,
         callback_function = function(obj) Expansion.nameEventCards(chain, obj, targetDeck) end,
@@ -49,7 +49,7 @@ end
 function Expansion.placeEventCard(chain, deck, targetDeck, index)
     deck.takeObject({
         index = index - 1,
-        position = Component.positions.getSafe(),
+        position = Component.getSafePosition(),
         smooth = false,
         callback_function = function(card)
             card.setName(tostring((index - 1) + Expansion.START_EVENT))
@@ -67,7 +67,7 @@ function Expansion.unpackItems(chain)
 
     forgottenCirclesBox.takeObject({
         guid = newItems.getGUID(),
-        position = Component.positions.getSafe(),
+        position = Component.getSafePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,
         callback_function = function(obj)

@@ -186,7 +186,7 @@ function Unlocked.loadTreasures(treasures)
         else
             treasureDeck.takeObject({
                 index = treasureCard.index,
-                position = Component.positions.getSafe(),
+                position = Component.getSafePosition(),
                 callback_function = function(obj) obj.destruct() end,
             })
         end
@@ -200,7 +200,7 @@ function Unlocked.saveAll(saveFile)
         classes = Unlocked.saveClasses(),
         sanctuary = Sanctuary.save(),
         specialConditions = Unlocked.saveOpeningConditions(),
-        treasures = Unlocked.saveTreasures(),
+        treasures = TableUtil.emptyToNil(Unlocked.saveTreasures()),
     }
     Shop.save(saveFile.unlocked)
 end

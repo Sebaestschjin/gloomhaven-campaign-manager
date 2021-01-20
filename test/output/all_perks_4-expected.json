@@ -1,16 +1,14 @@
 {
-  "unlocked": {
-    "classes": [
-      "Beast Tyrant",
-      "Soothsinger",
-      "Plagueherald",
-      "Nightshroud"
-    ]
+  "metadata": {
+    "version": "1.0"
+  },
+  "global": {
+    "prosperity": 0
   },
   "party": {
+    "achievements": [],
     "characters": [
       {
-        "class": "Beast Tyrant",
         "abilities": [
           "Ancient Ward",
           "Blood Hunger",
@@ -29,6 +27,13 @@
           "Unstoppable Beast",
           "Vicious Ally"
         ],
+        "checkmarks": 0,
+        "class": "Beast Tyrant",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "name": "",
+        "notes": [],
         "perks": [
           1,
           2,
@@ -45,10 +50,10 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       },
       {
-        "class": "Soothsinger",
         "abilities": [
           "Booming Proclamation",
           "Captivating Performance",
@@ -67,6 +72,13 @@
           "Soothing Lullaby",
           "Tranquil Trill"
         ],
+        "checkmarks": 0,
+        "class": "Soothsinger",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "name": "",
+        "notes": [],
         "perks": [
           1,
           2,
@@ -83,10 +95,10 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       },
       {
-        "class": "Plagueherald",
         "abilities": [
           "Accelerated End",
           "Airborne Toxin",
@@ -105,6 +117,13 @@
           "Under the Skin",
           "Willing Sacrifice"
         ],
+        "checkmarks": 0,
+        "class": "Plagueherald",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "name": "",
+        "notes": [],
         "perks": [
           1,
           2,
@@ -121,10 +140,10 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       },
       {
-        "class": "Nightshroud",
         "abilities": [
           "Angel of Death",
           "Armor of the Night",
@@ -143,6 +162,13 @@
           "Unseen Dread",
           "Voice of the Night"
         ],
+        "checkmarks": 0,
+        "class": "Nightshroud",
+        "gold": 0,
+        "hiddenNotes": [],
+        "items": [],
+        "name": "",
+        "notes": [],
         "perks": [
           1,
           2,
@@ -159,8 +185,21 @@
           13,
           14,
           15
-        ]
+        ],
+        "xp": 0
       }
+    ],
+    "location": "",
+    "name": "",
+    "notes": [],
+    "reputation": 0
+  },
+  "unlocked": {
+    "classes": [
+      "Beast Tyrant",
+      "Soothsinger",
+      "Plagueherald",
+      "Nightshroud"
     ]
   }
 }
