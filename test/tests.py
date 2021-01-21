@@ -6,8 +6,8 @@ import ttsautoui as tts
 import time
 import pytest
 
-LOAD_TIME = 25  # time to wait for loading to finish
-SAVE_TIME = 5  # time to wait for saving to finish
+LOAD_TIME = 30  # time to wait for loading to finish
+SAVE_TIME = 30  # time to wait for saving to finish
 
 
 @pytest.fixture()
