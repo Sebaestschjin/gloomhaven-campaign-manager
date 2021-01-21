@@ -5,13 +5,15 @@ import win32clipboard
 
 ui.PAUSE = 0.5
 
+IMAGE_TIMEOUT = 60
+
 
 def create_singleplayer():
     click_image("res/menu/create.png")
     click_image("res/menu/singleplayer.png")
 
 
-def load_workshop(name, folders=[], additive=False):
+def load_workshop(name, folders=[], additive=False, wait_for_loading=IMAGE_TIMEOUT):
     if additive:
         click_image("res/menu/games.png")
     click_image("res/menu/workshop.png")
@@ -26,15 +28,15 @@ def load_workshop(name, folders=[], additive=False):
     else:
         click_image(f"res/game/{name}.png")
         click_image("res/button/load.png")
-        wait_for_image("res/chat/loading_complete.png")
+        wait_for_image("res/chat/loading_complete.png", wait_for_loading)
 
 
-def load_save(name, folders=[]):
+def load_save(name, folders=[], wait_for_loading=IMAGE_TIMEOUT):
     click_image("res/menu/save_and_load.png")
     goto_folder(folders, "save")
     click_image(f"res/save/{name}.png")
     click_image("res/button/load.png")
-    wait_for_image("res/chat/loading_complete.png")
+    wait_for_image("res/chat/loading_complete.png", wait_for_loading)
 
 
 def load_saved_object(name, folders=[]):
@@ -122,13 +124,13 @@ def click_image(name):
     time.sleep(1)
 
 
-def wait_for_image(name, timeout=60):
+def wait_for_image(name, timeout=IMAGE_TIMEOUT):
     start = datetime.now()
     while True:
         position = ui.locateCenterOnScreen(name, confidence=0.9)
         if position:
             return
-        time.sleep(1)
+        time.sleep(2)
         if (datetime.now() - start).total_seconds() >= timeout:
             raise ValueError(f"Waited to long for image {name} to appear")
 

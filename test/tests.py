@@ -86,7 +86,7 @@ def load_from_savegame(name):
     shutil.copy2(src, dest)
 
     tts.create_singleplayer()
-    tts.load_save("test", folders=["gloomhaven", "test"])
+    tts.load_save("test", folders=["gloomhaven", "test"], wait_for_loading=360)
     tts.load_saved_object("campaign_manager", folders=["gloomhaven"])
 
 

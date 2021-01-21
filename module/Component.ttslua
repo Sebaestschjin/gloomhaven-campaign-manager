@@ -180,10 +180,15 @@ end
 
 ---@param object tts__Object
 function Component.isAbilityCardForClass(object, class)
-    return Object.isCard(object)
-            and object.getDescription():find(class) ~= nil
-            and object.getName():find("[%(%)]%d%d[%)%(]") ~= nil
-            and object.getName():find(Component.names.ATTACK_MODIFIER) == nil
+    if not Object.isCard(object)
+            or not object.getDescription():find(class)
+            or object.getName():find(Component.names.ATTACK_MODIFIER) then
+        return false
+    end
+
+    local cardName, _ = object.getName():gsub("[%(%)]%d%d[%)%(]", "")
+    local nearest, _ = Game.nearestAbility(class, cardName)
+    return nearest ~= nil
 end
 
 function Component.isStartingAbility(class, abilityName)
