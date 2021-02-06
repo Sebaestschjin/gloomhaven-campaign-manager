@@ -1,0 +1,6 @@
+[submodule "ge_tts"]
+	path = ge_tts
+	url = https://github.com/Benjamin-Dobell/ge_tts
+[submodule "sebaestschjin-tts"]
+	path = sebaestschjin-tts
+	url = https://github.com/Sebaestschjin/sebaestschjin-tts
