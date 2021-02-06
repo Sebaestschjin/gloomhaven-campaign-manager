@@ -1,0 +1,120 @@
+local EventManager = require('ge_tts.EventManager')
+local Logger = require('sebaestschjin-tts.Logger')
+local Utils = require('sebaestschjin-tts.Utils')
+
+local Cleanup = require('gloomhaven-campaign-manager.Cleanup')
+local Game = require('gloomhaven-campaign-manager.Game')
+local Achievement = require('gloomhaven-campaign-manager.Achievement')
+local Enhancement = require('gloomhaven-campaign-manager.Enhancement')
+local Event = require('gloomhaven-campaign-manager.Event')
+local EventType = require('gloomhaven-campaign-manager.EventType')
+local Party = require('gloomhaven-campaign-manager.Party')
+local Preparation = require('gloomhaven-campaign-manager.Preparation')
+local Prosperity = require('gloomhaven-campaign-manager.Prosperity')
+local Retirement = require('gloomhaven-campaign-manager.Retirement')
+local Scenario = require('gloomhaven-campaign-manager.Scenario')
+local Shop = require('gloomhaven-campaign-manager.Shop')
+local Unlocked = require('gloomhaven-campaign-manager.Unlocked')
+
+-- 2163619993
+local CampaignManager = {}
+
+---@type number[]
+CampaignManager.VERSION = { 1, 3, 2 }
+---@type string
+CampaignManager.SAVE_FILE = "Savefile"
+---@type number[]
+CampaignManager.SAVE_FILE_VERSION = { 1, 0 }
+
+function CampaignManager.loadAll()
+    local saveFile = Utils.readNotebook(CampaignManager.SAVE_FILE)
+    if not saveFile or #saveFile == 0 then
+        Logger.error("No notebook found containing the save file!"
+                .. " Please add a notebook named %s.", CampaignManager.SAVE_FILE)
+        return
+    end
+
+    local status, content = pcall(function() return JSON.decode(--[[---@not nil]] saveFile) end)
+    if not status then
+        Logger.error("The provided save file contains errors."
+                .. " The error message from Lua is also very cryptic and doesn't really help. :-("
+                .. " Make sure your save file is a valid JSON file and try again."
+                .. "\n" .. content)
+        return
+    end
+
+    Preparation.start(function() CampaignManager.doLoadAll(content) end)
+end
+
+---@param content gh_Savefile
+function CampaignManager.doLoadAll(content)
+    CampaignManager.setupEventHandlers(content)
+
+    if content.global then
+        Scenario.loadAll(content.global.scenarios)
+        Achievement.loadAll(content.global.achievements)
+        Prosperity.load(content.global.prosperity)
+    end
+    Shop.load()
+    Unlocked.loadAll(content.unlocked)
+    Party.load(content.party)
+    Retirement.load(content.retired)
+    Event.loadAll(content.events)
+end
+
+---@param content gh_Savefile
+function CampaignManager.setupEventHandlers(content)
+    EventManager.addHandler(EventType.SHOP_LOADED, function() Unlocked.loadItems(content) end)
+    EventManager.addHandler(EventType.ITEMS_UNLOCKED, function()
+        for name, _ in pairs(Game.CLASSES) do
+            EventManager.triggerEvent(EventType.CLASS_READY, name)
+        end
+    end)
+    EventManager.addHandler(EventType.CLASS_READY, function(className) Unlocked.mayLoadClass(content, className) end)
+    EventManager.addHandler(EventType.CLASS_UNLOCKED, function(className) Enhancement.mayLoadForClass(content, className) end)
+    EventManager.addHandler(EventType.CLASS_ENHANCED, function(className) Party.mayLoadCharacter(content, className) end)
+
+    EventManager.addHandler(EventType.CLASS_UNLOCKED, Cleanup.onClassUnlocked)
+    EventManager.addHandler(EventType.TREASURE_LOADED, Cleanup.onTreasureLoaded)
+end
+
+function CampaignManager.saveAll()
+    local saveFile = CampaignManager.createSaveFile()
+
+    Wait.time(function()
+        local content = JSON.encode_pretty(saveFile)
+        content = content .. "\n" -- to conform to POSIX :-)
+        Notes.addNotebookTab({ title = "New Savefile", body = content })
+    end, 3)
+end
+
+function CampaignManager.createSaveFile()
+    local saveFile = {}
+
+    Preparation.prepareSave()
+    -- this wait is necessary, because the scripting zones have to be adjusted, otherwise they won't detect cards lying
+    -- directly on the table
+    Wait.time(function() CampaignManager.doCreateSaveFile(saveFile) end, 1)
+
+    return saveFile
+end
+
+function CampaignManager.doCreateSaveFile(saveFile)
+    saveFile.global = {
+        prosperity = Prosperity.save(),
+        scenarios = Scenario.save(),
+    }
+    Achievement.saveAll(saveFile.global)
+    Unlocked.saveAll(saveFile)
+    saveFile.party = Party.save()
+    saveFile.enhancements = Enhancement.save()
+    saveFile.retired = Retirement.save()
+    saveFile.events = Event.save()
+
+    saveFile.metadata = {
+        version = table.concat(CampaignManager.SAVE_FILE_VERSION, "."),
+        date = os.date("%Y-%m-%d'T'%H:%M")
+    }
+end
+
+return CampaignManager

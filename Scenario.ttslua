@@ -1,0 +1,124 @@
+local Error = require("sebaestschjin-tts.Error")
+local Logger = require("sebaestschjin-tts.Logger")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
+local Utils = require("sebaestschjin-tts.Utils")
+
+local Component = require("gloomhaven-campaign-manager.Component")
+local Game = require("gloomhaven-campaign-manager.Game")
+local Task = require("gloomhaven-campaign-manager.Task")
+
+local Scenario = {}
+
+Scenario.MAX_VALUE = 115
+Scenario.OPEN = "Open"
+Scenario.DONE = "Done"
+Scenario.LOCKED = "Locked"
+Scenario.STATES = { Scenario.OPEN, Scenario.DONE, Scenario.LOCKED }
+
+function Scenario.loadAll(scenarios)
+    Task.load("Scenarios", scenarios, Scenario.validate, Scenario.doLoad)
+end
+
+function Scenario.validate(scenarios)
+    for i, scenario in pairs(scenarios) do
+        local number, state = scenario.number, scenario.state
+        if type(number) ~= "number" or number < 1 or number > Scenario.MAX_VALUE then
+            Error.add("Scenario '%s' does not exist. Scenario won't be loaded", number)
+            scenarios[i] = nil
+        end
+        if not TableUtil.contains(Scenario.STATES, state) then
+            Error.add("Scenario '%s' has unknown state '%s'. Has to be one of [%s]. Will default to '%s'.",
+                    number, state, table.concat(Scenario.STATES, ","), Scenario.OPEN)
+            scenario.state = Scenario.OPEN
+        end
+    end
+
+    return true, Error.pop()
+end
+
+function Scenario.doLoad(scenarios)
+    local scenarioStickers = getObjectFromGUID(Component.guids.MAP).getTable("tableML")
+
+    for _, scenario in pairs(scenarios) do
+        local number, state = scenario.number, scenario.state
+        local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
+        Scenario.placeSticker(stickerGuid, number, state)
+
+        if Scenario.isRandomScenario(number) then
+            Scenario.removeRandomScenario(number)
+        end
+    end
+end
+
+function Scenario.findStickerGuid(scenarioStickers, number)
+    for stickerGuid, info in pairs(scenarioStickers) do
+        if info.number == number then
+            return stickerGuid
+        end
+    end
+    return nil
+end
+
+function Scenario.placeSticker(stickerGuid, number, state)
+    Logger.verbose("Placing scenario " .. tostring(number) .. " as " .. state)
+    local map = getObjectFromGUID(Component.guids.MAP)
+    if state == Scenario.OPEN then
+        map.call("clickedML", stickerGuid)
+    elseif state == Scenario.DONE then
+        map.call("clickedML", stickerGuid)
+        map.call("oneClick", { stickerGuid })
+    elseif state == Scenario.LOCKED then
+        map.call("clickedML", stickerGuid)
+        map.call("triClick", { stickerGuid })
+    end
+end
+
+function Scenario.isRandomScenario(number)
+    return Game.RANDOM_SCENARIOS[number]
+end
+
+function Scenario.removeRandomScenario(number)
+    local deck = Component.fromDeckMat(Component.snaps.RANDOM_SCENARIOS)
+    if not deck then
+        Logger.error("Can't remove random scenarios. Nothing found at expected position.")
+        return
+    end
+
+    local cardId = Component.getCardId(Component.deckIds.RANDOM_SCENARIOS, Game.RANDOM_SCENARIOS[number])
+    local scenarioCard = Utils.findObjectIn(deck, { cardId = cardId })
+    if not scenarioCard then
+        Logger.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
+        return
+    end
+
+    deck.takeObject({
+        index = scenarioCard.index,
+        position = Component.getSafePosition(),
+        callback_function = function(obj) obj.destruct() end,
+    })
+end
+
+function Scenario.save()
+    local scenarios = {}
+    local map = getObjectFromGUID(Component.guids.MAP)
+    local scenarioStickers = map.getTable("tableML")
+    local unlockedScenarios = map.getTable("locations")
+
+    for stickerGuid, info in pairs(scenarioStickers) do
+        if getObjectFromGUID(stickerGuid) ~= nil and info.number ~= nil then
+            state = Scenario.OPEN
+            if unlockedScenarios[stickerGuid] then
+                if unlockedScenarios[stickerGuid][1] == 1 then
+                    state = Scenario.LOCKED
+                else
+                    state = Scenario.DONE
+                end
+            end
+            table.insert(scenarios, { number = info.number, state = state })
+        end
+    end
+
+    return TableUtil.emptyToNil(scenarios)
+end
+
+return Scenario

@@ -1,0 +1,107 @@
+local Logger = require('sebaestschjin-tts.Logger')
+local StringUtil = require("sebaestschjin-tts.StringUtil")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
+
+local Character = require("gloomhaven-campaign-manager.Character")
+local Component = require("gloomhaven-campaign-manager.Component")
+
+local Party = {}
+
+function Party.load(party)
+    if party then
+        Party.loadPartySheet(party)
+        Party.loadCharacters(party.characters)
+    end
+end
+
+function Party.loadPartySheet(party)
+    local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
+
+    if party.name then
+        partySheet.UI.setAttribute("partyName", "text", party.name)
+        partySheet.setName(party.name)
+    end
+    if party.location then
+        partySheet.UI.setAttribute("location", "text", party.location)
+    end
+    if party.notes then
+        partySheet.UI.setAttribute("notes", "text", table.concat(party.notes, "\n"))
+    end
+    if party.achievements then
+        partySheet.UI.setAttribute("partyAchiev", "text", table.concat(party.achievements, "\n"))
+    end
+    if party.reputation then
+        partySheet.call("addSub", { "partyReputation", party.reputation })
+    end
+end
+
+---@param content gh_Savefile
+function Party.mayLoadCharacter(content, characterClass)
+    if TableUtil.isEmpty(content.party) or TableUtil.isEmpty(content.party.characters) then
+        return
+    end
+
+    for i, character in TableUtil.pairs(content.party.characters) do
+        if TableUtil.isNotEmpty(character) and character.class == characterClass then
+            Character.load(i, character)
+        end
+    end
+end
+
+---@param characters gh_Character[]
+function Party.loadCharacters(characters)
+    for i, character in TableUtil.pairs(characters) do
+        if TableUtil.isNotEmpty(character) then
+            Party.setPartySheetCharacter(i, character)
+        end
+    end
+    Party.setPartySheetAverageLevel(characters)
+end
+
+function Party.setPartySheetCharacter(position, character)
+    local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
+    local partySheetAttributeNames = { "playerone", "playertwo", "playerthree", "playerfour" }
+    local attributeName = partySheetAttributeNames[position]
+    local attributeLvlName = attributeName .. 'lvl'
+    local level = Character.getLevel(character.xp)
+
+    partySheet.UI.setAttribute(attributeName, "text", character.name)
+    partySheet.UI.setAttribute(attributeLvlName, "text", level)
+end
+
+
+-- TODO It should be easier than this. :()
+function Party.setPartySheetAverageLevel(characters)
+    local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
+    local sum, numPlayers = 0, 0
+    for _, character in pairs(characters) do
+        if TableUtil.isNotEmpty(character) then
+            sum = sum + Character.getLevel(character.xp)
+            numPlayers = numPlayers + 1
+        end
+    end
+    local average = sum / numPlayers
+    local scenarioLevel = math.ceil(average / 2)
+    partySheet.UI.setAttribute("averageLevel", "text", tonumber(string.format("%.2f", average)))
+    partySheet.UI.setAttribute("scenarioLevel", "text", tonumber(string.format("%d", scenarioLevel)))
+end
+
+function Party.save()
+    local party = {}
+
+    local partySheet = getObjectFromGUID(Component.guids.PARTY_SHEET)
+    party.name = partySheet.UI.getAttribute("partyName", "text")
+    party.location = partySheet.UI.getAttribute("location", "text")
+    party.notes = StringUtil.split(partySheet.UI.getAttribute("notes", "text"), { "\n" })
+    party.achievements = StringUtil.split(partySheet.UI.getAttribute("partyAchiev", "text"), { ",", "\n" })
+    party.reputation = tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
+
+    party.characters = {}
+    for _, zoneGuid in pairs(Component.guids.ZONES) do
+        table.insert(party.characters, Character.save(zoneGuid))
+    end
+
+    return party
+end
+
+return Party

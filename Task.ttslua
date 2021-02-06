@@ -1,0 +1,79 @@
+local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
+
+local Task = {}
+
+local State = {
+    NO_RUN = { finish = true },
+    CANCELLED = { name = "cancelled" },
+    ERROR = { name = "error" },
+    DONE = { name = "finished", finish = true },
+}
+
+Task.saveMode = true
+
+function Task.start(name, params)
+    if not params.input then
+        return Task.finish(name, params, State.NO_RUN)
+    end
+
+    Logger.info("Starting " .. name)
+
+    if params.validate and not Task.validate(name, params.input, params.validate) then
+        return Task.finish(name, params, State.CANCELLED)
+    end
+
+    if Task.saveMode then
+        local status, message = pcall(function() params.execute(params.input) end)
+        if not status then
+            return Task.finish(name, params, State.ERROR, message)
+        end
+    else
+        params.execute(params.input)
+    end
+
+    Task.finish(name, params, State.DONE)
+end
+
+function Task.finish(name, params, state, stateParams)
+    if state.name then
+        Logger.info("Finished %s %s: %s", name, state.name, stateParams)
+    end
+    if params.finish and state.finish then
+        EventManager.triggerEvent(params.finish)
+    end
+end
+
+function Task.load(name, input, validator, executor)
+    if not input then
+        return
+    end
+    Logger.info("Loading " .. name)
+
+    if not Task.validate(name, input, validator) then
+        Logger.error("Loading " .. name .. " cancelled")
+        return
+    end
+
+    if Task.saveMode then
+        local status, message = pcall(function() executor(input) end)
+        if not status then
+            Logger.error("Error loading " .. name .. "\n    " .. message)
+        end
+    else
+        executor(input)
+    end
+end
+
+function Task.validate(name, input, validator)
+    local status, messages = validator(input)
+    if messages then
+        for _, message in pairs(messages) do
+            Logger.warn(name .. "\n    " .. message)
+        end
+    end
+
+    return status
+end
+
+return Task

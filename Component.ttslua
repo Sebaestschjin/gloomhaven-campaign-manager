@@ -1,0 +1,292 @@
+local DeckUtil = require("sebaestschjin-tts.DeckUtil")
+local Object = require("sebaestschjin-tts.Object")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
+local Utils = require("sebaestschjin-tts.Utils")
+
+local Game = require("gloomhaven-campaign-manager.Game")
+local Component = {}
+
+Component.guids = {
+    GAMEBOX = "346ed5",
+    LOCKED_CLASSES = "1e6549",
+    SCENARIO_BOOK = "f3404a",
+    RULE_BOOK = "c9d3f5",
+    OPENING_CONDITIONS = "30ae8e",
+    RETIREMENT_SHEET = "a30c94",
+    TOWN_RECORDS = "a6c771",
+    FORGOTTEN_CIRCLES_BOX = "5e28e8",
+    MAP = "9cc037",
+    AchievementBag = "3ea749", -- Bag containing the Achievement board
+    AchievementBoard = { "43d5b8", "546b57" },
+    SANCTUARY_STICKER = "800847",
+    DECK_MAT = "a75fcd",
+    PLAYER_MINUS_ONE_DECK = "74a2ed",
+    CITY_EVENTS_DECK_INITIAL = "759349",
+    CITY_EVENTS_DECK = "f13efd",
+    ROAD_EVENTS_DECK_INITIAL = "83de73",
+    ROAD_EVENTS_DECK = "f08b69",
+    CITY_MAT = "f3ffb7",
+    EVENTS_MAT = "b53fb2",
+    OLD_EVENT_MAT = "41393b",
+    PARTY_SHEET = "6d3de2",
+    LAST_BOX = "fdef02", -- tinkerer
+    BEFORE_LAST_BOX = "ec1d2a", -- cragheart
+    TREASURE_DECK = "284016",
+    ---@type GUID[]
+    ZONES = { "49a4e0", "dac936", "62cd94", "963318" },
+    ---@type GUID[]
+    ADD_PLAYERS = { "3f0cda", "4d61da", "f98ff8", "d0f661" },
+}
+
+Component.deckIds = {}
+---@type number[]
+Component.deckIds.QUESTS = { 1753, 1997 }
+Component.deckIds.RANDOM_SCENARIOS = 1930
+
+Component.names = {}
+Component.names.PLAYER_MAT = "Player Mat"
+Component.names.CHARACTER_MAT = "Character Mat"
+Component.names.CHARACTER_SHEET = "Character Sheet"
+Component.names.ABILITY_DECK = "Advanced Abilities"
+Component.names.STARTING_ABILITY_DECK = "Starting Abilities"
+Component.names.MODIFIER_DECK = "Attack Modifiers"
+Component.names.ATTACK_MODIFIER = "Attack Modifier"
+Component.names.ROAD_EVENTS = "Road Events"
+Component.names.CITY_EVENTS = "City Events"
+Component.names.AchievementBoard = "Achievements"
+
+---@type table<string, tts__VectorShape>
+Component.positions = {}
+Component.positions.QUEST_CARD = Vector(1, 2, -19) -- relative to player zone
+Component.positions.ITEM_UNEQUIPPED = Vector(-7, 2, -7) -- relative to player zone
+Component.positions.SECOND_HAND = Vector(0, 3, -2) -- relative to player zone
+
+Component.positions.ACHIEVEMENT_BOARD = { 87.26, 2, 26.12 }
+Component.positions.OPENING_CONDITIONS = Vector(65.19, 1.70, -29.55)
+Component.positions.RETIREMENT_SHEET = Vector(77.88, 1.70, -33.34)
+Component.positions.SCENARIO_BOOK = { 63.88, 2, 37.89 }
+Component.positions.RULE_BOOK = { -64.31, 2, -41.68 }
+Component.positions.TOWN_RECORDS = { 73.94, 2, 34.10 }
+Component.positions.TREASURE_DECK = { -75, 2, -5.3 }
+
+function Component.positions.relativeToZone(zoneGuid, position)
+    return (--[[---@not nil]] getObjectFromGUID(zoneGuid)).getPosition() + position
+end
+
+local positionCounter = 0
+function Component.getSafePosition()
+    positionCounter = positionCounter + 1
+    return Vector(-43 + (positionCounter * 3), 2, -85)
+end
+
+Component.snaps = {}
+
+-- Player Mat
+Component.snaps.Head = 15
+Component.snaps.Armor = 16
+Component.snaps.HandLeft = 17
+Component.snaps.HandRight = 18
+Component.snaps.Boots = 19
+Component.snaps.Bag1 = 12
+Component.snaps.Bag2 = 13
+Component.snaps.Bag3 = 14
+Component.snaps.Active4 = 9
+Component.snaps.Active1 = 6
+Component.snaps.Active2 = 7
+Component.snaps.Active3 = 8
+
+-- Deck Mat
+Component.snaps.RANDOM_SCENARIOS = 8
+Component.snaps.QUESTS = 11
+
+-- City Mat
+Component.snaps.SHOP = 1
+Component.snaps.REWARD_ITEMS = 13
+
+-- Event Mat
+Component.snaps.ROAD_EVENTS_DECK = 1
+Component.snaps.CITY_EVENTS_DECK = 2
+Component.snaps.RIFT_EVENTS = 3
+
+function Component.getCardId(customDeck, index)
+    if type(customDeck) == "table" then
+        customDeck = customDeck[#customDeck]
+    end
+    return string.format("%d%02d", customDeck, index)
+end
+
+---@param snapPoint number
+---@return common_DeckZone
+function Component.fromDeckMat(snapPoint)
+    local deckMat = --[[---@not nil]] getObjectFromGUID(Component.guids.DECK_MAT)
+    local deckPosition = Utils.getSnapPosition(deckMat, snapPoint)
+
+    return DeckUtil.wrapAt(deckPosition)
+end
+
+---@return tts__Object
+function Component.cityMat()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
+end
+
+---@param snapPoint number
+---@return common_DeckZone
+function Component.fromCityMat(snapPoint)
+    local deckPosition = Utils.getSnapPosition(Component.cityMat(), snapPoint)
+    return DeckUtil.wrapAt(deckPosition)
+end
+
+---@return GUID
+function Component.achievementBoardGuid()
+    for _, achievementBoard in ipairs(Component.guids.AchievementBoard) do
+        local board = getObjectFromGUID(achievementBoard)
+        if board then
+            return achievementBoard
+        end
+    end
+
+    local achievementBag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
+    local achievementBoard = Utils.findObjectIn(achievementBag, { name = Component.names.AchievementBoard })
+    return achievementBoard.guid
+end
+
+---@param index number
+---@return tts__Object
+function Component.playerButton(index)
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.ADD_PLAYERS[index])
+end
+
+function Component.playerMat(playerZone)
+    return Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+end
+
+function Component.characterMat(playerZone)
+    return Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_MAT })
+end
+
+function Component.characterSheet(playerZone)
+    return Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_SHEET })
+end
+
+---@return tts__Object
+function Component.abilityDeck(playerZone)
+    return DeckUtil.wrap(Utils.findObjectIn(playerZone, { name = Component.names.ABILITY_DECK }))
+end
+
+function Component.isAbilityDeck(object)
+    return Object.isDeck(object)
+            and object.getName():find(Component.names.ABILITY_DECK)
+end
+
+---@param object tts__Object
+function Component.isAbilityCardForClass(object, class)
+    if not Object.isCard(object)
+            or not object.getDescription():find(class)
+            or object.getName():find(Component.names.ATTACK_MODIFIER) then
+        return false
+    end
+
+    local cardName, _ = object.getName():gsub("[%(%)]%d%d[%)%(]", "")
+    local nearest, _ = Game.nearestAbility(class, cardName)
+    return nearest ~= nil
+end
+
+function Component.isStartingAbility(class, abilityName)
+    local ability = Game.ability(class, abilityName)
+    return ability.level == 1 or ability.level == "X"
+end
+
+---@param class string
+---@param abilityCard tts__Object
+---@return string
+function Component.getAbilityName(class, abilityCard)
+    local cardName, _ = string.gsub(abilityCard.getName(), "%s?[%(%)]%d+[%)%(]", "")
+    return --[[---@not nil]] Game.ability(class, cardName).name
+end
+
+--- Returns true if the given object is an item card.
+---@param object tts__Object | common__WrappedObject
+function Component.isItemCard(object)
+    return Object.isCard(object)
+            and (Component.isItemCardDescription(object.getDescription())
+            or Game.ITEMS.List[object.getName()] ~= nil)
+end
+
+--- Returns true if the given item card object is an item from the rewards or item design deck.
+---@param item tts__Object | common__WrappedObject
+---@param prosperityLevel number
+function Component.isRewardItemCard(item, prosperityLevel)
+    if not Component.isItemCard(item) then
+        return false
+    end
+
+    prosperityLevel = prosperityLevel or 1
+    if item.getDescription() == "" then
+        local itemInfo = Game.ITEMS.List[item.getName()]
+        return itemInfo.reward ~= nil or itemInfo.prosperity > prosperityLevel
+    else
+        local description = item.getDescription()
+        description = description:gsub("red", "")
+        description = description:gsub("blue", "")
+        return tonumber(description) > Game.ITEMS.Prosperity[prosperityLevel]
+    end
+end
+
+--- Returns true if the given object description is a possible item card's description.
+function Component.isItemCardDescription(description)
+    return description:find("^%d+$")
+            or description:find("^%d+ red$")
+            or description:find("^%d+ blue$")
+end
+
+function Component.isPersonalQuestCard(object)
+    if not Object.isCard(object) or not object.getData().CustomDeck then
+        return false
+    end
+
+    for key, _ in pairs(object.getData().CustomDeck) do
+        return TableUtil.contains(Component.deckIds.QUESTS, key)
+    end
+end
+
+function Component.getQuestInfo(object)
+    local cardId = object.getData().CardID
+    local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+    for name, quest in pairs(Game.QUESTS) do
+        if quest.index == cardIndex then
+            return name, quest
+        end
+    end
+
+    return nil
+end
+
+--- Returns all objects of the given playerZone. Only objects which center is within the planar bounds of the zone are
+--- returned. This avoids duplicated items that overlap multiple zones.
+---@param zoneGuid GUID
+---@return tts__Object[]
+function Component.getObjectsInZone(zoneGuid)
+    local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(zoneGuid)
+    return TableUtil.filter(zone.getObjects(),
+            function(object, _)
+                return Component.isObjectInZone(zone, --[[---@type tts__Object]] object)
+            end)
+end
+
+---@param playerZone tts__ScriptingTrigger
+---@param object tts__Object
+---@return boolean
+function Component.isObjectInZone(playerZone, object)
+    local width = playerZone.getScale().x
+    local height = playerZone.getScale().z
+    local zoneCenter = playerZone.getBounds().center
+    local left = zoneCenter.x - width / 2
+    local right = zoneCenter.x + width / 2
+    local top = zoneCenter.z + height / 2
+    local bottom = zoneCenter.z - height / 2
+    local objectCenter = object.getBounds().center
+
+    return objectCenter.x > left and objectCenter.x < right and objectCenter.z > bottom and objectCenter.z < top
+end
+
+return Component

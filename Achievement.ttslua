@@ -1,0 +1,130 @@
+local Constant = require("sebaestschjin-tts.Constant")
+local Error = require("sebaestschjin-tts.Error")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
+
+local Component = require("gloomhaven-campaign-manager.Component")
+local Game = require("gloomhaven-campaign-manager.Game")
+local Task = require("gloomhaven-campaign-manager.Task")
+
+---@shape fs_Achievement_Info
+---@field name string
+---@field guids GUID[]
+
+local Achievement = {}
+
+---@param achievements gh_Achievement[]
+function Achievement.loadAll(achievements)
+    Task.load("Achievements", achievements, Achievement.validate, Achievement.doLoad)
+end
+
+---@param achievements gh_Achievement[]
+function Achievement.validate(achievements)
+    for i, achievement in pairs(achievements) do
+        local name, count = achievement.name, achievement.count
+        if not Game.ACHIEVEMENTS[name] then
+            Error.add("Achievement with name '%s' does not exist. Achievement won't be loaded.", name)
+            TableUtil.removeKey(achievements, i)
+        else
+            local maxCount = Game.ACHIEVEMENTS[name].maxCount
+            if count and (count < 1 or count > maxCount) then
+                local newCount = math.min(math.max(1, count), maxCount)
+                Error.add("Achievement has a maximum count of '%s', but '%s' was given. Will default to '%s'",
+                        maxCount, count, newCount)
+                achievements[i].count = newCount
+            end
+        end
+    end
+
+    return true, Error.pop()
+end
+
+---@param achievements gh_Achievement[]
+function Achievement.doLoad(achievements)
+    ---@type boolean[]
+    Achievement.groupReady = { true }
+
+    for i = 1, 5 do
+        Achievement.groupReady[i + 1] = false
+        local achievementGroup = {}
+        for _, achievement in pairs(achievements) do
+            if not achievement.count then achievement.count = 1 end
+            if achievement.count >= i then
+                table.insert(achievementGroup, achievement.name)
+            end
+        end
+
+        if TableUtil.isNotEmpty(achievementGroup) then
+            Wait.condition(function() Achievement.loadGroup(i, achievementGroup) end,
+                    function() return Achievement.groupReady[i] end)
+        end
+    end
+end
+
+---@param i number
+---@param achievementGroup string[]
+function Achievement.loadGroup(i, achievementGroup)
+    local globalAchievementsBag = --[[---@not nil]] getObjectFromGUID(Component.guids.AchievementBag)
+
+    globalAchievementsBag.takeObject({
+        guid = Component.achievementBoardGuid(),
+        callback_function = function(obj)
+            for _, achievement in pairs(achievementGroup) do
+                local index = --[[---@not nil]] Achievement.findIndex(obj, achievement)
+                obj.call('clicked', index)
+            end
+            Achievement.groupReady[i + 1] = true
+        end
+    })
+end
+
+function Achievement.saveAll(saveFile)
+    local achievementBoardGuid = Component.achievementBoardGuid()
+    local achievementBoard = getObjectFromGUID(achievementBoardGuid)
+    if achievementBoard then
+        Achievement.doSave(saveFile, achievementBoard)
+    else
+        local bag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
+        bag.takeObject({
+            guid = achievementBoardGuid,
+            position = Component.positions.ACHIEVEMENT_BOARD,
+            rotation = Constant.Rotation.NORTH,
+            callback_function = function(obj)
+                Achievement.doSave(saveFile, obj)
+                bag.putObject(obj)
+            end
+        })
+    end
+end
+
+function Achievement.doSave(saveFile, achievementBoard)
+    local achievementInfo = --[[---@type fs_Achievement_Info[] ]] achievementBoard.getTable("flags")
+
+    local result = {}
+    for _, achievement in pairs(achievementInfo) do
+        local maxIndex = 0
+        for i, guid in pairs(achievement.guids) do
+            if getObjectFromGUID(guid) ~= nil then
+                maxIndex = i
+            end
+        end
+        if maxIndex > 0 then
+            table.insert(result, { name = achievement.name, count = maxIndex })
+        end
+    end
+    saveFile.achievements = TableUtil.emptyToNil(result)
+end
+
+---@param board tts__Object
+---@param achievement string
+function Achievement.findIndex(board, achievement)
+    local achievementInfo = --[[---@type fs_Achievement_Info[] ]] board.getTable("flags")
+
+    for i, flag in pairs(achievementInfo) do
+        if flag.name == achievement then
+            return i
+        end
+    end
+    return nil
+end
+
+return Achievement

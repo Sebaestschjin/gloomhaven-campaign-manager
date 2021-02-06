@@ -1,0 +1,543 @@
+local Base64 = require("ge_tts.Base64")
+
+local Chain = require("sebaestschjin-tts.Chain")
+local Constant = require("sebaestschjin-tts.Constant")
+local DeckUtil = require("sebaestschjin-tts.DeckUtil")
+local Error = require("sebaestschjin-tts.Error")
+local Logger = require("sebaestschjin-tts.Logger")
+local Object = require("sebaestschjin-tts.Object")
+local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
+local StringUtil = require("sebaestschjin-tts.StringUtil")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
+local Utils = require("sebaestschjin-tts.Utils")
+
+local Component = require("gloomhaven-campaign-manager.Component")
+local Game = require("gloomhaven-campaign-manager.Game")
+local Quest = require("gloomhaven-campaign-manager.Quest")
+local Shop = require("gloomhaven-campaign-manager.Shop")
+local Task = require("gloomhaven-campaign-manager.Task")
+
+local Character = {}
+
+Character.ABILITY_DEFAULT_DISTANCE = 5
+Character.ABILITY_MAX_DISTANCE = Character.ABILITY_DEFAULT_DISTANCE + 2
+
+---@param index number
+---@param character gh_Character
+function Character.load(index, character)
+    local taskName = "Character " .. tostring(character.class) .. " at " .. index
+    Task.load(taskName, character, Character.validate, function(input)
+        Character.startLoading(index, input)
+    end)
+end
+
+---@param character gh_Character
+function Character.validate(character)
+    if not Game.class(character.class) then
+        Error.add("A class named '%s' does not exist.", character.class)
+        return false, Error.pop()
+    end
+
+    for i, perk in TableUtil.pairs(character.perks) do
+        if not Game.class(character.class).perks[perk] then
+            Error.add("A perk '%s' does not exist for class '%s'.", perk, character.class)
+            character.perks[i] = nil
+        end
+    end
+
+    return true, Error.pop()
+end
+
+---@param index number
+---@param character gh_Character
+function Character.startLoading(index, character)
+    local playerZone = Component.guids.ZONES[index]
+    Component.playerButton(index).call("addPlayer")
+
+    Utils.waitForObjectInZone(playerZone, { name = Component.names.PLAYER_MAT },
+            function() Character.unpackCharacterBox(playerZone, character) end)
+end
+
+--- @param playerZone GUID
+---@param character gh_Character
+function Character.unpackCharacterBox(playerZone, character)
+    local playerMat = Component.playerMat(playerZone)
+    local boxGuid = Game.class(character.class).boxGuid
+    local characterBox = --[[---@not nil]] getObjectFromGUID(boxGuid)
+
+    characterBox.takeObject({
+        position = playerMat.getPosition(),
+        smooth = false,
+    })
+
+    Utils.waitForObjectInZone(playerZone, { name = Component.names.CHARACTER_SHEET },
+            function() Character.doLoad(playerZone, character) end)
+end
+
+---@param playerZone GUID
+---@param character gh_Character
+function Character.doLoad(playerZone, character)
+    -- still need more waiting to init the UI of the sheet :-(
+    Wait.time(function() Character.loadCharacterSheet(playerZone, character) end, 1)
+    Wait.time(function() Character.loadMaxHp(playerZone, character) end, 5)
+    Character.loadAbilities(playerZone, character)
+    Character.loadQuest(playerZone, character)
+end
+
+---@param playerZone GUID
+---@param character gh_Character
+function Character.loadCharacterSheet(playerZone, character)
+    local characterSheet = Component.characterSheet(playerZone)
+
+    if character.name then
+        characterSheet.UI.setAttribute("Name", "text", character.name)
+    end
+    if character.gold then
+        characterSheet.call("addEx", { name = "gold", amount = character.gold })
+    end
+    if character.xp then
+        characterSheet.call("addEx", { name = "xp", amount = character.xp })
+    end
+    if character.checkmarks then
+        for i = 1, character.checkmarks do
+            characterSheet.call("clickedToggle", "notes" .. tostring(i))
+        end
+    end
+    if character.perks then
+        Character.loadPerks(playerZone, character)
+    end
+    if character.items then
+        Character.loadItems(playerZone, character)
+    end
+    if character.notes then
+        characterSheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
+    end
+    Character.loadHiddenNotes(characterSheet, character.hiddenNotes)
+end
+
+---@param characterSheet tts__Object
+---@param hiddenNotes string[]
+function Character.loadHiddenNotes(characterSheet, hiddenNotes)
+    if not hiddenNotes then return end
+
+    ---@type string[]
+    local decodedNotes = {}
+    for i, note in ipairs(hiddenNotes) do
+        if StringUtil.isBase64(note) then
+            decodedNotes[i] = StringUtil.chars(Base64.decode(note))
+        else
+            decodedNotes[i] = note
+        end
+    end
+    characterSheet.UI.setAttribute("Notes", "text", table.concat(decodedNotes, "\n"))
+end
+
+---@param playerZone GUID
+---@param character gh_Character
+function Character.loadMaxHp(playerZone, character)
+    local characterInfo = Game.class(character.class)
+    local level = Character.getLevel(character.xp)
+    local maxHealth = characterInfo.hp[level]
+    local startingHealth = characterInfo.hp[1]
+
+    Character.loadFigureHealth(playerZone, character.class, maxHealth)
+    if maxHealth > startingHealth then
+        local tokenName = startingHealth .. " hp"
+        local healthToken = Utils.findObjectIn(playerZone, { name = tokenName })
+        healthToken.setState(maxHealth)
+    end
+
+    if characterInfo.extraFigure then
+        maxHealth = characterInfo.extraFigure.hp[level]
+        Character.loadFigureHealth(playerZone, characterInfo.extraFigure.name, maxHealth)
+    end
+end
+
+---@param playerZone GUID
+---@param name string
+---@param health number
+function Character.loadFigureHealth(playerZone, name, health)
+    local figure = Utils.findObjectIn(playerZone, { name = name, tag = Object.Tag.Figurine })
+
+    figure.setTable("health", { value = health, max = health })
+    figure.call("setHealth")
+end
+
+---@param playerZone GUID
+---@param character gh_Character
+function Character.loadAbilities(playerZone, character)
+    if not character.abilities then return end
+
+    local abilityDeck = Component.abilityDeck(playerZone)
+    for _, abilityName in pairs(character.abilities) do
+        local abilityCard, distance = Utils.findNearestObjectIn(abilityDeck, abilityName, Character.ABILITY_MAX_DISTANCE)
+        if abilityCard then
+            if distance ~= Character.ABILITY_DEFAULT_DISTANCE then
+                Logger.warn("Tried to load the ability '%s' for class '%s', but couldn't find it in the ability deck."
+                        .. " However, found a similar ability named '%s' which will be used instead."
+                        .. " Please verify if this assumption is correct.",
+                        abilityName, character.class, abilityCard.getName())
+            end
+            abilityDeck.takeObject({
+                position = Component.positions.relativeToZone(playerZone, Component.positions.SECOND_HAND),
+                guid = abilityCard.getGUID(),
+            })
+        else
+            Logger.error("An ability named '%s' does not exist for the character class '%s'!",
+                    abilityName, character.class)
+        end
+    end
+end
+
+---@param playerZone GUID
+---@param character gh_Character
+function Character.loadQuest(playerZone, character)
+    if not character.quest then return end
+
+    local callback = function(card)
+        card.setPosition(Component.positions.relativeToZone(playerZone, Component.positions.QUEST_CARD))
+    end
+    if not Quest.take(character.quest, callback) then
+        Logger.error("A quest named '%s' does not exist. Can't draw the quest from the deck.",
+                character.quest)
+    end
+end
+
+---@param playerZone GUID
+---@param character gh_Character
+function Character.loadPerks(playerZone, character)
+    local perkInfo = Game.class(character.class).perks
+    local characterSheet = Component.characterSheet(playerZone)
+    local currentDeck = Utils.findObjectIn(playerZone, { name = Component.names.MODIFIER_DECK, description = "Player" })
+    local isOtherDeck = function(obj) return obj.getName():find(Component.names.MODIFIER_DECK)
+            and obj.getGUID() ~= currentDeck.getGUID()
+    end
+    local additionalDeck = Utils.findObjectInZone(playerZone, { func = isOtherDeck })
+    additionalDeck = DeckUtil.wrap(additionalDeck)
+
+    local chain = Chain.create()
+    for _, perk in TableUtil.pairs(character.perks) do
+        if perkInfo[perk] then
+            characterSheet.call("clickedToggle", "perk" .. tostring(perk))
+
+            for _, card in TableUtil.pairs(perkInfo[perk].add) do
+                chain.add(function(c)
+                    Character.addModifierCard(c, character, additionalDeck, currentDeck, card)
+                end)
+            end
+            for _, card in TableUtil.pairs(perkInfo[perk].remove) do
+                chain.add(function(c)
+                    Character.removeModifierCard(c, character, currentDeck, card)
+                end)
+            end
+        else
+            Logger.error("A perk '%s' does not exist for class '%s'.", perk, character.class)
+        end
+    end
+    chain.add(function()
+        currentDeck.shuffle()
+        return true
+    end)
+
+    chain.proceed()
+end
+
+---@param chain common_Chain
+---@param character gh_Character
+---@param additionalDeck tts__Deck
+---@param currentDeck tts__Deck
+---@param card string
+---@return boolean
+function Character.addModifierCard(chain, character, additionalDeck, currentDeck, card)
+    Logger.verbose("%s: Adding %s", character.class, card)
+
+    local foundCard = Character.findModifierCard(additionalDeck, card)
+    if not foundCard then
+        Logger.error("%, adding: Can't find modifier card %s.", character.class, card)
+        return true
+    end
+
+    additionalDeck.takeObject({
+        guid = foundCard.getGUID(),
+        position = Component.getSafePosition(),
+        smooth = false,
+        callback_function = function(c)
+            currentDeck.putObject(c)
+            chain.proceed()
+        end
+    })
+
+    return false
+end
+
+---@param chain common_Chain
+---@param character gh_Character
+---@param currentDeck tts__Deck
+---@param card string
+---@return boolean
+function Character.removeModifierCard(chain, character, currentDeck, card)
+    Logger.verbose("%s: Removing %s", character.class, card)
+
+    local foundCard = Character.findModifierCard(currentDeck, card)
+    if not foundCard then
+        Logger.error("%s, removing: Can't find modifier card %s.", character.class, card)
+        return true
+    end
+
+    currentDeck.takeObject({
+        guid = foundCard.getGUID(),
+        position = Component.getSafePosition(),
+        smooth = false,
+        callback_function = function(c)
+            c.destruct()
+            chain.proceed()
+        end })
+
+    return false
+end
+
+---@param deck tts__Deck
+---@param name string
+function Character.findModifierCard(deck, name)
+    local searchPattern = "^" .. Component.names.ATTACK_MODIFIER .. " " .. StringUtil.escapePattern(name) .. "$"
+    return Utils.findObjectIn(deck, { name = searchPattern })
+end
+
+---@param playerZone GUID
+---@param character gh_Character
+function Character.loadItems(playerZone, character)
+    local items = {}
+
+    for _, item in TableUtil.pairs(character.items) do
+        local itemPosition = Character.calculateItemPosition(playerZone, item)
+
+        if Shop.takeItem(item.name, itemPosition, Constant.Rotation.NORTH) then
+            table.insert(items, item.name)
+            Character.checkForNegativeItemEffects(character, item, itemPosition)
+        else
+            Logger.error("The item '%s' does not exist. Won't load item.", item.name)
+        end
+    end
+
+    Component.characterSheet(playerZone).UI.setAttribute("Items", "text", table.concat(items, "\n"))
+end
+
+---@param playerZone GUID
+---@param item gh_Item
+function Character.calculateItemPosition(playerZone, item)
+    if item.position and Component.snaps[item.position] then
+        return Utils.getSnapPosition(Component.playerMat(playerZone), Component.snaps[item.position])
+    end
+    return Component.positions.relativeToZone(playerZone, Component.positions.ITEM_UNEQUIPPED)
+end
+
+---@param character gh_Character
+---@param item gh_Item
+---@param itemPosition tts__Vector
+function Character.checkForNegativeItemEffects(character, item, itemPosition)
+    if not Character.hasNegItemEffectsPerk(character) then
+        local negativeEffect = Game.ITEMS.NegativeEffects[item.name]
+        for _ = 1, negativeEffect or 0 do
+            Character.dealNegativeItemEffectCard(itemPosition)
+        end
+    end
+end
+
+---@param character gh_Character
+function Character.hasNegItemEffectsPerk(character)
+    local perkInfo = Game.class(character.class).perks
+    for _, perk in TableUtil.pairs(character.perks) do
+        if perkInfo[perk].ignore == "I" then
+            return true
+        end
+    end
+    return false
+end
+
+---@param itemPosition tts__Vector
+function Character.dealNegativeItemEffectCard(itemPosition)
+    local deck = --[[---@type tts__Deck]] getObjectFromGUID(Component.guids.PLAYER_MINUS_ONE_DECK)
+    deck.takeObject({
+        smooth = false,
+        -- position set to ensure PLayer -1 cards placed on top.
+        position = itemPosition + vector(0, 1, 0)
+    })
+end
+
+---@param curXP number
+function Character.getLevel(curXP)
+    if not curXP then curXP = 0 end
+    for i, xp in pairs(Game.XP_REQUIREMENTS) do
+        if curXP < xp then
+            return i - 1
+        end
+    end
+    return 9
+end
+
+---@param playerZone GUID
+function Character.save(playerZone)
+    local characterMat = Component.characterMat(playerZone)
+    if not characterMat then
+        return {}
+    end
+
+    character = {}
+    character.class = characterMat.getDescription()
+
+    local characterSheet = Component.characterSheet(playerZone)
+    local characterSheetButtons = --[[---@not nil]] characterSheet.getTable("buttons")
+    local characterSheetInputs = --[[---@not nil]] characterSheet.getTable("inputs")
+
+    if characterSheetInputs then
+        -- this is an older version of the sheet, without the inputs where you can directly set
+        -- the values
+        character.name = characterSheetInputs.Name
+        character.xp = tonumber(characterSheetButtons.xp.label)
+        character.gold = tonumber(characterSheetButtons.gold.label)
+    else
+        character.name = characterSheet.UI.getAttribute("Name", "text")
+        character.xp = tonumber(characterSheet.UI.getAttribute("xp", "text"))
+        character.gold = tonumber(characterSheet.UI.getAttribute("gold", "text"))
+        character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), { "\n" })
+        character.hiddenNotes = Character.saveHiddenNotes(characterSheet)
+    end
+
+    local totalCheckmarks = 0
+    for i = 1, 18 do
+        if characterSheetButtons["notes" .. i].label ~= "" then
+            totalCheckmarks = totalCheckmarks + 1
+        end
+    end
+    character.checkmarks = totalCheckmarks
+
+    character.perks = {}
+    for i = 1, 15 do
+        if characterSheetButtons["perk" .. i].label ~= "" then
+            table.insert(character.perks, i)
+        end
+    end
+
+    character.items = Character.saveItems(playerZone)
+    character.abilities = Character.saveAbilities(playerZone)
+    character.quest = Character.saveQuest(playerZone)
+
+    return character
+end
+
+---@param characterSheet tts__Object
+function Character.saveHiddenNotes(characterSheet)
+    local notes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), { "\n" })
+    for i, note in ipairs(notes) do
+        notes[i] = Base64.encode(StringUtil.bytes(note))
+    end
+
+    return notes
+end
+
+---@param playerZone GUID
+function Character.saveItems(playerZone)
+    local playerMat = Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+    local items = {}
+    local zoneObjects = Component.getObjectsInZone(playerZone)
+    Character.saveItemFromObjects(zoneObjects, playerMat, items)
+
+    return TableUtil.sortByAttribute(items, "name")
+end
+
+---@param objects tts__Object[]
+---@param playerMat tts__Object
+---@param items gh_Item[]
+function Character.saveItemFromObjects(objects, playerMat, items)
+    for _, object in pairs(objects) do
+        if Component.isItemCard(object) then
+            local item = { name = object.getName(), position = Character.getItemPosition(playerMat, object) }
+            table.insert(items, item)
+        elseif Object.isDeck(object) then
+            local deckObjects = ObjectUtil.getContainedObjects(object)
+            Character.saveItemFromObjects(deckObjects, playerMat, items)
+        end
+    end
+end
+
+---@param playerMat tts__Object
+---@param object tts__Object
+function Character.getItemPosition(playerMat, object)
+    -- TODO The snap module is used for all snap points not only player mat snaps. So this currently
+    -- only works, because the player mat snaps are defined first. This should be changed, so that it
+    -- works regardless of definition order
+    for name, snap in pairs(Component.snaps) do
+        if Utils.getSnapPosition(playerMat, snap) == object.getPosition() then
+            return name
+        end
+    end
+
+    return "Unequipped"
+end
+
+---@param playerZone GUID
+function Character.saveAbilities(playerZone)
+    local class = --[[---@not nil]] Character.findClassInZone(playerZone)
+    local abilities = {}
+    local zoneObjects = (--[[---@not nil]] getObjectFromGUID(playerZone)).getObjects()
+    Character.saveAbilitiesFromObjects(--[[---@type tts__Object[] ]]zoneObjects, class, abilities)
+
+    return table.sort(abilities)
+end
+
+---@param objects tts__Object[]
+---@param class string
+---@param abilities string[]
+function Character.saveAbilitiesFromObjects(objects, class, abilities)
+    for _, object in pairs(objects) do
+        if Component.isAbilityCardForClass(object, class) then
+            local name = Component.getAbilityName(class, object)
+            if not Component.isStartingAbility(class, name) then
+                table.insert(abilities, name)
+            end
+        elseif Object.isDeck(object) and not Component.isAbilityDeck(object) then
+            local deckObjects = ObjectUtil.getContainedObjects(object)
+            Character.saveAbilitiesFromObjects(deckObjects, class, abilities)
+        end
+    end
+end
+
+---@param playerZone GUID
+function Character.saveQuest(playerZone)
+    local _, info = Character.findQuest(playerZone)
+    if info then
+        return info.number
+    end
+end
+
+---@param className string
+function Character.findZoneForClass(className)
+    for _, playerZone in pairs(Component.guids.ZONES) do
+        local characterMat = Component.characterMat(playerZone)
+        if characterMat and characterMat.getDescription() == className then
+            return playerZone
+        end
+    end
+    return nil
+end
+
+---@param playerZone GUID
+function Character.findClassInZone(playerZone)
+    local characterMat = Component.characterMat(playerZone)
+    if characterMat then
+        return characterMat.getDescription()
+    end
+    return nil
+end
+
+---@param playerZone GUID
+function Character.findQuest(playerZone)
+    for _, object in pairs(Component.getObjectsInZone(playerZone)) do
+        if Component.isPersonalQuestCard(object) then
+            return Component.getQuestInfo(object)
+        end
+    end
+    return nil
+end
+
+return Character

@@ -1,0 +1,86 @@
+local Game = require("gloomhaven-campaign-manager.Game")
+local Enhancement = require("gloomhaven-campaign-manager.Enhancement")
+
+Enhancement.NUMBERS = {
+    "http://cloud-3.steamusercontent.com/ugc/929311677225889607/DFA4EF43DC2D1A8B6F1C7F22E7C31718E35CCB31/",
+    "http://cloud-3.steamusercontent.com/ugc/929311677225890374/9B9B38BE2BB6A23EC21C977911FEC8915C74FF19/",
+    "http://cloud-3.steamusercontent.com/ugc/929311677225891903/93FF8C7F051FDD06DAEBD17F2BBD917960CB1779/",
+    "http://cloud-3.steamusercontent.com/ugc/929311677225892191/F2D0FC8179C04D3E4BFD2A546FAD7BC76D813091/",
+    "http://cloud-3.steamusercontent.com/ugc/929311677225892469/3DC5E471FC5F2CB1D6DBFC91DF5ADB2751A52E12/",
+    "http://cloud-3.steamusercontent.com/ugc/929311677225892918/3720A0E91CA48BB3972BBE924B26A34FFA34F57F/"
+}
+
+function onCollisionEnter(collision_info)
+    local obj = collision_info.collision_object
+
+    printDecals(obj)
+    --addDecals(obj)
+end
+
+function addDecals(obj)
+    local name = obj.getName():gsub("%s?%(%d+%)", "")
+    log(name)
+
+    local abs = Game.ability("Doomstalker", name)
+    local positions = abs.enhancements
+    for i, position in pairs(positions) do
+        position = { position[1], 0.36, position[2] }
+        obj.addDecal({
+            name = tostring(i),
+            url = Enhancement.NUMBERS[i],
+            position = position,
+            rotation = { 90, 180, 0 },
+            scale = { 0.16, 0.16, 3.08 }
+        })
+    end
+end
+
+function printDecals(obj)
+    local objName = obj.getName():gsub("%s?%(%d+%)", "")
+    local line = "[\"" .. objName .. "\"] = { level = 0,\n" ..
+            "  enhancements = {"
+
+    if obj.getDecals() then
+        local lastZ, lastX
+        for i, decal in pairs(obj.getDecals()) do
+            local name = decal.name
+            local position = decal.position
+            local x = round(position.x, 2)
+            local z = round(position.z, 2)
+            if x == -0.38 or x == -0.39 or x == -0.40 or x == -0.42 or x == -0.43 then
+                x = -0.41
+            end
+            if x == -0.44 or x == -0.45 or x == -0.47 or x == -0.47 then
+                x = -0.46
+            end
+            if x == -0.59 or x == -0.60 or x == -0.62 or x == -0.63 then
+                x = -0.61
+            end
+            if lastZ and math.abs(lastZ - z) <= 0.02 then
+                z = lastZ
+            end
+
+            if z == lastZ and lastX and lastX ~= x and math.abs(x - lastX) < 0.2 then
+                x = lastX - 0.2
+            end
+
+            lastZ = z
+            lastX = x
+
+            if i ~= 1 then
+                line = line .. ", "
+            end
+            line = line .. "[" .. name .. "]={" .. tostring(x) .. ", " .. tostring(z) .. "}"
+        end
+    end
+    line = line .. "}\n},"
+    log(line)
+end
+
+function round(num, numDecimalPlaces)
+    if numDecimalPlaces and numDecimalPlaces > 0 then
+        local mult = 10 ^ numDecimalPlaces
+        return math.floor(num * mult + 0.5) / mult
+    end
+    return math.floor(num + 0.5)
+end
