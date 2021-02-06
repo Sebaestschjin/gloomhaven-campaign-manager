@@ -20,7 +20,7 @@ local Unlocked = require('gloomhaven-campaign-manager.module.Unlocked')
 local CampaignManager = {}
 
 ---@type number[]
-CampaignManager.VERSION = { 1, 3, 0 }
+CampaignManager.VERSION = { 1, 3, 2 }
 ---@type string
 CampaignManager.SAVE_FILE = "Savefile"
 ---@type number[]
@@ -70,9 +70,9 @@ function CampaignManager.setupEventHandlers(content)
             EventManager.triggerEvent(EventType.CLASS_READY, name)
         end
     end)
-    EventManager.addHandler(EventType.CLASS_READY, function(className) Enhancement.mayLoadForClass(content, className) end)
-    EventManager.addHandler(EventType.CLASS_ENHANCED, function(className) Unlocked.mayLoadClass(content, className) end)
-    EventManager.addHandler(EventType.CLASS_UNLOCKED, function(className) Party.mayLoadCharacter(content, className) end)
+    EventManager.addHandler(EventType.CLASS_READY, function(className) Unlocked.mayLoadClass(content, className) end)
+    EventManager.addHandler(EventType.CLASS_UNLOCKED, function(className) Enhancement.mayLoadForClass(content, className) end)
+    EventManager.addHandler(EventType.CLASS_ENHANCED, function(className) Party.mayLoadCharacter(content, className) end)
 
     EventManager.addHandler(EventType.CLASS_UNLOCKED, Cleanup.onClassUnlocked)
     EventManager.addHandler(EventType.TREASURE_LOADED, Cleanup.onTreasureLoaded)

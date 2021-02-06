@@ -14,6 +14,7 @@ local Game = require("gloomhaven-campaign-manager.module.Game")
 local Task = require("gloomhaven-campaign-manager.module.Task")
 local Enhancement = {}
 
+---@type table<string, URL>
 Enhancement.DECALS = {
     ["Air"] = "http://cloud-3.steamusercontent.com/ugc/938309024726768884/CC8308C7D7DD6185F3EFA99F452C83101E1E95E3/",
     ["Earth"] = "http://cloud-3.steamusercontent.com/ugc/938309024726773039/E83D1E9F06938B3B5355F0A6A49D98B78B1F2594/",
@@ -56,7 +57,7 @@ function Enhancement.mayLoadForClass(content, className)
             return
         end
     end
-    EventManager.triggerEvent(EventType.CLASS_ENHANCED, className)
+    Enhancement.finishLoadClass(className)
 end
 
 ---@param className string
@@ -64,67 +65,48 @@ end
 function Enhancement.loadClass(className, abilities)
     Logger.info("Loading enhancements for class %s", className)
 
-    local classBox = getObjectFromGUID(Game.class(className).boxGuid)
-    local params = { classBox = classBox,
-                     className = className,
-                     abilities = abilities,
-                     updates = 0 }
+    local classBox = --[[---@type tts__Bag]] getObjectFromGUID(Game.class(className).boxGuid)
+    local classData = classBox.getData()
 
-    -- We could apply the decals on the infinite class box directly and respawn the whole box. However, parsing the JSON
-    -- for the character box is very slow (as it's huge), so what we do is to pull out the character box and pull out
-    -- the ability decks from it. Then apply the decals on the deck state and respawn the deck. After that put the
-    -- ability deck back into the character box. If both ability decks have been put back, reset the infinite class box
-    -- with the new character box.
-    classBox.takeObject({
-        index = 1,
-        position = Component.getSafePosition(),
-        callback_function = function(o) Enhancement.onCharacterBoxUnpacked(o, params) end,
-    })
-end
-
---- Triggers, when the character box from the infinite class box has been unpacked. Unpacks the ability decks within.
----@param characterBox tts__Bag
-function Enhancement.onCharacterBoxUnpacked(characterBox, params)
-    params.characterBox = characterBox
-
-    for _, name in pairs({ Component.names.ABILITY_DECK, Component.names.STARTING_ABILITY_DECK }) do
-        local abilityDeck = Utils.findObjectIn(characterBox, { name = name })
-        characterBox.takeObject({
-            guid = abilityDeck.getGUID(),
-            position = Component.getSafePosition(),
-            rotation = { 0, 180, 0 },
-            smooth = false,
-            callback_function = function(d) Enhancement.onAbilityDeckUnpacked(d, params) end
-        })
-    end
-end
-
---- Triggers, when an ability deck has been unpacked from the character box. Applies the decals to the decks object
---- state and respawns the deck.
----@param deck tts__Deck
-function Enhancement.onAbilityDeckUnpacked(deck, params)
-    local deckData = deck.getData()
-    deck.destruct()
-
-    for _, ability in pairs(params.abilities) do
-        for _, abilityCard in pairs(deckData.ContainedObjects) do
-            if abilityCard.Nickname:find(ability.name) then
-                Enhancement.applyEnhancementsOnCardState(abilityCard, params.className, ability)
-            end
+    for _, contained in pairs((--[[---@type tts__BagState]] classData.ContainedObjects[1]).ContainedObjects) do
+        if contained.Nickname == Component.names.STARTING_ABILITY_DECK
+                or contained.Nickname == Component.names.ABILITY_DECK then
+            Enhancement.applyEnhancementsOnAbilityDeck(--[[---@type tts__DeckState]]contained, className, abilities)
         end
     end
 
-    ObjectState.fixStates(deckData)
-    spawnObjectJSON({
-        json = Json.encode(deckData),
-        callback_function = function(d) Enhancement.onDeckUpdated(d, params) end,
+    classBox.destruct()
+    spawnObjectData({
+        data = classData,
+        callback_function = function()
+            Logger.info("Enhancements for class %s loaded", className)
+            Enhancement.finishLoadClass(className)
+        end,
     })
 end
 
----@param abilityCard tts__CardState
+---@param className string
+function Enhancement.finishLoadClass(className)
+    EventManager.triggerEvent(EventType.CLASS_ENHANCED, className)
+end
+
+---@param deck tts__DeckState
+---@param className string
+---@param abilities gh_Enhanced_Ability[]
+function Enhancement.applyEnhancementsOnAbilityDeck(deck, className, abilities)
+    for _, ability in pairs(abilities) do
+        for _, abilityCard in pairs(deck.ContainedObjects) do
+            if (--[[---@not nil]]abilityCard.Nickname):find(ability.name) then
+                Enhancement.applyEnhancementsOnCard(abilityCard, className, ability)
+            end
+        end
+    end
+end
+
+---@param abilityCard tts__ObjectState
 ---@param className string
 ---@param ability gh_Enhanced_Ability
-function Enhancement.applyEnhancementsOnCardState(abilityCard, className, ability)
+function Enhancement.applyEnhancementsOnCard(abilityCard, className, ability)
     local enhancementsInfo = Game.ability(className, ability.name).enhancements
     for _, enhancement in pairs(ability.enhancements) do
         local position = enhancementsInfo[enhancement.position]
@@ -135,21 +117,6 @@ function Enhancement.applyEnhancementsOnCardState(abilityCard, className, abilit
             rotation = Enhancement.ROTATION,
             scale = Enhancement.SCALE,
         })
-    end
-end
-
---- Triggers, when an ability deck has been respawned with the decals attached. Puts the deck back into the characeter
---- box. If both decks have been put deck, it puts back the character box into the infinite class box and issues the
---- event that the class is successfully enhanced.
----@param deck tts__Deck
-function Enhancement.onDeckUpdated(deck, params)
-    params.characterBox.putObject(deck)
-    params.updates = params.updates + 1
-
-    if params.updates == 2 then
-        params.classBox.reset()
-        params.classBox.putObject(params.characterBox)
-        EventManager.triggerEvent(EventType.CLASS_ENHANCED, params.className)
     end
 end
 
