@@ -1,5 +1,6 @@
 local DeckUtil = require("sebaestschjin-tts.DeckUtil")
 local Object = require("sebaestschjin-tts.Object")
+local ObjectState = require("sebaestschjin-tts.ObjectState")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
 
@@ -43,17 +44,19 @@ Component.deckIds = {}
 Component.deckIds.QUESTS = { 1753, 1997 }
 Component.deckIds.RANDOM_SCENARIOS = 1930
 
-Component.names = {}
-Component.names.PLAYER_MAT = "Player Mat"
-Component.names.CHARACTER_MAT = "Character Mat"
-Component.names.CHARACTER_SHEET = "Character Sheet"
-Component.names.ABILITY_DECK = "Advanced Abilities"
-Component.names.STARTING_ABILITY_DECK = "Starting Abilities"
-Component.names.MODIFIER_DECK = "Attack Modifiers"
-Component.names.ATTACK_MODIFIER = "Attack Modifier"
-Component.names.ROAD_EVENTS = "Road Events"
-Component.names.CITY_EVENTS = "City Events"
-Component.names.AchievementBoard = "Achievements"
+Component.names = {
+    PLAYER_MAT = "Player Mat",
+    CHARACTER_MAT = "Character Mat",
+    CHARACTER_SHEET = "Character Sheet",
+    ABILITY_DECK = "Advanced Abilities",
+    STARTING_ABILITY_DECK = "Starting Abilities",
+    MODIFIER_DECK = "Attack Modifiers",
+    ATTACK_MODIFIER = "Attack Modifier",
+    ROAD_EVENTS = "Road Events",
+    CITY_EVENTS = "City Events",
+    AchievementBoard = "Achievements",
+    InactiveCharacter = "Repacked",
+}
 
 ---@type table<string, tts__VectorShape>
 Component.positions = {}
@@ -168,6 +171,13 @@ function Component.characterSheet(playerZone)
     return Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_SHEET })
 end
 
+---@return tts__Container[]
+function Component.inactiveCharacters()
+    return --[[---@type tts__Container[] ]] TableUtil.filter(getObjects(), function(obj)
+        return obj.tag == Object.Tag.Bag and obj.getDescription() == Component.names.InactiveCharacter
+    end)
+end
+
 ---@return tts__Object
 function Component.abilityDeck(playerZone)
     return DeckUtil.wrap(Utils.findObjectIn(playerZone, { name = Component.names.ABILITY_DECK }))
@@ -179,20 +189,39 @@ function Component.isAbilityDeck(object)
 end
 
 ---@param object tts__Object
-function Component.isAbilityCardForClass(object, class)
+---@param className string
+function Component.isAbilityCardForClass(object, className)
     if not Object.isCard(object)
-            or not object.getDescription():find(class)
+            or not object.getDescription():find(className)
             or object.getName():find(Component.names.ATTACK_MODIFIER) then
         return false
     end
 
     local cardName, _ = object.getName():gsub("[%(%)]%d%d[%)%(]", "")
-    local nearest, _ = Game.nearestAbility(class, cardName)
+    local nearest, _ = Game.nearestAbility(className, cardName)
     return nearest ~= nil
 end
 
-function Component.isStartingAbility(class, abilityName)
-    local ability = Game.ability(class, abilityName)
+---@param objectData tts__ObjectState
+---@param className string
+function Component.isAbilityCardDataForClass(objectData, className)
+    print(logString(ObjectState))
+    print(logString(objectData))
+    if not ObjectState.isCard(objectData)
+            or not (--[[---@not nil]]objectData.Description):find(className)
+            or (--[[---@not nil]]objectData.Nickname):find(Component.names.ATTACK_MODIFIER) then
+        return false
+    end
+
+    local cardName, _ = (--[[---@not nil]]objectData.Nickname):gsub("[%(%)]%d%d[%)%(]", "")
+    local nearest, _ = Game.nearestAbility(className, cardName)
+    return nearest ~= nil
+end
+
+---@param className string
+---@param abilityName string
+function Component.isStartingAbility(className, abilityName)
+    local ability = Game.ability(className, abilityName)
     return ability.level == 1 or ability.level == "X"
 end
 

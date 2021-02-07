@@ -10,9 +10,9 @@
 
 ---@shape gh_Enhanced_Ability
 ---@field name string
----@field enhancements gh_Enhancement[]
+---@field enhancements gh_Ability_Enhancement[]
 
----@shape gh_Enhancement
+---@shape gh_Ability_Enhancement
 ---@field enhancement string
 ---@field position number
 

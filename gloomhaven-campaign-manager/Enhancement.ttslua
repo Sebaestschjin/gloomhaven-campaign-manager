@@ -1,17 +1,14 @@
 local EventManager = require("ge_tts.EventManager")
-local Json = require('ge_tts.Json')
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
 local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
-local Utils = require("sebaestschjin-tts.Utils")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Character = require("gloomhaven-campaign-manager.Character")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
-local Task = require("gloomhaven-campaign-manager.Task")
 local Enhancement = {}
 
 ---@type table<string, URL>
@@ -121,70 +118,147 @@ function Enhancement.applyEnhancementsOnCard(abilityCard, className, ability)
 end
 
 function Enhancement.save()
-    local enhancements = {}
+    local enhancements = --[[---@type gh_Enhanced_Class[] ]] {}
 
     for _, playerZone in pairs(Component.guids.ZONES) do
-        Enhancement.saveInZone(playerZone, enhancements)
+        Enhancement.saveFromZone(playerZone, enhancements)
     end
+    Enhancement.saveFromPackedCharacters(enhancements)
+    Enhancement.saveFromCharacterBoxes(enhancements)
 
     enhancements = TableUtil.sortByAttribute(enhancements, "class")
     return TableUtil.emptyToNil(enhancements)
 end
 
-function Enhancement.saveInZone(playerZone, enhancements)
-    local class = Character.findClassInZone(playerZone)
-    if not class then
+---@param playerZone GUID
+---@param enhancements gh_Enhanced_Class[]
+function Enhancement.saveFromZone(playerZone, enhancements)
+    local className = Character.findClassInZone(playerZone)
+    if not className then
         return
     end
 
-    local classEnhancements = { class = class, abilities = {} }
+    local zoneObjects = --[[---@type tts__Object[] ]] (--[[---@not nil]] getObjectFromGUID(playerZone)).getObjects()
+    Enhancement.saveFromContainer(zoneObjects, --[[---@not nil]] className, enhancements)
+end
 
-    local zoneObjects = getObjectFromGUID(playerZone).getObjects()
-    Enhancement.saveInContainer(zoneObjects, class, classEnhancements.abilities)
-
-    classEnhancements.abilities = TableUtil.sortByAttribute(classEnhancements.abilities, "name")
-    if TableUtil.isNotEmpty(classEnhancements.abilities) then
-        table.insert(enhancements, classEnhancements)
+---@param enhancements gh_Enhanced_Class[]
+function Enhancement.saveFromPackedCharacters(enhancements)
+    for _, inactiveCharacter in pairs(Component.inactiveCharacters()) do
+        local className = inactiveCharacter.getName()
+        local characterBoxData = inactiveCharacter.getData()
+        Enhancement.saveFromCharacterBoxData(characterBoxData, className, enhancements)
     end
 end
 
-function Enhancement.saveInContainer(objects, class, classEnhancements)
-    for _, object in TableUtil.pairs(objects) do
-        if Component.isAbilityCardForClass(object, class)
-                and TableUtil.isNotEmpty(object.getDecals())
-        then
-            Enhancement.saveForCard(object, class, classEnhancements)
-        elseif Object.isDeck(object) then
-            Enhancement.saveInContainer(ObjectUtil.getContainedObjects(object), class, classEnhancements)
+---@param enhancements gh_Enhanced_Class[]
+function Enhancement.saveFromCharacterBoxes(enhancements)
+    for className, classInfo in pairs(Game.CLASSES) do
+        local classBox = --[[---@type tts__Bag]] getObjectFromGUID(classInfo.boxGuid)
+        if classBox ~= nil then
+            local classData = --[[---@type tts__BagState]] classBox.getData().ContainedObjects[1]
+            Enhancement.saveFromCharacterBoxData(classData, className, enhancements)
         end
     end
 end
 
-function Enhancement.saveForCard(card, class, classEnhancements)
+---@param characterBoxData tts__ContainerState
+---@param className string
+---@param enhancements gh_Enhanced_Class[]
+function Enhancement.saveFromCharacterBoxData(characterBoxData, className, enhancements)
+    for _, contained in pairs(characterBoxData.ContainedObjects) do
+        if contained.Nickname == Component.names.STARTING_ABILITY_DECK
+                or contained.Nickname == Component.names.ABILITY_DECK
+        then
+            local objects = ObjectUtil.getContainedObjectsFromData(--[[---@type tts__DeckState]]contained)
+            Enhancement.saveFromContainer(objects, className, enhancements)
+        elseif Component.isAbilityCardDataForClass(contained, className) then
+            local object = ObjectUtil.wrapObject(contained)
+            Enhancement.saveForCard(object, className, enhancements)
+        end
+    end
+end
+
+---@param objects tts__Object[]
+---@param className string
+---@param enhancements gh_Enhanced_Class[]
+function Enhancement.saveFromContainer(objects, className, enhancements)
+    for _, object in TableUtil.pairs(objects) do
+        if Component.isAbilityCardForClass(object, className) and TableUtil.isNotEmpty(object.getDecals()) then
+            Enhancement.saveForCard(object, className, enhancements)
+        elseif Object.isDeck(object) then
+            Enhancement.saveFromContainer(ObjectUtil.getContainedObjects(object), className, enhancements)
+        end
+    end
+end
+
+---@param card tts__Object
+---@param className string
+---@param enhancements gh_Enhanced_Class[]
+function Enhancement.saveForCard(card, className, enhancements)
     Logger.verbose("Saving enhancements for " .. card.getName())
-    local ability = Component.getAbilityName(class, card)
-    local enhancementInfo = Game.ability(class, ability).enhancements
-    local cardEnhancements = {}
+    local abilityName = Component.getAbilityName(className, card)
+    local enhancementInfo = Game.ability(className, abilityName).enhancements
 
     for _, decal in TableUtil.pairs(card.getDecals()) do
-        local name = decal.name:gsub("Enhancement ", "")
+        local enhancementName = decal.name:gsub("Enhancement ", "")
         local nearestIndex, distance = Enhancement.findNearestIndex(decal.position, enhancementInfo)
-        table.insert(cardEnhancements, { position = nearestIndex, enhancement = name })
 
-        if distance > Enhancement.MAX_DISTANCE then
-            Logger.warn("Enhancement for ability " .. character.class .. "\n"
-                    .. "The distance to any known ennhancement position for this ability is bigger"
-                    .. " than expected (" .. distance .. "). This might mean, that the known"
-                    .. " information is outdated (e.g. a newer printing of the card exists),"
-                    .. " the card shouldn't have enhancements or that the decal was added"
-                    .. " rather sloppy. Please verify that the enhancement loads correctly.")
+        if Enhancement.saveEnhancement(enhancements, className, abilityName, nearestIndex, enhancementName) then
+            if distance > Enhancement.MAX_DISTANCE then
+                Logger.warn("Enhancement for ability " .. className .. "\n"
+                        .. "The distance to any known enhancement position for this ability is bigger"
+                        .. " than expected (" .. distance .. "). This might mean, that the known"
+                        .. " information is outdated (e.g. a newer printing of the card exists),"
+                        .. " the card shouldn't have enhancements or that the decal was added"
+                        .. " rather sloppy. Please verify that the enhancement loads correctly.")
+            end
         end
     end
+end
 
-    if TableUtil.isNotEmpty(cardEnhancements) then
-        cardEnhancements = TableUtil.sortByAttribute(cardEnhancements, "position")
-        table.insert(classEnhancements, { name = ability, enhancements = cardEnhancements })
+---@param enhancements gh_Enhanced_Class[]
+---@param className string
+---@param abilityName string
+---@param position number
+---@param enhancementName string
+---@return boolean
+function Enhancement.saveEnhancement(enhancements, className, abilityName, position, enhancementName)
+    ---@type gh_Enhanced_Class
+    local classEnhancements
+    for _, enhancedClass in pairs(enhancements) do
+        if enhancedClass.class == className then
+            classEnhancements = enhancedClass
+            break
+        end
     end
+    if not classEnhancements then
+        classEnhancements = { class = className, abilities = {} }
+        table.insert(enhancements, classEnhancements)
+    end
+
+    ---@type gh_Enhanced_Ability
+    local abilityEnhancement
+    for _, enhancedAbility in pairs(classEnhancements.abilities) do
+        if enhancedAbility.name == abilityName then
+            abilityEnhancement = enhancedAbility
+            break
+        end
+    end
+    if not abilityEnhancement then
+        abilityEnhancement = { name = abilityName, enhancements = {} }
+        table.insert(classEnhancements.abilities, abilityEnhancement)
+    end
+
+    for _, enhancedPosition in pairs(abilityEnhancement.enhancements) do
+        if enhancedPosition.position == position then
+            return false
+        end
+    end
+    local positionEnhancement = { position = position, enhancement = enhancementName }
+    table.insert(abilityEnhancement.enhancements, positionEnhancement)
+
+    return true
 end
 
 ---@param decalPosition tts__Vector

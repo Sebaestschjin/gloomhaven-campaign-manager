@@ -4,3 +4,6 @@
 [submodule "sebaestschjin-tts"]
 	path = sebaestschjin-tts
 	url = https://github.com/Sebaestschjin/sebaestschjin-tts
+[submodule "tts-types"]
+	path = tts-types
+	url = https://github.com/Sebaestschjin/tts-types.git
