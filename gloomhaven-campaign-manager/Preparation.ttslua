@@ -17,10 +17,14 @@ function Preparation.start(callback)
     Preparation.takeFromGamebox(Component.guids.TREASURE_DECK, Component.positions.TREASURE_DECK)
 end
 
+---@overload fun(guid: GUID, position: tts__VectorShape)
+---@param guid GUID
+---@param position tts__VectorShape
+---@param callback tts__ObjectCallbackFunction
 function Preparation.takeFromGamebox(guid, position, callback)
     local object = getObjectFromGUID(guid)
     if object == nil then
-        getObjectFromGUID(Component.guids.GAMEBOX).takeObject({
+        (--[[---@not nil]] getObjectFromGUID(Component.guids.GAMEBOX)).takeObject({
             guid = guid,
             smooth = false,
             position = position,
@@ -28,7 +32,7 @@ function Preparation.takeFromGamebox(guid, position, callback)
             callback_function = callback
         })
     elseif callback then
-        callback(object)
+        callback(--[[---@not nil]]object)
     end
 end
 

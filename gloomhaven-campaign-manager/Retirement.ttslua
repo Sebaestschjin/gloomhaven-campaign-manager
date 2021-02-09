@@ -1,4 +1,3 @@
-local Error = require("sebaestschjin-tts.Error")
 local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
@@ -8,36 +7,24 @@ local Component = require("gloomhaven-campaign-manager.Component")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Preparation = require("gloomhaven-campaign-manager.Preparation")
 local Quest = require("gloomhaven-campaign-manager.Quest")
-local Task = require("gloomhaven-campaign-manager.Task")
 
 local Retirement = {}
 
-Retirement.COLUMNS = 5
+local RetirementSheetColumns = 5
 
+---@param retired gh_Save_Retired[]
 function Retirement.load(retired)
-    Task.load("Retirements", retired, Retirement.validate, Retirement.doLoad)
-end
-
-function Retirement.validate(retired)
-    for _, retire in pairs(retired) do
-        if retire.quest and not Game.QUESTS[retire.quest] then
-            Error.add("A quest named '%s' does not exist. Can't exclude it from the deck.", retire.quest)
-        end
-    end
-    return true, Error.pop()
-end
-
-function Retirement.doLoad(retired)
     Preparation.takeFromGamebox(Component.guids.RETIREMENT_SHEET, Component.positions.RETIREMENT_SHEET)
     Utils.waitForObject(Component.guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
 end
 
+---@param retired gh_Save_Retired[]
 function Retirement.startLoading(retired)
-    local retirementSheet = getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
+    local retirementSheet = --[[---@not nil]] getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
 
     for i, retirement in ipairs(retired) do
         local row = i - 1
-        local offset = row * Retirement.COLUMNS
+        local offset = row * RetirementSheetColumns
 
         retirementSheet.editInput({ index = offset + 0, value = retirement.player })
         retirementSheet.editInput({ index = offset + 1, value = retirement.character })
@@ -53,6 +40,7 @@ function Retirement.startLoading(retired)
     retirementSheet.call("forceSave", {})
 end
 
+---@return gh_Save_Retired
 function Retirement.save()
     local retired = {}
 
@@ -62,20 +50,21 @@ function Retirement.save()
     return TableUtil.emptyToNil(retired)
 end
 
+---@param retired gh_Save_Retired[]
 function Retirement.saveRetirementSheet(retired)
     local retirementSheet = getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
     if not retirementSheet then
         return
     end
 
-    local retiredCharacter = {}
-    for i, input in pairs(retirementSheet.getInputs()) do
-        local column = (i - 1) % Retirement.COLUMNS
+    local retiredCharacter = --[[---@type gh_Save_Retired]] {}
+    for i, input in pairs((--[[---@not nil]] retirementSheet).getInputs()) do
+        local column = (i - 1) % RetirementSheetColumns
         if column == 0 then
             if TableUtil.isNotEmpty(retiredCharacter) then
                 table.insert(retired, retiredCharacter)
             end
-            retiredCharacter = {}
+            retiredCharacter = --[[---@type gh_Save_Retired]] {}
         end
 
         if input.value ~= "" then
@@ -86,9 +75,9 @@ function Retirement.saveRetirementSheet(retired)
             elseif column == 2 then
                 retiredCharacter.class = input.value
             elseif column == 3 then
-                retiredCharacter.level = tonumber(input.value)
+                retiredCharacter.level = --[[---@not nil]] tonumber(input.value)
             elseif column == 4 then
-                retiredCharacter.perks = tonumber(input.value)
+                retiredCharacter.perks = --[[---@not nil]] tonumber(input.value)
             end
         end
     end
@@ -97,29 +86,30 @@ function Retirement.saveRetirementSheet(retired)
     end
 end
 
+---@param retired gh_Save_Retired[]
 function Retirement.saveCompletedQuests(retired)
-    local completedQuests = {}
+    local completedQuests = --[[---@type table<string, number> ]] {}
     for name, _ in pairs(Game.QUESTS) do
         completedQuests[name] = 1
     end
 
     local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
     for _, quest in pairs(ObjectUtil.getContainedObjects(questDeck)) do
-        local questName = Component.getQuestInfo(quest)
-        completedQuests[questName] = nil
+        local questInfo = --[[---@not nil]] Component.getQuestInfo(quest)
+        completedQuests[questInfo.name] = nil
     end
 
     for _, playerZone in pairs(Component.guids.ZONES) do
         local playerQuest = Character.findQuest(playerZone)
         if playerQuest then
-            completedQuests[playerQuest] = nil
+            completedQuests[(--[[---@not nil]] playerQuest).name] = nil
         end
     end
 
     local i = 1
     for completed, _ in pairs(completedQuests) do
         if not retired[i] then
-            retired[i] = {}
+            retired[i] = --[[---@type gh_Save_Retired]] {}
         end
         retired[i].quest = completed
         i = i + 1

@@ -22,6 +22,7 @@ function Shop.load()
     EventManager.triggerEvent(EventType.SHOP_LOADED)
 end
 
+---@param unlocked gh_Save_Unlocked
 function Shop.save(unlocked)
     local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
     if shopDeck.isEmpty then
@@ -32,6 +33,7 @@ function Shop.save(unlocked)
     end
 end
 
+---@param unlocked gh_Save_Unlocked
 function Shop.doSave(unlocked)
     local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
     if shopDeck.isEmpty then
@@ -59,6 +61,8 @@ function Shop.saveFromObjects(objects, items)
     end
 end
 
+---@param name string
+---@return nil | tts__Object
 function Shop.findItem(name)
     local cityMat = --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
     for i = 1, 14 do
@@ -75,6 +79,13 @@ function Shop.findItem(name)
     return nil
 end
 
+---@overload fun(name: string, toPosition: tts__VectorShape, toRotation: tts__VectorShape): boolean
+---@overload fun(name: string, toPosition: tts__VectorShape): boolean
+---@param name string
+---@param toPosition tts__VectorShape
+---@param toRotation tts__VectorShape
+---@param startAt number
+---@return boolean
 function Shop.takeItem(name, toPosition, toRotation, startAt)
     startAt = startAt or 1
     local cityMat = --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
@@ -99,6 +110,11 @@ function Shop.takeItem(name, toPosition, toRotation, startAt)
     return false
 end
 
+---@overload fun(name: string, toPosition: tts__VectorShape): boolean
+---@param name string
+---@param toPosition tts__VectorShape
+---@param toRotation tts__VectorShape
+---@return boolean
 function Shop.takeRewardItem(name, toPosition, toRotation)
     return Shop.takeItem(name, toPosition, toRotation, 2)
 end

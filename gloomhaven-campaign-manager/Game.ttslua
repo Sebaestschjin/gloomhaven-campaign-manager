@@ -88,6 +88,7 @@ Game.ITEMS = {
     ---Max item number per prosperity level
     ---@type number[]
     Prosperity = { 14, 21, 28, 35, 42, 49, 56, 63, 70 },
+    ---@type table<string, number>
     NegativeEffects = {
         ["Hide Armor"] = 2,
         ["Heavy Greaves"] = 1,
@@ -130,6 +131,7 @@ Game.ITEMS = {
     }
 }
 
+---@type table<number, number>
 Game.RANDOM_SCENARIOS = {
     [63] = 0,
     [64] = 1,
@@ -2335,7 +2337,7 @@ Game.ACHIEVEMENTS = {
 }
 
 ---Information about Personal quests.
----@type table<string, gh_Game_Quest>
+---@type gh_Game_Quests
 Game.QUESTS = {
     ["A Helping Hand"] = {
         index = 0,

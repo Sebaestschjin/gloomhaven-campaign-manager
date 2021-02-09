@@ -1,50 +1,17 @@
 local Constant = require("sebaestschjin-tts.Constant")
-local Error = require("sebaestschjin-tts.Error")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local Game = require("gloomhaven-campaign-manager.Game")
-local Task = require("gloomhaven-campaign-manager.Task")
-
----@shape fs_Achievement_Info
----@field name string
----@field guids GUID[]
 
 local Achievement = {}
 
----@param achievements gh_Achievement[]
+---@param achievements gh_Save_Achievement[]
 function Achievement.loadAll(achievements)
-    Task.load("Achievements", achievements, Achievement.validate, Achievement.doLoad)
-end
-
----@param achievements gh_Achievement[]
-function Achievement.validate(achievements)
-    for i, achievement in pairs(achievements) do
-        local name, count = achievement.name, achievement.count
-        if not Game.ACHIEVEMENTS[name] then
-            Error.add("Achievement with name '%s' does not exist. Achievement won't be loaded.", name)
-            TableUtil.removeKey(achievements, i)
-        else
-            local maxCount = Game.ACHIEVEMENTS[name].maxCount
-            if count and (count < 1 or count > maxCount) then
-                local newCount = math.min(math.max(1, count), maxCount)
-                Error.add("Achievement has a maximum count of '%s', but '%s' was given. Will default to '%s'",
-                        maxCount, count, newCount)
-                achievements[i].count = newCount
-            end
-        end
-    end
-
-    return true, Error.pop()
-end
-
----@param achievements gh_Achievement[]
-function Achievement.doLoad(achievements)
     ---@type boolean[]
-    Achievement.groupReady = { true }
+    local readyGroups = { true }
 
     for i = 1, 5 do
-        Achievement.groupReady[i + 1] = false
+        table.insert(readyGroups, false)
         local achievementGroup = {}
         for _, achievement in pairs(achievements) do
             if not achievement.count then achievement.count = 1 end
@@ -54,15 +21,16 @@ function Achievement.doLoad(achievements)
         end
 
         if TableUtil.isNotEmpty(achievementGroup) then
-            Wait.condition(function() Achievement.loadGroup(i, achievementGroup) end,
-                    function() return Achievement.groupReady[i] end)
+            Wait.condition(function() Achievement.loadGroup(i, achievementGroup, readyGroups) end,
+                    function() return readyGroups[i] end)
         end
     end
 end
 
----@param i number
+---@param group number
 ---@param achievementGroup string[]
-function Achievement.loadGroup(i, achievementGroup)
+---@param readyGroups boolean[]
+function Achievement.loadGroup(group, achievementGroup, readyGroups)
     local globalAchievementsBag = --[[---@not nil]] getObjectFromGUID(Component.guids.AchievementBag)
 
     globalAchievementsBag.takeObject({
@@ -72,16 +40,17 @@ function Achievement.loadGroup(i, achievementGroup)
                 local index = --[[---@not nil]] Achievement.findIndex(obj, achievement)
                 obj.call('clicked', index)
             end
-            Achievement.groupReady[i + 1] = true
+            readyGroups[group + 1] = true
         end
     })
 end
 
+---@param saveFile gh_Save_Global
 function Achievement.saveAll(saveFile)
     local achievementBoardGuid = Component.achievementBoardGuid()
     local achievementBoard = getObjectFromGUID(achievementBoardGuid)
     if achievementBoard then
-        Achievement.doSave(saveFile, achievementBoard)
+        Achievement.doSave(saveFile, --[[---@not nil]] achievementBoard)
     else
         local bag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
         bag.takeObject({
@@ -96,10 +65,12 @@ function Achievement.saveAll(saveFile)
     end
 end
 
+---@param saveFile gh_Save_Global
+---@param achievementBoard tts__Object
 function Achievement.doSave(saveFile, achievementBoard)
-    local achievementInfo = --[[---@type fs_Achievement_Info[] ]] achievementBoard.getTable("flags")
+    local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] achievementBoard.getTable("flags")
 
-    local result = {}
+    local result = --[[---@type gh_Save_Achievement[] ]] {}
     for _, achievement in pairs(achievementInfo) do
         local maxIndex = 0
         for i, guid in pairs(achievement.guids) do
@@ -117,7 +88,7 @@ end
 ---@param board tts__Object
 ---@param achievement string
 function Achievement.findIndex(board, achievement)
-    local achievementInfo = --[[---@type fs_Achievement_Info[] ]] board.getTable("flags")
+    local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] board.getTable("flags")
 
     for i, flag in pairs(achievementInfo) do
         if flag.name == achievement then

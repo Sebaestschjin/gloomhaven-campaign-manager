@@ -84,19 +84,21 @@ end
 
 Component.snaps = {}
 
--- Player Mat
-Component.snaps.Head = 15
-Component.snaps.Armor = 16
-Component.snaps.HandLeft = 17
-Component.snaps.HandRight = 18
-Component.snaps.Boots = 19
-Component.snaps.Bag1 = 12
-Component.snaps.Bag2 = 13
-Component.snaps.Bag3 = 14
-Component.snaps.Active4 = 9
-Component.snaps.Active1 = 6
-Component.snaps.Active2 = 7
-Component.snaps.Active3 = 8
+---@type table<gh_Save_Character_Item_Position, number>
+Component.PlayerMatSnapPoints = {
+    Head = 15,
+    Armor = 16,
+    HandLeft = 17,
+    HandRight = 18,
+    Boots = 19,
+    Bag1 = 12,
+    Bag2 = 13,
+    Bag3 = 14,
+    Active4 = 9,
+    Active1 = 6,
+    Active3 = 8,
+    Active2 = 7,
+}
 
 -- Deck Mat
 Component.snaps.RANDOM_SCENARIOS = 8
@@ -128,6 +130,21 @@ function Component.fromDeckMat(snapPoint)
 end
 
 ---@return tts__Object
+function Component.gamebox()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.GAMEBOX)
+end
+
+---@return tts__Object
+function Component.partySheet()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.PARTY_SHEET)
+end
+
+---@return tts__Object
+function Component.map()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.MAP)
+end
+
+---@return tts__Object
 function Component.cityMat()
     return --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
 end
@@ -137,6 +154,11 @@ end
 function Component.fromCityMat(snapPoint)
     local deckPosition = Utils.getSnapPosition(Component.cityMat(), snapPoint)
     return DeckUtil.wrapAt(deckPosition)
+end
+
+---@return tts__Object
+function Component.openingConditions()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
 end
 
 ---@return GUID
@@ -159,16 +181,20 @@ function Component.playerButton(index)
     return --[[---@not nil]] getObjectFromGUID(Component.guids.ADD_PLAYERS[index])
 end
 
+---@param playerZone GUID
+---@return tts__Object
 function Component.playerMat(playerZone)
-    return Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+    return --[[---@not nil]] Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
 end
 
 function Component.characterMat(playerZone)
     return Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_MAT })
 end
 
+---@param playerZone GUID
+---@return tts__Object
 function Component.characterSheet(playerZone)
-    return Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_SHEET })
+    return --[[---@not nil]] Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_SHEET })
 end
 
 ---@return tts__Container[]
@@ -178,7 +204,7 @@ function Component.inactiveCharacters()
     end)
 end
 
----@return tts__Object
+---@return tts__Deck
 function Component.abilityDeck(playerZone)
     return DeckUtil.wrap(Utils.findObjectIn(playerZone, { name = Component.names.ABILITY_DECK }))
 end
@@ -278,12 +304,14 @@ function Component.isPersonalQuestCard(object)
     end
 end
 
+---@param object tts__Object
+---@return nil | gh_Game_Quest_Info
 function Component.getQuestInfo(object)
     local cardId = object.getData().CardID
     local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
     for name, quest in pairs(Game.QUESTS) do
         if quest.index == cardIndex then
-            return name, quest
+            return { name = name, index = quest.index, number = quest.number }
         end
     end
 

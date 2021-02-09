@@ -1,45 +1,37 @@
 local Utils = require("sebaestschjin-tts.Utils")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local Task = require("gloomhaven-campaign-manager.Task")
 
 local Sanctuary = {}
 
-Sanctuary.MAX_VALUE = 90
-
+---@param value number
 function Sanctuary.load(value)
-    Task.load("Sanctuary", value, Sanctuary.validate, Sanctuary.doLoad)
+    if value >= 0 then
+        Component.map().call('unseal')
+        Utils.waitForObject(Component.guids.SANCTUARY_STICKER, function() Sanctuary.setLevel(value) end)
+    end
 end
 
-function Sanctuary.validate(value)
-    return type(value) == "number"
-            and value >= 0
-            and value <= Sanctuary.MAX_VALUE
-end
-
-function Sanctuary.doLoad(value)
-    getObjectFromGUID(Component.guids.MAP).call('unseal')
-    Utils.waitForObject(Component.guids.SANCTUARY_STICKER, function() Sanctuary.setLevel(value) end)
-end
-
+---@param value number
 function Sanctuary.setLevel(value)
-    local sanctuarySticker = getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
+    local sanctuarySticker = --[[---@not nil ]] getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
     for i = 0, value - 1 do
         sanctuarySticker.call("clickedPros", i)
     end
 end
 
+---@return nil | number
 function Sanctuary.save()
     local sanctuarySticker = getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
     if not sanctuarySticker then
         return nil
     end
 
-    local checkmarks = sanctuarySticker.getTable("Pros")
+    local checkmarks = (--[[---@not nil]] sanctuarySticker).getTable("Pros")
     local maxValue = -1
     for i, checked in pairs(checkmarks) do
         if checked and tonumber(i) > maxValue then
-            maxValue = tonumber(i)
+            maxValue = --[[---@not nil]] tonumber(i)
         end
     end
 

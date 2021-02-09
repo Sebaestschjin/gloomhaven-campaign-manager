@@ -6,6 +6,11 @@
 ---@field hp gh_Game_HpProgression
 ---@field perks gh_Game_Perk[]
 ---@field abilities table<string, gh_Game_Ability>
+---@field extraFigure nil | gh_Game_Class_ExtraFigure
+
+---@shape gh_Game_Class_ExtraFigure
+---@field name string
+---@field hp gh_Game_HpProgression
 
 ---@shape gh_Game_Perk
 ---@field add nil | gh_Game_Perk_Add
@@ -28,7 +33,14 @@
 ---@shape gh_Game_Achievement
 ---@field maxCount number
 
+---@alias gh_Game_Quests table<string, gh_Game_Quest>
+
 ---@shape gh_Game_Quest
+---@field index number Index in the quest deck
+---@field number number Card number
+
+---@shape gh_Game_Quest_Info
+---@field name string
 ---@field index number Index in the quest deck
 ---@field number number Card number
 

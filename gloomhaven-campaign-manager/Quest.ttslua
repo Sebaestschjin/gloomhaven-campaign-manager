@@ -9,7 +9,7 @@ local Game = require("gloomhaven-campaign-manager.Game")
 local Quest = {}
 
 ---@param quest gh_Quest
----@param callback fun(deck:common_DeckZone, card:tts__Object)
+---@param callback tts__ObjectCallbackFunction
 ---@return boolean
 function Quest.take(quest, callback)
     local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
