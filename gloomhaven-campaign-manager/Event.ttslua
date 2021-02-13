@@ -3,6 +3,7 @@ local DeckUtil = require("sebaestschjin-tts.DeckUtil")
 local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
+local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 
@@ -158,7 +159,7 @@ function Event.saveEventsFromDeck(info)
     return eventsFromDeck
 end
 
----@param card common__WrappedObject
+---@param card seb_WrappedObject_old
 ---@return number
 function Event.getNumber(card)
     local numberFromName = tonumber(card.getName())

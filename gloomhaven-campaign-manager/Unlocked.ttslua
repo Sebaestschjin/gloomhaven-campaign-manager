@@ -129,7 +129,7 @@ function Unlocked.loadTreasures(treasures)
     EventManager.triggerEvent(EventType.TREASURE_LOADED)
 end
 
----@param saveFile gh_Savefile
+---@param saveFile gh_Savefile_Partial
 function Unlocked.saveAll(saveFile)
     saveFile.unlocked = {
         classes = Unlocked.saveClasses(),

@@ -51,7 +51,7 @@ function Shop.doSave(unlocked)
     unlocked.items = TableUtil.emptyToNil(table.sort(items))
 end
 
----@param objects common__WrappedDeck | tts__Object[]
+---@param objects seb_WrappedContainer | tts__Object[]
 ---@param items string[]
 function Shop.saveFromObjects(objects, items)
     for _, item in pairs(objects) do

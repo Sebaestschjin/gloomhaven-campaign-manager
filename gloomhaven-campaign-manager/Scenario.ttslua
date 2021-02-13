@@ -7,6 +7,7 @@ local Game = require("gloomhaven-campaign-manager.Game")
 
 local Scenario = {}
 
+---@type table<string, gh_Scenario_State>
 local State = {
     OPEN = "Open",
     DONE = "Done",
@@ -71,7 +72,7 @@ function Scenario.removeRandomScenario(number)
     end
 
     local cardId = Component.getCardId(Component.deckIds.RANDOM_SCENARIOS, Game.RANDOM_SCENARIOS[number])
-    local scenarioCard = Utils.findObjectIn(deck, { cardId = cardId })
+    local scenarioCard = --[[---@type seb_WrappedContainedObject_old]] Utils.findObjectIn(deck, { cardId = cardId })
     if not scenarioCard then
         Logger.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
         return
@@ -84,14 +85,16 @@ function Scenario.removeRandomScenario(number)
     })
 end
 
+---@return nil | gh_Save_Scenario[]
 function Scenario.save()
-    local scenarios = {}
+    local scenarios = --[[---@type gh_Save_Scenario[] ]] {}
     local map = Component.map()
     local scenarioStickers = --[[---@type fantasySetup_Scenario_Stickers]] map.getTable("tableML")
     local unlockedScenarios = map.getTable("locations")
 
     for stickerGuid, info in pairs(scenarioStickers) do
         if getObjectFromGUID(stickerGuid) ~= nil and info.number ~= nil then
+            ---@type gh_Scenario_State
             local state = State.OPEN
             if unlockedScenarios[stickerGuid] then
                 if unlockedScenarios[stickerGuid][1] == 1 then

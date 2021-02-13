@@ -2,17 +2,18 @@ local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
-local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
+local WrappedContainer = require("sebaestschjin-tts.WrappedContainer")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Character = require("gloomhaven-campaign-manager.Character")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+
 local Enhancement = {}
 
 ---@type table<string, URL>
-Enhancement.DECALS = {
+local Decals = {
     ["Air"] = "http://cloud-3.steamusercontent.com/ugc/938309024726768884/CC8308C7D7DD6185F3EFA99F452C83101E1E95E3/",
     ["Earth"] = "http://cloud-3.steamusercontent.com/ugc/938309024726773039/E83D1E9F06938B3B5355F0A6A49D98B78B1F2594/",
     ["Fire"] = "http://cloud-3.steamusercontent.com/ugc/938309024726770166/CD369CF7C22FAD932A71C65BA811AE137234270D/",
@@ -34,16 +35,16 @@ Enhancement.DECALS = {
     ["Area"] = "http://cloud-3.steamusercontent.com/ugc/938309024726997997/041C0C738331AA8B4D8281BE8E9BE2C2963D823D/",
     ["Jump"] = "http://cloud-3.steamusercontent.com/ugc/938309024726767406/7C34D7EA30D5E6FF90BBA88A767ACB98467FC557/"
 }
-Enhancement.DECALS["Ice"] = Enhancement.DECALS["Frost"] -- makes more sense, since the element is also called Ice
+Decals["Ice"] = Decals["Frost"] -- makes more sense, since the element is also called Ice
 
 ---@type number
-Enhancement.MAX_DISTANCE = 0.1
+local MaxDistance = 0.1
 ---@type number
-Enhancement.Y_COORDINATE = 0.36
+local DecalYCoordinate = 0.36
 ---@type tts__VectorShape
-Enhancement.ROTATION = { 90, 180, 0 }
+local DecalRotation = { 90, 180, 0 }
 ---@type tts__VectorShape
-Enhancement.SCALE = { 0.16, 0.16, 3.07 }
+local DecalScale = { 0.16, 0.16, 3.07 }
 
 ---@param content gh_Savefile
 ---@param className string
@@ -62,7 +63,7 @@ end
 function Enhancement.loadClass(className, abilities)
     Logger.info("Loading enhancements for class %s", className)
 
-    local classBox = --[[---@type tts__Bag]] getObjectFromGUID(Game.class(className).boxGuid)
+    local classBox = --[[---@not nil]] Component.classBox(className)
     local classData = classBox.getData()
 
     for _, contained in pairs((--[[---@type tts__BagState]] classData.ContainedObjects[1]).ContainedObjects) do
@@ -109,14 +110,15 @@ function Enhancement.applyEnhancementsOnCard(abilityCard, className, ability)
         local position = enhancementsInfo[enhancement.position]
         ObjectState.addDecal(abilityCard, {
             name = "Enhancement " .. enhancement.enhancement,
-            url = Enhancement.DECALS[enhancement.enhancement],
-            position = { position[1], Enhancement.Y_COORDINATE, position[2] },
-            rotation = Enhancement.ROTATION,
-            scale = Enhancement.SCALE,
+            url = Decals[enhancement.enhancement],
+            position = { position[1], DecalYCoordinate, position[2] },
+            rotation = DecalRotation,
+            scale = DecalScale,
         })
     end
 end
 
+---@return nil | gh_Save_EnhancedClass[]
 function Enhancement.save()
     local enhancements = --[[---@type gh_Save_EnhancedClass[] ]] {}
 
@@ -138,61 +140,44 @@ function Enhancement.saveFromZone(playerZone, enhancements)
         return
     end
 
-    local zoneObjects = --[[---@type tts__Object[] ]] (--[[---@not nil]] getObjectFromGUID(playerZone)).getObjects()
-    Enhancement.saveFromContainer(zoneObjects, --[[---@not nil]] className, enhancements)
+    Enhancement.saveFromContainer(Component.playerZone(playerZone), --[[---@not nil]] className, enhancements)
 end
 
 ---@param enhancements gh_Save_EnhancedClass[]
 function Enhancement.saveFromPackedCharacters(enhancements)
     for _, inactiveCharacter in pairs(Component.inactiveCharacters()) do
         local className = inactiveCharacter.getName()
-        local characterBoxData = inactiveCharacter.getData()
-        Enhancement.saveFromCharacterBoxData(characterBoxData, className, enhancements)
+        local container = WrappedContainer(inactiveCharacter.getData())
+        Enhancement.saveFromContainer(container, className, enhancements)
     end
 end
 
 ---@param enhancements gh_Save_EnhancedClass[]
 function Enhancement.saveFromCharacterBoxes(enhancements)
-    for className, classInfo in pairs(Game.CLASSES) do
-        local classBox = --[[---@type tts__Bag]] getObjectFromGUID(classInfo.boxGuid)
+    for className, _ in pairs(Game.CLASSES) do
+        local classBox = Component.classBox(className)
         if classBox ~= nil then
-            local classData = --[[---@type tts__BagState]] classBox.getData().ContainedObjects[1]
-            Enhancement.saveFromCharacterBoxData(classData, className, enhancements)
+            local classData = (--[[---@not nil]] classBox).getData().ContainedObjects[1]
+            local container = WrappedContainer(--[[---@type tts__BagState]] classData)
+            Enhancement.saveFromContainer(container, className, enhancements)
         end
     end
 end
 
----@param characterBoxData tts__ContainerState
+---@param container seb_WrappedContainer
 ---@param className string
 ---@param enhancements gh_Save_EnhancedClass[]
-function Enhancement.saveFromCharacterBoxData(characterBoxData, className, enhancements)
-    for _, contained in pairs(characterBoxData.ContainedObjects) do
-        if contained.Nickname == Component.names.STARTING_ABILITY_DECK
-                or contained.Nickname == Component.names.ABILITY_DECK
-        then
-            local objects = ObjectUtil.getContainedObjectsFromData(--[[---@type tts__DeckState]]contained)
-            Enhancement.saveFromContainer(objects, className, enhancements)
-        elseif Component.isAbilityCardDataForClass(contained, className) then
-            local object = ObjectUtil.wrapObject(contained)
-            Enhancement.saveForCard(object, className, enhancements)
-        end
-    end
-end
-
----@param objects tts__Object[]
----@param className string
----@param enhancements gh_Save_EnhancedClass[]
-function Enhancement.saveFromContainer(objects, className, enhancements)
-    for _, object in TableUtil.pairs(objects) do
+function Enhancement.saveFromContainer(container, className, enhancements)
+    for _, object in ipairs(container.getObjects()) do
         if Component.isAbilityCardForClass(object, className) and TableUtil.isNotEmpty(object.getDecals()) then
             Enhancement.saveForCard(object, className, enhancements)
         elseif Object.isDeck(object) then
-            Enhancement.saveFromContainer(ObjectUtil.getContainedObjects(object), className, enhancements)
+            Enhancement.saveFromContainer(--[[---@type seb_WrappedContainer]] object, className, enhancements)
         end
     end
 end
 
----@param card tts__Object
+---@param card seb_WrappedObject
 ---@param className string
 ---@param enhancements gh_Save_EnhancedClass[]
 function Enhancement.saveForCard(card, className, enhancements)
@@ -200,12 +185,12 @@ function Enhancement.saveForCard(card, className, enhancements)
     local abilityName = Component.getAbilityName(className, card)
     local enhancementInfo = Game.ability(className, abilityName).enhancements
 
-    for _, decal in TableUtil.pairs(card.getDecals()) do
+    for _, decal in ipairs(card.getDecals()) do
         local enhancementName = decal.name:gsub("Enhancement ", "")
         local nearestIndex, distance = Enhancement.findNearestIndex(decal.position, enhancementInfo)
 
         if Enhancement.saveEnhancement(enhancements, className, abilityName, nearestIndex, enhancementName) then
-            if distance > Enhancement.MAX_DISTANCE then
+            if distance > MaxDistance then
                 Logger.warn("Enhancement for ability " .. className .. "\n"
                         .. "The distance to any known enhancement position for this ability is bigger"
                         .. " than expected (" .. distance .. "). This might mean, that the known"
@@ -262,6 +247,8 @@ function Enhancement.saveEnhancement(enhancements, className, abilityName, posit
 end
 
 ---@param decalPosition tts__Vector
+---@param enhancementInfo gh_Game_Ability_Enhancement[]
+---@return (number, number)
 function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
     local nearestDistance = 42
     local nearestIndex = 1

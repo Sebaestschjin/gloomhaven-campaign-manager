@@ -19,7 +19,7 @@ function onLoad(_)
     })
 
     self.createButton({
-        click_function = "load",
+        click_function = "loadCampaign",
         function_owner = self,
         label = "Load",
         position = { 0, 0.6, -2 },
@@ -33,7 +33,7 @@ function onLoad(_)
     })
 
     self.createButton({
-        click_function = "save",
+        click_function = "saveCampaign",
         function_owner = self,
         label = "Save",
         position = { 0, 0.6, 4 },
@@ -46,17 +46,16 @@ function onLoad(_)
         tooltip = "Saves the current game progress into the notebook 'Savefile'"
     })
 
-    ChatCommands.addCommand("save", save)
-    ChatCommands.addCommand("load", load)
+    ChatCommands.addCommand("save", saveCampaign)
+    ChatCommands.addCommand("load", loadCampaign)
 end
 
-function load()
+function loadCampaign()
     CampaignManager.loadAll()
 end
 
-function save()
+function saveCampaign()
     CampaignManager.saveAll()
 end
 
-function noop()
-end
+function noop() end

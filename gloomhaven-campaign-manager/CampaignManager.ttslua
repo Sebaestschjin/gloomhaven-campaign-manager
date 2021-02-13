@@ -64,7 +64,7 @@ function CampaignManager.saveAll()
 end
 
 function CampaignManager.createSaveFile()
-    local saveFile = {}
+    local saveFile = --[[---@type gh_Savefile]] {}
 
     Preparation.prepareSave()
     -- this wait is necessary, because the scripting zones have to be adjusted, otherwise they won't detect cards lying
@@ -74,18 +74,18 @@ function CampaignManager.createSaveFile()
     return saveFile
 end
 
----@param saveFile gh_Savefile
+---@param saveFile gh_Savefile_Partial
 function CampaignManager.doCreateSaveFile(saveFile)
-    saveFile.global = {
-        prosperity = Prosperity.save(),
-        scenarios = Scenario.save(),
-    }
-    Achievement.saveAll(saveFile.global)
-    Unlocked.saveAll(saveFile)
-    saveFile.party = Party.save()
+    --saveFile.global = {
+    --    prosperity = Prosperity.save(),
+    --    scenarios = Scenario.save(),
+    --}
+    --Achievement.saveAll(--[[---@not nil]] saveFile.global)
+    --Unlocked.saveAll(saveFile)
+    --saveFile.party = Party.save()
     saveFile.enhancements = Enhancement.save()
-    saveFile.retired = Retirement.save()
-    saveFile.events = Event.save()
+    --saveFile.retired = Retirement.save()
+    --saveFile.events = Event.save()
 end
 
 return CampaignManager

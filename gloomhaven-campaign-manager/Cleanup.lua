@@ -7,16 +7,11 @@ local Cleanup = {}
 
 local unlocked = 0
 
----@return tts__Container
-local function gamebox()
-    return --[[---@type tts__Container]] getObjectFromGUID(Component.guids.GAMEBOX)
-end
-
 ---@param guid GUID
 local function placeIntoGamebox(guid)
     local object = getObjectFromGUID(guid)
     if object then
-        gamebox().putObject(--[[---@not nil]]object)
+        Component.gamebox().putObject(--[[---@not nil]] object)
     end
 end
 

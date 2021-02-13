@@ -45,7 +45,7 @@ function Achievement.loadGroup(group, achievementGroup, readyGroups)
     })
 end
 
----@param saveFile gh_Save_Global
+---@param saveFile gh_Save_Global_Partial
 function Achievement.saveAll(saveFile)
     local achievementBoardGuid = Component.achievementBoardGuid()
     local achievementBoard = getObjectFromGUID(achievementBoardGuid)
@@ -65,7 +65,7 @@ function Achievement.saveAll(saveFile)
     end
 end
 
----@param saveFile gh_Save_Global
+---@param saveFile gh_Save_Global_Partial
 ---@param achievementBoard tts__Object
 function Achievement.doSave(saveFile, achievementBoard)
     local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] achievementBoard.getTable("flags")
@@ -87,6 +87,7 @@ end
 
 ---@param board tts__Object
 ---@param achievement string
+---@return nil | number
 function Achievement.findIndex(board, achievement)
     local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] board.getTable("flags")
 

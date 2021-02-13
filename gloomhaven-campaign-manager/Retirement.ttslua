@@ -40,9 +40,9 @@ function Retirement.startLoading(retired)
     retirementSheet.call("forceSave", {})
 end
 
----@return gh_Save_Retired
+---@return nil | gh_Save_Retired[]
 function Retirement.save()
-    local retired = {}
+    local retired = --[[---@type gh_Save_Retired[] ]] {}
 
     Retirement.saveRetirementSheet(retired)
     Retirement.saveCompletedQuests(retired)

@@ -10,6 +10,7 @@ function Prosperity.load(value)
     end
 end
 
+---@return number
 function Prosperity.save()
     local checkmarks = Component.map().getTable("Pros")
     local maxValue = -1

@@ -3,6 +3,7 @@ local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
+local WrappedZone = require("sebaestschjin-tts.WrappedZone")
 
 local Game = require("gloomhaven-campaign-manager.Game")
 local Component = {}
@@ -129,9 +130,9 @@ function Component.fromDeckMat(snapPoint)
     return DeckUtil.wrapAt(deckPosition)
 end
 
----@return tts__Object
+---@return tts__Bag
 function Component.gamebox()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.GAMEBOX)
+    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.GAMEBOX)
 end
 
 ---@return tts__Object
@@ -171,8 +172,14 @@ function Component.achievementBoardGuid()
     end
 
     local achievementBag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
-    local achievementBoard = Utils.findObjectIn(achievementBag, { name = Component.names.AchievementBoard })
+    local achievementBoard = --[[---@type tts__IndexedSimpleObjectState]] Utils.findObjectIn(achievementBag, { name = Component.names.AchievementBoard })
     return achievementBoard.guid
+end
+
+---@param playerZone string
+---@return seb_WrappedZone
+function Component.playerZone(playerZone)
+    return WrappedZone(--[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone))
 end
 
 ---@param index number
@@ -184,7 +191,13 @@ end
 ---@param playerZone GUID
 ---@return tts__Object
 function Component.playerMat(playerZone)
-    return --[[---@not nil]] Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+    return --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+end
+
+---@param className string
+---@return nil | tts__Bag
+function Component.classBox(className)
+    return --[[---@type nil | tts__Bag]] getObjectFromGUID(Game.class(className).boxGuid)
 end
 
 function Component.characterMat(playerZone)
@@ -194,19 +207,19 @@ end
 ---@param playerZone GUID
 ---@return tts__Object
 function Component.characterSheet(playerZone)
-    return --[[---@not nil]] Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_SHEET })
+    return --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_SHEET })
 end
 
 ---@return tts__Container[]
 function Component.inactiveCharacters()
     return --[[---@type tts__Container[] ]] TableUtil.filter(getObjects(), function(obj)
-        return obj.tag == Object.Tag.Bag and obj.getDescription() == Component.names.InactiveCharacter
+        return Object.isBag(obj) and obj.getDescription() == Component.names.InactiveCharacter
     end)
 end
 
----@return tts__Deck
+---@return common_DeckZone
 function Component.abilityDeck(playerZone)
-    return DeckUtil.wrap(Utils.findObjectIn(playerZone, { name = Component.names.ABILITY_DECK }))
+    return DeckUtil.wrap(--[[---@type tts__Deck]] Utils.findObjectIn(playerZone, { name = Component.names.ABILITY_DECK }))
 end
 
 function Component.isAbilityDeck(object)
@@ -214,7 +227,7 @@ function Component.isAbilityDeck(object)
             and object.getName():find(Component.names.ABILITY_DECK)
 end
 
----@param object tts__Object
+---@param object seb_ObjectLike
 ---@param className string
 function Component.isAbilityCardForClass(object, className)
     if not Object.isCard(object)
@@ -231,8 +244,6 @@ end
 ---@param objectData tts__ObjectState
 ---@param className string
 function Component.isAbilityCardDataForClass(objectData, className)
-    print(logString(ObjectState))
-    print(logString(objectData))
     if not ObjectState.isCard(objectData)
             or not (--[[---@not nil]]objectData.Description):find(className)
             or (--[[---@not nil]]objectData.Nickname):find(Component.names.ATTACK_MODIFIER) then
@@ -252,7 +263,7 @@ function Component.isStartingAbility(className, abilityName)
 end
 
 ---@param class string
----@param abilityCard tts__Object
+---@param abilityCard seb_ObjectLike
 ---@return string
 function Component.getAbilityName(class, abilityCard)
     local cardName, _ = string.gsub(abilityCard.getName(), "%s?[%(%)]%d+[%)%(]", "")
@@ -260,7 +271,7 @@ function Component.getAbilityName(class, abilityCard)
 end
 
 --- Returns true if the given object is an item card.
----@param object tts__Object | common__WrappedObject
+---@param object tts__Object | seb_WrappedObject_old
 function Component.isItemCard(object)
     return Object.isCard(object)
             and (Component.isItemCardDescription(object.getDescription())
@@ -268,7 +279,7 @@ function Component.isItemCard(object)
 end
 
 --- Returns true if the given item card object is an item from the rewards or item design deck.
----@param item tts__Object | common__WrappedObject
+---@param item tts__Object | seb_WrappedObject_old
 ---@param prosperityLevel number
 function Component.isRewardItemCard(item, prosperityLevel)
     if not Component.isItemCard(item) then

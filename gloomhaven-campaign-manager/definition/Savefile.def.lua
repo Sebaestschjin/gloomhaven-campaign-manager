@@ -1,3 +1,4 @@
+--- The complete savefile format
 ---@shape gh_Savefile
 ---@field enhancements gh_Save_EnhancedClass[]
 ---@field unlocked gh_Save_Unlocked
@@ -5,6 +6,16 @@
 ---@field party gh_Save_Party
 ---@field retired gh_Save_Retired[]
 ---@field events gh_Save_EventDeck[]
+---@field metadata gh_Save_Metadata
+
+--- The savefile format with optional values
+---@shape gh_Savefile_Partial
+---@field enhancements nil | gh_Save_EnhancedClass[]
+---@field unlocked nil | gh_Save_Unlocked_Partial
+---@field global nil | gh_Save_Global_Partial
+---@field party nil | gh_Save_Party
+---@field retired nil | gh_Save_Retired[]
+---@field events nil | gh_Save_EventDeck[]
 ---@field metadata nil | gh_Save_Metadata
 
 ---@shape gh_Save_EnhancedClass
@@ -24,6 +35,11 @@
 ---@field achievements gh_Save_Achievement[]
 ---@field prosperity number the number of prosperity checkmarks
 
+---@shape gh_Save_Global_Partial
+---@field scenarios nil | gh_Save_Scenario[] @Default []
+---@field achievements nil | gh_Save_Achievement[] @Default []
+---@field prosperity nil | number @Default 0
+
 ---@shape gh_Save_Scenario
 ---@field number number
 ---@field state gh_Scenario_State
@@ -32,7 +48,7 @@
 ---@field name string
 ---@field count nil | number
 
----@alias gh_Scenario_State 'Done' | 'Unlocked' | 'Locked'
+---@alias gh_Scenario_State 'Open' | 'Done' | 'Locked'
 
 ---@shape gh_Save_Party
 ---@field name string
@@ -67,6 +83,13 @@
 ---@field sanctuary number
 ---@field items string[]
 ---@field specialConditions gh_Save_Unlocked_Conditions
+
+---@shape gh_Save_Unlocked_Partial
+---@field classes nil | string[]
+---@field treasures nil | number[]
+---@field sanctuary nil | number
+---@field items nil | string[]
+---@field specialConditions nil | gh_Save_Unlocked_Conditions
 
 ---@shape gh_Save_Unlocked_Conditions
 ---@field ancientTechnology boolean

@@ -9,6 +9,7 @@ local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
+local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Game = require("gloomhaven-campaign-manager.Game")
@@ -117,7 +118,7 @@ function Character.loadMaxHp(playerZone, character)
     Character.loadFigureHealth(playerZone, character.class, maxHealth)
     if maxHealth > startingHealth then
         local tokenName = startingHealth .. " hp"
-        local healthToken = --[[---@not nil]] Utils.findObjectIn(playerZone, { name = tokenName })
+        local healthToken = --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = tokenName })
         healthToken.setState(maxHealth)
     end
 
@@ -131,7 +132,7 @@ end
 ---@param name string
 ---@param health number
 function Character.loadFigureHealth(playerZone, name, health)
-    local figure = --[[---@not nil]] Utils.findObjectIn(playerZone, { name = name, tag = Object.Tag.Figurine })
+    local figure = --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = name, tag = Object.Tag.Figurine })
 
     figure.setTable("health", { value = health, max = health })
     figure.call("setHealth")
@@ -182,12 +183,12 @@ end
 function Character.loadPerks(playerZone, character)
     local perkInfo = Game.class(character.class).perks
     local characterSheet = --[[---@not nil]] Component.characterSheet(playerZone)
-    local currentDeck = --[[---@not nil]] Utils.findObjectIn(playerZone, { name = Component.names.MODIFIER_DECK, description = "Player" })
+    local currentDeck = --[[---@type tts__Deck]] Utils.findObjectIn(playerZone, { name = Component.names.MODIFIER_DECK, description = "Player" })
     local isOtherDeck = function(obj) return obj.getName():find(Component.names.MODIFIER_DECK)
             and obj.getGUID() ~= currentDeck.getGUID()
     end
-    local additionalDeck = Utils.findObjectInZone(playerZone, { func = isOtherDeck })
-    additionalDeck = DeckUtil.wrap(additionalDeck)
+    local additionalDeck = --[[---@type tts__Deck]] Utils.findObjectInZone(playerZone, { func = isOtherDeck })
+    local additionalDeckZone = WrappedDeck(additionalDeck)
 
     local chain = Chain.create()
     for _, perk in TableUtil.pairs(character.perks) do
@@ -195,12 +196,12 @@ function Character.loadPerks(playerZone, character)
             characterSheet.call("clickedToggle", "perk" .. tostring(perk))
 
             for _, card in TableUtil.pairs(perkInfo[perk].add) do
-                chain.add(function(--[[---@type common_Chain]] c)
-                    Character.addModifierCard(c, character, additionalDeck, currentDeck, card)
+                chain.add(function(c)
+                    Character.addModifierCard(c, character, additionalDeckZone, currentDeck, card)
                 end)
             end
             for _, card in TableUtil.pairs(perkInfo[perk].remove) do
-                chain.add(function(--[[---@type common_Chain]] c)
+                chain.add(function(c)
                     Character.removeModifierCard(c, character, currentDeck, card)
                 end)
             end
@@ -218,7 +219,7 @@ end
 
 ---@param chain common_Chain
 ---@param character gh_Save_Character
----@param additionalDeck tts__Deck
+---@param additionalDeck seb_WrappedDeck
 ---@param currentDeck tts__Deck
 ---@param card string
 ---@return boolean
@@ -270,9 +271,9 @@ function Character.removeModifierCard(chain, character, currentDeck, card)
     return false
 end
 
----@param deck tts__Deck
+---@param deck seb_WrappedDeck
 ---@param name string
----@return nil | tts__Object
+---@return nil | tts__IndexedSimpleObjectState
 function Character.findModifierCard(deck, name)
     local searchPattern = "^" .. Component.names.ATTACK_MODIFIER .. " " .. StringUtil.escapePattern(name) .. "$"
     return Utils.findObjectIn(deck, { name = searchPattern })
@@ -419,7 +420,7 @@ end
 ---@param playerZone GUID
 ---@return gh_Save_Character_Item[]
 function Character.saveItems(playerZone)
-    local playerMat = --[[---@not nil]] Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+    local playerMat = --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
     local items = --[[---@type gh_Save_Character_Item[] ]] {}
     local zoneObjects = Component.getObjectsInZone(playerZone)
     Character.saveItemFromObjects(zoneObjects, playerMat, items)
@@ -427,23 +428,23 @@ function Character.saveItems(playerZone)
     return TableUtil.sortByAttribute(items, "name")
 end
 
----@param objects tts__Object[]
+---@param objects seb_ObjectLikeArray
 ---@param playerMat tts__Object
 ---@param items gh_Save_Character_Item[]
 function Character.saveItemFromObjects(objects, playerMat, items)
-    for _, object in pairs(objects) do
+    for _, object in ipairs(--[[---@type seb_ObjectLike_old[] ]] objects) do
         if Component.isItemCard(object) then
             local item = { name = object.getName(), position = Character.getItemPosition(playerMat, object) }
             table.insert(items, item)
         elseif Object.isDeck(object) then
-            local deckObjects = ObjectUtil.getContainedObjects(object)
+            local deckObjects = ObjectUtil.getContainedObjects(--[[---@type tts__Deck]] object)
             Character.saveItemFromObjects(deckObjects, playerMat, items)
         end
     end
 end
 
 ---@param playerMat tts__Object
----@param object tts__Object
+---@param object seb_ObjectLike_old
 ---@return gh_Save_Character_Item_Position
 function Character.getItemPosition(playerMat, object)
     for name, snap in pairs(Component.PlayerMatSnapPoints) do
@@ -460,25 +461,25 @@ end
 function Character.saveAbilities(playerZone)
     local class = --[[---@not nil]] Character.findClassInZone(playerZone)
     local abilities = --[[---@type string[] ]] {}
-    local zoneObjects = (--[[---@not nil]] getObjectFromGUID(playerZone)).getObjects()
-    Character.saveAbilitiesFromObjects(--[[---@type tts__Object[] ]]zoneObjects, class, abilities)
+    local zoneObjects = (--[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)).getObjects()
+    Character.saveAbilitiesFromObjects(zoneObjects, class, abilities)
 
     table.sort(abilities)
     return abilities
 end
 
----@param objects tts__Object[]
+---@param objects seb_ObjectLikeArray
 ---@param class string
 ---@param abilities string[]
 function Character.saveAbilitiesFromObjects(objects, class, abilities)
-    for _, object in pairs(objects) do
+    for _, object in ipairs(--[[---@type seb_ObjectLike_old[] ]] objects) do
         if Component.isAbilityCardForClass(object, class) then
             local name = Component.getAbilityName(class, object)
             if not Component.isStartingAbility(class, name) then
                 table.insert(abilities, name)
             end
         elseif Object.isDeck(object) and not Component.isAbilityDeck(object) then
-            local deckObjects = ObjectUtil.getContainedObjects(object)
+            local deckObjects = ObjectUtil.getContainedObjects(--[[---@type seb_ContainerLike]] object)
             Character.saveAbilitiesFromObjects(deckObjects, class, abilities)
         end
     end
