@@ -52,7 +52,7 @@ end
 
 ---@param retired gh_Save_Retired[]
 function Retirement.saveRetirementSheet(retired)
-    local retirementSheet = getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
+    local retirementSheet = Component.retirementSheet()
     if not retirementSheet then
         return
     end
@@ -94,12 +94,12 @@ function Retirement.saveCompletedQuests(retired)
     end
 
     local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
-    for _, quest in pairs(ObjectUtil.getContainedObjects(questDeck)) do
+    for _, quest in pairs(questDeck.getObjects()) do
         local questInfo = --[[---@not nil]] Component.getQuestInfo(quest)
         completedQuests[questInfo.name] = nil
     end
 
-    for _, playerZone in pairs(Component.guids.ZONES) do
+    for _, playerZone in pairs(Component.playerZones()) do
         local playerQuest = Character.findQuest(playerZone)
         if playerQuest then
             completedQuests[(--[[---@not nil]] playerQuest).name] = nil

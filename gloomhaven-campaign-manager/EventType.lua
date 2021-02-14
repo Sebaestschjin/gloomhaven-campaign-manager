@@ -5,6 +5,7 @@ local Event = {
     CLASS_ENHANCED = "class_enhanced",
     CLASS_UNLOCKED = "class_unlocked",
     TREASURE_LOADED = "treasure_loaded",
+    ACHIEVEMENTS_SAVED = "achievements_saved",
 }
 
 return Event

@@ -76,7 +76,7 @@ function Party.save()
     party.reputation = --[[---@not nil]] tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
 
     party.characters = --[[---@type gh_Save_Character[] ]]{}
-    for _, zoneGuid in pairs(Component.guids.ZONES) do
+    for _, zoneGuid in pairs(Component.playerZones()) do
         table.insert(party.characters, Character.save(zoneGuid))
     end
 

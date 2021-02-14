@@ -1,8 +1,11 @@
 local DeckUtil = require("sebaestschjin-tts.DeckUtil")
 local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
+local Search = require("sebaestschjin-tts.Search")
+local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
+local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 local WrappedZone = require("sebaestschjin-tts.WrappedZone")
 
 local Game = require("gloomhaven-campaign-manager.Game")
@@ -122,12 +125,12 @@ function Component.getCardId(customDeck, index)
 end
 
 ---@param snapPoint number
----@return common_DeckZone
+---@return seb_WrappedDeck
 function Component.fromDeckMat(snapPoint)
     local deckMat = --[[---@not nil]] getObjectFromGUID(Component.guids.DECK_MAT)
     local deckPosition = Utils.getSnapPosition(deckMat, snapPoint)
 
-    return DeckUtil.wrapAt(deckPosition)
+    return WrappedDeck(deckPosition)
 end
 
 ---@return tts__Bag
@@ -138,6 +141,11 @@ end
 ---@return tts__Object
 function Component.partySheet()
     return --[[---@not nil]] getObjectFromGUID(Component.guids.PARTY_SHEET)
+end
+
+---@return nil | tts__Object
+function Component.retirementSheet()
+    return getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
 end
 
 ---@return tts__Object
@@ -151,15 +159,15 @@ function Component.cityMat()
 end
 
 ---@param snapPoint number
----@return common_DeckZone
+---@return seb_WrappedDeck
 function Component.fromCityMat(snapPoint)
     local deckPosition = Utils.getSnapPosition(Component.cityMat(), snapPoint)
-    return DeckUtil.wrapAt(deckPosition)
+    return WrappedDeck(deckPosition)
 end
 
----@return tts__Object
+---@return nil | tts__Object
 function Component.openingConditions()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
+    return getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
 end
 
 ---@return GUID
@@ -176,6 +184,31 @@ function Component.achievementBoardGuid()
     return achievementBoard.guid
 end
 
+---@return tts__Bag
+function Component.achievementsBag()
+    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.AchievementBag)
+end
+
+---@return nil | tts__Object
+function Component.eventMatOld()
+    return getObjectFromGUID(Component.guids.OLD_EVENT_MAT)
+end
+
+---@return nil | tts__Object
+function Component.eventMat()
+    return getObjectFromGUID(Component.guids.EVENTS_MAT)
+end
+
+---@return nil | tts__Object
+function Component.sanctuarySticker()
+    return getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
+end
+
+---@return GUID[]
+function Component.playerZones()
+    return Component.guids.ZONES
+end
+
 ---@param playerZone string
 ---@return seb_WrappedZone
 function Component.playerZone(playerZone)
@@ -189,9 +222,12 @@ function Component.playerButton(index)
 end
 
 ---@param playerZone GUID
+---@param className string
 ---@return tts__Object
-function Component.playerMat(playerZone)
-    return --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+function Component.playerMat(playerZone, className)
+    local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
+    local matName = Component.names.PLAYER_MAT .. ' - ' .. className
+    return --[[---@not nil]] Search.findInObjects(zone.getObjects(), { name = matName })
 end
 
 ---@param className string
@@ -200,8 +236,9 @@ function Component.classBox(className)
     return --[[---@type nil | tts__Bag]] getObjectFromGUID(Game.class(className).boxGuid)
 end
 
+---@return nil | seb_WrappedObject
 function Component.characterMat(playerZone)
-    return Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_MAT })
+    return Component.playerZone(playerZone).findObject({ name = Component.names.CHARACTER_MAT })
 end
 
 ---@param playerZone GUID
@@ -222,6 +259,11 @@ function Component.abilityDeck(playerZone)
     return DeckUtil.wrap(--[[---@type tts__Deck]] Utils.findObjectIn(playerZone, { name = Component.names.ABILITY_DECK }))
 end
 
+---@return nil | tts__Deck
+function Component.treasureDeck()
+    return --[[---@type nil | tts__Deck]] getObjectFromGUID(Component.guids.TREASURE_DECK)
+end
+
 function Component.isAbilityDeck(object)
     return Object.isDeck(object)
             and object.getName():find(Component.names.ABILITY_DECK)
@@ -236,7 +278,7 @@ function Component.isAbilityCardForClass(object, className)
         return false
     end
 
-    local cardName, _ = object.getName():gsub("[%(%)]%d%d[%)%(]", "")
+    local cardName = StringUtil.replace(object.getName(), "[%(%)]%d%d[%)%(]")
     local nearest, _ = Game.nearestAbility(className, cardName)
     return nearest ~= nil
 end
@@ -271,7 +313,7 @@ function Component.getAbilityName(class, abilityCard)
 end
 
 --- Returns true if the given object is an item card.
----@param object tts__Object | seb_WrappedObject_old
+---@param object seb_ObjectLike
 function Component.isItemCard(object)
     return Object.isCard(object)
             and (Component.isItemCardDescription(object.getDescription())
@@ -279,7 +321,7 @@ function Component.isItemCard(object)
 end
 
 --- Returns true if the given item card object is an item from the rewards or item design deck.
----@param item tts__Object | seb_WrappedObject_old
+---@param item seb_ObjectLike
 ---@param prosperityLevel number
 function Component.isRewardItemCard(item, prosperityLevel)
     if not Component.isItemCard(item) then
@@ -292,8 +334,8 @@ function Component.isRewardItemCard(item, prosperityLevel)
         return itemInfo.reward ~= nil or itemInfo.prosperity > prosperityLevel
     else
         local description = item.getDescription()
-        description = description:gsub("red", "")
-        description = description:gsub("blue", "")
+        description = StringUtil.replace(description, "red")
+        description = StringUtil.replace(description, "blue")
         return tonumber(description) > Game.ITEMS.Prosperity[prosperityLevel]
     end
 end
@@ -315,7 +357,7 @@ function Component.isPersonalQuestCard(object)
     end
 end
 
----@param object tts__Object
+---@param object seb_ObjectLike
 ---@return nil | gh_Game_Quest_Info
 function Component.getQuestInfo(object)
     local cardId = object.getData().CardID

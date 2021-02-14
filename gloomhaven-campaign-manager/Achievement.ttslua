@@ -1,7 +1,9 @@
 local Constant = require("sebaestschjin-tts.Constant")
+local EventManager = require("ge_tts.EventManager")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
+local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Achievement = {}
 
@@ -45,14 +47,14 @@ function Achievement.loadGroup(group, achievementGroup, readyGroups)
     })
 end
 
----@param saveFile gh_Save_Global_Partial
+---@param saveFile gh_Savefile_Partial
 function Achievement.saveAll(saveFile)
     local achievementBoardGuid = Component.achievementBoardGuid()
     local achievementBoard = getObjectFromGUID(achievementBoardGuid)
-    if achievementBoard then
+    if achievementBoard ~= nil then
         Achievement.doSave(saveFile, --[[---@not nil]] achievementBoard)
     else
-        local bag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
+        local bag = Component.achievementsBag()
         bag.takeObject({
             guid = achievementBoardGuid,
             position = Component.positions.ACHIEVEMENT_BOARD,
@@ -65,7 +67,7 @@ function Achievement.saveAll(saveFile)
     end
 end
 
----@param saveFile gh_Save_Global_Partial
+---@param saveFile gh_Savefile_Partial
 ---@param achievementBoard tts__Object
 function Achievement.doSave(saveFile, achievementBoard)
     local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] achievementBoard.getTable("flags")
@@ -82,14 +84,15 @@ function Achievement.doSave(saveFile, achievementBoard)
             table.insert(result, { name = achievement.name, count = maxIndex })
         end
     end
-    saveFile.achievements = TableUtil.emptyToNil(result)
+    (--[[---@not nil]] saveFile.global).achievements = TableUtil.emptyToNil(result)
+    EventManager.triggerEvent(EventType.ACHIEVEMENTS_SAVED, saveFile)
 end
 
----@param board tts__Object
+---@param achievementBoard tts__Object
 ---@param achievement string
 ---@return nil | number
-function Achievement.findIndex(board, achievement)
-    local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] board.getTable("flags")
+function Achievement.findIndex(achievementBoard, achievement)
+    local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] achievementBoard.getTable("flags")
 
     for i, flag in pairs(achievementInfo) do
         if flag.name == achievement then

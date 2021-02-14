@@ -22,7 +22,7 @@ end
 
 ---@return nil | number
 function Sanctuary.save()
-    local sanctuarySticker = getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
+    local sanctuarySticker = Component.sanctuarySticker()
     if not sanctuarySticker then
         return nil
     end

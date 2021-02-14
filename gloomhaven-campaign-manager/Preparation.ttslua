@@ -110,8 +110,8 @@ function Preparation.finish(callback)
 end
 
 function Preparation.prepareSave()
-    for _, zoneGuid in pairs(Component.guids.ZONES) do
-        local zone = getObjectFromGUID(zoneGuid)
+    for _, playerZone in pairs(Component.playerZones()) do
+        local zone = --[[---@not nil]] getObjectFromGUID(playerZone)
         local zonePosition = zone.getPosition()
         zonePosition:setAt("y", 4.22)
         zone.setPosition(zonePosition)

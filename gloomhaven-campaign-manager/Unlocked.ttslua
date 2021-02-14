@@ -4,6 +4,7 @@ local Logger = require('sebaestschjin-tts.Logger')
 local ObjectUtil = require('sebaestschjin-tts.ObjectUtil')
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
+local WrappedContainer = require("sebaestschjin-tts.WrappedContainer")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
@@ -137,29 +138,31 @@ function Unlocked.saveAll(saveFile)
         specialConditions = Unlocked.saveOpeningConditions(),
         treasures = TableUtil.emptyToNil(Unlocked.saveTreasures()),
     }
-    Shop.save(saveFile.unlocked)
+    Shop.save(--[[---@not nil]] saveFile.unlocked)
 end
 
+---@return nil | string[]
 function Unlocked.saveClasses()
-    local classes = {}
-    for class, info in pairs(Game.CLASSES) do
-        local box = getObjectFromGUID(info.boxGuid)
-        if box and not info.isStartingClass then
-            table.insert(classes, class)
+    local classes = --[[---@type string[] ]] {}
+    for className, info in pairs(Game.CLASSES) do
+        local box = Component.classBox(className)
+        if box ~= nil and not info.isStartingClass then
+            table.insert(classes, className)
         end
     end
 
     return TableUtil.emptyToNil(classes)
 end
 
+---@return nil | gh_Save_Unlocked_Conditions
 function Unlocked.saveOpeningConditions()
-    local openingConditionsSheet = getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
+    local openingConditionsSheet = Component.openingConditions()
     if not openingConditionsSheet then
         return nil
     end
 
-    local openingConditions = {}
-    local buttons = openingConditionsSheet.getTable("buttons")
+    local openingConditions = --[[---@type gh_Save_Unlocked_Conditions]] {}
+    local buttons = (--[[---@not nil]] openingConditionsSheet).getTable("buttons")
     openingConditions.ancientTechnology = buttons["Ancient"].label ~= ""
     openingConditions.drakeAided = buttons["Drake"].label ~= ""
     openingConditions.lowReputation = buttons["RepN10"].label ~= ""
@@ -178,25 +181,24 @@ function Unlocked.saveOpeningConditions()
     return openingConditions
 end
 
+---@return nil | number[]
 function Unlocked.saveTreasures()
-    local treasureDeck = getObjectFromGUID(Component.guids.TREASURE_DECK)
-    if not treasureDeck then
-        treasureDeck = Utils.findObjectIn(Component.gamebox(), { guid = Component.guids.TREASURE_DECK })
-    end
+    local gamebox = WrappedContainer(Component.gamebox().getData())
+    local treasureDeck = gamebox.findObject({ guid = Component.guids.TREASURE_DECK })
 
     if not treasureDeck then
-        Logger.warn('Could not find the treasure deck in the gamebox or on the board. Can not save unlocked treasures.')
+        Logger.warn('Could not find the treasure deck in the gamebox. Can not save unlocked treasures.')
         return {}
     end
 
-    local treasure = {}
+    local treasure = --[[---@type table<number, boolean>]] {}
     for i = 1, 96 do
         treasure[i] = true
     end
 
-    local treasureCards = ObjectUtil.getContainedObjects(treasureDeck)
+    local treasureCards = (--[[---@type seb_WrappedContainer]] treasureDeck).getObjects()
     for _, treasureCard in pairs(treasureCards) do
-        local treasureNumber = tonumber(treasureCard.getName():sub(-2))
+        local treasureNumber = --[[---@not nil]] tonumber(treasureCard.getName():sub(-2))
         treasure[treasureNumber] = false
     end
 

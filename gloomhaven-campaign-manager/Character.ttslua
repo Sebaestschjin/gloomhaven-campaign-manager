@@ -2,13 +2,12 @@ local Base64 = require("ge_tts.Base64")
 
 local Chain = require("sebaestschjin-tts.Chain")
 local Constant = require("sebaestschjin-tts.Constant")
-local DeckUtil = require("sebaestschjin-tts.DeckUtil")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
-local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
+local WrappedContainer = require("sebaestschjin-tts.WrappedContainer")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
@@ -399,7 +398,7 @@ function Character.save(playerZone)
         end
     end
 
-    character.items = Character.saveItems(playerZone)
+    character.items = Character.saveItems(playerZone, character.class)
     character.abilities = Character.saveAbilities(playerZone)
     character.quest = Character.saveQuest(playerZone)
 
@@ -418,9 +417,10 @@ function Character.saveHiddenNotes(characterSheet)
 end
 
 ---@param playerZone GUID
+---@param className string
 ---@return gh_Save_Character_Item[]
-function Character.saveItems(playerZone)
-    local playerMat = --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = Component.names.PLAYER_MAT })
+function Character.saveItems(playerZone, className)
+    local playerMat = Component.playerMat(playerZone, className)
     local items = --[[---@type gh_Save_Character_Item[] ]] {}
     local zoneObjects = Component.getObjectsInZone(playerZone)
     Character.saveItemFromObjects(zoneObjects, playerMat, items)
@@ -432,19 +432,19 @@ end
 ---@param playerMat tts__Object
 ---@param items gh_Save_Character_Item[]
 function Character.saveItemFromObjects(objects, playerMat, items)
-    for _, object in ipairs(--[[---@type seb_ObjectLike_old[] ]] objects) do
+    for _, object in ipairs(--[[---@type seb_ObjectLike[] ]] objects) do
         if Component.isItemCard(object) then
             local item = { name = object.getName(), position = Character.getItemPosition(playerMat, object) }
             table.insert(items, item)
         elseif Object.isDeck(object) then
-            local deckObjects = ObjectUtil.getContainedObjects(--[[---@type tts__Deck]] object)
+            local deckObjects = WrappedContainer(--[[---@type tts__DeckState]] object.getData()).getObjects()
             Character.saveItemFromObjects(deckObjects, playerMat, items)
         end
     end
 end
 
 ---@param playerMat tts__Object
----@param object seb_ObjectLike_old
+---@param object seb_ObjectLike
 ---@return gh_Save_Character_Item_Position
 function Character.getItemPosition(playerMat, object)
     for name, snap in pairs(Component.PlayerMatSnapPoints) do
@@ -461,7 +461,7 @@ end
 function Character.saveAbilities(playerZone)
     local class = --[[---@not nil]] Character.findClassInZone(playerZone)
     local abilities = --[[---@type string[] ]] {}
-    local zoneObjects = (--[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)).getObjects()
+    local zoneObjects = Component.getObjectsInZone(playerZone)
     Character.saveAbilitiesFromObjects(zoneObjects, class, abilities)
 
     table.sort(abilities)
@@ -472,14 +472,14 @@ end
 ---@param class string
 ---@param abilities string[]
 function Character.saveAbilitiesFromObjects(objects, class, abilities)
-    for _, object in ipairs(--[[---@type seb_ObjectLike_old[] ]] objects) do
+    for _, object in ipairs(--[[---@type seb_ObjectLike[] ]] objects) do
         if Component.isAbilityCardForClass(object, class) then
             local name = Component.getAbilityName(class, object)
             if not Component.isStartingAbility(class, name) then
                 table.insert(abilities, name)
             end
         elseif Object.isDeck(object) and not Component.isAbilityDeck(object) then
-            local deckObjects = ObjectUtil.getContainedObjects(--[[---@type seb_ContainerLike]] object)
+            local deckObjects = WrappedContainer(--[[---@type tts__DeckState]] object.getData()).getObjects()
             Character.saveAbilitiesFromObjects(deckObjects, class, abilities)
         end
     end

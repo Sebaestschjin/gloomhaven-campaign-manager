@@ -59,8 +59,9 @@ function CampaignManager.setupEventHandlers(content)
 end
 
 function CampaignManager.saveAll()
-    local saveFile = CampaignManager.createSaveFile()
-    Wait.time(function() Savefile.save(saveFile) end, 3)
+    EventManager.addHandler(EventType.ACHIEVEMENTS_SAVED, function(saveFile) Savefile.save(saveFile) end)
+
+    CampaignManager.createSaveFile()
 end
 
 function CampaignManager.createSaveFile()
@@ -70,22 +71,20 @@ function CampaignManager.createSaveFile()
     -- this wait is necessary, because the scripting zones have to be adjusted, otherwise they won't detect cards lying
     -- directly on the table
     Wait.time(function() CampaignManager.doCreateSaveFile(saveFile) end, 1)
-
-    return saveFile
 end
 
 ---@param saveFile gh_Savefile_Partial
 function CampaignManager.doCreateSaveFile(saveFile)
-    --saveFile.global = {
-    --    prosperity = Prosperity.save(),
-    --    scenarios = Scenario.save(),
-    --}
-    --Achievement.saveAll(--[[---@not nil]] saveFile.global)
-    --Unlocked.saveAll(saveFile)
-    --saveFile.party = Party.save()
+    saveFile.global = {
+        prosperity = Prosperity.save(),
+        scenarios = Scenario.save(),
+    }
+    Achievement.saveAll(--[[---@not nil]] saveFile)
+    Unlocked.saveAll(saveFile)
+    saveFile.party = Party.save()
     saveFile.enhancements = Enhancement.save()
-    --saveFile.retired = Retirement.save()
-    --saveFile.events = Event.save()
+    saveFile.retired = Retirement.save()
+    saveFile.events = Event.save()
 end
 
 return CampaignManager

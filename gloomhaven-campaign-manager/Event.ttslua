@@ -118,7 +118,7 @@ function Event.dealEvents(deck, eventCards, info)
     end
 end
 
----@return gh_Save_EventDeck[]
+---@return nil | gh_Save_EventDeck[]
 function Event.save()
     local events = --[[---@type gh_Save_EventDeck[] ]]{}
 
@@ -139,7 +139,7 @@ function Event.saveEventsFromDeck(info)
     local eventDeck = Event.getTargetDeck(info)
     local eventsFromDeck = --[[---@type gh_Save_EventDeck]] { bottomUp = {}, remove = {} }
 
-    for _, card in pairs(ObjectUtil.getContainedObjects(eventDeck)) do
+    for _, card in pairs(eventDeck.getObjects()) do
         local eventNumber = Event.getNumber(card)
         table.insert(eventsFromDeck.bottomUp, eventNumber)
     end
@@ -159,7 +159,7 @@ function Event.saveEventsFromDeck(info)
     return eventsFromDeck
 end
 
----@param card seb_WrappedObject_old
+---@param card seb_WrappedObject
 ---@return number
 function Event.getNumber(card)
     local numberFromName = tonumber(card.getName())
@@ -176,21 +176,21 @@ function Event.getNumber(card)
 end
 
 ---@param info gh_EventDeckInfo
----@return common_DeckZone
+---@return seb_WrappedDeck
 function Event.getTargetDeck(info)
     ---@type tts__Vector
     local position
-    if getObjectFromGUID(Component.guids.OLD_EVENT_MAT) then
+    if Component.eventMatOld() then
         if info.oldMat then
             position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(--[[---@not nil]] info.oldMat), 1)
         else
-            position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(Component.guids.EVENTS_MAT), 1)
+            position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), 1)
         end
     else
-        position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(Component.guids.EVENTS_MAT), info.snapPoint)
+        position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), info.snapPoint)
     end
 
-    return DeckUtil.wrapAt(position)
+    return WrappedDeck(position)
 end
 
 return Event

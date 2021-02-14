@@ -92,6 +92,7 @@ function Savefile.save(content)
     local jsonContent = JSON.encode_pretty(content)
     jsonContent = jsonContent .. "\n" -- to conform to POSIX :-)
     Notes.addNotebookTab({ title = "New Savefile", body = jsonContent })
+    printToAll("Savefile created!", "Green")
 end
 
 return Savefile

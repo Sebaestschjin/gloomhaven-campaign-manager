@@ -22,10 +22,10 @@ function Shop.load()
     EventManager.triggerEvent(EventType.SHOP_LOADED)
 end
 
----@param unlocked gh_Save_Unlocked
+---@param unlocked gh_Save_Unlocked_Partial
 function Shop.save(unlocked)
     local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
-    if shopDeck.isEmpty then
+    if shopDeck.isEmpty() then
         Component.cityMat().call("layOut", 0)
         Wait.time(function() Shop.doSave(unlocked) end, 1)
     else
@@ -33,28 +33,29 @@ function Shop.save(unlocked)
     end
 end
 
----@param unlocked gh_Save_Unlocked
+---@param unlocked gh_Save_Unlocked_Partial
 function Shop.doSave(unlocked)
     local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
-    if shopDeck.isEmpty then
+    if shopDeck.isEmpty() then
         Logger.warn("Can't find shop deck, even after trying to recalling it."
                 .. " This means unlocked items can't be saved.")
         return
     end
 
-    local items = {}
-    Shop.saveFromObjects(ObjectUtil.getContainedObjects(shopDeck), items)
+    local items = --[[---@type string[] ]] {}
+    Shop.saveFromObjects(shopDeck.getObjects(), items)
     for _, zoneGuid in pairs(Component.guids.ZONES) do
         Shop.saveFromObjects(Component.getObjectsInZone(zoneGuid), items)
     end
 
-    unlocked.items = TableUtil.emptyToNil(table.sort(items))
+    table.sort(items)
+    unlocked.items = TableUtil.emptyToNil(items)
 end
 
----@param objects seb_WrappedContainer | tts__Object[]
+---@param objects seb_ObjectLikeArray
 ---@param items string[]
 function Shop.saveFromObjects(objects, items)
-    for _, item in pairs(objects) do
+    for _, item in pairs(--[[---@type seb_ObjectLike[] ]]objects) do
         if Component.isRewardItemCard(item, Prosperity.getLevel()) then
             table.insert(items, item.getName())
         end
