@@ -4,17 +4,19 @@ local Component = require("gloomhaven-campaign-manager.Component")
 
 local Sanctuary = {}
 
----@param value number
+---@param value nil | number
 function Sanctuary.load(value)
-    if value >= 0 then
+    if value and value >= 0 then
         Component.map().call('unseal')
-        Utils.waitForObject(Component.guids.SANCTUARY_STICKER, function() Sanctuary.setLevel(value) end)
+        Utils.waitForObject(Component.guids.SANCTUARY_STICKER, function()
+            Sanctuary.setLevel(--[[---@not nil]] value)
+        end)
     end
 end
 
 ---@param value number
 function Sanctuary.setLevel(value)
-    local sanctuarySticker = --[[---@not nil ]] getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
+    local sanctuarySticker = --[[---@not nil ]] Component.sanctuarySticker()
     for i = 0, value - 1 do
         sanctuarySticker.call("clickedPros", i)
     end

@@ -1,4 +1,3 @@
-local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
 
@@ -15,12 +14,13 @@ local RetirementSheetColumns = 5
 ---@param retired gh_Save_Retired[]
 function Retirement.load(retired)
     Preparation.takeFromGamebox(Component.guids.RETIREMENT_SHEET, Component.positions.RETIREMENT_SHEET)
+    -- TOOD use callback directly?
     Utils.waitForObject(Component.guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
 end
 
 ---@param retired gh_Save_Retired[]
 function Retirement.startLoading(retired)
-    local retirementSheet = --[[---@not nil]] getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
+    local retirementSheet = --[[---@not nil]] Component.retirementSheet()
 
     for i, retirement in ipairs(retired) do
         local row = i - 1
@@ -40,14 +40,10 @@ function Retirement.startLoading(retired)
     retirementSheet.call("forceSave", {})
 end
 
----@return nil | gh_Save_Retired[]
-function Retirement.save()
-    local retired = --[[---@type gh_Save_Retired[] ]] {}
-
-    Retirement.saveRetirementSheet(retired)
-    Retirement.saveCompletedQuests(retired)
-
-    return TableUtil.emptyToNil(retired)
+---@param saveFile gh_Savefile
+function Retirement.saveAll(saveFile)
+    Retirement.saveRetirementSheet(saveFile.retired)
+    Retirement.saveCompletedQuests(saveFile.retired)
 end
 
 ---@param retired gh_Save_Retired[]
@@ -93,7 +89,7 @@ function Retirement.saveCompletedQuests(retired)
         completedQuests[name] = 1
     end
 
-    local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
+    local questDeck = Component.questDeck()
     for _, quest in pairs(questDeck.getObjects()) do
         local questInfo = --[[---@not nil]] Component.getQuestInfo(quest)
         completedQuests[questInfo.name] = nil

@@ -3,7 +3,7 @@ local ChatCommands = require("ge_tts.ChatCommands")
 local CampaignManager = require("gloomhaven-campaign-manager.CampaignManager")
 
 function onLoad(_)
-    self.setPosition(self.getPosition() + vector(0, 2, 0))
+    self.setPosition(self.getPosition() + Vector(0, 2, 0))
     local colors = { yellow = { 0.753, 0.671, 0.565, 1 }, black = { 0.18, 0.047, 0.047, 1 } }
 
     self.createButton({

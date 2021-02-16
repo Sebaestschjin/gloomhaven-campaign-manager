@@ -44,28 +44,27 @@ end
 
 ---@param content gh_Savefile
 function CampaignManager.setupEventHandlers(content)
-    EventManager.addHandler(EventType.SHOP_LOADED, function() Unlocked.loadItems(content) end)
-    EventManager.addHandler(EventType.ITEMS_UNLOCKED, function()
+    EventManager.addHandler(EventType.Load.Shop, function() Unlocked.loadItems(content) end)
+    EventManager.addHandler(EventType.Load.Items, function()
         for name, _ in pairs(Game.CLASSES) do
-            EventManager.triggerEvent(EventType.CLASS_READY, name)
+            EventManager.triggerEvent(EventType.Load.Class.Start, name)
         end
     end)
-    EventManager.addHandler(EventType.CLASS_READY, function(className) Unlocked.mayLoadClass(content, className) end)
-    EventManager.addHandler(EventType.CLASS_UNLOCKED, function(className) Enhancement.mayLoadForClass(content, className) end)
-    EventManager.addHandler(EventType.CLASS_ENHANCED, function(className) Party.mayLoadCharacter(content, className) end)
-
-    EventManager.addHandler(EventType.CLASS_UNLOCKED, Cleanup.onClassUnlocked)
-    EventManager.addHandler(EventType.TREASURE_LOADED, Cleanup.onTreasureLoaded)
+    EventManager.addHandler(EventType.Load.Class.Start, function(className) Unlocked.mayLoadClass(content, className) end)
+    EventManager.addHandler(EventType.Load.Class.Unlocked, function(className) Enhancement.mayLoadForClass(content, className) end)
+    EventManager.addHandler(EventType.Load.Class.Enhanced, function(className) Party.mayLoadCharacter(content, className) end)
+    EventManager.addHandler(EventType.Load.Class.Unlocked, Cleanup.onClassUnlocked)
+    EventManager.addHandler(EventType.Load.Treasure, Cleanup.onTreasureLoaded)
 end
 
 function CampaignManager.saveAll()
-    EventManager.addHandler(EventType.ACHIEVEMENTS_SAVED, function(saveFile) Savefile.save(saveFile) end)
+    EventManager.addHandler(EventType.Save.Achievements, function(saveFile) Savefile.save(saveFile) end)
 
     CampaignManager.createSaveFile()
 end
 
 function CampaignManager.createSaveFile()
-    local saveFile = --[[---@type gh_Savefile]] {}
+    local saveFile = Savefile.create()
 
     Preparation.prepareSave()
     -- this wait is necessary, because the scripting zones have to be adjusted, otherwise they won't detect cards lying
@@ -73,18 +72,16 @@ function CampaignManager.createSaveFile()
     Wait.time(function() CampaignManager.doCreateSaveFile(saveFile) end, 1)
 end
 
----@param saveFile gh_Savefile_Partial
+---@param saveFile gh_Savefile
 function CampaignManager.doCreateSaveFile(saveFile)
-    saveFile.global = {
-        prosperity = Prosperity.save(),
-        scenarios = Scenario.save(),
-    }
-    Achievement.saveAll(--[[---@not nil]] saveFile)
+    Prosperity.saveAll(saveFile)
+    Scenario.saveAll(saveFile)
+    Achievement.saveAll(saveFile)
     Unlocked.saveAll(saveFile)
-    saveFile.party = Party.save()
-    saveFile.enhancements = Enhancement.save()
-    saveFile.retired = Retirement.save()
-    saveFile.events = Event.save()
+    Party.saveAll(saveFile)
+    Enhancement.saveAll(saveFile)
+    Retirement.saveAll(saveFile)
+    Event.saveAll(saveFile)
 end
 
 return CampaignManager

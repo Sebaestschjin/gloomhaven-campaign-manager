@@ -1,10 +1,8 @@
 local Constant = require("sebaestschjin-tts.Constant")
 local EventManager = require('ge_tts.EventManager')
 local Logger = require('sebaestschjin-tts.Logger')
-local ObjectUtil = require('sebaestschjin-tts.ObjectUtil')
-local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
-local WrappedContainer = require("sebaestschjin-tts.WrappedContainer")
+local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
@@ -22,16 +20,16 @@ function Unlocked.loadAll(unlocked)
     Unlocked.loadTreasures(unlocked.treasures)
 end
 
----@param content gh_Savefile
+---@param saveFile gh_Savefile
 ---@param className string
-function Unlocked.mayLoadClass(content, className)
-    for i, unlockedClass in TableUtil.ipairs(content.unlocked.classes) do
+function Unlocked.mayLoadClass(saveFile, className)
+    for i, unlockedClass in ipairs(saveFile.unlocked.classes) do
         if unlockedClass == className then
             Unlocked.loadClass(i, className)
             return
         end
     end
-    EventManager.triggerEvent(EventType.CLASS_UNLOCKED, className)
+    EventManager.triggerEvent(EventType.Load.Class.Unlocked, className)
 end
 
 ---@param number number
@@ -39,33 +37,31 @@ end
 function Unlocked.loadClass(number, className)
     Logger.info('Unlocking class %s', className)
 
-    local characterBoxes = --[[---@not nil]] getObjectFromGUID(Component.guids.LOCKED_CLASSES)
-    local lastBox = --[[---@not nil]] getObjectFromGUID(Component.guids.LAST_BOX)
-    local beforeLastBox = --[[---@not nil]] getObjectFromGUID(Component.guids.BEFORE_LAST_BOX)
+    local lastBox = Component.lastCharacterBox()
+    local beforeLastBox = Component.beforeLastCharacterBox()
     local delta = (lastBox.getPosition() - beforeLastBox.getPosition()) * number
 
-    characterBoxes.takeObject({
+    Component.lockedClasses().takeObject({
         position = lastBox.getPosition() + delta,
         rotation = lastBox.getRotation(),
         smooth = false,
-        guid = Game.CLASSES[className].boxGuid,
+        guid = Game.class(className).boxGuid,
         callback_function = function(obj)
             obj.setLock(true)
-            EventManager.triggerEvent(EventType.CLASS_UNLOCKED, className)
+            EventManager.triggerEvent(EventType.Load.Class.Unlocked, className)
         end
     })
 end
 
----@param content gh_Savefile
-function Unlocked.loadItems(content)
-    if content.unlocked and content.unlocked.items then
-        local shopPosition = Utils.getSnapPosition(Component.cityMat(), Component.snaps.SHOP)
+---@param saveFile gh_Savefile
+function Unlocked.loadItems(saveFile)
+    local shopPosition = Component.shopDeck().getPosition()
 
-        for _, item in pairs(content.unlocked.items) do
-            Shop.takeRewardItem(item, shopPosition)
-        end
+    for _, item in pairs(saveFile.unlocked.items) do
+        Shop.takeRewardItem(item, shopPosition)
     end
-    EventManager.triggerEvent(EventType.ITEMS_UNLOCKED)
+
+    EventManager.triggerEvent(EventType.Load.Items)
 end
 
 ---@param openingConditions gh_Save_Unlocked_Conditions
@@ -77,15 +73,17 @@ end
 
 ---@param openingConditions gh_Save_Unlocked_Conditions
 function Unlocked.doLoadOpeningConditions(openingConditions)
-    Unlocked.setOpeningCondition(openingConditions.ancientTechnology, "Ancient")
-    Unlocked.setOpeningCondition(openingConditions.drakeAided, "Drake")
-    Unlocked.setOpeningCondition(openingConditions.lowReputation, "RepN10")
-    Unlocked.setOpeningCondition(openingConditions.lowestReputation, "RepN20")
-    Unlocked.setOpeningCondition(openingConditions.highReputation, "Rep10")
-    Unlocked.setOpeningCondition(openingConditions.highestReputation, "Rep20")
+    local sheet = --[[---@not nil]] Component.openingConditions()
+
+    Unlocked.setOpeningCondition(sheet, openingConditions.ancientTechnology, "Ancient")
+    Unlocked.setOpeningCondition(sheet, openingConditions.drakeAided, "Drake")
+    Unlocked.setOpeningCondition(sheet, openingConditions.lowReputation, "RepN10")
+    Unlocked.setOpeningCondition(sheet, openingConditions.lowestReputation, "RepN20")
+    Unlocked.setOpeningCondition(sheet, openingConditions.highReputation, "Rep10")
+    Unlocked.setOpeningCondition(sheet, openingConditions.highestReputation, "Rep20")
 
     if openingConditions.retired then
-        Component.openingConditions().call("clickedToggle", "Retire")
+        sheet.call("clickedToggle", "Retire")
         Component.gamebox().takeObject({
             guid = Component.guids.TOWN_RECORDS,
             position = Component.positions.TOWN_RECORDS,
@@ -95,73 +93,68 @@ function Unlocked.doLoadOpeningConditions(openingConditions)
     end
 
     for i = 1, openingConditions.donations do
-        Unlocked.setOpeningCondition(true, "Donation" .. i)
+        Unlocked.setOpeningCondition(sheet, true, "Donation" .. i)
     end
     if openingConditions.donations >= 10 then
-        Unlocked.setOpeningCondition(true, "DonationFull")
+        Unlocked.setOpeningCondition(sheet, true, "DonationFull")
     end
 end
 
----@param condition boolean
----@param name string
-function Unlocked.setOpeningCondition(condition, name)
-    if condition then
-        Component.openingConditions().call("clickedToggle", name)
+---@param sheet tts__Object
+---@param done boolean
+---@param conditionName string
+function Unlocked.setOpeningCondition(sheet, done, conditionName)
+    if done then
+        sheet.call("clickedToggle", conditionName)
     end
 end
 
 ---@param treasures number[]
 function Unlocked.loadTreasures(treasures)
-    local treasureDeck = --[[---@type tts__Deck]] getObjectFromGUID(Component.guids.TREASURE_DECK)
+    local treasureDeck = --[[---@not nil]] Component.treasureDeck()
 
     for _, treasure in ipairs(treasures) do
-        local treasureCard = Utils.findObjectIn(treasureDeck, { name = tostring(treasure) })
+        local treasureCard = Search.inContainer(treasureDeck, { name = tostring(treasure) })
         if not treasureCard then
             Logger.error("Treasure '%s' does not exist. Treasure won't be loaded.", treasure)
         else
             treasureDeck.takeObject({
-                index = treasureCard.index,
+                index = (--[[---@not nil]] treasureCard).index,
                 position = Component.getSafePosition(),
                 callback_function = function(obj) obj.destruct() end,
             })
         end
     end
 
-    EventManager.triggerEvent(EventType.TREASURE_LOADED)
+    EventManager.triggerEvent(EventType.Load.Treasure)
 end
 
----@param saveFile gh_Savefile_Partial
+---@param saveFile gh_Savefile
 function Unlocked.saveAll(saveFile)
-    saveFile.unlocked = {
-        classes = Unlocked.saveClasses(),
-        sanctuary = Sanctuary.save(),
-        specialConditions = Unlocked.saveOpeningConditions(),
-        treasures = TableUtil.emptyToNil(Unlocked.saveTreasures()),
-    }
-    Shop.save(--[[---@not nil]] saveFile.unlocked)
+    Unlocked.saveClasses(saveFile.unlocked.classes)
+    saveFile.unlocked.sanctuary = Sanctuary.save()
+    Unlocked.saveOpeningConditions(saveFile.unlocked.specialConditions)
+    Unlocked.saveTreasures(saveFile.unlocked.treasures)
+    Shop.save(saveFile.unlocked)
 end
 
----@return nil | string[]
-function Unlocked.saveClasses()
-    local classes = --[[---@type string[] ]] {}
+---@param classes string[]
+function Unlocked.saveClasses(classes)
     for className, info in pairs(Game.CLASSES) do
         local box = Component.classBox(className)
         if box ~= nil and not info.isStartingClass then
             table.insert(classes, className)
         end
     end
-
-    return TableUtil.emptyToNil(classes)
 end
 
----@return nil | gh_Save_Unlocked_Conditions
-function Unlocked.saveOpeningConditions()
+---@param openingConditions gh_Save_Unlocked_Conditions
+function Unlocked.saveOpeningConditions(openingConditions)
     local openingConditionsSheet = Component.openingConditions()
     if not openingConditionsSheet then
-        return nil
+        return
     end
 
-    local openingConditions = --[[---@type gh_Save_Unlocked_Conditions]] {}
     local buttons = (--[[---@not nil]] openingConditionsSheet).getTable("buttons")
     openingConditions.ancientTechnology = buttons["Ancient"].label ~= ""
     openingConditions.drakeAided = buttons["Drake"].label ~= ""
@@ -177,32 +170,34 @@ function Unlocked.saveOpeningConditions()
         end
     end
     openingConditions.donations = donations
-
-    return openingConditions
 end
 
----@return nil | number[]
-function Unlocked.saveTreasures()
-    local gamebox = WrappedContainer(Component.gamebox().getData())
-    local treasureDeck = gamebox.findObject({ guid = Component.guids.TREASURE_DECK })
+---@param treasures number[]
+function Unlocked.saveTreasures(treasures)
+    local treasureDeck, _ = Search.inContainedObjects(Component.gamebox(), { guid = Component.guids.TREASURE_DECK })
 
     if not treasureDeck then
-        Logger.warn('Could not find the treasure deck in the gamebox. Can not save unlocked treasures.')
-        return {}
+        Logger.warn("Could not find the treasure deck in the gamebox. Can not save unlocked treasures.")
+        return
     end
 
-    local treasure = --[[---@type table<number, boolean>]] {}
+    local allTreasures = --[[---@type table<number, boolean>]] {}
     for i = 1, 96 do
-        treasure[i] = true
+        allTreasures[i] = true
     end
 
-    local treasureCards = (--[[---@type seb_WrappedContainer]] treasureDeck).getObjects()
+    local treasureCards = (--[[---@type tts__ContainerState]] treasureDeck).ContainedObjects
     for _, treasureCard in pairs(treasureCards) do
-        local treasureNumber = --[[---@not nil]] tonumber(treasureCard.getName():sub(-2))
-        treasure[treasureNumber] = false
+        local cardName = --[[---@not nil]] treasureCard.Nickname
+        local treasureNumber = --[[---@not nil]] tonumber(cardName:sub(-2))
+        allTreasures[treasureNumber] = false
     end
 
-    return TableUtil.setToList(treasure)
+    for treasure, unlocked in pairs(allTreasures) do
+        if unlocked then
+            table.insert(treasures, treasure)
+        end
+    end
 end
 
 return Unlocked

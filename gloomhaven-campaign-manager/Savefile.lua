@@ -40,7 +40,9 @@ local function setDefaultValue(content, default, ...)
         toCheck = toCheck[name]
     end
 
-    toCheck[args[args.n]] = default
+    if toCheck[args[args.n]] == nil then
+        toCheck[args[args.n]] = default
+    end
 end
 
 ---@param content gh_Savefile
@@ -51,7 +53,6 @@ local function setDefaultValues(content)
     setDefaultValue(content, {}, "unlocked", "items")
     setDefaultValue(content, {}, "unlocked", "specialConditions")
     setDefaultValue(content, {}, "unlocked", "treasures")
-    setDefaultValue(content, -1, "unlocked", "sanctuary")
     setDefaultValue(content, 0, "unlocked", "specialConditions", "donations")
     -- events?
     setDefaultValue(content, {}, "global", "achievements")
@@ -78,17 +79,53 @@ function Savefile.load()
     if saveFile then
         upgrade(saveFile)
     end
-    print(logString(saveFile))
     return saveFile
+end
+
+---@return gh_Savefile
+function Savefile.create()
+    return {
+        enhancements = {},
+        events = {},
+        global = {
+            achievements = {},
+            prosperity = 0,
+            scenarios = {},
+        },
+        party = {
+            name = "",
+            location = "",
+            achievements = {},
+            characters = {},
+            notes = {},
+            reputation = 0,
+        },
+        retired = {},
+        unlocked = {
+            classes = {},
+            treasures = {},
+            items = {},
+            specialConditions = {
+                ancientTechnology = false,
+                drakeAided = false,
+                lowReputation = false,
+                lowestReputation = false,
+                highReputation = false,
+                highestReputation = false,
+                retired = false,
+                donations = 0,
+            },
+        },
+        metadata = {
+            date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M"),
+            version = table.concat(Version, "."),
+        },
+    }
+
 end
 
 ---@param content gh_Savefile
 function Savefile.save(content)
-    content.metadata = {
-        version = table.concat(Version, "."),
-        date = os.date("%Y-%m-%d'T'%H:%M")
-    }
-
     local jsonContent = JSON.encode_pretty(content)
     jsonContent = jsonContent .. "\n" -- to conform to POSIX :-)
     Notes.addNotebookTab({ title = "New Savefile", body = jsonContent })

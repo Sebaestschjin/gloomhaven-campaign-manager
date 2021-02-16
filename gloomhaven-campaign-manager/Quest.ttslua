@@ -1,37 +1,34 @@
-local Constant = require("sebaestschjin-tts.Constant")
-local Utils = require("sebaestschjin-tts.Utils")
+local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Game = require("gloomhaven-campaign-manager.Game")
 
----@alias gh_Quest string|number
-
 local Quest = {}
 
----@param quest gh_Quest
+---@param quest gh_Save_Quest
 ---@param callback tts__ObjectCallbackFunction
 ---@return boolean
 function Quest.take(quest, callback)
-    local questDeck = Component.fromDeckMat(Component.snaps.QUESTS)
+    local questDeck = Component.questDeck()
     local cardId = Component.getCardId(Component.deckIds.QUESTS, Quest.getCardIndex(quest))
-    local questCard = Utils.findObjectIn(questDeck, { cardId = cardId })
+    local questCard, index = Search.inContainedObjects(questDeck, { cardId = cardId })
     if not questCard then
         return false
     end
 
     questDeck.takeObject({
-        index = questCard.index,
+        index = index,
         smooth = false,
-        rotation = Constant.Rotation.NORTH_FLIPPED,
+        rotation = { 0, 180, 180 },
         callback_function = callback
     })
     return true
 end
 
----@param quest gh_Quest
----@return number|nil
+---@param quest gh_Save_Quest
+---@return number
 function Quest.getCardIndex(quest)
-    local questByName = Game.QUESTS[--[[---@type string]]quest]
+    local questByName = Game.QUESTS[--[[---@type string]] quest]
     if questByName then
         return questByName.index
     end
@@ -41,8 +38,6 @@ function Quest.getCardIndex(quest)
             return questInfo.index
         end
     end
-
-    return nil
 end
 
 return Quest

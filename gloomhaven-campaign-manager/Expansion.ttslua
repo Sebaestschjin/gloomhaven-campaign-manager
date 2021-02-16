@@ -1,21 +1,29 @@
 local Chain = require("sebaestschjin-tts.Chain")
-local DeckUtil = require("sebaestschjin-tts.DeckUtil")
-local Utils = require("sebaestschjin-tts.Utils")
+local Object = require("sebaestschjin-tts.Object")
+local Search = require("sebaestschjin-tts.Search")
+local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Event = require("gloomhaven-campaign-manager.Event")
 
+-- TODO use events instead of chain
+
+---
+--- Handles everything about the Forgotten Circles expansion
+---
 local Expansion = {}
 
-Expansion.START_EVENT = 82
-Expansion.NEW_ITEMS = "Forgotten Circles Items"
+local StartEvent = 82
+local NewItemsDeck = "Forgotten Circles Items"
 
+--- Unpacks the expansion box.
+---@param callback common_ChainCallback
 function Expansion.unpack(callback)
     local chain = Chain.create()
 
-    for _, info in pairs(Event.DECKS) do
-        local deck = getObjectFromGUID(info.deckGuid)
-        chain.add(function(c) Expansion.unpackEvents(c, deck, info.name) end)
+    for _, info in pairs(Event.EventDecks) do
+        local targetDeck = --[[---@type tts__Deck]] getObjectFromGUID(info.deckGuid)
+        chain.add(function(c) Expansion.unpackEvents(c, targetDeck, info.name) end)
     end
 
     chain.add(Expansion.unpackItems)
@@ -24,35 +32,46 @@ function Expansion.unpack(callback)
     chain.proceed()
 end
 
-function Expansion.unpackEvents(chain, targetDeck, name)
-    local forgottenCirclesBox = getObjectFromGUID(Component.guids.FORGOTTEN_CIRCLES_BOX)
-    local newEvents = Utils.findObjectIn(forgottenCirclesBox, { name = name })
+--- Unpacks the additional event cards.
+---@param chain common_Chain
+---@param targetDeck tts__Deck
+---@param deckName string
+function Expansion.unpackEvents(chain, targetDeck, deckName)
+    local forgottenCirclesBox = Component.forgottenCirclesBox()
+    local newEvents = --[[---@not nil]] Search.inContainer(forgottenCirclesBox, { name = deckName })
 
     forgottenCirclesBox.takeObject({
-        guid = newEvents.getGUID(),
+        guid = newEvents.guid,
         position = Component.getSafePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,
-        callback_function = function(obj) Expansion.nameEventCards(chain, obj, targetDeck) end,
+        callback_function = function(obj) Expansion.unpackEventDeck(chain, WrappedDeck(--[[---@type tts__Deck]] obj), targetDeck) end,
     })
 end
 
-function Expansion.nameEventCards(chain, deck, targetDeck)
-    local wrappedDeck = DeckUtil.wrap(deck)
-    for i, _ in ipairs(wrappedDeck.getObjects()) do
-        chain.addNext(function(c) Expansion.placeEventCard(c, wrappedDeck, targetDeck, i) end)
+---@param chain common_Chain
+---@param expansionDeck seb_WrappedDeck @The event deck to unpack
+---@param targetDeck tts__Deck @The event deck where the new events will be placed
+function Expansion.unpackEventDeck(chain, expansionDeck, targetDeck)
+    for i, _ in ipairs(expansionDeck.getObjects()) do
+        chain.addNext(function(c) Expansion.placeAndNameEventCard(c, expansionDeck, targetDeck, i) end)
     end
 
     chain.proceed()
 end
 
-function Expansion.placeEventCard(chain, deck, targetDeck, index)
-    deck.takeObject({
+---@param chain common_Chain
+---@param expansionDeck seb_WrappedDeck @The event deck to unpack
+---@param targetDeck tts__Deck @The event deck where the new events will be placed
+---@param index number
+---@return boolean
+function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index)
+    expansionDeck.takeObject({
         index = index - 1,
         position = Component.getSafePosition(),
         smooth = false,
         callback_function = function(card)
-            card.setName(tostring((index - 1) + Expansion.START_EVENT))
+            card.setName(tostring((index - 1) + StartEvent))
             targetDeck.putObject(card)
             Wait.frames(chain.proceed, 1)
         end
@@ -60,18 +79,20 @@ function Expansion.placeEventCard(chain, deck, targetDeck, index)
     return false
 end
 
+---@param chain common_Chain
+---@return boolean
 function Expansion.unpackItems(chain)
-    local forgottenCirclesBox = getObjectFromGUID(Component.guids.FORGOTTEN_CIRCLES_BOX)
-    local newItems = Utils.findObjectIn(forgottenCirclesBox, { name = Expansion.NEW_ITEMS })
-    local targetDeck = Component.fromCityMat(Component.snaps.REWARD_ITEMS)
+    local forgottenCirclesBox = Component.forgottenCirclesBox()
+    local newItems = --[[---@not nil]] Search.inContainer(forgottenCirclesBox, { name = NewItemsDeck })
+    local targetDeck = Component.rewardItemsDeck()
 
     forgottenCirclesBox.takeObject({
-        guid = newItems.getGUID(),
+        guid = newItems.guid,
         position = Component.getSafePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,
         callback_function = function(obj)
-            targetDeck.putObject(obj)
+            targetDeck.putObject(--[[---@type tts__Card]] obj)
             Wait.frames(chain.proceed, 1)
         end
     })

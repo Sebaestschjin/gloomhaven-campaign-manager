@@ -1,7 +1,10 @@
-local Game = require("gloomhaven-campaign-manager.Game")
-local Enhancement = require("gloomhaven-campaign-manager.Enhancement")
+local Math = require("sebaestschjin-tts.Math")
+local StringUtil = require("sebaestschjin-tts.StringUtil")
 
-Enhancement.NUMBERS = {
+local Game = require("gloomhaven-campaign-manager.Game")
+
+---@type URL[]
+local Numbers = {
     "http://cloud-3.steamusercontent.com/ugc/929311677225889607/DFA4EF43DC2D1A8B6F1C7F22E7C31718E35CCB31/",
     "http://cloud-3.steamusercontent.com/ugc/929311677225890374/9B9B38BE2BB6A23EC21C977911FEC8915C74FF19/",
     "http://cloud-3.steamusercontent.com/ugc/929311677225891903/93FF8C7F051FDD06DAEBD17F2BBD917960CB1779/",
@@ -10,24 +13,21 @@ Enhancement.NUMBERS = {
     "http://cloud-3.steamusercontent.com/ugc/929311677225892918/3720A0E91CA48BB3972BBE924B26A34FFA34F57F/"
 }
 
-function onCollisionEnter(collision_info)
-    local obj = collision_info.collision_object
+local currentClass = "Doomstalker"
+local add = false
+local print = true
 
-    printDecals(obj)
-    --addDecals(obj)
-end
-
-function addDecals(obj)
-    local name = obj.getName():gsub("%s?%(%d+%)", "")
+local function addDecals(obj)
+    local name = StringUtil.replace(obj.getName(), "%s?%(%d+%)")
     log(name)
 
-    local abs = Game.ability("Doomstalker", name)
+    local abs = --[[---@not nil]] Game.ability(currentClass, name)
     local positions = abs.enhancements
     for i, position in pairs(positions) do
         position = { position[1], 0.36, position[2] }
         obj.addDecal({
             name = tostring(i),
-            url = Enhancement.NUMBERS[i],
+            url = Numbers[i],
             position = position,
             rotation = { 90, 180, 0 },
             scale = { 0.16, 0.16, 3.08 }
@@ -35,18 +35,19 @@ function addDecals(obj)
     end
 end
 
-function printDecals(obj)
-    local objName = obj.getName():gsub("%s?%(%d+%)", "")
+---@param obj tts__Object
+local function printDecals(obj)
+    local objName = StringUtil.replace(obj.getName(), "%s?%(%d+%)")
     local line = "[\"" .. objName .. "\"] = { level = 0,\n" ..
             "  enhancements = {"
 
     if obj.getDecals() then
         local lastZ, lastX
-        for i, decal in pairs(obj.getDecals()) do
+        for i, decal in pairs(--[[---@not nil]] obj.getDecals()) do
             local name = decal.name
             local position = decal.position
-            local x = round(position.x, 2)
-            local z = round(position.z, 2)
+            local x = Math.round(position.x, 2)
+            local z = Math.round(position.z, 2)
             if x == -0.38 or x == -0.39 or x == -0.40 or x == -0.42 or x == -0.43 then
                 x = -0.41
             end
@@ -77,10 +78,13 @@ function printDecals(obj)
     log(line)
 end
 
-function round(num, numDecimalPlaces)
-    if numDecimalPlaces and numDecimalPlaces > 0 then
-        local mult = 10 ^ numDecimalPlaces
-        return math.floor(num * mult + 0.5) / mult
+function onCollisionEnter(collision_info)
+    local obj = collision_info.collision_object
+
+    if print then
+        printDecals(obj)
     end
-    return math.floor(num + 0.5)
+    if add then
+        addDecals(obj)
+    end
 end

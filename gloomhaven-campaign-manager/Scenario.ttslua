@@ -1,6 +1,5 @@
 local Logger = require("sebaestschjin-tts.Logger")
-local TableUtil = require("sebaestschjin-tts.TableUtil")
-local Utils = require("sebaestschjin-tts.Utils")
+local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Game = require("gloomhaven-campaign-manager.Game")
@@ -9,16 +8,16 @@ local Scenario = {}
 
 ---@type table<string, gh_Scenario_State>
 local State = {
-    OPEN = "Open",
-    DONE = "Done",
-    LOCKED = "Locked",
+    Open = "Open",
+    Done = "Done",
+    Locked = "Locked",
 }
 
 ---@param scenarios gh_Save_Scenario[]
 function Scenario.loadAll(scenarios)
     local scenarioStickers = --[[---@type fantasySetup_Scenario_Stickers]] Component.map().getTable("tableML")
 
-    for _, scenario in pairs(scenarios) do
+    for _, scenario in ipairs(scenarios) do
         local number, state = scenario.number, scenario.state
         local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
         Scenario.placeSticker(stickerGuid, number, state)
@@ -46,68 +45,66 @@ end
 function Scenario.placeSticker(stickerGuid, number, state)
     Logger.verbose("Placing scenario " .. tostring(number) .. " as " .. state)
     local map = Component.map()
-    if state == State.OPEN then
+    if state == State.Open then
         map.call("clickedML", stickerGuid)
-    elseif state == State.DONE then
+    elseif state == State.Done then
         map.call("clickedML", stickerGuid)
         map.call("oneClick", { stickerGuid })
-    elseif state == State.LOCKED then
+    elseif state == State.Locked then
         map.call("clickedML", stickerGuid)
         map.call("triClick", { stickerGuid })
+    else
+        Logger.error("Unknown scenario state '%s'", state)
     end
 end
 
 ---@param number number
 ---@return boolean
 function Scenario.isRandomScenario(number)
-    return Game.RANDOM_SCENARIOS[number] ~= nil
+    return Game.RandomScenarios[number] ~= nil
 end
 
 ---@param number number
 function Scenario.removeRandomScenario(number)
-    local deck = Component.fromDeckMat(Component.snaps.RANDOM_SCENARIOS)
+    local deck = Component.randomScenarioDeck()
     if not deck then
         Logger.error("Can't remove random scenarios. Nothing found at expected position.")
         return
     end
 
-    local cardId = Component.getCardId(Component.deckIds.RANDOM_SCENARIOS, Game.RANDOM_SCENARIOS[number])
-    local scenarioCard = --[[---@type seb_WrappedContainedObject_old]] Utils.findObjectIn(deck, { cardId = cardId })
+    local cardId = Component.getCardId(Component.deckIds.RANDOM_SCENARIOS, Game.RandomScenarios[number])
+    local scenarioCard, index = Search.inContainedObjects(deck, { cardId = cardId })
     if not scenarioCard then
         Logger.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
         return
     end
 
     deck.takeObject({
-        index = scenarioCard.index,
+        index = index,
         position = Component.getSafePosition(),
         callback_function = function(obj) obj.destruct() end,
     })
 end
 
----@return nil | gh_Save_Scenario[]
-function Scenario.save()
-    local scenarios = --[[---@type gh_Save_Scenario[] ]] {}
+---@param saveFile gh_Savefile
+function Scenario.saveAll(saveFile)
     local map = Component.map()
     local scenarioStickers = --[[---@type fantasySetup_Scenario_Stickers]] map.getTable("tableML")
     local unlockedScenarios = map.getTable("locations")
 
     for stickerGuid, info in pairs(scenarioStickers) do
         if getObjectFromGUID(stickerGuid) ~= nil and info.number ~= nil then
-            ---@type gh_Scenario_State
-            local state = State.OPEN
+            local state = State.Open
             if unlockedScenarios[stickerGuid] then
                 if unlockedScenarios[stickerGuid][1] == 1 then
-                    state = State.LOCKED
+                    state = State.Locked
                 else
-                    state = State.DONE
+                    state = State.Done
                 end
             end
-            table.insert(scenarios, { number = info.number, state = state })
+            table.insert(saveFile.global.scenarios, { number = info.number, state = state })
         end
     end
-
-    return TableUtil.emptyToNil(scenarios)
 end
 
 return Scenario

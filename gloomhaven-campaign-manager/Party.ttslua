@@ -64,9 +64,9 @@ function Party.setPartySheetAverageLevel(characters)
     partySheet.UI.setAttribute("scenarioLevel", "text", --[[---@not nil]] tonumber(string.format("%d", scenarioLevel)))
 end
 
----@return gh_Save_Party
-function Party.save()
-    local party = --[[---@type gh_Save_Party]] {}
+---@param saveFile gh_Savefile
+function Party.saveAll(saveFile)
+    local party = saveFile.party
 
     local partySheet = Component.partySheet()
     party.name = partySheet.UI.getAttribute("partyName", "text")
@@ -77,10 +77,8 @@ function Party.save()
 
     party.characters = --[[---@type gh_Save_Character[] ]]{}
     for _, zoneGuid in pairs(Component.playerZones()) do
-        table.insert(party.characters, Character.save(zoneGuid))
+        Character.save(zoneGuid, party.characters)
     end
-
-    return party
 end
 
 return Party

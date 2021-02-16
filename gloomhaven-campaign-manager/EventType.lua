@@ -1,11 +1,18 @@
-local Event = {
-    SHOP_LOADED = "shop_loaded",
-    ITEMS_UNLOCKED = "items_loaded",
-    CLASS_READY = "class_ready",
-    CLASS_ENHANCED = "class_enhanced",
-    CLASS_UNLOCKED = "class_unlocked",
-    TREASURE_LOADED = "treasure_loaded",
-    ACHIEVEMENTS_SAVED = "achievements_saved",
+local EventType = {
+    Load = {
+        Shop = "shop_loaded",
+        Items = "items_loaded",
+        Class = {
+            Start = "class_ready",
+            Unlocked = "class_unlocked",
+            Enhanced = "class_enhanced",
+        },
+        Treasure = "treasure_loaded",
+    },
+    Save = {
+        Achievements = "achievements_saved",
+        Events = "events_saved",
+    }
 }
 
-return Event
+return EventType

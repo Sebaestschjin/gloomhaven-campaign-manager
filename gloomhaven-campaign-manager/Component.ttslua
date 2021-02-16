@@ -1,14 +1,12 @@
-local DeckUtil = require("sebaestschjin-tts.DeckUtil")
 local Object = require("sebaestschjin-tts.Object")
-local ObjectState = require("sebaestschjin-tts.ObjectState")
 local Search = require("sebaestschjin-tts.Search")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
-local WrappedZone = require("sebaestschjin-tts.WrappedZone")
 
 local Game = require("gloomhaven-campaign-manager.Game")
+
 local Component = {}
 
 Component.guids = {
@@ -104,43 +102,53 @@ Component.PlayerMatSnapPoints = {
     Active2 = 7,
 }
 
--- Deck Mat
-Component.snaps.RANDOM_SCENARIOS = 8
-Component.snaps.QUESTS = 11
+local DeckMatSnapPoints = {
+    RandomScenarios = 8,
+    Quests = 11,
+}
 
--- City Mat
-Component.snaps.SHOP = 1
-Component.snaps.REWARD_ITEMS = 13
+local CityMatSnapPoints = {
+    Shop = 1,
+    RewardItems = 13,
+}
 
 -- Event Mat
 Component.snaps.ROAD_EVENTS_DECK = 1
 Component.snaps.CITY_EVENTS_DECK = 2
 Component.snaps.RIFT_EVENTS = 3
 
+---@param customDeck number | number[]
+---@param index number
+---@return number
 function Component.getCardId(customDeck, index)
     if type(customDeck) == "table" then
-        customDeck = customDeck[#customDeck]
+        customDeck = (--[[---@type number[] ]] customDeck)[#customDeck]
     end
-    return string.format("%d%02d", customDeck, index)
+    return --[[---@not nil]] tonumber(string.format("%d%02d", customDeck, index))
 end
 
----@param snapPoint number
----@return seb_WrappedDeck
-function Component.fromDeckMat(snapPoint)
-    local deckMat = --[[---@not nil]] getObjectFromGUID(Component.guids.DECK_MAT)
-    local deckPosition = Utils.getSnapPosition(deckMat, snapPoint)
-
-    return WrappedDeck(deckPosition)
-end
+--------------------------------------------------------------------------------
+--- Gamebox-Content ------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 ---@return tts__Bag
 function Component.gamebox()
     return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.GAMEBOX)
 end
 
----@return tts__Object
-function Component.partySheet()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.PARTY_SHEET)
+---@return tts__Bag
+function Component.forgottenCirclesBox()
+    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.FORGOTTEN_CIRCLES_BOX)
+end
+
+---@return tts__Bag
+function Component.lockedClasses()
+    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.LOCKED_CLASSES)
+end
+
+---@return nil | tts__Deck
+function Component.treasureDeck()
+    return --[[---@type nil | tts__Deck]] getObjectFromGUID(Component.guids.TREASURE_DECK)
 end
 
 ---@return nil | tts__Object
@@ -148,26 +156,33 @@ function Component.retirementSheet()
     return getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
 end
 
+---@return nil | tts__Object
+function Component.openingConditions()
+    return getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
+end
+
+--------------------------------------------------------------------------------
+--- General --------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+---@return tts__Bag
+function Component.lastCharacterBox()
+    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.LAST_BOX)
+end
+
+---@return tts__Bag
+function Component.beforeLastCharacterBox()
+    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.BEFORE_LAST_BOX)
+end
+
 ---@return tts__Object
 function Component.map()
     return --[[---@not nil]] getObjectFromGUID(Component.guids.MAP)
 end
 
----@return tts__Object
-function Component.cityMat()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
-end
-
----@param snapPoint number
----@return seb_WrappedDeck
-function Component.fromCityMat(snapPoint)
-    local deckPosition = Utils.getSnapPosition(Component.cityMat(), snapPoint)
-    return WrappedDeck(deckPosition)
-end
-
----@return nil | tts__Object
-function Component.openingConditions()
-    return getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
+---@return tts__Bag
+function Component.achievementsBag()
+    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.AchievementBag)
 end
 
 ---@return GUID
@@ -179,24 +194,19 @@ function Component.achievementBoardGuid()
         end
     end
 
-    local achievementBag = --[[---@type tts__Container]] getObjectFromGUID(Component.guids.AchievementBag)
-    local achievementBoard = --[[---@type tts__IndexedSimpleObjectState]] Utils.findObjectIn(achievementBag, { name = Component.names.AchievementBoard })
+    local achievementBag = Component.achievementsBag()
+    local achievementBoard = --[[---@not nil]] Search.inContainer(achievementBag, { name = Component.names.AchievementBoard })
     return achievementBoard.guid
 end
 
----@return tts__Bag
-function Component.achievementsBag()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.AchievementBag)
+---@return tts__VectorShape
+function Component.achievementBoardPosition()
+    return { 87.26, 2, 26.12 }
 end
 
----@return nil | tts__Object
-function Component.eventMatOld()
-    return getObjectFromGUID(Component.guids.OLD_EVENT_MAT)
-end
-
----@return nil | tts__Object
-function Component.eventMat()
-    return getObjectFromGUID(Component.guids.EVENTS_MAT)
+---@return tts__Object
+function Component.partySheet()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.PARTY_SHEET)
 end
 
 ---@return nil | tts__Object
@@ -204,31 +214,80 @@ function Component.sanctuarySticker()
     return getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
 end
 
----@return GUID[]
-function Component.playerZones()
-    return Component.guids.ZONES
-end
+--------------------------------------------------------------------------------
+--- City-Mat -------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
----@param playerZone string
----@return seb_WrappedZone
-function Component.playerZone(playerZone)
-    return WrappedZone(--[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone))
-end
-
----@param index number
 ---@return tts__Object
-function Component.playerButton(index)
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.ADD_PLAYERS[index])
+function Component.cityMat()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
 end
 
----@param playerZone GUID
----@param className string
----@return tts__Object
-function Component.playerMat(playerZone, className)
-    local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
-    local matName = Component.names.PLAYER_MAT .. ' - ' .. className
-    return --[[---@not nil]] Search.findInObjects(zone.getObjects(), { name = matName })
+---@param snapPoint number
+---@return seb_WrappedDeck
+local function fromCityMat(snapPoint)
+    local deckPosition = Utils.getSnapPosition(Component.cityMat(), snapPoint)
+    return WrappedDeck(deckPosition)
 end
+
+---@return seb_WrappedDeck
+function Component.shopDeck()
+    return fromCityMat(CityMatSnapPoints.Shop)
+end
+
+---@return seb_WrappedDeck
+function Component.rewardItemsDeck()
+    return fromCityMat(CityMatSnapPoints.RewardItems)
+end
+
+--------------------------------------------------------------------------------
+--- Deck-Mat -------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+---@return tts__Object
+function Component.deckMat()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.DECK_MAT)
+end
+
+---@param snapPoint number
+---@return seb_WrappedDeck
+local function fromDeckMat(snapPoint)
+    local deckPosition = Utils.getSnapPosition(Component.deckMat(), snapPoint)
+    return WrappedDeck(deckPosition)
+end
+
+---@return seb_WrappedDeck
+function Component.questDeck()
+    return fromDeckMat(DeckMatSnapPoints.Quests)
+end
+
+---@return seb_WrappedDeck
+function Component.randomScenarioDeck()
+    return fromDeckMat(DeckMatSnapPoints.RandomScenarios)
+end
+
+---@return tts__Deck
+function Component.minusOneDeck()
+    return --[[---@type tts__Deck]] getObjectFromGUID(Component.guids.PLAYER_MINUS_ONE_DECK)
+end
+
+--------------------------------------------------------------------------------
+--- Event Mat ------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+---@return tts__Object
+function Component.eventMat()
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.EVENTS_MAT)
+end
+
+---@return nil | tts__Object
+function Component.eventMatOld()
+    return getObjectFromGUID(Component.guids.OLD_EVENT_MAT)
+end
+
+--------------------------------------------------------------------------------
+--- Character specific ---------------------------------------------------------
+--------------------------------------------------------------------------------
 
 ---@param className string
 ---@return nil | tts__Bag
@@ -236,63 +295,40 @@ function Component.classBox(className)
     return --[[---@type nil | tts__Bag]] getObjectFromGUID(Game.class(className).boxGuid)
 end
 
----@return nil | seb_WrappedObject
-function Component.characterMat(playerZone)
-    return Component.playerZone(playerZone).findObject({ name = Component.names.CHARACTER_MAT })
+--- Returns the contained character box within a class box for the given class.
+---@param classBox tts__Bag
+---@return tts__ContainerState
+function Component.characterBox(classBox)
+    return --[[---@type tts__ContainerState]] classBox.getData().ContainedObjects[1]
 end
 
----@param playerZone GUID
----@return tts__Object
-function Component.characterSheet(playerZone)
-    return --[[---@type tts__Object]] Utils.findObjectIn(playerZone, { name = Component.names.CHARACTER_SHEET })
-end
-
----@return tts__Container[]
-function Component.inactiveCharacters()
-    return --[[---@type tts__Container[] ]] TableUtil.filter(getObjects(), function(obj)
-        return Object.isBag(obj) and obj.getDescription() == Component.names.InactiveCharacter
-    end)
-end
-
----@return common_DeckZone
-function Component.abilityDeck(playerZone)
-    return DeckUtil.wrap(--[[---@type tts__Deck]] Utils.findObjectIn(playerZone, { name = Component.names.ABILITY_DECK }))
-end
-
----@return nil | tts__Deck
-function Component.treasureDeck()
-    return --[[---@type nil | tts__Deck]] getObjectFromGUID(Component.guids.TREASURE_DECK)
-end
-
+---@param object seb_Object
 function Component.isAbilityDeck(object)
-    return Object.isDeck(object)
-            and object.getName():find(Component.names.ABILITY_DECK)
+    if not Object.isDeck(object) then
+        return false
+    end
+    local name = Object.name(object)
+    return name:find(Component.names.ABILITY_DECK) or name:find(Component.names.STARTING_ABILITY_DECK)
 end
 
----@param object seb_ObjectLike
+---@return seb_WrappedDeck
+function Component.abilityDeck(playerZone)
+    local abilityDeck = --[[---@type tts__Deck]] Search.inZone(Component.playerZone(playerZone), { name = Component.names.ABILITY_DECK })
+    return WrappedDeck(abilityDeck)
+end
+
+---@param object seb_Object
 ---@param className string
 function Component.isAbilityCardForClass(object, className)
+    local name = Object.name(object)
+
     if not Object.isCard(object)
-            or not object.getDescription():find(className)
-            or object.getName():find(Component.names.ATTACK_MODIFIER) then
+            or not Object.description(object):find(className)
+            or name:find(Component.names.ATTACK_MODIFIER) then
         return false
     end
 
-    local cardName = StringUtil.replace(object.getName(), "[%(%)]%d%d[%)%(]")
-    local nearest, _ = Game.nearestAbility(className, cardName)
-    return nearest ~= nil
-end
-
----@param objectData tts__ObjectState
----@param className string
-function Component.isAbilityCardDataForClass(objectData, className)
-    if not ObjectState.isCard(objectData)
-            or not (--[[---@not nil]]objectData.Description):find(className)
-            or (--[[---@not nil]]objectData.Nickname):find(Component.names.ATTACK_MODIFIER) then
-        return false
-    end
-
-    local cardName, _ = (--[[---@not nil]]objectData.Nickname):gsub("[%(%)]%d%d[%)%(]", "")
+    local cardName = StringUtil.replace(name, "[%(%)]%d%d[%)%(]")
     local nearest, _ = Game.nearestAbility(className, cardName)
     return nearest ~= nil
 end
@@ -300,75 +336,38 @@ end
 ---@param className string
 ---@param abilityName string
 function Component.isStartingAbility(className, abilityName)
-    local ability = Game.ability(className, abilityName)
+    local ability = --[[---@not nil]] Game.ability(className, abilityName)
     return ability.level == 1 or ability.level == "X"
 end
 
 ---@param class string
----@param abilityCard seb_ObjectLike
+---@param abilityCard seb_Object
 ---@return string
 function Component.getAbilityName(class, abilityCard)
-    local cardName, _ = string.gsub(abilityCard.getName(), "%s?[%(%)]%d+[%)%(]", "")
-    return --[[---@not nil]] Game.ability(class, cardName).name
+    local cardName = StringUtil.replace(Object.name(abilityCard), "%s?[%(%)]%d+[%)%(]")
+    return --[[---@not nil]] (--[[---@not nil]] Game.ability(class, cardName)).name
 end
 
---- Returns true if the given object is an item card.
----@param object seb_ObjectLike
-function Component.isItemCard(object)
-    return Object.isCard(object)
-            and (Component.isItemCardDescription(object.getDescription())
-            or Game.ITEMS.List[object.getName()] ~= nil)
+---@return tts__Bag[]
+function Component.inactiveCharacters()
+    return --[[---@type tts__Bag[] ]] TableUtil.filter(getObjects(), function(obj)
+        return Object.isBag(obj) and obj.getDescription() == Component.names.InactiveCharacter
+    end)
 end
 
---- Returns true if the given item card object is an item from the rewards or item design deck.
----@param item seb_ObjectLike
----@param prosperityLevel number
-function Component.isRewardItemCard(item, prosperityLevel)
-    if not Component.isItemCard(item) then
-        return false
-    end
+--------------------------------------------------------------------------------
+--- Player specific ------------------------------------------------------------
+--------------------------------------------------------------------------------
 
-    prosperityLevel = prosperityLevel or 1
-    if item.getDescription() == "" then
-        local itemInfo = Game.ITEMS.List[item.getName()]
-        return itemInfo.reward ~= nil or itemInfo.prosperity > prosperityLevel
-    else
-        local description = item.getDescription()
-        description = StringUtil.replace(description, "red")
-        description = StringUtil.replace(description, "blue")
-        return tonumber(description) > Game.ITEMS.Prosperity[prosperityLevel]
-    end
+---@return GUID[]
+function Component.playerZones()
+    return Component.guids.ZONES
 end
 
---- Returns true if the given object description is a possible item card's description.
-function Component.isItemCardDescription(description)
-    return description:find("^%d+$")
-            or description:find("^%d+ red$")
-            or description:find("^%d+ blue$")
-end
-
-function Component.isPersonalQuestCard(object)
-    if not Object.isCard(object) or not object.getData().CustomDeck then
-        return false
-    end
-
-    for key, _ in pairs(object.getData().CustomDeck) do
-        return TableUtil.contains(Component.deckIds.QUESTS, key)
-    end
-end
-
----@param object seb_ObjectLike
----@return nil | gh_Game_Quest_Info
-function Component.getQuestInfo(object)
-    local cardId = object.getData().CardID
-    local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
-    for name, quest in pairs(Game.QUESTS) do
-        if quest.index == cardIndex then
-            return { name = name, index = quest.index, number = quest.number }
-        end
-    end
-
-    return nil
+---@param playerZone GUID
+---@return tts__ScriptingTrigger
+function Component.playerZone(playerZone)
+    return --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
 end
 
 --- Returns all objects of the given playerZone. Only objects which center is within the planar bounds of the zone are
@@ -378,7 +377,7 @@ end
 function Component.getObjectsInZone(zoneGuid)
     local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(zoneGuid)
     return TableUtil.filter(zone.getObjects(),
-            function(object, _)
+            function(object)
                 return Component.isObjectInZone(zone, --[[---@type tts__Object]] object)
             end)
 end
@@ -397,6 +396,132 @@ function Component.isObjectInZone(playerZone, object)
     local objectCenter = object.getBounds().center
 
     return objectCenter.x > left and objectCenter.x < right and objectCenter.z > bottom and objectCenter.z < top
+end
+
+---@return GUID[]
+function Component.playerButtons()
+    return Component.guids.ADD_PLAYERS
+end
+
+---@param index number
+---@return tts__Object
+function Component.playerButton(index)
+    return --[[---@not nil]] getObjectFromGUID(Component.guids.ADD_PLAYERS[index])
+end
+
+---@param playerZone GUID
+---@return tts__Object
+function Component.playerMat(playerZone)
+    local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
+    local matName = Component.names.PLAYER_MAT
+    return --[[---@not nil]] Search.inZone(zone, { name = matName, isPattern = true })
+end
+
+---@return nil | tts__Object
+function Component.characterMat(playerZone)
+    return Search.inZone(Component.playerZone(playerZone), { name = Component.names.CHARACTER_MAT })
+end
+
+---@param playerZone GUID
+---@return tts__Object
+function Component.characterSheet(playerZone)
+    return --[[---@not nil]] Search.inZone(Component.playerZone(playerZone), { name = Component.names.CHARACTER_SHEET })
+end
+
+---@param playerZone GUID
+---@return tts__Deck
+function Component.attackModifiers(playerZone)
+    local search = { name = Component.names.MODIFIER_DECK, description = "Player", isPattern = true }
+    return --[[---@type tts__Deck]] Search.inZone(Component.playerZone(playerZone), search)
+end
+
+---@param playerZone GUID
+---@return seb_WrappedDeck
+function Component.additionalAttackModifiers(playerZone)
+    for _, obj in ipairs(Component.playerZone(playerZone).getObjects()) do
+        if obj.type == Object.Type.Deck
+                and obj.getName() == Component.names.MODIFIER_DECK
+                and obj.getDescription() == "" then
+            return WrappedDeck(--[[---@type tts__Deck]] obj)
+        end
+    end
+end
+
+---@param playerZone GUID
+---@return tts__VectorShape
+function Component.secondHandPosition(playerZone)
+    return Component.positions.relativeToZone(playerZone, Component.positions.SECOND_HAND)
+end
+
+---@param playerZone GUID
+---@return tts__VectorShape
+function Component.questPosition(playerZone)
+    return Component.positions.relativeToZone(playerZone, Component.positions.QUEST_CARD)
+end
+
+--------------------------------------------------------------------------------
+--- Specific cards -------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+--- Returns true if the given object is an item card.
+---@param object seb_Object
+function Component.isItemCard(object)
+    return Object.isCard(object)
+            and (Component.isItemCardDescription(Object.description(object))
+            or Game.ITEMS.List[Object.name(object)] ~= nil)
+end
+
+--- Returns true if the given item card object is an item from the rewards or item design deck.
+---@param item seb_Object
+---@param prosperityLevel nil | number
+function Component.isRewardItemCard(item, prosperityLevel)
+    if not Component.isItemCard(item) then
+        return false
+    end
+
+    prosperityLevel = prosperityLevel or 1
+    if Object.description(item) == "" then
+        local itemInfo = Game.ITEMS.List[Object.name(item)]
+        return itemInfo.reward ~= nil or itemInfo.prosperity > prosperityLevel
+    else
+        local description = Object.description(item)
+        description = StringUtil.replace(description, "red")
+        description = StringUtil.replace(description, "blue")
+        return tonumber(description) > Game.ITEMS.Prosperity[--[[---@not nil]] prosperityLevel]
+    end
+end
+
+--- Returns true if the given object description is a possible item card's description.
+function Component.isItemCardDescription(description)
+    return description:find("^%d+$")
+            or description:find("^%d+ red$")
+            or description:find("^%d+ blue$")
+end
+
+---@param object seb_Object
+function Component.isPersonalQuestCard(object)
+    local customDeck = (--[[---@type tts__DeckCustomState]] Object.data(object)).CustomDeck
+    if not Object.isCard(object) or not customDeck then
+        return false
+    end
+
+    for key, _ in pairs(customDeck) do
+        return TableUtil.contains(Component.deckIds.QUESTS, key)
+    end
+end
+
+---@param object seb_Object
+---@return nil | gh_Game_Quest_Info
+function Component.getQuestInfo(object)
+    local cardId = Object.data(object).CardID
+    local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
+    for name, quest in pairs(Game.QUESTS) do
+        if quest.index == cardIndex then
+            return { name = name, index = quest.index, number = quest.number }
+        end
+    end
+
+    return nil
 end
 
 return Component

@@ -2,6 +2,7 @@
 
 ---@shape gh_Game_Class
 ---@field isStartingClass boolean
+---@field isCustomClass nil | boolean
 ---@field boxGuid GUID
 ---@field hp gh_Game_HpProgression
 ---@field perks gh_Game_Perk[]
@@ -13,12 +14,10 @@
 ---@field hp gh_Game_HpProgression
 
 ---@shape gh_Game_Perk
----@field add nil | gh_Game_Perk_Add
----@field remove nil | gh_Game_Perk_Remove
+---@field add nil | string[]
+---@field remove nil | string[]
 ---@field ignore nil | gh_Game_Perk_Ignore
 
----@alias gh_Game_Perk_Add string[]
----@alias gh_Game_Perk_Remove string[]
 ---@alias gh_Game_Perk_Ignore 'I' | 'S'
 
 ---@shape gh_Game_Ability

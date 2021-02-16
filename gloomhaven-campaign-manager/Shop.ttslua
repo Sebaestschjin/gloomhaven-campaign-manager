@@ -1,9 +1,9 @@
-local DeckUtil = require('sebaestschjin-tts.DeckUtil')
 local EventManager = require('ge_tts.EventManager')
 local Logger = require('sebaestschjin-tts.Logger')
-local ObjectUtil = require('sebaestschjin-tts.ObjectUtil')
-local TableUtil = require('sebaestschjin-tts.TableUtil')
+local Object = require('sebaestschjin-tts.Object')
+local Search = require('sebaestschjin-tts.Search')
 local Utils = require('sebaestschjin-tts.Utils')
+local WrappedDeck = require('sebaestschjin-tts.WrappedDeck')
 
 local Component = require('gloomhaven-campaign-manager.Component')
 local EventType = require('gloomhaven-campaign-manager.EventType')
@@ -19,12 +19,12 @@ function Shop.load()
     end
     cityMat.call("layOut", 0)
 
-    EventManager.triggerEvent(EventType.SHOP_LOADED)
+    EventManager.triggerEvent(EventType.Load.Shop)
 end
 
----@param unlocked gh_Save_Unlocked_Partial
+---@param unlocked gh_Save_Unlocked
 function Shop.save(unlocked)
-    local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
+    local shopDeck = Component.shopDeck()
     if shopDeck.isEmpty() then
         Component.cityMat().call("layOut", 0)
         Wait.time(function() Shop.doSave(unlocked) end, 1)
@@ -33,51 +33,32 @@ function Shop.save(unlocked)
     end
 end
 
----@param unlocked gh_Save_Unlocked_Partial
+---@param unlocked gh_Save_Unlocked
 function Shop.doSave(unlocked)
-    local shopDeck = Component.fromCityMat(Component.snaps.SHOP)
+    local shopDeck = Component.shopDeck()
     if shopDeck.isEmpty() then
         Logger.warn("Can't find shop deck, even after trying to recalling it."
                 .. " This means unlocked items can't be saved.")
         return
     end
 
-    local items = --[[---@type string[] ]] {}
+    local items = unlocked.items
     Shop.saveFromObjects(shopDeck.getObjects(), items)
-    for _, zoneGuid in pairs(Component.guids.ZONES) do
+    for _, zoneGuid in pairs(Component.playerZones()) do
         Shop.saveFromObjects(Component.getObjectsInZone(zoneGuid), items)
     end
 
     table.sort(items)
-    unlocked.items = TableUtil.emptyToNil(items)
 end
 
----@param objects seb_ObjectLikeArray
+---@param objects seb_Object_Array
 ---@param items string[]
 function Shop.saveFromObjects(objects, items)
-    for _, item in pairs(--[[---@type seb_ObjectLike[] ]]objects) do
+    for _, item in pairs(--[[---@type tts__Object[] ]] objects) do
         if Component.isRewardItemCard(item, Prosperity.getLevel()) then
-            table.insert(items, item.getName())
+            table.insert(items, Object.name(item))
         end
     end
-end
-
----@param name string
----@return nil | tts__Object
-function Shop.findItem(name)
-    local cityMat = --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
-    for i = 1, 14 do
-        local pos = Utils.getSnapPosition(cityMat, i)
-        local deck = cityMat.call('checkForDeck', pos)
-        if deck then
-            local item = Utils.findObjectIn(deck, { name = name, plain = true })
-            if item then
-                return item
-            end
-        end
-    end
-
-    return nil
 end
 
 ---@overload fun(name: string, toPosition: tts__VectorShape, toRotation: tts__VectorShape): boolean
@@ -89,16 +70,16 @@ end
 ---@return boolean
 function Shop.takeItem(name, toPosition, toRotation, startAt)
     startAt = startAt or 1
-    local cityMat = --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
+    local cityMat = Component.cityMat()
 
     for i = startAt, 14 do
         local deckPosition = Utils.getSnapPosition(cityMat, i)
-        local deck = DeckUtil.wrapAt(deckPosition)
-        if deck then
-            local item = Utils.findObjectIn(deck, { name = name, plain = true })
+        local deck = WrappedDeck(deckPosition)
+        if not deck.isEmpty() then
+            local item, index = Search.inContainedObjects(deck, { name = name })
             if item then
                 deck.takeObject({
-                    index = item.index,
+                    index = index,
                     smooth = false,
                     position = toPosition,
                     rotation = toRotation,

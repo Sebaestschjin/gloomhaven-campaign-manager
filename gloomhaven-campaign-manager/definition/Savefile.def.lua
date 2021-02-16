@@ -8,16 +8,6 @@
 ---@field events gh_Save_EventDeck[]
 ---@field metadata gh_Save_Metadata
 
---- The savefile format with optional values
----@shape gh_Savefile_Partial
----@field enhancements nil | gh_Save_EnhancedClass[]
----@field unlocked nil | gh_Save_Unlocked_Partial
----@field global nil | gh_Save_Global_Partial
----@field party nil | gh_Save_Party
----@field retired nil | gh_Save_Retired[]
----@field events nil | gh_Save_EventDeck[]
----@field metadata nil | gh_Save_Metadata
-
 ---@shape gh_Save_EnhancedClass
 ---@field class string
 ---@field abilities gh_Save_Enhanced_Ability[]
@@ -34,11 +24,6 @@
 ---@field scenarios gh_Save_Scenario[]
 ---@field achievements gh_Save_Achievement[]
 ---@field prosperity number the number of prosperity checkmarks
-
----@shape gh_Save_Global_Partial
----@field scenarios nil | gh_Save_Scenario[] @Default []
----@field achievements nil | gh_Save_Achievement[] @Default []
----@field prosperity nil | number @Default 0
 
 ---@shape gh_Save_Scenario
 ---@field number number
@@ -63,13 +48,15 @@
 ---@field name string
 ---@field xp number
 ---@field gold number
----@field quest string | number
+---@field quest gh_Save_Quest
 ---@field checkmarks number
 ---@field perks number[]
 ---@field items gh_Save_Character_Item[]
 ---@field abilities string[]
 ---@field notes string[]
 ---@field hiddenNotes string[]
+
+---@alias gh_Save_Quest string | number
 
 ---@shape gh_Save_Character_Item
 ---@field name string
@@ -80,16 +67,9 @@
 ---@shape gh_Save_Unlocked
 ---@field classes string[]
 ---@field treasures number[]
----@field sanctuary number
+---@field sanctuary nil | number
 ---@field items string[]
 ---@field specialConditions gh_Save_Unlocked_Conditions
-
----@shape gh_Save_Unlocked_Partial
----@field classes nil | string[]
----@field treasures nil | number[]
----@field sanctuary nil | number
----@field items nil | string[]
----@field specialConditions nil | gh_Save_Unlocked_Conditions
 
 ---@shape gh_Save_Unlocked_Conditions
 ---@field ancientTechnology boolean
@@ -107,7 +87,7 @@
 ---@field class string
 ---@field level number
 ---@field perks number
----@field quest string
+---@field quest gh_Save_Quest
 
 ---@shape gh_Save_EventDeck
 ---@field deck string

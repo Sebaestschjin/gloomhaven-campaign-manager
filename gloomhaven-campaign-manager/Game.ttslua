@@ -23,7 +23,7 @@ end
 
 ---@param class string
 ---@param name string
----@return gh_Game_Ability
+---@return nil | gh_Game_Ability
 function Game.ability(class, name)
     local ability, state = Game.nearestAbility(class, name)
 
@@ -132,7 +132,7 @@ Game.ITEMS = {
 }
 
 ---@type table<number, number>
-Game.RANDOM_SCENARIOS = {
+Game.RandomScenarios = {
     [63] = 0,
     [64] = 1,
     [65] = 2,

@@ -1,7 +1,6 @@
-local Constant = require("sebaestschjin-tts.Constant")
-local DeckUtil = require("sebaestschjin-tts.DeckUtil")
-local ObjectUtil = require("sebaestschjin-tts.ObjectUtil")
+local Object = require("sebaestschjin-tts.Object")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
+local Search = require("sebaestschjin-tts.Search")
 local Utils = require("sebaestschjin-tts.Utils")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
@@ -17,7 +16,7 @@ local Event = {}
 ---@field oldMat nil | GUID
 
 ---@type table<string, gh_EventDeckInfo>
-Event.DECKS = {
+Event.EventDecks = {
     ["city"] = {
         initialDeckGuid = Component.guids.CITY_EVENTS_DECK_INITIAL,
         deckGuid = Component.guids.CITY_EVENTS_DECK,
@@ -32,56 +31,57 @@ Event.DECKS = {
         oldMat = Component.guids.OLD_EVENT_MAT,
     },
 }
+local StartingEvents = 30
 
----@param events gh_Save_EventDeck[]
-function Event.loadAll(events)
-    for _, eventDeck in ipairs(events) do
+---@param eventDecks gh_Save_EventDeck[]
+function Event.loadAll(eventDecks)
+    for _, eventDeck in ipairs(eventDecks) do
         Event.load(eventDeck)
     end
 end
 
----@param events gh_Save_EventDeck
-function Event.load(events)
-    local eventsInfo = Event.DECKS[events.deck]
-    local deck = DeckUtil.wrap(--[[---@type tts__Deck]] getObjectFromGUID(eventsInfo.deckGuid))
-    deck.putObject(--[[---@not nil]] getObjectFromGUID(eventsInfo.initialDeckGuid))
+---@param eventDeck gh_Save_EventDeck
+function Event.load(eventDeck)
+    local eventsInfo = Event.EventDecks[eventDeck.deck]
+    local targetDeck = WrappedDeck(--[[---@type tts__Deck]] getObjectFromGUID(eventsInfo.deckGuid))
+    targetDeck.putObject(--[[---@type tts__Deck]] getObjectFromGUID(eventsInfo.initialDeckGuid))
 
-    local bottomCards = Event.findBottomDeck(events, deck)
-    local addedCards = Event.findAddedCards(events, deck, bottomCards)
+    local bottomCards = Event.findBottomDeck(eventDeck, targetDeck)
+    local addedCards = Event.findAddedCards(eventDeck, targetDeck, bottomCards)
 
     TableUtil.shuffle(addedCards)
     local eventCards = TableUtil.merge(bottomCards, addedCards)
 
-    Event.dealEvents(deck, eventCards, eventsInfo)
+    Event.dealEvents(targetDeck, eventCards, eventsInfo)
 end
 
 ---@param events gh_Save_EventDeck
----@param deck common_DeckZone
+---@param deck seb_WrappedDeck
 ---@return GUID[]
 function Event.findBottomDeck(events, deck)
     local eventsToAdd = {}
     for _, event in TableUtil.pairs(events.bottomUp) do
         local eventName = string.format("%02d", event)
-        local eventCard = --[[---@not nil]] Utils.findObjectIn(deck, { name = eventName })
-        table.insert(eventsToAdd, eventCard.getGUID())
+        local eventCard = --[[---@not nil]] Search.inContainedObjects(deck, { name = eventName })
+        table.insert(eventsToAdd, Object.guid(eventCard))
     end
 
     return eventsToAdd
 end
 
 ---@param events gh_Save_EventDeck
----@param deck common_DeckZone
+---@param deck seb_WrappedDeck
 ---@param alreadyAdded GUID[]
 ---@return GUID[]
 function Event.findAddedCards(events, deck, alreadyAdded)
     local eventsToAdd = {}
     for _, eventCard in ipairs(deck.getObjects()) do
-        local eventNumber = --[[---@not nil]] tonumber(eventCard.name)
-        if not TableUtil.contains(alreadyAdded, eventCard.guid)
+        local eventNumber = --[[---@not nil]] tonumber(Object.name(eventCard))
+        if not TableUtil.contains(alreadyAdded, Object.guid(eventCard))
                 and Event.isAdded(events, eventNumber)
                 and not Event.isRemoved(events, eventNumber)
         then
-            table.insert(eventsToAdd, eventCard.guid)
+            table.insert(eventsToAdd, Object.guid(eventCard))
         end
     end
 
@@ -103,7 +103,7 @@ function Event.isAdded(events, eventNumber)
             or (events.add and TableUtil.contains(events.add, eventNumber))
 end
 
----@param deck common_DeckZone
+---@param deck seb_WrappedDeck
 ---@param eventCards GUID[]
 function Event.dealEvents(deck, eventCards, info)
     local eventDeck = Event.getTargetDeck(info)
@@ -111,30 +111,28 @@ function Event.dealEvents(deck, eventCards, info)
         deck.takeObject({
             guid = event,
             position = Component.getSafePosition(),
-            rotation = Constant.Rotation.NORTH,
+            rotation = { 0, 180, 0 },
             smooth = false,
-            callback_function = function(card) eventDeck.putObject(card) end
+            callback_function = function(card) eventDeck.putObject(--[[---@type tts__Card]] card) end
         })
     end
 end
 
----@return nil | gh_Save_EventDeck[]
-function Event.save()
-    local events = --[[---@type gh_Save_EventDeck[] ]]{}
+---@param saveFile gh_Savefile
+function Event.saveAll(saveFile)
+    local events = saveFile.events
 
-    for name, info in pairs(Event.DECKS) do
+    for name, info in pairs(Event.EventDecks) do
         local eventDeck = Event.saveEventsFromDeck(info)
         if eventDeck then
             (--[[---@not nil]] eventDeck).deck = name
             table.insert(events, --[[---@not nil]] eventDeck)
         end
     end
-
-    return TableUtil.emptyToNil(events)
 end
 
 ---@param info gh_EventDeckInfo
----@return nil | gh_Save_EventDeck
+---@return gh_Save_EventDeck
 function Event.saveEventsFromDeck(info)
     local eventDeck = Event.getTargetDeck(info)
     local eventsFromDeck = --[[---@type gh_Save_EventDeck]] { bottomUp = {}, remove = {} }
@@ -144,30 +142,24 @@ function Event.saveEventsFromDeck(info)
         table.insert(eventsFromDeck.bottomUp, eventNumber)
     end
 
-    for i = 1, 30 do
-        if not TableUtil.contains(eventsFromDeck.bottomUp, i) then
-            table.insert(eventsFromDeck.remove, i)
+    for event = 1, StartingEvents do
+        if not TableUtil.contains(eventsFromDeck.bottomUp, event) then
+            table.insert(eventsFromDeck.remove, event)
         end
     end
-    if TableUtil.isEmpty(eventsFromDeck.remove) then
-        TableUtil.removeKey(eventsFromDeck, "remove")
-    end
 
-    if TableUtil.isEmpty(eventsFromDeck.bottomUp) then
-        return nil
-    end
     return eventsFromDeck
 end
 
----@param card seb_WrappedObject
+---@param card tts__ObjectState
 ---@return number
 function Event.getNumber(card)
-    local numberFromName = tonumber(card.getName())
+    local numberFromName = tonumber(Object.name(card))
     if numberFromName then
         return --[[---@not nil]] numberFromName
     end
 
-    local cardId = card.getData().CardID
+    local cardId = Object.data(card).CardID
     local cardIndex = --[[---@not nil]] tonumber(tostring(cardId):sub(-2, -1))
     if cardIndex >= 22 then
         return cardIndex + 60

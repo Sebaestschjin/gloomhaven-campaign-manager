@@ -10,8 +10,8 @@ function Prosperity.load(value)
     end
 end
 
----@return number
-function Prosperity.save()
+---@param saveFile gh_Savefile
+function Prosperity.saveAll(saveFile)
     local checkmarks = Component.map().getTable("Pros")
     local maxValue = -1
     for i, checked in pairs(checkmarks) do
@@ -20,7 +20,7 @@ function Prosperity.save()
         end
     end
 
-    return maxValue + 1
+    saveFile.global.prosperity = maxValue + 1
 end
 
 ---@return number
