@@ -1,10 +1,27 @@
+local EventManager = require("ge_tts.EventManager")
+
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Character = require("gloomhaven-campaign-manager.Character")
 local Component = require("gloomhaven-campaign-manager.Component")
+local EventType = require("gloomhaven-campaign-manager.EventType")
+local Game = require("gloomhaven-campaign-manager.Game")
 
 local Party = {}
+
+local function fireClassesReady()
+    for name, _ in pairs(Game.CLASSES) do
+        EventManager.triggerEvent(EventType.Loaded.Class.Start, name)
+    end
+end
+
+---@param saveFile gh_Savefile
+function Party.setup(saveFile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Party.load(saveFile.party) end)
+    EventManager.addHandler(EventType.Loaded.Items, fireClassesReady)
+    EventManager.addHandler(EventType.Loaded.Class.Enhanced, function(className) Party.mayLoadCharacter(saveFile, className) end)
+end
 
 ---@param party gh_Save_Party
 function Party.load(party)

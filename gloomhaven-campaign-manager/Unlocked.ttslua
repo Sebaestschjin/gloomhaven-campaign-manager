@@ -1,23 +1,36 @@
-local Constant = require("sebaestschjin-tts.Constant")
 local EventManager = require('ge_tts.EventManager')
 local Logger = require('sebaestschjin-tts.Logger')
-local Utils = require("sebaestschjin-tts.Utils")
 local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
-local Preparation = require("gloomhaven-campaign-manager.Preparation")
 local Sanctuary = require("gloomhaven-campaign-manager.Sanctuary")
 local Shop = require("gloomhaven-campaign-manager.Shop")
 
 local Unlocked = {}
 
----@param unlocked gh_Save_Unlocked
-function Unlocked.loadAll(unlocked)
-    Sanctuary.load(unlocked.sanctuary)
-    Unlocked.loadOpeningConditions(unlocked.specialConditions)
-    Unlocked.loadTreasures(unlocked.treasures)
+local shopLoaded = false
+local expansionLoaded = false
+
+---@param saveFile gh_Savefile
+function Unlocked.setup(saveFile)
+    shopLoaded = false
+    expansionLoaded = false
+
+    EventManager.addHandler(EventType.Placed.OpeningConditions, function() Unlocked.loadOpeningConditions(saveFile.unlocked.specialConditions) end)
+    EventManager.addHandler(EventType.Placed.Treasure, function() Unlocked.loadTreasures(saveFile.unlocked.treasures) end)
+
+    EventManager.addHandler(EventType.Loaded.Start, function() Unlocked.loadOpeningConditions(saveFile.unlocked.specialConditions) end)
+    EventManager.addHandler(EventType.Loaded.Shop, function()
+        shopLoaded = true
+        Unlocked.loadItems(saveFile)
+    end)
+    EventManager.addHandler(EventType.Loaded.Expansion, function()
+        expansionLoaded = true
+        Unlocked.loadItems(saveFile)
+    end)
+    EventManager.addHandler(EventType.Loaded.Class.Start, function(className) Unlocked.mayLoadClass(saveFile, className) end)
 end
 
 ---@param saveFile gh_Savefile
@@ -29,7 +42,7 @@ function Unlocked.mayLoadClass(saveFile, className)
             return
         end
     end
-    EventManager.triggerEvent(EventType.Load.Class.Unlocked, className)
+    EventManager.triggerEvent(EventType.Loaded.Class.Unlocked, className)
 end
 
 ---@param number number
@@ -48,31 +61,28 @@ function Unlocked.loadClass(number, className)
         guid = Game.class(className).boxGuid,
         callback_function = function(obj)
             obj.setLock(true)
-            EventManager.triggerEvent(EventType.Load.Class.Unlocked, className)
+            EventManager.triggerEvent(EventType.Loaded.Class.Unlocked, className)
         end
     })
 end
 
 ---@param saveFile gh_Savefile
 function Unlocked.loadItems(saveFile)
+    if not expansionLoaded or not shopLoaded then
+        return
+    end
+
     local shopPosition = Component.shopDeck().getPosition()
 
     for _, item in pairs(saveFile.unlocked.items) do
         Shop.takeRewardItem(item, shopPosition)
     end
 
-    EventManager.triggerEvent(EventType.Load.Items)
+    EventManager.triggerEvent(EventType.Loaded.Items)
 end
 
 ---@param openingConditions gh_Save_Unlocked_Conditions
 function Unlocked.loadOpeningConditions(openingConditions)
-    Preparation.takeFromGamebox(Component.guids.OPENING_CONDITIONS, Component.positions.OPENING_CONDITIONS)
-    Utils.waitForObject(Component.guids.OPENING_CONDITIONS,
-            function() Unlocked.doLoadOpeningConditions(openingConditions) end)
-end
-
----@param openingConditions gh_Save_Unlocked_Conditions
-function Unlocked.doLoadOpeningConditions(openingConditions)
     local sheet = --[[---@not nil]] Component.openingConditions()
 
     Unlocked.setOpeningCondition(sheet, openingConditions.ancientTechnology, "Ancient")
@@ -84,12 +94,7 @@ function Unlocked.doLoadOpeningConditions(openingConditions)
 
     if openingConditions.retired then
         sheet.call("clickedToggle", "Retire")
-        Component.gamebox().takeObject({
-            guid = Component.guids.TOWN_RECORDS,
-            position = Component.positions.TOWN_RECORDS,
-            rotation = Constant.Rotation.NORTH,
-            smooth = false
-        })
+        Component.placeTownRecords()
     end
 
     for i = 1, openingConditions.donations do
@@ -120,13 +125,13 @@ function Unlocked.loadTreasures(treasures)
         else
             treasureDeck.takeObject({
                 index = (--[[---@not nil]] treasureCard).index,
-                position = Component.getSafePosition(),
+                position = Component.safePosition(),
                 callback_function = function(obj) obj.destruct() end,
             })
         end
     end
 
-    EventManager.triggerEvent(EventType.Load.Treasure)
+    EventManager.triggerEvent(EventType.Loaded.Treasure)
 end
 
 ---@param saveFile gh_Savefile
@@ -174,7 +179,7 @@ end
 
 ---@param treasures number[]
 function Unlocked.saveTreasures(treasures)
-    local treasureDeck, _ = Search.inContainedObjects(Component.gamebox(), { guid = Component.guids.TREASURE_DECK })
+    local treasureDeck, _ = Component.treasureDeckData()
 
     if not treasureDeck then
         Logger.warn("Could not find the treasure deck in the gamebox. Can not save unlocked treasures.")

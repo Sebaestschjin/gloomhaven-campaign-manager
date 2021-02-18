@@ -1,3 +1,4 @@
+local EventManager = require("ge_tts.EventManager")
 local Object = require("sebaestschjin-tts.Object")
 local Search = require("sebaestschjin-tts.Search")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
@@ -5,89 +6,95 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
+local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 
+---
+--- Handles everything about the different game components required to load and save a Gloomhaven-Campaign. Has methods
+--- to locate and place those components.
+---
 local Component = {}
 
-Component.guids = {
-    GAMEBOX = "346ed5",
-    LOCKED_CLASSES = "1e6549",
-    SCENARIO_BOOK = "f3404a",
-    RULE_BOOK = "c9d3f5",
-    OPENING_CONDITIONS = "30ae8e",
-    RETIREMENT_SHEET = "a30c94",
-    TOWN_RECORDS = "a6c771",
-    FORGOTTEN_CIRCLES_BOX = "5e28e8",
-    MAP = "9cc037",
+--- A list of GUIDs of relevant components.
+---@type table<string, GUID>
+local Guid = {
+    Gamebox = "346ed5",
+    LockedClasses = "1e6549",
+    ScenarioBook = "f3404a",
+    RuleBook = "c9d3f5",
+    OpeningConditions = "30ae8e",
+    RetirementSheet = "a30c94",
+    TownRecords = "a6c771",
+    ForgottenCirclesBox = "5e28e8",
+    Map = "9cc037",
     AchievementBag = "3ea749", -- Bag containing the Achievement board
-    AchievementBoard = { "43d5b8", "546b57" },
-    SANCTUARY_STICKER = "800847",
-    DECK_MAT = "a75fcd",
-    PLAYER_MINUS_ONE_DECK = "74a2ed",
-    CITY_EVENTS_DECK_INITIAL = "759349",
-    CITY_EVENTS_DECK = "f13efd",
-    ROAD_EVENTS_DECK_INITIAL = "83de73",
-    ROAD_EVENTS_DECK = "f08b69",
-    CITY_MAT = "f3ffb7",
-    EVENTS_MAT = "b53fb2",
-    OLD_EVENT_MAT = "41393b",
-    PARTY_SHEET = "6d3de2",
-    LAST_BOX = "fdef02", -- tinkerer
-    BEFORE_LAST_BOX = "ec1d2a", -- cragheart
-    TREASURE_DECK = "284016",
-    ---@type GUID[]
-    ZONES = { "49a4e0", "dac936", "62cd94", "963318" },
-    ---@type GUID[]
-    ADD_PLAYERS = { "3f0cda", "4d61da", "f98ff8", "d0f661" },
+    SanctuarySticker = "800847",
+    DeckMat = "a75fcd",
+    CityEventsDeckInitial = "759349",
+    CityEventsDeck = "f13efd",
+    RoadEventsDeckInitial = "83de73",
+    RoadEventsDeck = "f08b69",
+    CityMat = "f3ffb7",
+    TreasureDeck = "284016",
+    PlayerMinusOneDeck = "74a2ed",
+    EventsMat = "b53fb2",
+    OldEventsMat = "41393b",
+    PartySheet = "6d3de2",
+    LastBox = "fdef02", -- tinkerer
+    BeforeLastBox = "ec1d2a", -- cragheart
 }
 
-Component.deckIds = {}
----@type number[]
-Component.deckIds.QUESTS = { 1753, 1997 }
-Component.deckIds.RANDOM_SCENARIOS = 1930
+--- A list of components with multiple GUIDs (e.g. where newer versions have different GUIDs) or where multiple objects exist.
+---@type table<string, GUID[]>
+local Guids = {
+    Zones = { "49a4e0", "dac936", "62cd94", "963318" },
+    AddPlayers = { "3f0cda", "4d61da", "f98ff8", "d0f661" },
+    AchievementBoard = { "43d5b8", "546b57" },
+}
 
-Component.names = {
-    PLAYER_MAT = "Player Mat",
-    CHARACTER_MAT = "Character Mat",
-    CHARACTER_SHEET = "Character Sheet",
-    ABILITY_DECK = "Advanced Abilities",
-    STARTING_ABILITY_DECK = "Starting Abilities",
-    MODIFIER_DECK = "Attack Modifiers",
-    ATTACK_MODIFIER = "Attack Modifier",
-    ROAD_EVENTS = "Road Events",
-    CITY_EVENTS = "City Events",
+--- A list of CustomDeck-IDs to identify cards. May have multiple entries if newer version have other IDs.
+---@type table<string, number[]>
+local DeckIds = {
+    Quests = { 1753, 1997 },
+    RandomScenarios = { 1930 },
+}
+
+--- A list of names to identify components by.
+---@type table<string, string>
+local Names = {
+    CharacterMat = "Character Mat",
+    AbilityDeck = "Advanced Abilities",
+    StartingAbilityDeck = "Starting Abilities",
+    AttackModifierDeck = "Attack Modifiers",
     AchievementBoard = "Achievements",
     InactiveCharacter = "Repacked",
+    PlayerMat = "Player Mat",
+    CharacterSheet = "Character Sheet",
+    AttachModifierCard = "Attack Modifier",
+    RoadEventsDeck = "Road Events",
+    CityEventsDeck = "City Events",
 }
 
+--- A list of positions where components should be placed.
 ---@type table<string, tts__VectorShape>
-Component.positions = {}
-Component.positions.QUEST_CARD = Vector(1, 2, -19) -- relative to player zone
-Component.positions.ITEM_UNEQUIPPED = Vector(-7, 2, -7) -- relative to player zone
-Component.positions.SECOND_HAND = Vector(0, 3, -2) -- relative to player zone
+local Positions = {
+    -- relative
+    QuestCard = { 1, 2, -19 },
+    ItemUnequipped = { -7, 2, -7 },
+    SecondHand = { 0, 3, -2 },
+    -- absolute
+    AchievementBoard = { 87.26, 2, 26.12 },
+    OpeningConditions = { 65.19, 1.70, -29.55 },
+    RetirementSheet = { 77.88, 1.70, -33.34 },
+    ScenarioBook = { 63.88, 2, 37.89 },
+    RuleBook = { -64.31, 2, -41.68 },
+    TownRecords = { 73.94, 2, 34.10 },
+    TreasureDeck = { -75, 2, -5.3 },
+}
 
-Component.positions.ACHIEVEMENT_BOARD = { 87.26, 2, 26.12 }
-Component.positions.OPENING_CONDITIONS = Vector(65.19, 1.70, -29.55)
-Component.positions.RETIREMENT_SHEET = Vector(77.88, 1.70, -33.34)
-Component.positions.SCENARIO_BOOK = { 63.88, 2, 37.89 }
-Component.positions.RULE_BOOK = { -64.31, 2, -41.68 }
-Component.positions.TOWN_RECORDS = { 73.94, 2, 34.10 }
-Component.positions.TREASURE_DECK = { -75, 2, -5.3 }
-
-function Component.positions.relativeToZone(zoneGuid, position)
-    return (--[[---@not nil]] getObjectFromGUID(zoneGuid)).getPosition() + position
-end
-
-local positionCounter = 0
-function Component.getSafePosition()
-    positionCounter = positionCounter + 1
-    return Vector(-43 + (positionCounter * 3), 2, -85)
-end
-
-Component.snaps = {}
-
+--- A list of snap points on the player mat, e.g. for item slots.
 ---@type table<gh_Save_Character_Item_Position, number>
-Component.PlayerMatSnapPoints = {
+local PlayerMatSnapPoints = {
     Head = 15,
     Armor = 16,
     HandLeft = 17,
@@ -102,63 +109,168 @@ Component.PlayerMatSnapPoints = {
     Active2 = 7,
 }
 
+--- A list of snap points on the deck mat containing different decks.
+---@type table<string, number>
 local DeckMatSnapPoints = {
     RandomScenarios = 8,
     Quests = 11,
 }
 
+--- A list of snap points on the city deck mat containing different decks.
 local CityMatSnapPoints = {
     Shop = 1,
     RewardItems = 13,
 }
 
--- Event Mat
-Component.snaps.ROAD_EVENTS_DECK = 1
-Component.snaps.CITY_EVENTS_DECK = 2
-Component.snaps.RIFT_EVENTS = 3
+--- Information about an event deck.
+---@shape gh_EventDeckInfo
+---@field initialDeckGuid GUID
+---@field deckGuid GUID
+---@field snapPoint number
+---@field name string
+---@field oldMat nil | GUID
 
----@param customDeck number | number[]
----@param index number
----@return number
-function Component.getCardId(customDeck, index)
-    if type(customDeck) == "table" then
-        customDeck = (--[[---@type number[] ]] customDeck)[#customDeck]
-    end
-    return --[[---@not nil]] tonumber(string.format("%d%02d", customDeck, index))
+---@type table<string, gh_EventDeckInfo>
+Component.EventDecks = {
+    ["city"] = {
+        initialDeckGuid = Guid.CityEventsDeckInitial,
+        deckGuid = Guid.CityEventsDeck,
+        snapPoint = 2,
+        name = Names.CityEvents,
+    },
+    ["road"] = {
+        initialDeckGuid = Guid.RoadEventsDeckInitial,
+        deckGuid = Guid.RoadEventsDeck,
+        snapPoint = 1,
+        name = Names.RoadEvents,
+        oldMat = Guid.OldEventsMat,
+    },
+}
+
+--------------------------------------------------------------------------------
+--- Positioning ----------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+local function relativeToZone(zoneGuid, position)
+    return (--[[---@not nil]] getObjectFromGUID(zoneGuid)).getPosition() + position
+end
+
+local positionCounter = 0
+function Component.safePosition()
+    positionCounter = positionCounter + 1
+    return Vector(-43 + (positionCounter * 3), 2, -85)
+end
+
+---@param playerZone GUID
+---@return tts__VectorShape
+function Component.secondHandPosition(playerZone)
+    return relativeToZone(playerZone, Positions.SecondHand)
+end
+
+---@param playerZone GUID
+---@return tts__VectorShape
+function Component.questPosition(playerZone)
+    return relativeToZone(playerZone, Positions.QuestCard)
 end
 
 --------------------------------------------------------------------------------
 --- Gamebox-Content ------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+---@overload fun(guid: GUID, position: tts__VectorShape)
+---@param guid GUID
+---@param position tts__VectorShape
+---@param event nil | string
+local function takeFromGamebox(guid, position, event)
+    local object = getObjectFromGUID(guid)
+    if object == nil then
+        Component.gamebox().takeObject({
+            guid = guid,
+            smooth = false,
+            position = position,
+            rotation = { 0, 180, 0 },
+            callback_function = function()
+                if event then EventManager.triggerEvent(--[[---@not nil]] event) end
+            end,
+        })
+    elseif event then
+        EventManager.triggerEvent(--[[---@not nil]] event)
+    end
+end
+
 ---@return tts__Bag
 function Component.gamebox()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.GAMEBOX)
+    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.Gamebox)
 end
 
 ---@return tts__Bag
 function Component.forgottenCirclesBox()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.FORGOTTEN_CIRCLES_BOX)
+    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.ForgottenCirclesBox)
 end
 
 ---@return tts__Bag
 function Component.lockedClasses()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.LOCKED_CLASSES)
+    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.LockedClasses)
 end
 
 ---@return nil | tts__Deck
 function Component.treasureDeck()
-    return --[[---@type nil | tts__Deck]] getObjectFromGUID(Component.guids.TREASURE_DECK)
+    return --[[---@type nil | tts__Deck]] getObjectFromGUID(Guid.TreasureDeck)
+end
+
+---@return nil | (tts__ObjectState, number)
+function Component.treasureDeckData()
+    return Search.inContainedObjects(Component.gamebox(), { guid = Guid.TreasureDeck })
 end
 
 ---@return nil | tts__Object
 function Component.retirementSheet()
-    return getObjectFromGUID(Component.guids.RETIREMENT_SHEET)
+    return getObjectFromGUID(Guid.RetirementSheet)
 end
 
 ---@return nil | tts__Object
 function Component.openingConditions()
-    return getObjectFromGUID(Component.guids.OPENING_CONDITIONS)
+    return getObjectFromGUID(Guid.OpeningConditions)
+end
+
+function Component.placeScenarioBook()
+    takeFromGamebox(Guid.ScenarioBook, Positions.ScenarioBook)
+end
+
+function Component.placeRuleBook()
+    takeFromGamebox(Guid.RuleBook, Positions.RuleBook)
+end
+
+function Component.placeTreasureDeck()
+    takeFromGamebox(Guid.TreasureDeck, Positions.TreasureDeck, EventType.Placed.Treasure)
+end
+
+function Component.placeLockedCharacter()
+    takeFromGamebox(Guid.LockedClasses, Component.safePosition(), EventType.Placed.LockedCharacters)
+end
+
+function Component.placeOpeningConditions()
+    takeFromGamebox(Guid.OpeningConditions, Positions.OpeningConditions, EventType.Placed.OpeningConditions)
+end
+
+function Component.placeRetirementSheet()
+    takeFromGamebox(Guid.RetirementSheet, Positions.RetirementSheet, EventType.Placed.RetirementSheet)
+end
+
+function Component.placeTownRecords()
+    Component.gamebox().takeObject({
+        guid = Guid.TownRecords,
+        position = Positions.TownRecords,
+        rotation = { 0, 180, 0 },
+        smooth = false
+    })
+end
+
+function Component.placeSanctuarySticker()
+    Component.map().call('unseal')
+    Utils.waitForObject(Guid.SanctuarySticker, function()
+
+    end)
 end
 
 --------------------------------------------------------------------------------
@@ -167,27 +279,27 @@ end
 
 ---@return tts__Bag
 function Component.lastCharacterBox()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.LAST_BOX)
+    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.LastBox)
 end
 
 ---@return tts__Bag
 function Component.beforeLastCharacterBox()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.BEFORE_LAST_BOX)
+    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.BeforeLastBox)
 end
 
 ---@return tts__Object
 function Component.map()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.MAP)
+    return --[[---@not nil]] getObjectFromGUID(Guid.Map)
 end
 
 ---@return tts__Bag
 function Component.achievementsBag()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Component.guids.AchievementBag)
+    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.AchievementBag)
 end
 
 ---@return GUID
 function Component.achievementBoardGuid()
-    for _, achievementBoard in ipairs(Component.guids.AchievementBoard) do
+    for _, achievementBoard in ipairs(Guids.AchievementBoard) do
         local board = getObjectFromGUID(achievementBoard)
         if board then
             return achievementBoard
@@ -195,7 +307,7 @@ function Component.achievementBoardGuid()
     end
 
     local achievementBag = Component.achievementsBag()
-    local achievementBoard = --[[---@not nil]] Search.inContainer(achievementBag, { name = Component.names.AchievementBoard })
+    local achievementBoard = --[[---@not nil]] Search.inContainer(achievementBag, { name = Names.AchievementBoard })
     return achievementBoard.guid
 end
 
@@ -206,12 +318,12 @@ end
 
 ---@return tts__Object
 function Component.partySheet()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.PARTY_SHEET)
+    return --[[---@not nil]] getObjectFromGUID(Guid.PartySheet)
 end
 
 ---@return nil | tts__Object
 function Component.sanctuarySticker()
-    return getObjectFromGUID(Component.guids.SANCTUARY_STICKER)
+    return getObjectFromGUID(Guid.SanctuarySticker)
 end
 
 --------------------------------------------------------------------------------
@@ -220,7 +332,7 @@ end
 
 ---@return tts__Object
 function Component.cityMat()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.CITY_MAT)
+    return --[[---@not nil]] getObjectFromGUID(Guid.CityMat)
 end
 
 ---@param snapPoint number
@@ -246,7 +358,7 @@ end
 
 ---@return tts__Object
 function Component.deckMat()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.DECK_MAT)
+    return --[[---@not nil]] getObjectFromGUID(Guid.DeckMat)
 end
 
 ---@param snapPoint number
@@ -268,7 +380,7 @@ end
 
 ---@return tts__Deck
 function Component.minusOneDeck()
-    return --[[---@type tts__Deck]] getObjectFromGUID(Component.guids.PLAYER_MINUS_ONE_DECK)
+    return --[[---@type tts__Deck]] getObjectFromGUID(Guid.PlayerMinusOneDeck)
 end
 
 --------------------------------------------------------------------------------
@@ -277,12 +389,12 @@ end
 
 ---@return tts__Object
 function Component.eventMat()
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.EVENTS_MAT)
+    return --[[---@not nil]] getObjectFromGUID(Guid.EventsMat)
 end
 
 ---@return nil | tts__Object
 function Component.eventMatOld()
-    return getObjectFromGUID(Component.guids.OLD_EVENT_MAT)
+    return getObjectFromGUID(Guid.OldEventsMat)
 end
 
 --------------------------------------------------------------------------------
@@ -308,12 +420,12 @@ function Component.isAbilityDeck(object)
         return false
     end
     local name = Object.name(object)
-    return name:find(Component.names.ABILITY_DECK) or name:find(Component.names.STARTING_ABILITY_DECK)
+    return name:find(Names.AbilityDeck) or name:find(Names.StartingAbilityDeck)
 end
 
 ---@return seb_WrappedDeck
 function Component.abilityDeck(playerZone)
-    local abilityDeck = --[[---@type tts__Deck]] Search.inZone(Component.playerZone(playerZone), { name = Component.names.ABILITY_DECK })
+    local abilityDeck = --[[---@type tts__Deck]] Search.inZone(Component.playerZone(playerZone), { name = Names.AbilityDeck })
     return WrappedDeck(abilityDeck)
 end
 
@@ -324,7 +436,7 @@ function Component.isAbilityCardForClass(object, className)
 
     if not Object.isCard(object)
             or not Object.description(object):find(className)
-            or name:find(Component.names.ATTACK_MODIFIER) then
+            or name:find(Names.AttachModifierCard) then
         return false
     end
 
@@ -351,8 +463,33 @@ end
 ---@return tts__Bag[]
 function Component.inactiveCharacters()
     return --[[---@type tts__Bag[] ]] TableUtil.filter(getObjects(), function(obj)
-        return Object.isBag(obj) and obj.getDescription() == Component.names.InactiveCharacter
+        return Object.isBag(obj) and obj.getDescription() == Names.InactiveCharacter
     end)
+end
+
+---@param playerZone GUID
+---@param positionName gh_Save_Character_Item_Position
+function Component.itemPosition(playerZone, positionName)
+    if positionName then
+        local snapPoint = PlayerMatSnapPoints[positionName]
+        if snapPoint then
+            return Utils.getSnapPosition(Component.playerMat(playerZone), snapPoint)
+        end
+    end
+    return relativeToZone(playerZone, Positions.ItemUnequipped)
+end
+
+---@param playerMat tts__Object
+---@param object tts__Object | tts__ObjectState
+---@return gh_Save_Character_Item_Position
+function Component.itemPositionName(playerMat, object)
+    for name, snap in pairs(PlayerMatSnapPoints) do
+        if Utils.getSnapPosition(playerMat, snap) == Object.position(object) then
+            return name
+        end
+    end
+
+    return "Unequipped"
 end
 
 --------------------------------------------------------------------------------
@@ -361,13 +498,39 @@ end
 
 ---@return GUID[]
 function Component.playerZones()
-    return Component.guids.ZONES
+    return Guids.Zones
 end
 
 ---@param playerZone GUID
 ---@return tts__ScriptingTrigger
 function Component.playerZone(playerZone)
     return --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
+end
+
+---@param index number
+---@param callback fun(playerZone: string): void
+function Component.loadPlayer(index, callback)
+    local playerZone = Component.playerZones()[index]
+    Component.playerButton(index).call("addPlayer")
+    Utils.waitForObjectInZone(playerZone, { name = Names.PlayerMat }, function()
+        callback(playerZone)
+    end)
+end
+
+---@param playerZone GUID
+---@param className string
+---@param callback fun(): void
+function Component.placeCharacterBox(playerZone, className, callback)
+    local playerMat = Component.playerMat(playerZone)
+    local classBox = --[[---@not nil]] Component.classBox(className)
+
+    classBox.takeObject({
+        position = playerMat.getPosition(),
+        smooth = false,
+    })
+
+    Utils.waitForObjectInZone(playerZone, { name = Names.CharacterSheet },
+            function() callback() end)
 end
 
 --- Returns all objects of the given playerZone. Only objects which center is within the planar bounds of the zone are
@@ -400,38 +563,37 @@ end
 
 ---@return GUID[]
 function Component.playerButtons()
-    return Component.guids.ADD_PLAYERS
+    return Guids.AddPlayers
 end
 
 ---@param index number
 ---@return tts__Object
 function Component.playerButton(index)
-    return --[[---@not nil]] getObjectFromGUID(Component.guids.ADD_PLAYERS[index])
+    return --[[---@not nil]] getObjectFromGUID(Guids.AddPlayers[index])
 end
 
 ---@param playerZone GUID
 ---@return tts__Object
 function Component.playerMat(playerZone)
     local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
-    local matName = Component.names.PLAYER_MAT
-    return --[[---@not nil]] Search.inZone(zone, { name = matName, isPattern = true })
+    return --[[---@not nil]] Search.inZone(zone, { name = Names.PlayerMat, isPattern = true })
 end
 
 ---@return nil | tts__Object
 function Component.characterMat(playerZone)
-    return Search.inZone(Component.playerZone(playerZone), { name = Component.names.CHARACTER_MAT })
+    return Search.inZone(Component.playerZone(playerZone), { name = Names.CharacterMat })
 end
 
 ---@param playerZone GUID
 ---@return tts__Object
 function Component.characterSheet(playerZone)
-    return --[[---@not nil]] Search.inZone(Component.playerZone(playerZone), { name = Component.names.CHARACTER_SHEET })
+    return --[[---@not nil]] Search.inZone(Component.playerZone(playerZone), { name = Names.CharacterSheet })
 end
 
 ---@param playerZone GUID
 ---@return tts__Deck
 function Component.attackModifiers(playerZone)
-    local search = { name = Component.names.MODIFIER_DECK, description = "Player", isPattern = true }
+    local search = { name = Names.AttackModifierDeck, description = "Player", isPattern = true }
     return --[[---@type tts__Deck]] Search.inZone(Component.playerZone(playerZone), search)
 end
 
@@ -440,23 +602,17 @@ end
 function Component.additionalAttackModifiers(playerZone)
     for _, obj in ipairs(Component.playerZone(playerZone).getObjects()) do
         if obj.type == Object.Type.Deck
-                and obj.getName() == Component.names.MODIFIER_DECK
+                and obj.getName() == Names.AttackModifierDeck
                 and obj.getDescription() == "" then
             return WrappedDeck(--[[---@type tts__Deck]] obj)
         end
     end
 end
 
----@param playerZone GUID
----@return tts__VectorShape
-function Component.secondHandPosition(playerZone)
-    return Component.positions.relativeToZone(playerZone, Component.positions.SECOND_HAND)
-end
-
----@param playerZone GUID
----@return tts__VectorShape
-function Component.questPosition(playerZone)
-    return Component.positions.relativeToZone(playerZone, Component.positions.QUEST_CARD)
+---@param name string
+---@return string
+function Component.modifierNamePattern(name)
+    return "^" .. Names.AttachModifierCard .. " " .. StringUtil.escapePattern(name) .. "$"
 end
 
 --------------------------------------------------------------------------------
@@ -506,7 +662,7 @@ function Component.isPersonalQuestCard(object)
     end
 
     for key, _ in pairs(customDeck) do
-        return TableUtil.contains(Component.deckIds.QUESTS, key)
+        return TableUtil.contains(DeckIds.Quests, key)
     end
 end
 
@@ -522,6 +678,78 @@ function Component.getQuestInfo(object)
     end
 
     return nil
+end
+
+---@param customDeck number[]
+---@param index number
+---@return number
+local function getCardId(customDeck, index)
+    local customDeckId = customDeck[#customDeck]
+    return --[[---@not nil]] tonumber(string.format("%d%02d", customDeckId, index))
+end
+
+---@param index number
+---@return number
+function Component.getQuestCardId(index)
+    return getCardId(DeckIds.Quests, index)
+end
+
+---@param index number
+---@return number
+function Component.getScenarioCardId(index)
+    return getCardId(DeckIds.RandomScenarios, index)
+end
+
+---@param object nil | tts__Object
+---@param name string
+local function verifyObject(object, name)
+    assert(object ~= nil, name .. " is missing ")
+end
+
+---@param container tts__Container
+---@param content GUID
+---@param name string
+local function verifyContent(container, content, name)
+    assert(getObjectFromGUID(content)
+            or Search.inContainer(container, { guid = content }),
+            name .. " is missing")
+end
+
+---@param object tts__Object
+---@param tableName string
+---@param name string
+local function verifyTable(object, tableName, name)
+    assert(object.getTable(tableName), name .. " is missing")
+end
+
+--- Verifies that the script can actually run, by checking if needed objects exists.
+function Component.verifyLoad()
+    local gamebox = Component.gamebox()
+    verifyObject(gamebox, "Gamebox")
+    verifyContent(gamebox, Guid.LockedClasses, "Locked classes")
+    verifyContent(gamebox, Guid.ScenarioBook, "Scenario book")
+    verifyContent(gamebox, Guid.RuleBook, "Rule book")
+    verifyContent(gamebox, Guid.OpeningConditions, "Opening Conditions")
+    verifyContent(gamebox, Guid.RetirementSheet, "Retirement Sheet")
+    verifyContent(gamebox, Guid.TownRecords, "Town Records")
+
+    local map = Component.map()
+    verifyObject(map, "Map")
+    verifyTable(map, "tableML", "Scenario information")
+    verifyTable(map, "Pros", "Prosperity information")
+
+    verifyObject(Component.achievementsBag(), "Achievements bag")
+    verifyObject(Component.deckMat(), "Deck Mat")
+    verifyObject(Component.minusOneDeck(), "-1 Deck")
+    verifyObject(Component.cityMat(), "City Mat")
+    verifyObject(Component.eventMat(), "Events Mat")
+    verifyObject(Component.partySheet(), "Party Sheet")
+    for i, zone in pairs(Component.playerZones()) do
+        verifyObject(getObjectFromGUID(zone), "Player zone " .. i)
+    end
+    for i, button in pairs(Component.playerButtons()) do
+        verifyObject(getObjectFromGUID(button), "Add Player button " .. i)
+    end
 end
 
 return Component

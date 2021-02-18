@@ -1,129 +1,24 @@
-local Constant = require("sebaestschjin-tts.Constant")
-local Search = require("sebaestschjin-tts.Search")
-local TableUtil = require("sebaestschjin-tts.TableUtil")
+local EventManager = require("ge_tts.EventManager")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local Expansion = require("gloomhaven-campaign-manager.Expansion")
-local Game = require("gloomhaven-campaign-manager.Game")
-
--- TODO use events instead of callbacks
+local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Preparation = {}
 
-function Preparation.start(callback)
-    Preparation.verifyLoad()
-    Preparation.revealLockedCharacters(callback)
-
-    Preparation.takeFromGamebox(Component.guids.SCENARIO_BOOK, Component.positions.SCENARIO_BOOK)
-    Preparation.takeFromGamebox(Component.guids.RULE_BOOK, Component.positions.RULE_BOOK)
-    Preparation.takeFromGamebox(Component.guids.TREASURE_DECK, Component.positions.TREASURE_DECK)
+function Preparation.setup()
+    EventManager.addHandler(EventType.Loaded.Start, function() Preparation.start() end)
 end
 
----@overload fun(guid: GUID, position: tts__VectorShape)
----@param guid GUID
----@param position tts__VectorShape
----@param callback tts__ObjectCallbackFunction
-function Preparation.takeFromGamebox(guid, position, callback)
-    local object = getObjectFromGUID(guid)
-    if object == nil then
-        Component.gamebox().takeObject({
-            guid = guid,
-            smooth = false,
-            position = position,
-            rotation = Constant.Rotation.NORTH,
-            callback_function = callback,
-        })
-    elseif callback then
-        callback(--[[---@not nil]]object)
-    end
+function Preparation.start()
+    Component.verifyLoad()
+
+    Component.placeScenarioBook()
+    Component.placeRuleBook()
+    Component.placeTreasureDeck()
+    Component.placeLockedCharacter()
+    Component.placeOpeningConditions()
 end
 
----@param object nil | tts__Object
----@param name string
-local function verifyObject(object, name)
-    assert(object ~= nil, name .. " is missing ")
-end
-
----@param container tts__Container
----@param content GUID
----@param name string
-local function verifyContent(container, content, name)
-    assert(getObjectFromGUID(content)
-            or Search.inContainer(container, { guid = content }),
-            name .. " is missing")
-end
-
----@param object tts__Object
----@param tableName string
----@param name string
-local function verifyTable(object, tableName, name)
-    assert(object.getTable(tableName), name .. " is missing")
-end
-
---- Verifies that the script can actually run, by checking if needed objects exists.
-function Preparation.verifyLoad()
-    local gamebox = Component.gamebox()
-    verifyObject(gamebox, "Gamebox")
-    verifyContent(gamebox, Component.guids.LOCKED_CLASSES, "Locked classes")
-    verifyContent(gamebox, Component.guids.SCENARIO_BOOK, "Scenario book")
-    verifyContent(gamebox, Component.guids.RULE_BOOK, "Rule book")
-    verifyContent(gamebox, Component.guids.OPENING_CONDITIONS, "Opening Conditions")
-    verifyContent(gamebox, Component.guids.RETIREMENT_SHEET, "Retirement Sheet")
-    verifyContent(gamebox, Component.guids.TOWN_RECORDS, "Town Records")
-
-    local map = Component.map()
-    verifyObject(map, "Map")
-    verifyTable(map, "tableML", "Scenario information")
-    verifyTable(map, "Pros", "Prosperity information")
-
-    verifyObject(Component.achievementsBag(), "Achievements bag")
-    verifyObject(Component.deckMat(), "Deck Mat")
-    verifyObject(Component.minusOneDeck(), "-1 Deck")
-    verifyObject(Component.cityMat(), "City Mat")
-    verifyObject(Component.eventMat(), "Events Mat")
-    verifyObject(Component.partySheet(), "Party Sheet")
-    for i, zone in pairs(Component.playerZones()) do
-        verifyObject(getObjectFromGUID(zone), "Player zone " .. i)
-    end
-    for i, button in pairs(Component.playerButtons()) do
-        verifyObject(getObjectFromGUID(button), "Add Player button " .. i)
-    end
-end
-
-function Preparation.revealLockedCharacters(callback)
-    Preparation.takeFromGamebox(Component.guids.LOCKED_CLASSES, Component.getSafePosition(),
-            function(obj)
-                Preparation.putDivinerIntoBox(--[[---@type tts__Bag]] obj)
-                Preparation.putCustomClassesIntoBox(--[[---@type tts__Bag]] obj)
-                Expansion.unpack(function()
-                    Preparation.finish(callback)
-                end)
-            end)
-end
-
----@param classes tts__Bag
-function Preparation.putDivinerIntoBox(classes)
-    Component.forgottenCirclesBox().takeObject({
-        guid = Game.class("Diviner").boxGuid,
-        smooth = false,
-        callback_function = function(obj) classes.putObject(obj) end
-    })
-end
-
----@param classes tts__Bag
-function Preparation.putCustomClassesIntoBox(classes)
-    local customClasses = TableUtil.filter(Game.CLASSES, function(c) return c.isCustomClass end)
-    for _, customClass in pairs(customClasses) do
-        local customClassBox = getObjectFromGUID(customClass.boxGuid)
-        if customClassBox then
-            classes.putObject(--[[---@not nil]] customClassBox)
-        end
-    end
-end
-
-function Preparation.finish(callback)
-    callback()
-end
 
 function Preparation.prepareSave()
     for _, playerZone in pairs(Component.playerZones()) do

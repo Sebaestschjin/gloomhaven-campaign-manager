@@ -11,6 +11,10 @@ local Prosperity = require('gloomhaven-campaign-manager.Prosperity')
 
 local Shop = {}
 
+function Shop.setup()
+    EventManager.addHandler(EventType.Loaded.Prosperity, function() Shop.load() end)
+end
+
 function Shop.load()
     local cityMat = Component.cityMat()
 
@@ -19,7 +23,7 @@ function Shop.load()
     end
     cityMat.call("layOut", 0)
 
-    EventManager.triggerEvent(EventType.Load.Shop)
+    EventManager.triggerEvent(EventType.Loaded.Shop)
 end
 
 ---@param unlocked gh_Save_Unlocked

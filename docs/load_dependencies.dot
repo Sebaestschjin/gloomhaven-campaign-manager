@@ -3,28 +3,32 @@ digraph D {
 
     rankdir=RL
 
-    "Prosperity"
-    "Sanctuary"
-    "Achievements"
-    "Scenarios"
-    "Party Sheet"
-    "Empty Gamebox"
+    "Place Opening Conditions" -> "Start"
+    "Place Locked Classes" -> "Start"
+    "Place Retirement Sheet" -> "Start"
+    "Place Sanctuary Sticker" -> "Start"
+    "Place Treasure Deck" -> "Start"
 
-    "Opening Conditions" -> "Empty Gamebox"
+    "Achievements" -> "Start"
+    "Party Sheet" -> "Start"
+    "Prosperity" -> "Start"
+    "Scenarios" -> "Start"
+    "Shop" -> "Prosperity"
 
-    "Unlocked Treasures" -> "Empty Gamebox"
+    "Sanctuary" -> "Place Sanctuary Sticker"
+    "Opening Conditions" -> "Place Opening Conditions"
+    "Treasures" -> "Place Treasure Deck"
 
-    "Unpack Expansion" -> "Empty Gamebox"
+    "Expansion" -> "Place Locked Classes"
 
-    "Unlock Class" -> "Unlock Items"
+    "Items" -> "Shop"
+    "Items" -> "Expansion"
+
+    "Retirement" -> "Place Retirement Sheet"
+
+    "Events" -> "Expansion"
+
+    "Unlock Class" -> "Items"
     "Enchant Class" -> "Unlock Class"
-
     "Unpack Class" -> "Enchant Class"
-
-    "Unlock Items" -> "Unpack Expansion"
-
-    "Retirement" -> "Empty Gamebox"
-
-    "Events" -> "Unpack Expansion"
-
 }

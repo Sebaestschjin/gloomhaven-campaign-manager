@@ -1,16 +1,21 @@
-local Utils = require("sebaestschjin-tts.Utils")
+local EventManager = require("ge_tts.EventManager")
 
 local Component = require("gloomhaven-campaign-manager.Component")
+local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Sanctuary = {}
+
+---@param saveFile gh_Savefile
+function Sanctuary.setup(saveFile)
+    local value = saveFile.unlocked.sanctuary
+    EventManager.addHandler(EventType.Loaded.Start, function() Sanctuary.load(value) end)
+    EventManager.addHandler(EventType.Placed.SanctuarySticker, function() Sanctuary.setLevel(--[[---@not nil]] value) end)
+end
 
 ---@param value nil | number
 function Sanctuary.load(value)
     if value and value >= 0 then
-        Component.map().call('unseal')
-        Utils.waitForObject(Component.guids.SANCTUARY_STICKER, function()
-            Sanctuary.setLevel(--[[---@not nil]] value)
-        end)
+        Component.placeSanctuarySticker()
     end
 end
 

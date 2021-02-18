@@ -6,6 +6,11 @@ local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Achievement = {}
 
+---@param saveFile gh_Savefile
+function Achievement.setup(saveFile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Achievement.loadAll(saveFile.global.achievements) end)
+end
+
 ---@param achievements gh_Save_Achievement[]
 function Achievement.loadAll(achievements)
     ---@type boolean[]
@@ -32,7 +37,7 @@ end
 ---@param achievementGroup string[]
 ---@param readyGroups boolean[]
 function Achievement.loadGroup(group, achievementGroup, readyGroups)
-    local globalAchievementsBag = --[[---@not nil]] getObjectFromGUID(Component.guids.AchievementBag)
+    local globalAchievementsBag = Component.achievementsBag()
 
     globalAchievementsBag.takeObject({
         guid = Component.achievementBoardGuid(),
@@ -84,7 +89,7 @@ function Achievement.doSave(saveFile, achievementBoard)
         end
     end
     (--[[---@not nil]] saveFile.global).achievements = result
-    EventManager.triggerEvent(EventType.Save.Achievements, saveFile)
+    EventManager.triggerEvent(EventType.Saved.Achievements, saveFile)
 end
 
 ---@param achievementBoard tts__Object

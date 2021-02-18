@@ -10,7 +10,7 @@ local Quest = {}
 ---@return boolean
 function Quest.take(quest, callback)
     local questDeck = Component.questDeck()
-    local cardId = Component.getCardId(Component.deckIds.QUESTS, Quest.getCardIndex(quest))
+    local cardId = Component.getQuestCardId(Quest.getCardIndex(quest))
     local questCard, index = Search.inContainedObjects(questDeck, { cardId = cardId })
     if not questCard then
         return false

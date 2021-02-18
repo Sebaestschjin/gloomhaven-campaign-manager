@@ -7,7 +7,6 @@ local Object = require("sebaestschjin-tts.Object")
 local Search = require("sebaestschjin-tts.Search")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
-local Utils = require("sebaestschjin-tts.Utils")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Game = require("gloomhaven-campaign-manager.Game")
@@ -24,26 +23,13 @@ local AbilityMaxDistance = AbilityDefaultDistance + 2
 function Character.load(index, character)
     Logger.info("Loading Character %s at %d", character.class, index)
 
-    local playerZone = Component.playerZones()[index]
-    Component.playerButton(index).call("addPlayer")
-
-    Utils.waitForObjectInZone(playerZone, { name = Component.names.PLAYER_MAT },
-            function() Character.unpackCharacterBox(playerZone, character) end)
+    Component.loadPlayer(index, function(playerZone) Character.unpackCharacterBox(playerZone, character) end)
 end
 
 ---@param playerZone GUID
 ---@param character gh_Save_Character
 function Character.unpackCharacterBox(playerZone, character)
-    local playerMat = Component.playerMat(playerZone)
-    local classBox = --[[---@not nil]] Component.classBox(character.class)
-
-    classBox.takeObject({
-        position = playerMat.getPosition(),
-        smooth = false,
-    })
-
-    Utils.waitForObjectInZone(playerZone, { name = Component.names.CHARACTER_SHEET },
-            function() Character.doLoad(playerZone, character) end)
+    Component.placeCharacterBox(playerZone, character.class, function() Character.doLoad(playerZone, character) end)
 end
 
 ---@param playerZone GUID
@@ -219,7 +205,7 @@ end
 function Character.addModifierCard(chain, character, additionalDeck, currentDeck, card)
     Logger.verbose("%s: Adding %s", character.class, card)
 
-    local search = { name = Character.modifierNamePattern(card), isPattern = true }
+    local search = { name = Component.modifierNamePattern(card), isPattern = true }
     local foundCard, _ = Search.inContainedObjects(additionalDeck, search)
     if not foundCard then
         Logger.error("%, adding: Can't find modifier card %s.", character.class, card)
@@ -228,7 +214,7 @@ function Character.addModifierCard(chain, character, additionalDeck, currentDeck
 
     additionalDeck.takeObject({
         guid = Object.guid(--[[---@not nil]] foundCard),
-        position = Component.getSafePosition(),
+        position = Component.safePosition(),
         smooth = false,
         callback_function = function(c)
             currentDeck.putObject(c)
@@ -247,7 +233,7 @@ end
 function Character.removeModifierCard(chain, character, currentDeck, card)
     Logger.verbose("%s: Removing %s", character.class, card)
 
-    local search = { name = Character.modifierNamePattern(card), isPattern = true }
+    local search = { name = Component.modifierNamePattern(card), isPattern = true }
     local foundCard = Search.inContainer(currentDeck, search)
     if not foundCard then
         Logger.error("%s, removing: Can't find modifier card %s.", character.class, card)
@@ -256,7 +242,7 @@ function Character.removeModifierCard(chain, character, currentDeck, card)
 
     currentDeck.takeObject({
         guid = (--[[---@not nil]] foundCard).guid,
-        position = Component.getSafePosition(),
+        position = Component.safePosition(),
         smooth = false,
         callback_function = function(c)
             c.destruct()
@@ -266,19 +252,13 @@ function Character.removeModifierCard(chain, character, currentDeck, card)
     return false
 end
 
----@param name string
----@return string
-function Character.modifierNamePattern(name)
-    return "^" .. Component.names.ATTACK_MODIFIER .. " " .. StringUtil.escapePattern(name) .. "$"
-end
-
 ---@param playerZone GUID
 ---@param character gh_Save_Character
 function Character.loadItems(playerZone, character)
     local items = --[[---@type string[] ]] {}
 
     for _, item in ipairs(character.items) do
-        local itemPosition = Character.calculateItemPosition(playerZone, item)
+        local itemPosition = Component.itemPosition(playerZone, item.position)
 
         if Shop.takeItem(item.name, itemPosition, Constant.Rotation.NORTH) then
             table.insert(items, item.name)
@@ -290,18 +270,6 @@ function Character.loadItems(playerZone, character)
 
     local characterSheet = Component.characterSheet(playerZone)
     characterSheet.UI.setAttribute("Items", "text", table.concat(items, "\n"))
-end
-
----@param playerZone GUID
----@param item gh_Save_Character_Item
-function Character.calculateItemPosition(playerZone, item)
-    if item.position then
-        local snapPoint = Component.PlayerMatSnapPoints[item.position]
-        if snapPoint then
-            return Utils.getSnapPosition(Component.playerMat(playerZone), snapPoint)
-        end
-    end
-    return Component.positions.relativeToZone(playerZone, Component.positions.ITEM_UNEQUIPPED)
 end
 
 ---@param character gh_Save_Character
@@ -390,7 +358,7 @@ function Character.save(playerZone, characters)
             end
         end
 
-        character.items = Character.saveItems(playerZone, character.class)
+        character.items = Character.saveItems(playerZone)
         character.abilities = Character.saveAbilities(playerZone)
         character.quest = Character.saveQuest(playerZone)
     end
@@ -410,9 +378,8 @@ function Character.saveHiddenNotes(characterSheet)
 end
 
 ---@param playerZone GUID
----@param className string
 ---@return gh_Save_Character_Item[]
-function Character.saveItems(playerZone, className)
+function Character.saveItems(playerZone)
     local playerMat = Component.playerMat(playerZone)
     local items = --[[---@type gh_Save_Character_Item[] ]] {}
     local zoneObjects = Component.getObjectsInZone(playerZone)
@@ -427,25 +394,12 @@ end
 function Character.saveItemFromObjects(objects, playerMat, items)
     for _, object in ipairs(--[[---@type (tts__Object | tts__ObjectState)[] ]] objects) do
         if Component.isItemCard(object) then
-            local item = { name = Object.name(object), position = Character.getItemPosition(playerMat, object) }
+            local item = { name = Object.name(object), position = Component.itemPositionName(playerMat, object) }
             table.insert(items, item)
         elseif Object.isContainer(object) then
             Character.saveItemFromObjects(Object.objects(--[[---@type tts__ContainerState]] object), playerMat, items)
         end
     end
-end
-
----@param playerMat tts__Object
----@param object tts__Object | tts__ObjectState
----@return gh_Save_Character_Item_Position
-function Character.getItemPosition(playerMat, object)
-    for name, snap in pairs(Component.PlayerMatSnapPoints) do
-        if Utils.getSnapPosition(playerMat, snap) == Object.position(object) then
-            return name
-        end
-    end
-
-    return "Unequipped"
 end
 
 ---@param playerZone GUID

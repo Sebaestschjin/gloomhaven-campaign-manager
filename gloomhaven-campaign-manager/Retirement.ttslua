@@ -1,21 +1,28 @@
+local EventManager = require("ge_tts.EventManager")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
-local Utils = require("sebaestschjin-tts.Utils")
 
 local Character = require("gloomhaven-campaign-manager.Character")
 local Component = require("gloomhaven-campaign-manager.Component")
+local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
-local Preparation = require("gloomhaven-campaign-manager.Preparation")
 local Quest = require("gloomhaven-campaign-manager.Quest")
 
 local Retirement = {}
+
+---@param saveFile gh_Savefile
+function Retirement.setup(saveFile)
+    EventManager.addHandler(EventType.Placed.RetirementSheet, function() Retirement.startLoading(saveFile.retired) end)
+
+    EventManager.addHandler(EventType.Loaded.Start, function() Retirement.load(saveFile.retired) end)
+end
 
 local RetirementSheetColumns = 5
 
 ---@param retired gh_Save_Retired[]
 function Retirement.load(retired)
-    Preparation.takeFromGamebox(Component.guids.RETIREMENT_SHEET, Component.positions.RETIREMENT_SHEET)
-    -- TOOD use callback directly?
-    Utils.waitForObject(Component.guids.RETIREMENT_SHEET, function() Retirement.startLoading(retired) end)
+    if TableUtil.isNotEmpty(retired) then
+        Component.placeRetirementSheet()
+    end
 end
 
 ---@param retired gh_Save_Retired[]

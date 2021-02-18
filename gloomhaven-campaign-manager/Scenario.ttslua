@@ -1,10 +1,18 @@
+local EventManager = require("ge_tts.EventManager")
+
 local Logger = require("sebaestschjin-tts.Logger")
 local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
+local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 
 local Scenario = {}
+
+---@param saveFile gh_Savefile
+function Scenario.setup(saveFile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Scenario.loadAll(saveFile.global.scenarios) end)
+end
 
 ---@type table<string, gh_Scenario_State>
 local State = {
@@ -72,7 +80,7 @@ function Scenario.removeRandomScenario(number)
         return
     end
 
-    local cardId = Component.getCardId(Component.deckIds.RANDOM_SCENARIOS, Game.RandomScenarios[number])
+    local cardId = Component.getScenarioCardId(Game.RandomScenarios[number])
     local scenarioCard, index = Search.inContainedObjects(deck, { cardId = cardId })
     if not scenarioCard then
         Logger.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
@@ -81,7 +89,7 @@ function Scenario.removeRandomScenario(number)
 
     deck.takeObject({
         index = index,
-        position = Component.getSafePosition(),
+        position = Component.safePosition(),
         callback_function = function(obj) obj.destruct() end,
     })
 end

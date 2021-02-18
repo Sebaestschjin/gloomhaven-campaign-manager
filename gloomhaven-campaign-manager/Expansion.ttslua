@@ -1,10 +1,13 @@
+local EventManager = require("ge_tts.EventManager")
+
 local Chain = require("sebaestschjin-tts.Chain")
-local Object = require("sebaestschjin-tts.Object")
 local Search = require("sebaestschjin-tts.Search")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local Event = require("gloomhaven-campaign-manager.Event")
+local EventType = require("gloomhaven-campaign-manager.EventType")
+local Game = require("gloomhaven-campaign-manager.Game")
 
 -- TODO use events instead of chain
 
@@ -13,23 +16,61 @@ local Event = require("gloomhaven-campaign-manager.Event")
 ---
 local Expansion = {}
 
+function Expansion.setup()
+    EventManager.addHandler(EventType.Placed.LockedCharacters, function() Expansion.unpack() end)
+end
+
 local StartEvent = 82
 local NewItemsDeck = "Forgotten Circles Items"
 
 --- Unpacks the expansion box.
----@param callback common_ChainCallback
-function Expansion.unpack(callback)
+function Expansion.unpack()
     local chain = Chain.create()
 
-    for _, info in pairs(Event.EventDecks) do
+    chain.add(function(c) Expansion.unlockExpansionClass(c, "Diviner") end)
+
+    local customClasses = TableUtil.filter(Game.CLASSES, function(c) return c.isCustomClass end)
+    for _, customClass in pairs(customClasses) do
+        chain.add(function(c) Expansion.unlockCustomClass(c, customClass) end)
+    end
+
+    for _, info in pairs(Component.EventDecks) do
         local targetDeck = --[[---@type tts__Deck]] getObjectFromGUID(info.deckGuid)
         chain.add(function(c) Expansion.unpackEvents(c, targetDeck, info.name) end)
     end
 
     chain.add(Expansion.unpackItems)
 
-    chain.add(callback)
+    chain.add(Expansion.finishUnpack)
+
     chain.proceed()
+end
+
+function Expansion.finishUnpack()
+    EventManager.triggerEvent(EventType.Loaded.Expansion)
+end
+
+---@param chain common_Chain
+---@param className string
+function Expansion.unlockExpansionClass(chain, className)
+    Component.forgottenCirclesBox().takeObject({
+        guid = Game.class(className).boxGuid,
+        smooth = false,
+        callback_function = function(obj)
+            Component.lockedClasses().putObject(obj)
+            chain.proceed()
+        end
+    })
+end
+
+---@param chain common_Chain
+---@param class gh_Game_Class
+function Expansion.unlockCustomClass(chain, class)
+    local customClassBox = getObjectFromGUID(class.boxGuid)
+    if customClassBox then
+        Component.lockedClasses().putObject(--[[---@not nil]] customClassBox)
+        chain.proceed()
+    end
 end
 
 --- Unpacks the additional event cards.
@@ -42,7 +83,7 @@ function Expansion.unpackEvents(chain, targetDeck, deckName)
 
     forgottenCirclesBox.takeObject({
         guid = newEvents.guid,
-        position = Component.getSafePosition(),
+        position = Component.safePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,
         callback_function = function(obj) Expansion.unpackEventDeck(chain, WrappedDeck(--[[---@type tts__Deck]] obj), targetDeck) end,
@@ -68,7 +109,7 @@ end
 function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index)
     expansionDeck.takeObject({
         index = index - 1,
-        position = Component.getSafePosition(),
+        position = Component.safePosition(),
         smooth = false,
         callback_function = function(card)
             card.setName(tostring((index - 1) + StartEvent))
@@ -88,7 +129,7 @@ function Expansion.unpackItems(chain)
 
     forgottenCirclesBox.takeObject({
         guid = newItems.guid,
-        position = Component.getSafePosition(),
+        position = Component.safePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,
         callback_function = function(obj)

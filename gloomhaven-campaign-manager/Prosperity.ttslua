@@ -1,6 +1,14 @@
+local EventManager = require("ge_tts.EventManager")
+
 local Component = require("gloomhaven-campaign-manager.Component")
+local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Prosperity = {}
+
+---@param saveFile gh_Savefile
+function Prosperity.setup(saveFile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Prosperity.load(saveFile.global.prosperity) end)
+end
 
 ---@param value number
 function Prosperity.load(value)
@@ -8,6 +16,7 @@ function Prosperity.load(value)
     for i = 1, value do
         map.call("clickedPros", i)
     end
+    EventManager.triggerEvent(EventType.Loaded.Prosperity)
 end
 
 ---@param saveFile gh_Savefile
