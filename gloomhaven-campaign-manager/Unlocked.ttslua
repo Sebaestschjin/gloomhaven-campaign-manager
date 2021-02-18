@@ -145,7 +145,7 @@ end
 
 ---@param classes string[]
 function Unlocked.saveClasses(classes)
-    for className, info in pairs(Game.CLASSES) do
+    for className, info in pairs(Game.Classes) do
         local box = Component.classBox(className)
         if box ~= nil and not info.isStartingClass then
             table.insert(classes, className)

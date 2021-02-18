@@ -161,16 +161,16 @@ function Component.safePosition()
     return Vector(-43 + (positionCounter * 3), 2, -85)
 end
 
----@param playerZone GUID
+---@param player number
 ---@return tts__VectorShape
-function Component.secondHandPosition(playerZone)
-    return relativeToZone(playerZone, Positions.SecondHand)
+function Component.secondHandPosition(player)
+    return relativeToZone(player, Positions.SecondHand)
 end
 
----@param playerZone GUID
+---@param player number
 ---@return tts__VectorShape
-function Component.questPosition(playerZone)
-    return relativeToZone(playerZone, Positions.QuestCard)
+function Component.questPosition(player)
+    return relativeToZone(player, Positions.QuestCard)
 end
 
 --------------------------------------------------------------------------------
@@ -424,8 +424,8 @@ function Component.isAbilityDeck(object)
 end
 
 ---@return seb_WrappedDeck
-function Component.abilityDeck(playerZone)
-    local abilityDeck = --[[---@type tts__Deck]] Search.inZone(Component.playerZone(playerZone), { name = Names.AbilityDeck })
+function Component.abilityDeck(player)
+    local abilityDeck = --[[---@type tts__Deck]] Search.inZone(Component.playerZone(player), { name = Names.AbilityDeck })
     return WrappedDeck(abilityDeck)
 end
 
@@ -467,16 +467,16 @@ function Component.inactiveCharacters()
     end)
 end
 
----@param playerZone GUID
+---@param player number
 ---@param positionName gh_Save_Character_Item_Position
-function Component.itemPosition(playerZone, positionName)
+function Component.itemPosition(player, positionName)
     if positionName then
         local snapPoint = PlayerMatSnapPoints[positionName]
         if snapPoint then
-            return Utils.getSnapPosition(Component.playerMat(playerZone), snapPoint)
+            return Utils.getSnapPosition(Component.playerMat(player), snapPoint)
         end
     end
-    return relativeToZone(playerZone, Positions.ItemUnequipped)
+    return relativeToZone(player, Positions.ItemUnequipped)
 end
 
 ---@param playerMat tts__Object
@@ -496,32 +496,47 @@ end
 --- Player specific ------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+---@return number
+function Component.playerCount()
+    return 4
+end
+
 ---@return GUID[]
 function Component.playerZones()
     return Guids.Zones
 end
 
----@param playerZone GUID
+---@param player number
 ---@return tts__ScriptingTrigger
-function Component.playerZone(playerZone)
-    return --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
+function Component.playerZone(player)
+    return --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(Guids.Zones[player])
 end
 
----@param index number
----@param callback fun(playerZone: string): void
-function Component.loadPlayer(index, callback)
-    local playerZone = Component.playerZones()[index]
-    Component.playerButton(index).call("addPlayer")
-    Utils.waitForObjectInZone(playerZone, { name = Names.PlayerMat }, function()
-        callback(playerZone)
+--- Returns all objects of the given player. Only objects which center is within the planar bounds of the player zone
+--- are returned. This avoids duplicated objects that overlap multiple zones.
+---@param player number
+---@return tts__Object[]
+function Component.playerObjects(player)
+    local zone = Component.playerZone(player)
+    return TableUtil.filter(zone.getObjects(),
+            function(object) return Utils.isCenterInZone(zone, object) end)
+end
+
+---@param player number
+---@param callback fun(): void
+function Component.loadPlayer(player, callback)
+    local playerZoneGuid = Guids.Zones[player]
+    Component.playerButton(player).call("addPlayer")
+    Utils.waitForObjectInZone(playerZoneGuid, { name = Names.PlayerMat }, function()
+        callback()
     end)
 end
 
----@param playerZone GUID
+---@param player number
 ---@param className string
 ---@param callback fun(): void
-function Component.placeCharacterBox(playerZone, className, callback)
-    local playerMat = Component.playerMat(playerZone)
+function Component.placeCharacterBox(player, className, callback)
+    local playerMat = Component.playerMat(player)
     local classBox = --[[---@not nil]] Component.classBox(className)
 
     classBox.takeObject({
@@ -529,36 +544,8 @@ function Component.placeCharacterBox(playerZone, className, callback)
         smooth = false,
     })
 
-    Utils.waitForObjectInZone(playerZone, { name = Names.CharacterSheet },
+    Utils.waitForObjectInZone(Guids.Zones[player], { name = Names.CharacterSheet },
             function() callback() end)
-end
-
---- Returns all objects of the given playerZone. Only objects which center is within the planar bounds of the zone are
---- returned. This avoids duplicated items that overlap multiple zones.
----@param zoneGuid GUID
----@return tts__Object[]
-function Component.getObjectsInZone(zoneGuid)
-    local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(zoneGuid)
-    return TableUtil.filter(zone.getObjects(),
-            function(object)
-                return Component.isObjectInZone(zone, --[[---@type tts__Object]] object)
-            end)
-end
-
----@param playerZone tts__ScriptingTrigger
----@param object tts__Object
----@return boolean
-function Component.isObjectInZone(playerZone, object)
-    local width = playerZone.getScale().x
-    local height = playerZone.getScale().z
-    local zoneCenter = playerZone.getBounds().center
-    local left = zoneCenter.x - width / 2
-    local right = zoneCenter.x + width / 2
-    local top = zoneCenter.z + height / 2
-    local bottom = zoneCenter.z - height / 2
-    local objectCenter = object.getBounds().center
-
-    return objectCenter.x > left and objectCenter.x < right and objectCenter.z > bottom and objectCenter.z < top
 end
 
 ---@return GUID[]
@@ -572,35 +559,35 @@ function Component.playerButton(index)
     return --[[---@not nil]] getObjectFromGUID(Guids.AddPlayers[index])
 end
 
----@param playerZone GUID
+---@param player number
 ---@return tts__Object
-function Component.playerMat(playerZone)
-    local zone = --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(playerZone)
-    return --[[---@not nil]] Search.inZone(zone, { name = Names.PlayerMat, isPattern = true })
+function Component.playerMat(player)
+    return --[[---@not nil]] Search.inZone(Component.playerZone(player), { name = Names.PlayerMat, isPattern = true })
 end
 
+---@param player number
 ---@return nil | tts__Object
-function Component.characterMat(playerZone)
-    return Search.inZone(Component.playerZone(playerZone), { name = Names.CharacterMat })
+function Component.characterMat(player)
+    return Search.inZone(Component.playerZone(player), { name = Names.CharacterMat })
 end
 
----@param playerZone GUID
+---@param player number
 ---@return tts__Object
-function Component.characterSheet(playerZone)
-    return --[[---@not nil]] Search.inZone(Component.playerZone(playerZone), { name = Names.CharacterSheet })
+function Component.characterSheet(player)
+    return --[[---@not nil]] Search.inZone(Component.playerZone(player), { name = Names.CharacterSheet })
 end
 
----@param playerZone GUID
+---@param player number
 ---@return tts__Deck
-function Component.attackModifiers(playerZone)
+function Component.attackModifiers(player)
     local search = { name = Names.AttackModifierDeck, description = "Player", isPattern = true }
-    return --[[---@type tts__Deck]] Search.inZone(Component.playerZone(playerZone), search)
+    return --[[---@type tts__Deck]] Search.inZone(Component.playerZone(player), search)
 end
 
----@param playerZone GUID
+---@param player number
 ---@return seb_WrappedDeck
-function Component.additionalAttackModifiers(playerZone)
-    for _, obj in ipairs(Component.playerZone(playerZone).getObjects()) do
+function Component.additionalAttackModifiers(player)
+    for _, obj in ipairs(Component.playerZone(player).getObjects()) do
         if obj.type == Object.Type.Deck
                 and obj.getName() == Names.AttackModifierDeck
                 and obj.getDescription() == "" then
@@ -624,7 +611,7 @@ end
 function Component.isItemCard(object)
     return Object.isCard(object)
             and (Component.isItemCardDescription(Object.description(object))
-            or Game.ITEMS.List[Object.name(object)] ~= nil)
+            or Game.Items.List[Object.name(object)] ~= nil)
 end
 
 --- Returns true if the given item card object is an item from the rewards or item design deck.
@@ -637,13 +624,13 @@ function Component.isRewardItemCard(item, prosperityLevel)
 
     prosperityLevel = prosperityLevel or 1
     if Object.description(item) == "" then
-        local itemInfo = Game.ITEMS.List[Object.name(item)]
+        local itemInfo = Game.Items.List[Object.name(item)]
         return itemInfo.reward ~= nil or itemInfo.prosperity > prosperityLevel
     else
         local description = Object.description(item)
         description = StringUtil.replace(description, "red")
         description = StringUtil.replace(description, "blue")
-        return tonumber(description) > Game.ITEMS.Prosperity[--[[---@not nil]] prosperityLevel]
+        return tonumber(description) > Game.Items.Prosperity[--[[---@not nil]] prosperityLevel]
     end
 end
 
@@ -744,7 +731,7 @@ function Component.verifyLoad()
     verifyObject(Component.cityMat(), "City Mat")
     verifyObject(Component.eventMat(), "Events Mat")
     verifyObject(Component.partySheet(), "Party Sheet")
-    for i, zone in pairs(Component.playerZones()) do
+    for i, zone in pairs(Guids.Zones) do
         verifyObject(getObjectFromGUID(zone), "Player zone " .. i)
     end
     for i, button in pairs(Component.playerButtons()) do

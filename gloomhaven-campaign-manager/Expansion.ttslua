@@ -9,8 +9,6 @@ local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 
--- TODO use events instead of chain
-
 ---
 --- Handles everything about the Forgotten Circles expansion
 ---
@@ -25,11 +23,11 @@ local NewItemsDeck = "Forgotten Circles Items"
 
 --- Unpacks the expansion box.
 function Expansion.unpack()
-    local chain = Chain.create()
+    local chain = Chain()
 
     chain.add(function(c) Expansion.unlockExpansionClass(c, "Diviner") end)
 
-    local customClasses = TableUtil.filter(Game.CLASSES, function(c) return c.isCustomClass end)
+    local customClasses = TableUtil.filter(Game.Classes, function(c) return c.isCustomClass end)
     for _, customClass in pairs(customClasses) do
         chain.add(function(c) Expansion.unlockCustomClass(c, customClass) end)
     end
@@ -50,7 +48,7 @@ function Expansion.finishUnpack()
     EventManager.triggerEvent(EventType.Loaded.Expansion)
 end
 
----@param chain common_Chain
+---@param chain seb_Chain
 ---@param className string
 function Expansion.unlockExpansionClass(chain, className)
     Component.forgottenCirclesBox().takeObject({
@@ -63,7 +61,7 @@ function Expansion.unlockExpansionClass(chain, className)
     })
 end
 
----@param chain common_Chain
+---@param chain seb_Chain
 ---@param class gh_Game_Class
 function Expansion.unlockCustomClass(chain, class)
     local customClassBox = getObjectFromGUID(class.boxGuid)
@@ -74,7 +72,7 @@ function Expansion.unlockCustomClass(chain, class)
 end
 
 --- Unpacks the additional event cards.
----@param chain common_Chain
+---@param chain seb_Chain
 ---@param targetDeck tts__Deck
 ---@param deckName string
 function Expansion.unpackEvents(chain, targetDeck, deckName)
@@ -90,7 +88,7 @@ function Expansion.unpackEvents(chain, targetDeck, deckName)
     })
 end
 
----@param chain common_Chain
+---@param chain seb_Chain
 ---@param expansionDeck seb_WrappedDeck @The event deck to unpack
 ---@param targetDeck tts__Deck @The event deck where the new events will be placed
 function Expansion.unpackEventDeck(chain, expansionDeck, targetDeck)
@@ -101,7 +99,7 @@ function Expansion.unpackEventDeck(chain, expansionDeck, targetDeck)
     chain.proceed()
 end
 
----@param chain common_Chain
+---@param chain seb_Chain
 ---@param expansionDeck seb_WrappedDeck @The event deck to unpack
 ---@param targetDeck tts__Deck @The event deck where the new events will be placed
 ---@param index number
@@ -120,7 +118,7 @@ function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index
     return false
 end
 
----@param chain common_Chain
+---@param chain seb_Chain
 ---@return boolean
 function Expansion.unpackItems(chain)
     local forgottenCirclesBox = Component.forgottenCirclesBox()

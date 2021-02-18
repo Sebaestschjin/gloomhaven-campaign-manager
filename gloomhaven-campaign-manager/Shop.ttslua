@@ -48,8 +48,8 @@ function Shop.doSave(unlocked)
 
     local items = unlocked.items
     Shop.saveFromObjects(shopDeck.getObjects(), items)
-    for _, zoneGuid in pairs(Component.playerZones()) do
-        Shop.saveFromObjects(Component.getObjectsInZone(zoneGuid), items)
+    for player = 1, Component.playerCount() do
+        Shop.saveFromObjects(Component.playerObjects(player), items)
     end
 
     table.sort(items)

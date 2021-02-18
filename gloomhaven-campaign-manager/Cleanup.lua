@@ -26,7 +26,7 @@ end
 
 function Cleanup.onClassUnlocked()
     unlocked = unlocked + 1
-    if unlocked == TableUtil.length(Game.CLASSES) then
+    if unlocked == TableUtil.length(Game.Classes) then
         placeIntoGamebox(Component.lockedClasses())
     end
 end

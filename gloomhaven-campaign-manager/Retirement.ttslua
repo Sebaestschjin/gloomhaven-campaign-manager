@@ -102,8 +102,8 @@ function Retirement.saveCompletedQuests(retired)
         completedQuests[questInfo.name] = nil
     end
 
-    for _, playerZone in pairs(Component.playerZones()) do
-        local playerQuest = Character.findQuest(playerZone)
+    for player = 1, Component.playerCount() do
+        local playerQuest = Character.findQuest(player)
         if playerQuest then
             completedQuests[(--[[---@not nil]] playerQuest).name] = nil
         end

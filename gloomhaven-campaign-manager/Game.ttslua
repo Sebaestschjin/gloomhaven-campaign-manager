@@ -7,62 +7,62 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Game = {}
 
 local FoundAbility = {
-    NONE = 0,
-    EXACT = 1,
-    NEAREST = 2,
+    None = 0,
+    Exact = 1,
+    Nearest = 2,
 }
 
----@param class string
-function Game.class(class)
-    local classInfo = Game.CLASSES[class]
+---@param className string
+function Game.class(className)
+    local classInfo = Game.Classes[className]
     if not classInfo then
-        Logger.error("Tried to get class information for class '%s', but it doesn't exist!", class)
+        Logger.error("Tried to get class information for class '%s', but it doesn't exist!", className)
     end
     return classInfo
 end
 
----@param class string
----@param name string
+---@param className string
+---@param abilityName string
 ---@return nil | gh_Game_Ability
-function Game.ability(class, name)
-    local ability, state = Game.nearestAbility(class, name)
+function Game.ability(className, abilityName)
+    local ability, state = Game.nearestAbility(className, abilityName)
 
-    if state == FoundAbility.NEAREST then
+    if state == FoundAbility.Nearest then
         Logger.warn("Tried to get ability information for '%s' of class '%s', but it doesn't exist."
                 .. " However, found the ability '%s' which is similar in name which will be used instead."
                 .. " Maybe there's a typo in the ability name."
                 .. " Please verify that this assumption is correct.",
-                name, class, (--[[---@not nil]] ability).name)
-    elseif state == FoundAbility.NONE then
-        local classInfo = Game.class(class)
+                abilityName, className, (--[[---@not nil]] ability).name)
+    elseif state == FoundAbility.None then
+        local classInfo = Game.class(className)
         local allNames = TableUtil.keys(classInfo.abilities)
         Logger.error("Tried to get ability information for '%s' of class '%s', but it doesn't exist!"
                 .. " Also couldn't find any ability that is similar. Avaible abilities are: [%s].",
-                name, class, table.concat(allNames, ", "))
+                abilityName, className, table.concat(allNames, ", "))
     end
 
     return ability
 end
 
----@param class string
----@param name string
+---@param className string
+---@param abilityName string
 ---@return nil | gh_Game_Ability, number
-function Game.nearestAbility(class, name)
-    local classInfo = Game.class(class)
-    local state = FoundAbility.NONE
+function Game.nearestAbility(className, abilityName)
+    local classInfo = Game.class(className)
+    local state = FoundAbility.None
     if classInfo then
-        local abilityInfo = classInfo.abilities[name]
+        local abilityInfo = classInfo.abilities[abilityName]
         if not abilityInfo then
             local allNames = TableUtil.keys(classInfo.abilities)
-            local nearestName = StringUtil.findNearest(name, allNames, 3)
+            local nearestName = StringUtil.findNearest(abilityName, allNames, 3)
             if nearestName then
                 abilityInfo = classInfo.abilities[--[[---@not nil]]nearestName]
                 abilityInfo.name = nearestName
-                state = FoundAbility.NEAREST
+                state = FoundAbility.Nearest
             end
         else
-            abilityInfo.name = name
-            state = FoundAbility.EXACT
+            abilityInfo.name = abilityName
+            state = FoundAbility.Exact
         end
 
         return abilityInfo, state
@@ -74,17 +74,17 @@ Game.PLAYERS = { "Red", "White", "Blue", "Green", }
 
 --- Max HP per level.
 ---@type table<string, gh_Game_HpProgression>
-Game.HP = {
-    LOW = { 6, 7, 8, 9, 10, 11, 12, 13, 14 },
-    MEDIUM = { 8, 9, 11, 12, 14, 15, 17, 18, 20 },
-    HIGH = { 10, 12, 14, 16, 18, 20, 22, 24, 26 }
+local HpProgression = {
+    Low = { 6, 7, 8, 9, 10, 11, 12, 13, 14 },
+    Medium = { 8, 9, 11, 12, 14, 15, 17, 18, 20 },
+    High = { 10, 12, 14, 16, 18, 20, 22, 24, 26 }
 }
 
 --- XP Requirements per level
 ---@type number[]
-Game.XP_REQUIREMENTS = { 0, 45, 95, 150, 210, 275, 345, 420, 500 }
+Game.XpRequirements = { 0, 45, 95, 150, 210, 275, 345, 420, 500 }
 
-Game.ITEMS = {
+Game.Items = {
     ---Max item number per prosperity level
     ---@type number[]
     Prosperity = { 14, 21, 28, 35, 42, 49, 56, 63, 70 },
@@ -146,11 +146,11 @@ Game.RandomScenarios = {
 
 --- Information about all character classes.
 ---@type table<string, gh_Game_Class>
-Game.CLASSES = {
+Game.Classes = {
     Brute = {
         isStartingClass = true,
         boxGuid = "697f18",
-        hp = Game.HP.HIGH,
+        hp = HpProgression.High,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { add = { "(+1)" }, remove = { "(-1)" } },
@@ -261,7 +261,7 @@ Game.CLASSES = {
     Scoundrel = {
         isStartingClass = true,
         boxGuid = "66309d",
-        hp = Game.HP.MEDIUM,
+        hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -369,7 +369,7 @@ Game.CLASSES = {
     Spellweaver = {
         isStartingClass = true,
         boxGuid = "0507cf",
-        hp = Game.HP.LOW,
+        hp = HpProgression.LOW,
         perks = {
             [1] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" } },
             [2] = { remove = { "(-1)" }, add = { "(+1)" } },
@@ -474,7 +474,7 @@ Game.CLASSES = {
     Mindthief = {
         isStartingClass = true,
         boxGuid = "8c1ca4",
-        hp = Game.HP.LOW,
+        hp = HpProgression.LOW,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -585,7 +585,7 @@ Game.CLASSES = {
     Cragheart = {
         isStartingClass = true,
         boxGuid = "ec1d2a",
-        hp = Game.HP.HIGH,
+        hp = HpProgression.High,
         perks = {
             [1] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" } },
             [2] = { remove = { "(-1)" }, add = { "(+1)" } },
@@ -699,7 +699,7 @@ Game.CLASSES = {
     Tinkerer = {
         isStartingClass = true,
         boxGuid = "fdef02",
-        hp = Game.HP.MEDIUM,
+        hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -815,7 +815,7 @@ Game.CLASSES = {
     },
     Berserker = {
         boxGuid = "7ff6c4",
-        hp = Game.HP.HIGH,
+        hp = HpProgression.High,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" } },
@@ -925,7 +925,7 @@ Game.CLASSES = {
     },
     Elementalist = {
         boxGuid = "21d7e7",
-        hp = Game.HP.LOW,
+        hp = HpProgression.LOW,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1035,7 +1035,7 @@ Game.CLASSES = {
     },
     Quartermaster = {
         boxGuid = "d221fc",
-        hp = Game.HP.HIGH,
+        hp = HpProgression.High,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1142,10 +1142,10 @@ Game.CLASSES = {
     },
     ["Beast Tyrant"] = {
         boxGuid = "89bec7",
-        hp = Game.HP.LOW,
+        hp = HpProgression.LOW,
         extraFigure = {
             name = "Bear Companion",
-            hp = Game.HP.HIGH
+            hp = HpProgression.High
         },
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
@@ -1256,7 +1256,7 @@ Game.CLASSES = {
     },
     Soothsinger = {
         boxGuid = "732351",
-        hp = Game.HP.LOW,
+        hp = HpProgression.LOW,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1363,7 +1363,7 @@ Game.CLASSES = {
     },
     Plagueherald = {
         boxGuid = "10b86a",
-        hp = Game.HP.LOW,
+        hp = HpProgression.LOW,
         perks = {
             [1] = { remove = { "(-2)" }, add = { "(+0)" } },
             [2] = { remove = { "(-1)" }, add = { "(+1)" } },
@@ -1476,7 +1476,7 @@ Game.CLASSES = {
     },
     Nightshroud = {
         boxGuid = "8f7455",
-        hp = Game.HP.MEDIUM,
+        hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1583,7 +1583,7 @@ Game.CLASSES = {
     },
     Sawbones = {
         boxGuid = "e5148c",
-        hp = Game.HP.MEDIUM,
+        hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1693,7 +1693,7 @@ Game.CLASSES = {
     },
     Sunkeeper = {
         boxGuid = "bfe08d",
-        hp = Game.HP.HIGH,
+        hp = HpProgression.High,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1806,7 +1806,7 @@ Game.CLASSES = {
     },
     Summoner = {
         boxGuid = "0f9847",
-        hp = Game.HP.MEDIUM,
+        hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-2)" }, add = { "(+0)" } },
@@ -1913,7 +1913,7 @@ Game.CLASSES = {
     },
     Doomstalker = {
         boxGuid = "b7fe6d",
-        hp = Game.HP.MEDIUM,
+        hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -2029,7 +2029,7 @@ Game.CLASSES = {
     },
     Diviner = {
         boxGuid = "ae2ea4",
-        hp = Game.HP.LOW,
+        hp = HpProgression.LOW,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -2137,7 +2137,7 @@ Game.CLASSES = {
     --- custom classes starting here
     Witcher = {
         boxGuid = "57b739",
-        hp = Game.HP.MEDIUM,
+        hp = HpProgression.Medium,
         isCustomClass = true,
         perks = {
             [1] = { remove = { "(-1)" }, add = { "(+1) (Toxicity -1)" } },

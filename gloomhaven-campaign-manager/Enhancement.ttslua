@@ -127,8 +127,8 @@ end
 function Enhancement.saveAll(saveFile)
     local enhancements = saveFile.enhancements
 
-    for _, playerZone in pairs(Component.playerZones()) do
-        Enhancement.saveFromZone(playerZone, enhancements)
+    for player = 1, Component.playerCount() do
+        Enhancement.saveFromZone(player, enhancements)
     end
     Enhancement.saveFromPackedCharacters(enhancements)
     Enhancement.saveFromCharacterBoxes(enhancements)
@@ -136,15 +136,15 @@ function Enhancement.saveAll(saveFile)
     enhancements = TableUtil.sortByAttribute(enhancements, "class")
 end
 
----@param playerZone GUID
+---@param player number
 ---@param enhancements gh_Save_EnhancedClass[]
-function Enhancement.saveFromZone(playerZone, enhancements)
-    local className = Character.findClassInZone(playerZone)
+function Enhancement.saveFromZone(player, enhancements)
+    local className = Character.findClassInZone(player)
     if not className then
         return
     end
 
-    Enhancement.saveFromContainer(Component.playerZone(playerZone), --[[---@not nil]] className, enhancements)
+    Enhancement.saveFromContainer(Component.playerZone(player), --[[---@not nil]] className, enhancements)
 end
 
 ---@param enhancements gh_Save_EnhancedClass[]
@@ -157,7 +157,7 @@ end
 
 ---@param enhancements gh_Save_EnhancedClass[]
 function Enhancement.saveFromCharacterBoxes(enhancements)
-    for className, _ in pairs(Game.CLASSES) do
+    for className, _ in pairs(Game.Classes) do
         local classBox = Component.classBox(className)
         if classBox then
             local characterBox = Component.characterBox(--[[---@not nil]] classBox)

@@ -11,7 +11,7 @@ local Game = require("gloomhaven-campaign-manager.Game")
 local Party = {}
 
 local function fireClassesReady()
-    for name, _ in pairs(Game.CLASSES) do
+    for name, _ in pairs(Game.Classes) do
         EventManager.triggerEvent(EventType.Loaded.Class.Start, name)
     end
 end
@@ -93,8 +93,8 @@ function Party.saveAll(saveFile)
     party.reputation = --[[---@not nil]] tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
 
     party.characters = --[[---@type gh_Save_Character[] ]]{}
-    for _, zoneGuid in pairs(Component.playerZones()) do
-        Character.save(zoneGuid, party.characters)
+    for player = 1, Component.playerCount() do
+        Character.save(player, party.characters)
     end
 end
 
