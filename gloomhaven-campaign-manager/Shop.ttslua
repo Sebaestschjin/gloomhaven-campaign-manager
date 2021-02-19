@@ -1,13 +1,13 @@
-local EventManager = require('ge_tts.EventManager')
-local Logger = require('sebaestschjin-tts.Logger')
-local Object = require('sebaestschjin-tts.Object')
-local Search = require('sebaestschjin-tts.Search')
-local Utils = require('sebaestschjin-tts.Utils')
-local WrappedDeck = require('sebaestschjin-tts.WrappedDeck')
+local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
+local Object = require("sebaestschjin-tts.Object")
+local Search = require("sebaestschjin-tts.Search")
+local Utils = require("sebaestschjin-tts.Utils")
+local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
-local Component = require('gloomhaven-campaign-manager.Component')
-local EventType = require('gloomhaven-campaign-manager.EventType')
-local Prosperity = require('gloomhaven-campaign-manager.Prosperity')
+local Component = require("gloomhaven-campaign-manager.Component")
+local EventType = require("gloomhaven-campaign-manager.EventType")
+local Prosperity = require("gloomhaven-campaign-manager.Prosperity")
 
 local Shop = {}
 
@@ -16,6 +16,8 @@ function Shop.setup()
 end
 
 function Shop.load()
+    Logger.info("Loading shop from prosperity")
+
     local cityMat = Component.cityMat()
 
     for i = 1, Prosperity.getLevel() do

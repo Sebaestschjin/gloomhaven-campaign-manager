@@ -1,4 +1,5 @@
 local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
@@ -12,6 +13,7 @@ end
 
 ---@param value number
 function Prosperity.load(value)
+    Logger.info("Loading prosperity")
     local map = Component.map()
     for i = 1, value do
         map.call("clickedPros", i)

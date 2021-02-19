@@ -1,4 +1,5 @@
 local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
 
 local Chain = require("sebaestschjin-tts.Chain")
 local Search = require("sebaestschjin-tts.Search")
@@ -23,7 +24,9 @@ local NewItemsDeck = "Forgotten Circles Items"
 
 --- Unpacks the expansion box.
 function Expansion.unpack()
-    local chain = Chain()
+    Logger.info("Unpacking Forgotten Circles expansion")
+
+    local chain = Chain("Unpack Expansion")
 
     chain.add(function(c) Expansion.unlockExpansionClass(c, "Diviner") end)
 
@@ -33,12 +36,11 @@ function Expansion.unpack()
     end
 
     for _, info in pairs(Component.EventDecks) do
-        local targetDeck = --[[---@type tts__Deck]] getObjectFromGUID(info.deckGuid)
+        local targetDeck = Component.eventDeck(info)
         chain.add(function(c) Expansion.unpackEvents(c, targetDeck, info.name) end)
     end
 
     chain.add(Expansion.unpackItems)
-
     chain.add(Expansion.finishUnpack)
 
     chain.proceed()
@@ -67,13 +69,13 @@ function Expansion.unlockCustomClass(chain, class)
     local customClassBox = getObjectFromGUID(class.boxGuid)
     if customClassBox then
         Component.lockedClasses().putObject(--[[---@not nil]] customClassBox)
-        chain.proceed()
     end
+    chain.proceed()
 end
 
 --- Unpacks the additional event cards.
 ---@param chain seb_Chain
----@param targetDeck tts__Deck
+---@param targetDeck seb_WrappedDeck
 ---@param deckName string
 function Expansion.unpackEvents(chain, targetDeck, deckName)
     local forgottenCirclesBox = Component.forgottenCirclesBox()
@@ -90,7 +92,7 @@ end
 
 ---@param chain seb_Chain
 ---@param expansionDeck seb_WrappedDeck @The event deck to unpack
----@param targetDeck tts__Deck @The event deck where the new events will be placed
+---@param targetDeck seb_WrappedDeck @The event deck where the new events will be placed
 function Expansion.unpackEventDeck(chain, expansionDeck, targetDeck)
     for i, _ in ipairs(expansionDeck.getObjects()) do
         chain.addNext(function(c) Expansion.placeAndNameEventCard(c, expansionDeck, targetDeck, i) end)
@@ -103,7 +105,6 @@ end
 ---@param expansionDeck seb_WrappedDeck @The event deck to unpack
 ---@param targetDeck tts__Deck @The event deck where the new events will be placed
 ---@param index number
----@return boolean
 function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index)
     expansionDeck.takeObject({
         index = index - 1,
@@ -115,7 +116,6 @@ function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index
             Wait.frames(chain.proceed, 1)
         end
     })
-    return false
 end
 
 ---@param chain seb_Chain

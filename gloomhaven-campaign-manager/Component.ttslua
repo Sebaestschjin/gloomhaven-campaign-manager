@@ -19,13 +19,17 @@ local Component = {}
 ---@type table<string, GUID>
 local Guid = {
     Gamebox = "346ed5",
+    ForgottenCirclesBox = "5e28e8",
     LockedClasses = "1e6549",
     ScenarioBook = "f3404a",
     RuleBook = "c9d3f5",
     OpeningConditions = "30ae8e",
     RetirementSheet = "a30c94",
     TownRecords = "a6c771",
-    ForgottenCirclesBox = "5e28e8",
+    TreasureDeck = "284016",
+    PartySheet = "6d3de2",
+    LastBox = "fdef02", -- tinkerer
+    BeforeLastBox = "ec1d2a", -- cragheart
     Map = "9cc037",
     AchievementBag = "3ea749", -- Bag containing the Achievement board
     SanctuarySticker = "800847",
@@ -35,13 +39,8 @@ local Guid = {
     RoadEventsDeckInitial = "83de73",
     RoadEventsDeck = "f08b69",
     CityMat = "f3ffb7",
-    TreasureDeck = "284016",
-    PlayerMinusOneDeck = "74a2ed",
     EventsMat = "b53fb2",
     OldEventsMat = "41393b",
-    PartySheet = "6d3de2",
-    LastBox = "fdef02", -- tinkerer
-    BeforeLastBox = "ec1d2a", -- cragheart
 }
 
 --- A list of components with multiple GUIDs (e.g. where newer versions have different GUIDs) or where multiple objects exist.
@@ -112,6 +111,11 @@ local PlayerMatSnapPoints = {
 --- A list of snap points on the deck mat containing different decks.
 ---@type table<string, number>
 local DeckMatSnapPoints = {
+    MinusOneDeck = 3,
+    RoadEventsInitial = 4,
+    RoadEvents = 5,
+    CityEventsInitial = 6,
+    CityEvents = 7,
     RandomScenarios = 8,
     Quests = 11,
 }
@@ -124,25 +128,25 @@ local CityMatSnapPoints = {
 
 --- Information about an event deck.
 ---@shape gh_EventDeckInfo
----@field initialDeckGuid GUID
----@field deckGuid GUID
----@field snapPoint number
+---@field initialDeckAt number
+---@field deckAt number
+---@field atEventMat number
 ---@field name string
 ---@field oldMat nil | GUID
 
 ---@type table<string, gh_EventDeckInfo>
 Component.EventDecks = {
     ["city"] = {
-        initialDeckGuid = Guid.CityEventsDeckInitial,
-        deckGuid = Guid.CityEventsDeck,
-        snapPoint = 2,
         name = Names.CityEvents,
+        initialDeckAt = DeckMatSnapPoints.CityEventsInitial,
+        deckAt = DeckMatSnapPoints.CityEvents,
+        atEventMat = 2,
     },
     ["road"] = {
-        initialDeckGuid = Guid.RoadEventsDeckInitial,
-        deckGuid = Guid.RoadEventsDeck,
-        snapPoint = 1,
         name = Names.RoadEvents,
+        initialDeckAt = DeckMatSnapPoints.RoadEventsInitial,
+        deckAt = DeckMatSnapPoints.RoadEvents,
+        atEventMat = 1,
         oldMat = Guid.OldEventsMat,
     },
 }
@@ -151,11 +155,14 @@ Component.EventDecks = {
 --- Positioning ----------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function relativeToZone(zoneGuid, position)
-    return (--[[---@not nil]] getObjectFromGUID(zoneGuid)).getPosition() + position
+---@param player number
+---@param position tts__VectorShape
+local function relativeToZone(player, position)
+    return Component.playerZone(player).getPosition() + Vector(position)
 end
 
 local positionCounter = 0
+---@return tts__VectorShape
 function Component.safePosition()
     positionCounter = positionCounter + 1
     return Vector(-43 + (positionCounter * 3), 2, -85)
@@ -190,7 +197,9 @@ local function takeFromGamebox(guid, position, event)
             position = position,
             rotation = { 0, 180, 0 },
             callback_function = function()
-                if event then EventManager.triggerEvent(--[[---@not nil]] event) end
+                if event then
+                    Wait.frames(function() EventManager.triggerEvent(--[[---@not nil]] event) end, 1)
+                end
             end,
         })
     elseif event then
@@ -378,9 +387,22 @@ function Component.randomScenarioDeck()
     return fromDeckMat(DeckMatSnapPoints.RandomScenarios)
 end
 
+---@param eventDeckInfo gh_EventDeckInfo
 ---@return tts__Deck
+function Component.initialEventDeck(eventDeckInfo)
+    local wrappedDeck = fromDeckMat(eventDeckInfo.initialDeckAt)
+    return --[[---@type tts__Deck]] wrappedDeck.unwrap()
+end
+
+---@param eventDeckInfo gh_EventDeckInfo
+---@return seb_WrappedDeck
+function Component.eventDeck(eventDeckInfo)
+    return fromDeckMat(eventDeckInfo.deckAt)
+end
+
+---@return seb_WrappedDeck
 function Component.minusOneDeck()
-    return --[[---@type tts__Deck]] getObjectFromGUID(Guid.PlayerMinusOneDeck)
+    return fromDeckMat(DeckMatSnapPoints.MinusOneDeck)
 end
 
 --------------------------------------------------------------------------------
@@ -392,9 +414,22 @@ function Component.eventMat()
     return --[[---@not nil]] getObjectFromGUID(Guid.EventsMat)
 end
 
----@return nil | tts__Object
-function Component.eventMatOld()
-    return getObjectFromGUID(Guid.OldEventsMat)
+---@param info gh_EventDeckInfo
+---@return seb_WrappedDeck
+function Component.eventMatDeck(info)
+    ---@type tts__Vector
+    local position
+    if getObjectFromGUID(Guid.OldEventsMat) then
+        if info.oldMat then
+            position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(--[[---@not nil]] info.oldMat), 1)
+        else
+            position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), 1)
+        end
+    else
+        position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), info.atEventMat)
+    end
+
+    return WrappedDeck(position)
 end
 
 --------------------------------------------------------------------------------
@@ -408,10 +443,13 @@ function Component.classBox(className)
 end
 
 --- Returns the contained character box within a class box for the given class.
----@param classBox tts__Bag
+---@param classBox tts__Bag | tts__ContainerState
 ---@return tts__ContainerState
 function Component.characterBox(classBox)
-    return --[[---@type tts__ContainerState]] classBox.getData().ContainedObjects[1]
+    if Object.isObject(classBox) then
+        return --[[---@type tts__ContainerState]] (--[[---@type tts__Bag]] classBox).getData().ContainedObjects[1]
+    end
+    return --[[---@type tts__ContainerState]] (--[[---@type tts__ContainerState]] classBox).ContainedObjects[1]
 end
 
 ---@param object seb_Object
@@ -658,7 +696,7 @@ end
 function Component.getQuestInfo(object)
     local cardId = Object.data(object).CardID
     local cardIndex = tonumber(tostring(cardId):sub(-2, -1))
-    for name, quest in pairs(Game.QUESTS) do
+    for name, quest in pairs(Game.Quests) do
         if quest.index == cardIndex then
             return { name = name, index = quest.index, number = quest.number }
         end
@@ -727,7 +765,7 @@ function Component.verifyLoad()
 
     verifyObject(Component.achievementsBag(), "Achievements bag")
     verifyObject(Component.deckMat(), "Deck Mat")
-    verifyObject(Component.minusOneDeck(), "-1 Deck")
+    --verifyObject(Component.minusOneDeck(), "-1 Deck")
     verifyObject(Component.cityMat(), "City Mat")
     verifyObject(Component.eventMat(), "Events Mat")
     verifyObject(Component.partySheet(), "Party Sheet")

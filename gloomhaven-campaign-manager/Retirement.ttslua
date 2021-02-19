@@ -1,4 +1,5 @@
 local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Character = require("gloomhaven-campaign-manager.Character")
@@ -11,15 +12,14 @@ local Retirement = {}
 
 ---@param saveFile gh_Savefile
 function Retirement.setup(saveFile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Retirement.unpackRetirementSheet(saveFile.retired) end)
     EventManager.addHandler(EventType.Placed.RetirementSheet, function() Retirement.startLoading(saveFile.retired) end)
-
-    EventManager.addHandler(EventType.Loaded.Start, function() Retirement.load(saveFile.retired) end)
 end
 
 local RetirementSheetColumns = 5
 
 ---@param retired gh_Save_Retired[]
-function Retirement.load(retired)
+function Retirement.unpackRetirementSheet(retired)
     if TableUtil.isNotEmpty(retired) then
         Component.placeRetirementSheet()
     end
@@ -27,6 +27,8 @@ end
 
 ---@param retired gh_Save_Retired[]
 function Retirement.startLoading(retired)
+    Logger.info("Loading retired characters")
+
     local retirementSheet = --[[---@not nil]] Component.retirementSheet()
 
     for i, retirement in ipairs(retired) do
@@ -92,7 +94,7 @@ end
 ---@param retired gh_Save_Retired[]
 function Retirement.saveCompletedQuests(retired)
     local completedQuests = --[[---@type table<string, number> ]] {}
-    for name, _ in pairs(Game.QUESTS) do
+    for name, _ in pairs(Game.Quests) do
         completedQuests[name] = 1
     end
 

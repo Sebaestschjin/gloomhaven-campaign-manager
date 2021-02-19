@@ -1,5 +1,6 @@
 local Logger = require('sebaestschjin-tts.Logger')
 local Utils = require('sebaestschjin-tts.Utils')
+local TableUtil = require('sebaestschjin-tts.TableUtil')
 
 local Savefile = {}
 
@@ -73,6 +74,19 @@ local function upgrade(content)
     setDefaultValues(content)
 end
 
+--- Removes empty tables from the save file reducing unnecessary noise.
+---@param content table
+local function cleanup(content)
+    for i, v in pairs(content) do
+        if type(v) == "table" then
+            cleanup(v)
+            if TableUtil.isEmpty(v) then
+                content[i] = nil
+            end
+        end
+    end
+end
+
 ---@return nil | gh_Savefile
 function Savefile.load()
     local saveFile = readFromNotebook()
@@ -82,6 +96,7 @@ function Savefile.load()
     return saveFile
 end
 
+--- Creates an empty save file with tables already exisiting.
 ---@return gh_Savefile
 function Savefile.create()
     return {
@@ -124,9 +139,10 @@ function Savefile.create()
 
 end
 
----@param content gh_Savefile
-function Savefile.save(content)
-    local jsonContent = JSON.encode_pretty(content)
+---@param saveFile gh_Savefile
+function Savefile.save(saveFile)
+    cleanup(saveFile)
+    local jsonContent = JSON.encode_pretty(saveFile)
     jsonContent = jsonContent .. "\n" -- to conform to POSIX :-)
     Notes.addNotebookTab({ title = "New Savefile", body = jsonContent })
     printToAll("Savefile created!", "Green")

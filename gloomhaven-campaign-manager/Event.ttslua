@@ -2,8 +2,6 @@ local EventManager = require("ge_tts.EventManager")
 local Object = require("sebaestschjin-tts.Object")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Search = require("sebaestschjin-tts.Search")
-local Utils = require("sebaestschjin-tts.Utils")
-local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
@@ -27,8 +25,9 @@ end
 ---@param eventDeck gh_Save_EventDeck
 function Event.load(eventDeck)
     local eventsInfo = Component.EventDecks[eventDeck.deck]
-    local targetDeck = WrappedDeck(--[[---@type tts__Deck]] getObjectFromGUID(eventsInfo.deckGuid))
-    targetDeck.putObject(--[[---@type tts__Deck]] getObjectFromGUID(eventsInfo.initialDeckGuid))
+    local initialDeck = Component.initialEventDeck(eventsInfo)
+    local targetDeck = Component.eventDeck(eventsInfo)
+    targetDeck.putObject(initialDeck)
 
     local bottomCards = Event.findBottomDeck(eventDeck, targetDeck)
     local addedCards = Event.findAddedCards(eventDeck, targetDeck, bottomCards)
@@ -89,8 +88,9 @@ end
 
 ---@param deck seb_WrappedDeck
 ---@param eventCards GUID[]
+---@param info gh_EventDeckInfo
 function Event.dealEvents(deck, eventCards, info)
-    local eventDeck = Event.getTargetDeck(info)
+    local eventDeck = Component.eventMatDeck(info)
     for _, event in pairs(eventCards) do
         deck.takeObject({
             guid = event,
@@ -118,7 +118,7 @@ end
 ---@param info gh_EventDeckInfo
 ---@return gh_Save_EventDeck
 function Event.saveEventsFromDeck(info)
-    local eventDeck = Event.getTargetDeck(info)
+    local eventDeck = Component.eventMatDeck(info)
     local eventsFromDeck = --[[---@type gh_Save_EventDeck]] { bottomUp = {}, remove = {} }
 
     for _, card in pairs(eventDeck.getObjects()) do
@@ -151,22 +151,5 @@ function Event.getNumber(card)
     return cardIndex + 82
 end
 
----@param info gh_EventDeckInfo
----@return seb_WrappedDeck
-function Event.getTargetDeck(info)
-    ---@type tts__Vector
-    local position
-    if Component.eventMatOld() then
-        if info.oldMat then
-            position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(--[[---@not nil]] info.oldMat), 1)
-        else
-            position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), 1)
-        end
-    else
-        position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), info.snapPoint)
-    end
-
-    return WrappedDeck(position)
-end
 
 return Event

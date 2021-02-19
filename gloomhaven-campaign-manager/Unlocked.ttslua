@@ -21,7 +21,6 @@ function Unlocked.setup(saveFile)
     EventManager.addHandler(EventType.Placed.OpeningConditions, function() Unlocked.loadOpeningConditions(saveFile.unlocked.specialConditions) end)
     EventManager.addHandler(EventType.Placed.Treasure, function() Unlocked.loadTreasures(saveFile.unlocked.treasures) end)
 
-    EventManager.addHandler(EventType.Loaded.Start, function() Unlocked.loadOpeningConditions(saveFile.unlocked.specialConditions) end)
     EventManager.addHandler(EventType.Loaded.Shop, function()
         shopLoaded = true
         Unlocked.loadItems(saveFile)
@@ -72,6 +71,8 @@ function Unlocked.loadItems(saveFile)
         return
     end
 
+    Logger.info("Loading unlocked items")
+
     local shopPosition = Component.shopDeck().getPosition()
 
     for _, item in pairs(saveFile.unlocked.items) do
@@ -83,6 +84,8 @@ end
 
 ---@param openingConditions gh_Save_Unlocked_Conditions
 function Unlocked.loadOpeningConditions(openingConditions)
+    Logger.info("Loading opening conditions")
+
     local sheet = --[[---@not nil]] Component.openingConditions()
 
     Unlocked.setOpeningCondition(sheet, openingConditions.ancientTechnology, "Ancient")

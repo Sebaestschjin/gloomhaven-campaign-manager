@@ -70,8 +70,6 @@ function Game.nearestAbility(className, abilityName)
     return nil, state
 end
 
-Game.PLAYERS = { "Red", "White", "Blue", "Green", }
-
 --- Max HP per level.
 ---@type table<string, gh_Game_HpProgression>
 local HpProgression = {
@@ -369,7 +367,7 @@ Game.Classes = {
     Spellweaver = {
         isStartingClass = true,
         boxGuid = "0507cf",
-        hp = HpProgression.LOW,
+        hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" } },
             [2] = { remove = { "(-1)" }, add = { "(+1)" } },
@@ -474,7 +472,7 @@ Game.Classes = {
     Mindthief = {
         isStartingClass = true,
         boxGuid = "8c1ca4",
-        hp = HpProgression.LOW,
+        hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -925,7 +923,7 @@ Game.Classes = {
     },
     Elementalist = {
         boxGuid = "21d7e7",
-        hp = HpProgression.LOW,
+        hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1142,7 +1140,7 @@ Game.Classes = {
     },
     ["Beast Tyrant"] = {
         boxGuid = "89bec7",
-        hp = HpProgression.LOW,
+        hp = HpProgression.Low,
         extraFigure = {
             name = "Bear Companion",
             hp = HpProgression.High
@@ -1256,7 +1254,7 @@ Game.Classes = {
     },
     Soothsinger = {
         boxGuid = "732351",
-        hp = HpProgression.LOW,
+        hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -1363,7 +1361,7 @@ Game.Classes = {
     },
     Plagueherald = {
         boxGuid = "10b86a",
-        hp = HpProgression.LOW,
+        hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(-2)" }, add = { "(+0)" } },
             [2] = { remove = { "(-1)" }, add = { "(+1)" } },
@@ -2029,7 +2027,7 @@ Game.Classes = {
     },
     Diviner = {
         boxGuid = "ae2ea4",
-        hp = HpProgression.LOW,
+        hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -2252,7 +2250,7 @@ Game.Classes = {
 }
 
 ---@type table<string, gh_Game_Achievement>
-Game.ACHIEVEMENTS = {
+Game.Achievements = {
     ["Ancient Technology"] = {
         maxCount = 5
     },
@@ -2338,7 +2336,7 @@ Game.ACHIEVEMENTS = {
 
 ---Information about Personal quests.
 ---@type gh_Game_Quests
-Game.QUESTS = {
+Game.Quests = {
     ["A Helping Hand"] = {
         index = 0,
         number = 532

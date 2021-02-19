@@ -70,7 +70,7 @@ function Enhancement.loadClass(className, abilities)
 
     local classBox = --[[---@not nil]] Component.classBox(className)
     local classBoxData = classBox.getData()
-    local characterBox = Component.characterBox(classBox)
+    local characterBox = Component.characterBox(classBoxData)
 
     for _, contained in pairs(characterBox.ContainedObjects) do
         if Component.isAbilityDeck(contained) then

@@ -129,7 +129,7 @@ function Character.loadAbilities(player, character)
 
     local abilityDeck = --[[---@not nil]] Component.abilityDeck(player)
     for _, abilityName in pairs(character.abilities) do
-        local abilityCard, distance = Search.nearestInWrappedDeck(abilityDeck, abilityName, AbilityMaxDistance)
+        local abilityCard, distance = Search.nearestInContainedObjects(abilityDeck, abilityName, AbilityMaxDistance)
         if abilityCard then
             if distance ~= AbilityDefaultDistance then
                 Logger.warn("Tried to load the ability '%s' for class '%s', but couldn't find it in the ability deck."
