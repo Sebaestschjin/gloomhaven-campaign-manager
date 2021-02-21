@@ -44,17 +44,18 @@
 ---@field characters gh_Save_Character[]
 
 ---@shape gh_Save_Character
----@field class string
----@field name string
----@field xp number
----@field gold number
----@field quest gh_Save_Quest
----@field checkmarks number
----@field perks number[]
----@field items gh_Save_Character_Item[]
----@field abilities string[]
----@field notes string[]
----@field hiddenNotes string[]
+---@field class string @Name of the class
+---@field name string @Player given name
+---@field xp number @Current amount of experience
+---@field gold number @Current amount of gold
+---@field quest gh_Save_Quest @Personal quest card
+---@field checkmarks number @Number of checkmarks for battle goals
+---@field perks number[] @List of unlocked perks
+---@field items gh_Save_Character_Item[] @List of possessed items
+---@field abilities string[] @List of unlocked abilities
+---@field notes string[] @List of notes on the character sheet (visible to all)
+---@field hiddenNotes string[] @List of hidden notes (only visible to player itself)
+---@field hand string[] @List of abilities in the player's hand
 
 ---@alias gh_Save_Quest string | number
 

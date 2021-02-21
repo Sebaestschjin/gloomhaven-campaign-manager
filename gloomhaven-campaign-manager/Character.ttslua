@@ -359,7 +359,8 @@ function Character.save(player, characters)
         end
 
         character.items = Character.saveItems(player)
-        character.abilities = Character.saveAbilities(player)
+        character.abilities = Character.saveAbilities(character.class, player)
+        character.hand = Character.saveHand(character.class, player)
         character.quest = Character.saveQuest(player)
     end
 
@@ -402,13 +403,13 @@ function Character.saveItemFromObjects(objects, playerMat, items)
     end
 end
 
+---@param className string
 ---@param player number
 ---@return string[]
-function Character.saveAbilities(player)
-    local class = --[[---@not nil]] Character.findClassInZone(player)
+function Character.saveAbilities(className, player)
     local abilities = --[[---@type string[] ]] {}
     local zoneObjects = Component.playerObjects(player)
-    Character.saveAbilitiesFromObjects(zoneObjects, class, abilities)
+    Character.saveAbilitiesFromObjects(zoneObjects, className, abilities)
 
     table.sort(abilities)
     return abilities
@@ -428,6 +429,21 @@ function Character.saveAbilitiesFromObjects(objects, class, abilities)
             Character.saveAbilitiesFromObjects(Object.objects(--[[---@type tts__ContainerState]] object), class, abilities)
         end
     end
+end
+
+---@param className string
+---@param player number
+---@return string[]
+function Character.saveHand(className, player)
+    local handAbilities = --[[---@type string[] ]] {}
+    for _, object in ipairs(Component.playerHand(player)) do
+        if Component.isAbilityCardForClass(object, className) then
+            local abilityName = Component.getAbilityName(className, object)
+            table.insert(handAbilities, abilityName)
+        end
+    end
+
+    return handAbilities
 end
 
 ---@param player number

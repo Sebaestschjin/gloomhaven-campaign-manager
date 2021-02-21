@@ -126,6 +126,10 @@ local CityMatSnapPoints = {
     RewardItems = 13,
 }
 
+--- Player color associated with each player
+---@type tts__PlayerColor[]
+local PlayerColors = { "Red", "White", "Blue", "Green", }
+
 --- Information about an event deck.
 ---@shape gh_EventDeckInfo
 ---@field initialDeckAt number
@@ -558,6 +562,12 @@ function Component.playerObjects(player)
     local zone = Component.playerZone(player)
     return TableUtil.filter(zone.getObjects(),
             function(object) return Utils.isCenterInZone(zone, object) end)
+end
+
+---@param player number
+---@return tts__Object[]
+function Component.playerHand(player)
+    return Player[PlayerColors[player]].getHandObjects()
 end
 
 ---@param player number
