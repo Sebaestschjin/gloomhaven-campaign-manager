@@ -70,6 +70,24 @@ function Game.nearestAbility(className, abilityName)
     return nil, state
 end
 
+---@param ability gh_Game_Ability
+---@return boolean
+function Game.isStartingAbility(ability)
+    return ability.level == 1 or ability.level == "X"
+end
+
+---@param className string
+---@return string[]
+function Game.startingAbilities(className)
+    local abilities = --[[---@type string[] ]] {}
+    for abilityName, ability in pairs(Game.class(className).abilities) do
+        if Game.isStartingAbility(ability) then
+            table.insert(abilities, abilityName)
+        end
+    end
+    return abilities
+end
+
 --- Max HP per level.
 ---@type table<string, gh_Game_HpProgression>
 local HpProgression = {

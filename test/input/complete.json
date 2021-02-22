@@ -146,6 +146,10 @@
           "TXkgTm90ZQ==",
           "Non Base64 is also possible"
         ],
+        "hand": [
+          "Eye for an Eye", "Trample", "Overwhelming Assault", "Shield Bash", "Sweeping Blow", "Spare Dagger",
+          "Hook and Chain", "Juggernaut", "Wall of Doom", "Skewer"
+        ],
         "items": [
           {
             "name": "Battle-Axe",
@@ -189,27 +193,25 @@
         "xp": 100
       },
       {
+        "class": "Tinkerer",
+        "name": "Dave",
+        "xp": 50,
+        "gold": 42,
+        "quest": 531,
+        "perks": [1],
+        "checkmarks": 0,
         "abilities": [
           "Stamina Booster"
         ],
-        "checkmarks": 0,
-        "class": "Tinkerer",
-        "gold": 42,
-        "hiddenNotes": [],
         "items": [
           {
             "name": "Minor Healing Potion",
             "position": "Unequipped"
           }
         ],
-        "name": "Dave",
         "notes": [],
-        "perks": [1],
-        "quest": 531,
-        "xp": 50
-      },
-      [],
-      []
+        "hiddenNotes": []
+      }
     ],
     "location": "Gloomhaven",
     "name": "Devil's advocates",

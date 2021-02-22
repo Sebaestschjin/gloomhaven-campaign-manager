@@ -67,6 +67,15 @@ local function setDefaultValues(content)
     setDefaultValue(content, 0, "party", "reputation")
     setDefaultValue(content, {}, "party", "characters")
 
+    for _, character in ipairs(content.party.characters) do
+        setDefaultValue(character, {}, "abilities")
+        setDefaultValue(character, {}, "hand")
+        setDefaultValue(character, {}, "items")
+        setDefaultValue(character, {}, "perks")
+        setDefaultValue(character, {}, "notes")
+        setDefaultValue(character, {}, "hiddenNotes")
+    end
+
     setDefaultValue(content, {}, "retired")
 end
 

@@ -7,6 +7,7 @@ local Object = require("sebaestschjin-tts.Object")
 local Search = require("sebaestschjin-tts.Search")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
+local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Game = require("gloomhaven-campaign-manager.Game")
@@ -29,7 +30,65 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Character.unpackCharacterBox(player, character)
-    Component.placeCharacterBox(player, character.class, function() Character.doLoad(player, character) end)
+    local classBox = --[[---@not nil]] Component.classBox(character.class)
+    classBox.takeObject({
+        index = 1,
+        smooth = false,
+        position = Component.safePosition(),
+        -- TODO I'd like to get rid of the wait here, but don't know how. Somehow the taken object is not ready yet and
+        --      will fail in the called function
+        callback_function = function(obj) Wait.frames(function()
+            Character.unpackCharacterAbilities(player, character, --[[---@type tts__Bag]] obj)
+        end, 30)
+        end,
+    })
+end
+
+---@param indices number[]
+---@param index number
+---@return number
+local function adjustIndex(indices, index)
+    table.insert(indices, index)
+    local realIndex = index
+    for _, v in ipairs(indices) do
+        if v < index then
+            realIndex = realIndex - 1
+        end
+    end
+    return realIndex
+end
+
+---@param player number
+---@param character gh_Save_Character
+---@param characterBox tts__Bag
+function Character.unpackCharacterAbilities(player, character, characterBox)
+    local chain = Chain()
+    local indices = {}
+    local targetDeck = WrappedDeck(Component.abilityDeckPosition(player))
+
+    for _, content in ipairs(characterBox.getObjects()) do
+        if Component.isAbilityDeck(content) then
+            local adjustedIndex = adjustIndex(indices, content.index)
+
+            chain.add(function(c)
+                characterBox.takeObject({
+                    index = adjustedIndex,
+                    smooth = false,
+                    rotation = { 0, 180, 0 },
+                    callback_function = function(obj)
+                        targetDeck.putObject(--[[---@type tts__Deck]] obj)
+                        targetDeck.setName("Advanced Abilities")
+                        c.proceed()
+                    end,
+                })
+            end)
+        end
+    end
+
+    local onCharacterBoxPlaced = function() Character.doLoad(player, character) end
+    chain.add(function() Component.placeCharacterBox(player, characterBox, onCharacterBoxPlaced) end)
+
+    chain.proceed()
 end
 
 ---@param player number
@@ -125,25 +184,38 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Character.loadAbilities(player, character)
-    if not character.abilities then return end
+    local unlockedAbilities = TableUtil.merge(Game.startingAbilities(character.class), character.abilities)
+    local secondHandAbilities = TableUtil.filter(unlockedAbilities,
+            function(abilityName) return not TableUtil.contains(character.hand, abilityName) end)
 
+    Character.moveAbilityCards(player, 1, character.class, character.hand)
+    Character.moveAbilityCards(player, 2, character.class, secondHandAbilities)
+end
+
+---@param player number
+---@param targetHand number
+---@param className string
+---@param abilities string[]
+function Character.moveAbilityCards(player, targetHand, className, abilities)
     local abilityDeck = --[[---@not nil]] Component.abilityDeck(player)
-    for _, abilityName in pairs(character.abilities) do
+    local targetPosition = Component.handPosition(player, targetHand)
+    for _, abilityName in ipairs(abilities) do
         local abilityCard, distance = Search.nearestInContainedObjects(abilityDeck, abilityName, AbilityMaxDistance)
         if abilityCard then
             if distance ~= AbilityDefaultDistance then
                 Logger.warn("Tried to load the ability '%s' for class '%s', but couldn't find it in the ability deck."
                         .. " However, found a similar ability named '%s' which will be used instead."
                         .. " Please verify if this assumption is correct.",
-                        abilityName, character.class, Object.name(--[[---@not nil]] abilityCard))
+                        abilityName, className, Object.name(--[[---@not nil]] abilityCard))
             end
             abilityDeck.takeObject({
-                position = Component.secondHandPosition(player),
+                position = targetPosition,
+                smooth = false,
                 guid = Object.guid(--[[---@not nil]] abilityCard),
             })
         else
             Logger.error("An ability named '%s' does not exist for the character class '%s'!",
-                    abilityName, character.class)
+                    abilityName, className)
         end
     end
 end
@@ -151,7 +223,9 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Character.loadQuest(player, character)
-    if not character.quest then return end
+    if not character.quest then
+        return
+    end
 
     local callback = function(card)
         card.setPosition(Component.questPosition(player))
@@ -309,7 +383,9 @@ end
 ---@param curXP number
 ---@return number
 function Character.getLevel(curXP)
-    if not curXP then curXP = 0 end
+    if not curXP then
+        curXP = 0
+    end
     for i, xp in pairs(Game.XpRequirements) do
         if curXP < xp then
             return i - 1

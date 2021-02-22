@@ -74,13 +74,17 @@ local Names = {
     CityEventsDeck = "City Events",
 }
 
+local TableHigh = 0.65
+
 --- A list of positions where components should be placed.
 ---@type table<string, tts__VectorShape>
 local Positions = {
-    -- relative
+    -- relative to player zone
     QuestCard = { 1, 2, -19 },
     ItemUnequipped = { -7, 2, -7 },
+    Hand = { 0, 3, 5 },
     SecondHand = { 0, 3, -2 },
+    AbilityDeck = { -3.2, 2, -15.17 },
     -- absolute
     AchievementBoard = { 87.26, 2, 26.12 },
     OpeningConditions = { 65.19, 1.70, -29.55 },
@@ -165,17 +169,25 @@ local function relativeToZone(player, position)
     return Component.playerZone(player).getPosition() + Vector(position)
 end
 
+local MaxColumn = 40
 local positionCounter = 0
 ---@return tts__VectorShape
 function Component.safePosition()
     positionCounter = positionCounter + 1
-    return Vector(-43 + (positionCounter * 3), 2, -85)
+    local offsetZ = math.floor(positionCounter / MaxColumn)
+    return Vector(-23 + (positionCounter * 3), TableHigh, -85 - offsetZ)
 end
 
 ---@param player number
+---@param target number
 ---@return tts__VectorShape
-function Component.secondHandPosition(player)
-    return relativeToZone(player, Positions.SecondHand)
+function Component.handPosition(player, target)
+    if target == 1 then
+        return relativeToZone(player, Positions.Hand)
+    end
+    if target == 2 then
+        return relativeToZone(player, Positions.SecondHand)
+    end
 end
 
 ---@param player number
@@ -456,19 +468,26 @@ function Component.characterBox(classBox)
     return --[[---@type tts__ContainerState]] (--[[---@type tts__ContainerState]] classBox).ContainedObjects[1]
 end
 
----@param object seb_Object
+---@param object seb_Object_Identifiable
 function Component.isAbilityDeck(object)
-    if not Object.isDeck(object) then
+    if not (Object.isSimple(object) or Object.isDeck(--[[---@type seb_Object]] object)) then
         return false
     end
     local name = Object.name(object)
     return name:find(Names.AbilityDeck) or name:find(Names.StartingAbilityDeck)
 end
 
+---@param player number
 ---@return seb_WrappedDeck
 function Component.abilityDeck(player)
     local abilityDeck = --[[---@type tts__Deck]] Search.inZone(Component.playerZone(player), { name = Names.AbilityDeck })
     return WrappedDeck(abilityDeck)
+end
+
+---@param player number
+---@return tts__VectorShape
+function Component.abilityDeckPosition(player)
+    return relativeToZone(player, Positions.AbilityDeck)
 end
 
 ---@param object seb_Object
@@ -581,19 +600,13 @@ function Component.loadPlayer(player, callback)
 end
 
 ---@param player number
----@param className string
+---@param characterBox tts__Bag
 ---@param callback fun(): void
-function Component.placeCharacterBox(player, className, callback)
+function Component.placeCharacterBox(player, characterBox, callback)
     local playerMat = Component.playerMat(player)
-    local classBox = --[[---@not nil]] Component.classBox(className)
+    characterBox.setPosition(playerMat.getPosition())
 
-    classBox.takeObject({
-        position = playerMat.getPosition(),
-        smooth = false,
-    })
-
-    Utils.waitForObjectInZone(Guids.Zones[player], { name = Names.CharacterSheet },
-            function() callback() end)
+    Utils.waitForObjectInZone(Guids.Zones[player], { name = Names.CharacterSheet }, callback)
 end
 
 ---@return GUID[]
