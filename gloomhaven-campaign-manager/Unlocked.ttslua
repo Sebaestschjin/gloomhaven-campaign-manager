@@ -141,9 +141,9 @@ end
 function Unlocked.saveAll(savefile)
     Unlocked.saveClasses(savefile.unlocked.classes)
     savefile.unlocked.sanctuary = Sanctuary.save()
-    Unlocked.saveOpeningConditions(saveFile.unlocked.specialConditions)
-    Unlocked.saveTreasures(saveFile.unlocked.treasures)
-    Shop.save(saveFile.unlocked)
+    Unlocked.saveOpeningConditions(savefile.unlocked.specialConditions)
+    Unlocked.saveTreasures(savefile.unlocked.treasures)
+    Shop.save(savefile.unlocked)
 end
 
 ---@param classes string[]
