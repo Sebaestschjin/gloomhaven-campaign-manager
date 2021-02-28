@@ -15,14 +15,14 @@ local Version = { 2, 0 }
 
 ---@return nil | gh_Savefile_any
 local function readFromNotebook()
-    local saveFile = Utils.readNotebook(NotebookName)
-    if not saveFile or #saveFile == 0 then
+    local savefile = Utils.readNotebook(NotebookName)
+    if not savefile or #savefile == 0 then
         Logger.error("No notebook found containing the save file!"
                 .. " Please add a notebook named %s.", NotebookName)
         return nil
     end
 
-    local status, content = pcall(function() return JSON.decode(--[[---@not nil]] saveFile) end)
+    local status, content = pcall(function() return JSON.decode(--[[---@not nil]] savefile) end)
     if not status then
         Logger.error("The provided save file contains errors."
                 .. " The error message from Lua is also very cryptic and doesn't really help. :-("
@@ -85,10 +85,10 @@ local function setDefaultValues(content)
     setDefaultValue(content, {}, "events")
 end
 
----@param saveFile gh_Savefile_any
+---@param savefile gh_Savefile_any
 ---@return number, number
-local function getVersion(saveFile)
-    local metadata = saveFile.metadata
+local function getVersion(savefile)
+    local metadata = savefile.metadata
     if not metadata or not metadata.version then
         return 1, 0
     end
@@ -228,11 +228,11 @@ end
 
 ---@return nil | gh_Savefile_any
 function Savefile.load()
-    local saveFile = readFromNotebook()
-    if saveFile then
-        return upgrade(--[[---@not nil]] saveFile)
+    local savefile = readFromNotebook()
+    if savefile then
+        return upgrade(--[[---@not nil]] savefile)
     end
-    return saveFile
+    return savefile
 end
 
 --- Creates an empty save file with tables already exisiting.
@@ -278,13 +278,20 @@ function Savefile.create()
 
 end
 
----@param saveFile gh_Savefile
-function Savefile.save(saveFile)
-    cleanup(saveFile)
-    local jsonContent = JSON.encode_pretty(saveFile)
+---@param savefile gh_Savefile
+function Savefile.save(savefile)
+    cleanup(savefile)
+    local jsonContent = JSON.encode_pretty(savefile)
     jsonContent = jsonContent .. "\n" -- to conform to POSIX :-)
     Notes.addNotebookTab({ title = "New Savefile", body = jsonContent })
+
     printToAll("Savefile created!", "Green")
+end
+
+---@param scenarioTree gh_ScenarioTree
+function Savefile.saveScenarioTree(scenarioTree)
+    local jsonContent = JSON.encode_pretty(scenarioTree)
+    Notes.addNotebookTab({ title = "Scenario Tree", body = jsonContent })
 end
 
 return Savefile

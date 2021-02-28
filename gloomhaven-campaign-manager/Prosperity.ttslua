@@ -6,9 +6,9 @@ local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Prosperity = {}
 
----@param saveFile gh_Savefile
-function Prosperity.setup(saveFile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Prosperity.load(saveFile.global.prosperity) end)
+---@param savefile gh_Savefile
+function Prosperity.setup(savefile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Prosperity.load(savefile.global.prosperity) end)
 end
 
 ---@param value number
@@ -21,8 +21,8 @@ function Prosperity.load(value)
     EventManager.triggerEvent(EventType.Loaded.Prosperity)
 end
 
----@param saveFile gh_Savefile
-function Prosperity.saveAll(saveFile)
+---@param savefile gh_Savefile
+function Prosperity.saveAll(savefile)
     local checkmarks = Component.map().getTable("Pros")
     local maxValue = -1
     for i, checked in pairs(checkmarks) do
@@ -31,7 +31,7 @@ function Prosperity.saveAll(saveFile)
         end
     end
 
-    saveFile.global.prosperity = maxValue + 1
+    savefile.global.prosperity = maxValue + 1
 end
 
 ---@return number

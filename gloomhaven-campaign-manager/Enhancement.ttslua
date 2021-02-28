@@ -12,9 +12,9 @@ local Game = require("gloomhaven-campaign-manager.Game")
 
 local Enhancement = {}
 
----@param saveFile gh_Savefile
-function Enhancement.setup(saveFile)
-    EventManager.addHandler(EventType.Loaded.Class.Unlocked, function(className) Enhancement.mayLoadForClass(saveFile, className) end)
+---@param savefile gh_Savefile
+function Enhancement.setup(savefile)
+    EventManager.addHandler(EventType.Loaded.Class.Unlocked, function(className) Enhancement.mayLoadForClass(savefile, className) end)
 end
 
 ---@type table<string, URL>
@@ -51,10 +51,10 @@ local DecalRotation = { 90, 180, 0 }
 ---@type tts__VectorShape
 local DecalScale = { 0.16, 0.16, 3.07 }
 
----@param saveFile gh_Savefile
+---@param savefile gh_Savefile
 ---@param className string
-function Enhancement.mayLoadForClass(saveFile, className)
-    local classEnhancements = saveFile.enhancements[className]
+function Enhancement.mayLoadForClass(savefile, className)
+    local classEnhancements = savefile.enhancements[className]
     if classEnhancements then
         Enhancement.loadClass(className, classEnhancements)
         return
@@ -124,9 +124,9 @@ function Enhancement.applyEnhancementsOnCard(abilityCard, className, abilityName
     end
 end
 
----@param saveFile gh_Savefile
-function Enhancement.saveAll(saveFile)
-    local enhancements = saveFile.enhancements
+---@param savefile gh_Savefile
+function Enhancement.saveAll(savefile)
+    local enhancements = savefile.enhancements
 
     for player = 1, Component.playerCount() do
         Enhancement.saveFromZone(player, enhancements)

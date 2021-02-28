@@ -30,49 +30,53 @@ function CampaignManager.loadAll()
     end
 end
 
----@param saveFile gh_Savefile
-function CampaignManager.setupEventHandlers(saveFile)
+---@param savefile gh_Savefile
+function CampaignManager.setupEventHandlers(savefile)
     Preparation.setup()
     Cleanup.setup()
 
-    Achievement.setup(saveFile)
-    Enhancement.setup(saveFile)
-    Event.setup(saveFile)
+    Achievement.setup(savefile)
+    Enhancement.setup(savefile)
+    Event.setup(savefile)
     Expansion.setup()
-    Party.setup(saveFile)
-    Prosperity.setup(saveFile)
-    Retirement.setup(saveFile)
-    Sanctuary.setup(saveFile)
-    Scenario.setup(saveFile)
+    Party.setup(savefile)
+    Prosperity.setup(savefile)
+    Retirement.setup(savefile)
+    Sanctuary.setup(savefile)
+    Scenario.setup(savefile)
     Shop.setup()
-    Unlocked.setup(saveFile)
+    Unlocked.setup(savefile)
 end
 
 function CampaignManager.saveAll()
-    EventManager.addHandler(EventType.Saved.Achievements, function(saveFile) Savefile.save(saveFile) end)
+    EventManager.addHandler(EventType.Saved.Achievements, function(savefile)
+        Savefile.save(savefile)
+        local scenarioTree = Scenario.saveScenarioTree(savefile)
+        Savefile.saveScenarioTree(scenarioTree)
+    end)
 
     CampaignManager.createSaveFile()
 end
 
 function CampaignManager.createSaveFile()
-    local saveFile = Savefile.create()
+    local savefile = Savefile.create()
 
     Preparation.prepareSave()
     -- this wait is necessary, because the scripting zones have to be adjusted, otherwise they won't detect cards lying
     -- directly on the table
-    Wait.time(function() CampaignManager.doCreateSaveFile(saveFile) end, 1)
+    Wait.time(function() CampaignManager.doCreateSaveFile(savefile) end, 1)
 end
 
----@param saveFile gh_Savefile
-function CampaignManager.doCreateSaveFile(saveFile)
-    Prosperity.saveAll(saveFile)
-    Scenario.saveAll(saveFile)
-    Achievement.saveAll(saveFile)
-    Unlocked.saveAll(saveFile)
-    Party.saveAll(saveFile)
-    Enhancement.saveAll(saveFile)
-    Retirement.saveAll(saveFile)
-    Event.saveAll(saveFile)
+---@param savefile gh_Savefile
+function CampaignManager.doCreateSaveFile(savefile)
+    Prosperity.saveAll(savefile)
+    Scenario.saveAll(savefile)
+    Achievement.saveAll(savefile)
+    Unlocked.saveAll(savefile)
+    Party.saveAll(savefile)
+    Enhancement.saveAll(savefile)
+    Retirement.saveAll(savefile)
+    Event.saveAll(savefile)
 end
 
 return CampaignManager

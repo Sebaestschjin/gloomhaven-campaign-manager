@@ -16,11 +16,11 @@ local function fireClassesReady()
     end
 end
 
----@param saveFile gh_Savefile
-function Party.setup(saveFile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Party.load(saveFile.party) end)
+---@param savefile gh_Savefile
+function Party.setup(savefile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Party.load(savefile.party) end)
     EventManager.addHandler(EventType.Loaded.Items, fireClassesReady)
-    EventManager.addHandler(EventType.Loaded.Class.Enhanced, function(className) Party.mayLoadCharacter(saveFile, className) end)
+    EventManager.addHandler(EventType.Loaded.Class.Enhanced, function(className) Party.mayLoadCharacter(savefile, className) end)
 end
 
 ---@param party gh_Save_Party
@@ -81,9 +81,9 @@ function Party.setPartySheetAverageLevel(characters)
     partySheet.UI.setAttribute("scenarioLevel", "text", --[[---@not nil]] tonumber(string.format("%d", scenarioLevel)))
 end
 
----@param saveFile gh_Savefile
-function Party.saveAll(saveFile)
-    local party = saveFile.party
+---@param savefile gh_Savefile
+function Party.saveAll(savefile)
+    local party = savefile.party
 
     local partySheet = Component.partySheet()
     party.name = partySheet.UI.getAttribute("partyName", "text")

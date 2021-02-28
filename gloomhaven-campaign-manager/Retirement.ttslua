@@ -10,10 +10,10 @@ local Quest = require("gloomhaven-campaign-manager.Quest")
 
 local Retirement = {}
 
----@param saveFile gh_Savefile
-function Retirement.setup(saveFile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Retirement.unpackRetirementSheet(saveFile.retired) end)
-    EventManager.addHandler(EventType.Placed.RetirementSheet, function() Retirement.startLoading(saveFile.retired) end)
+---@param savefile gh_Savefile
+function Retirement.setup(savefile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Retirement.unpackRetirementSheet(savefile.retired) end)
+    EventManager.addHandler(EventType.Placed.RetirementSheet, function() Retirement.startLoading(savefile.retired) end)
 end
 
 local RetirementSheetColumns = 5
@@ -49,10 +49,10 @@ function Retirement.startLoading(retired)
     retirementSheet.call("forceSave", {})
 end
 
----@param saveFile gh_Savefile
-function Retirement.saveAll(saveFile)
-    Retirement.saveRetirementSheet(saveFile.retired)
-    Retirement.saveCompletedQuests(saveFile.retired)
+---@param savefile gh_Savefile
+function Retirement.saveAll(savefile)
+    Retirement.saveRetirementSheet(savefile.retired)
+    Retirement.saveCompletedQuests(savefile.retired)
 end
 
 ---@param retired gh_Save_Retired[]

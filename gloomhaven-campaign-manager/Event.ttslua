@@ -9,9 +9,9 @@ local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Event = {}
 
----@param saveFile gh_Savefile
-function Event.setup(saveFile)
-    EventManager.addHandler(EventType.Loaded.Expansion, function() Event.loadAll(saveFile.events) end)
+---@param savefile gh_Savefile
+function Event.setup(savefile)
+    EventManager.addHandler(EventType.Loaded.Expansion, function() Event.loadAll(savefile.events) end)
 end
 
 local StartingEvents = 30
@@ -109,9 +109,9 @@ function Event.dealEvents(deck, eventCards, info)
     end
 end
 
----@param saveFile gh_Savefile
-function Event.saveAll(saveFile)
-    local events = saveFile.events
+---@param savefile gh_Savefile
+function Event.saveAll(savefile)
+    local events = savefile.events
 
     for name, info in pairs(Component.EventDecks) do
         local eventDeck = Event.saveEventsFromDeck(info)

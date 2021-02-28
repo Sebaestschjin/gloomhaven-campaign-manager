@@ -2,6 +2,7 @@ local EventManager = require("ge_tts.EventManager")
 
 local Logger = require("sebaestschjin-tts.Logger")
 local Search = require("sebaestschjin-tts.Search")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
@@ -9,9 +10,9 @@ local Game = require("gloomhaven-campaign-manager.Game")
 
 local Scenario = {}
 
----@param saveFile gh_Savefile
-function Scenario.setup(saveFile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Scenario.loadAll(saveFile.global.scenarios) end)
+---@param savefile gh_Savefile
+function Scenario.setup(savefile)
+    EventManager.addHandler(EventType.Loaded.Start, function() Scenario.loadAll(savefile.global.scenarios) end)
 end
 
 ---@type table<string, gh_Scenario_State>
@@ -93,8 +94,8 @@ function Scenario.removeRandomScenario(number)
     })
 end
 
----@param saveFile gh_Savefile
-function Scenario.saveAll(saveFile)
+---@param savefile gh_Savefile
+function Scenario.saveAll(savefile)
     local map = Component.map()
     local scenarioStickers = --[[---@type fantasySetup_Scenario_Stickers]] map.getTable("tableML")
     local unlockedScenarios = map.getTable("locations")
@@ -109,9 +110,43 @@ function Scenario.saveAll(saveFile)
                     state = State.Done
                 end
             end
-            saveFile.global.scenarios[tostring(info.number)] = state
+            savefile.global.scenarios[tostring(info.number)] = state
         end
     end
+end
+
+--- Creates a table from the given savefile that can be used for the Gloomhaven Scenario Tree
+---@param savefile gh_Savefile
+---@return gh_ScenarioTree
+function Scenario.saveScenarioTree(savefile)
+    local scenarioTree = --[[---@type gh_ScenarioTree]] {
+        nodes = {}, version = "2",
+    }
+
+    for id, state in pairs(savefile.global.scenarios) do
+        local scenario = --[[---@type gh_ScenarioTree_Node]]{}
+        scenario.id = id
+        scenario.treasure = {}
+        for _, treasure in ipairs(Game.Scenario[--[[---@not nil]] tonumber(id)]) do
+            if TableUtil.contains(savefile.unlocked.treasures, treasure) then
+                scenario.treasure[tostring(treasure)] = { looted = "true" }
+            end
+        end
+
+        if state == State.Done then
+            scenario.status = "complete"
+        else
+            if TableUtil.isNotEmpty(scenario.treasure) then
+                scenario.status = "attempted"
+            else
+                scenario.status = "incomplete"
+            end
+        end
+
+        table.insert(scenarioTree.nodes, scenario)
+    end
+
+    return scenarioTree
 end
 
 return Scenario

@@ -5,9 +5,9 @@ local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Sanctuary = {}
 
----@param saveFile gh_Savefile
-function Sanctuary.setup(saveFile)
-    local value = saveFile.unlocked.sanctuary
+---@param savefile gh_Savefile
+function Sanctuary.setup(savefile)
+    local value = savefile.unlocked.sanctuary
     EventManager.addHandler(EventType.Loaded.Start, function() Sanctuary.load(value) end)
     EventManager.addHandler(EventType.Placed.SanctuarySticker, function() Sanctuary.setLevel(--[[---@not nil]] value) end)
 end

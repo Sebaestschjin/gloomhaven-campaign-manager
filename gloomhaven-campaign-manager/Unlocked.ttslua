@@ -13,29 +13,29 @@ local Unlocked = {}
 local shopLoaded = false
 local expansionLoaded = false
 
----@param saveFile gh_Savefile
-function Unlocked.setup(saveFile)
+---@param savefile gh_Savefile
+function Unlocked.setup(savefile)
     shopLoaded = false
     expansionLoaded = false
 
-    EventManager.addHandler(EventType.Placed.OpeningConditions, function() Unlocked.loadOpeningConditions(saveFile.unlocked.specialConditions) end)
-    EventManager.addHandler(EventType.Placed.Treasure, function() Unlocked.loadTreasures(saveFile.unlocked.treasures) end)
+    EventManager.addHandler(EventType.Placed.OpeningConditions, function() Unlocked.loadOpeningConditions(savefile.unlocked.specialConditions) end)
+    EventManager.addHandler(EventType.Placed.Treasure, function() Unlocked.loadTreasures(savefile.unlocked.treasures) end)
 
     EventManager.addHandler(EventType.Loaded.Shop, function()
         shopLoaded = true
-        Unlocked.loadItems(saveFile)
+        Unlocked.loadItems(savefile)
     end)
     EventManager.addHandler(EventType.Loaded.Expansion, function()
         expansionLoaded = true
-        Unlocked.loadItems(saveFile)
+        Unlocked.loadItems(savefile)
     end)
-    EventManager.addHandler(EventType.Loaded.Class.Start, function(className) Unlocked.mayLoadClass(saveFile, className) end)
+    EventManager.addHandler(EventType.Loaded.Class.Start, function(className) Unlocked.mayLoadClass(savefile, className) end)
 end
 
----@param saveFile gh_Savefile
+---@param savefile gh_Savefile
 ---@param className string
-function Unlocked.mayLoadClass(saveFile, className)
-    for i, unlockedClass in ipairs(saveFile.unlocked.classes) do
+function Unlocked.mayLoadClass(savefile, className)
+    for i, unlockedClass in ipairs(savefile.unlocked.classes) do
         if unlockedClass == className then
             Unlocked.loadClass(i, className)
             return
@@ -65,8 +65,8 @@ function Unlocked.loadClass(number, className)
     })
 end
 
----@param saveFile gh_Savefile
-function Unlocked.loadItems(saveFile)
+---@param savefile gh_Savefile
+function Unlocked.loadItems(savefile)
     if not expansionLoaded or not shopLoaded then
         return
     end
@@ -75,7 +75,7 @@ function Unlocked.loadItems(saveFile)
 
     local shopPosition = Component.shopDeck().getPosition()
 
-    for _, item in pairs(saveFile.unlocked.items) do
+    for _, item in pairs(savefile.unlocked.items) do
         Shop.takeRewardItem(item, shopPosition)
     end
 
@@ -137,10 +137,10 @@ function Unlocked.loadTreasures(treasures)
     EventManager.triggerEvent(EventType.Loaded.Treasure)
 end
 
----@param saveFile gh_Savefile
-function Unlocked.saveAll(saveFile)
-    Unlocked.saveClasses(saveFile.unlocked.classes)
-    saveFile.unlocked.sanctuary = Sanctuary.save()
+---@param savefile gh_Savefile
+function Unlocked.saveAll(savefile)
+    Unlocked.saveClasses(savefile.unlocked.classes)
+    savefile.unlocked.sanctuary = Sanctuary.save()
     Unlocked.saveOpeningConditions(saveFile.unlocked.specialConditions)
     Unlocked.saveTreasures(saveFile.unlocked.treasures)
     Shop.save(saveFile.unlocked)
