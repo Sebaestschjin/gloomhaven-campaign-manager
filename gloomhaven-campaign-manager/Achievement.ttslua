@@ -11,7 +11,7 @@ function Achievement.setup(saveFile)
     EventManager.addHandler(EventType.Loaded.Start, function() Achievement.loadAll(saveFile.global.achievements) end)
 end
 
----@param achievements gh_Save_Achievement[]
+---@param achievements gh_Save_Achievements
 function Achievement.loadAll(achievements)
     ---@type boolean[]
     local readyGroups = { true }
@@ -19,10 +19,9 @@ function Achievement.loadAll(achievements)
     for i = 1, 5 do
         table.insert(readyGroups, false)
         local achievementGroup = {}
-        for _, achievement in pairs(achievements) do
-            if not achievement.count then achievement.count = 1 end
-            if achievement.count >= i then
-                table.insert(achievementGroup, achievement.name)
+        for achievementName, count in pairs(achievements) do
+            if count >= i then
+                table.insert(achievementGroup, achievementName)
             end
         end
 
@@ -76,7 +75,7 @@ end
 function Achievement.doSave(saveFile, achievementBoard)
     local achievementInfo = --[[---@type fantasySetup_Achievement_Info[] ]] achievementBoard.getTable("flags")
 
-    local result = --[[---@type gh_Save_Achievement[] ]] {}
+    local result = --[[---@type gh_Save_Achievements ]] {}
     for _, achievement in pairs(achievementInfo) do
         local maxIndex = 0
         for i, guid in pairs(achievement.guids) do
@@ -85,7 +84,7 @@ function Achievement.doSave(saveFile, achievementBoard)
             end
         end
         if maxIndex > 0 then
-            table.insert(result, { name = achievement.name, count = maxIndex })
+            result[achievement.name] = maxIndex
         end
     end
     (--[[---@not nil]] saveFile.global).achievements = result

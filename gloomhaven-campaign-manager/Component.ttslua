@@ -651,7 +651,7 @@ function Component.additionalAttackModifiers(player)
     for _, obj in ipairs(Component.playerZone(player).getObjects()) do
         if obj.type == Object.Type.Deck
                 and obj.getName() == Names.AttackModifierDeck
-                and obj.getDescription() == "" then
+                and obj.getDescription() ~= "Player " .. player then
             return WrappedDeck(--[[---@type tts__Deck]] obj)
         end
     end

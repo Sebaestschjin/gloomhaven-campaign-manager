@@ -1,513 +1,157 @@
 {
   "metadata": {
-    "version": "1.0"
+    "version": "2.0"
   },
-  "enhancements": [
-    {
-      "abilities": [
-        {
-          "enhancements": [
-            {
-              "enhancement": "Wound",
-              "position": 1
-            },
-            {
-              "enhancement": "Plus 1",
-              "position": 2
-            }
-          ],
-          "name": "Creeping Curse"
-        },
-        {
-          "enhancements": [
-            {
-              "enhancement": "Curse",
-              "position": 1
-            }
-          ],
-          "name": "Fetid Flurry"
-        },
-        {
-          "enhancements": [
-            {
-              "enhancement": "Plus 1",
-              "position": 2
-            }
-          ],
-          "name": "Nightmarish Affliction"
-        },
-        {
-          "enhancements": [
-            {
-              "enhancement": "Jump",
-              "position": 3
-            }
-          ],
-          "name": "Under the Skin"
-        },
-        {
-          "enhancements": [
-            {
-              "enhancement": "Plus 1",
-              "position": 1
-            }
-          ],
-          "name": "Winged Congregation"
-        },
-        {
-          "enhancements": [
-            {
-              "enhancement": "Jump",
-              "position": 2
-            }
-          ],
-          "name": "Wretched Swarm"
-        }
-      ],
-      "class": "Plagueherald"
-    }
-  ],
-  "events": [
-    {
-      "bottomUp": [
-        10,
-        57,
-        50,
-        2,
-        31,
-        80,
-        24,
-        1,
-        55,
-        59,
-        49,
-        18,
-        22,
-        77,
-        54,
-        13,
-        46,
-        36
-      ],
-      "deck": "city",
-      "remove": [
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        11,
-        12,
-        14,
-        15,
-        16,
-        17,
-        19,
-        20,
-        21,
-        23,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30
-      ]
-    },
-    {
-      "bottomUp": [
-        56,
-        36,
-        9,
-        66,
-        26,
-        43,
-        51,
-        6,
-        37,
-        22,
-        25,
-        30,
-        68,
-        40,
-        54,
-        10,
-        55,
-        50,
-        58,
-        33,
-        59,
-        46,
-        2,
-        14,
-        15,
-        1,
-        49,
-        31,
-        3,
-        38
-      ],
-      "deck": "road",
-      "remove": [
-        4,
-        5,
-        7,
-        8,
-        11,
-        12,
-        13,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        23,
-        24,
-        27,
-        28,
-        29
-      ]
-    }
-  ],
-  "global": {
-    "achievements": [
-      {
-        "count": 5,
-        "name": "Ancient Technology"
+  "enhancements": {
+    "Plagueherald": {
+      "Creeping Curse": {
+        "1": "Wound",
+        "2": "Plus 1"
       },
-      {
-        "count": 1,
-        "name": "Artifact: Lost"
+      "Fetid Flurry": {
+        "1": "Curse"
       },
-      {
-        "count": 1,
-        "name": "City Rule: Demonic"
+      "Nightmarish Affliction": {
+        "2": "Plus 1"
       },
-      {
-        "count": 2,
-        "name": "End of Corruption"
+      "Under the Skin": {
+        "3": "Jump"
       },
-      {
-        "count": 1,
-        "name": "End of the Invasion"
+      "Winged Congregation": {
+        "1": "Plus 1"
       },
-      {
-        "count": 1,
-        "name": "The Annihilation of the Order"
-      },
-      {
-        "count": 1,
-        "name": "The Dead Invade"
-      },
-      {
-        "count": 1,
-        "name": "The Drake Aided"
-      },
-      {
-        "count": 1,
-        "name": "The Power of Enhancement"
-      },
-      {
-        "count": 1,
-        "name": "The Voice Freed"
-      },
-      {
-        "count": 1,
-        "name": "Water-Breathing"
+      "Wretched Swarm": {
+        "2": "Jump"
       }
+    }
+  },
+  "unlocked": {
+    "sanctuary": 65,
+    "classes": [
+      "Berserker", "Elementalist", "Quartermaster", "Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud",
+      "Sawbones", "Sunkeeper", "Summoner", "Doomstalker", "Diviner"
     ],
-    "prosperity": 46,
-    "scenarios": [
-      {
-        "number": 1,
-        "state": "Done"
-      },
-      {
-        "number": 2,
-        "state": "Done"
-      },
-      {
-        "number": 3,
-        "state": "Done"
-      },
-      {
-        "number": 4,
-        "state": "Done"
-      },
-      {
-        "number": 5,
-        "state": "Done"
-      },
-      {
-        "number": 6,
-        "state": "Done"
-      },
-      {
-        "number": 8,
-        "state": "Open"
-      },
-      {
-        "number": 9,
-        "state": "Done"
-      },
-      {
-        "number": 10,
-        "state": "Done"
-      },
-      {
-        "number": 11,
-        "state": "Done"
-      },
-      {
-        "number": 14,
-        "state": "Done"
-      },
-      {
-        "number": 15,
-        "state": "Done"
-      },
-      {
-        "number": 16,
-        "state": "Done"
-      },
-      {
-        "number": 17,
-        "state": "Done"
-      },
-      {
-        "number": 18,
-        "state": "Done"
-      },
-      {
-        "number": 19,
-        "state": "Done"
-      },
-      {
-        "number": 21,
-        "state": "Open"
-      },
-      {
-        "number": 22,
-        "state": "Done"
-      },
-      {
-        "number": 23,
-        "state": "Done"
-      },
-      {
-        "number": 24,
-        "state": "Done"
-      },
-      {
-        "number": 25,
-        "state": "Done"
-      },
-      {
-        "number": 26,
-        "state": "Done"
-      },
-      {
-        "number": 27,
-        "state": "Open"
-      },
-      {
-        "number": 30,
-        "state": "Done"
-      },
-      {
-        "number": 31,
-        "state": "Done"
-      },
-      {
-        "number": 32,
-        "state": "Done"
-      },
-      {
-        "number": 33,
-        "state": "Done"
-      },
-      {
-        "number": 34,
-        "state": "Open"
-      },
-      {
-        "number": 35,
-        "state": "Done"
-      },
-      {
-        "number": 36,
-        "state": "Open"
-      },
-      {
-        "number": 37,
-        "state": "Done"
-      },
-      {
-        "number": 38,
-        "state": "Done"
-      },
-      {
-        "number": 39,
-        "state": "Done"
-      },
-      {
-        "number": 40,
-        "state": "Done"
-      },
-      {
-        "number": 41,
-        "state": "Done"
-      },
-      {
-        "number": 42,
-        "state": "Open"
-      },
-      {
-        "number": 43,
-        "state": "Done"
-      },
-      {
-        "number": 44,
-        "state": "Done"
-      },
-      {
-        "number": 45,
-        "state": "Done"
-      },
-      {
-        "number": 46,
-        "state": "Open"
-      },
-      {
-        "number": 47,
-        "state": "Done"
-      },
-      {
-        "number": 48,
-        "state": "Done"
-      },
-      {
-        "number": 49,
-        "state": "Done"
-      },
-      {
-        "number": 50,
-        "state": "Open"
-      },
-      {
-        "number": 51,
-        "state": "Open"
-      },
-      {
-        "number": 52,
-        "state": "Done"
-      },
-      {
-        "number": 53,
-        "state": "Done"
-      },
-      {
-        "number": 54,
-        "state": "Done"
-      },
-      {
-        "number": 57,
-        "state": "Done"
-      },
-      {
-        "number": 58,
-        "state": "Done"
-      },
-      {
-        "number": 63,
-        "state": "Done"
-      },
-      {
-        "number": 64,
-        "state": "Open"
-      },
-      {
-        "number": 65,
-        "state": "Done"
-      },
-      {
-        "number": 66,
-        "state": "Done"
-      },
-      {
-        "number": 67,
-        "state": "Done"
-      },
-      {
-        "number": 68,
-        "state": "Done"
-      },
-      {
-        "number": 69,
-        "state": "Done"
-      },
-      {
-        "number": 70,
-        "state": "Done"
-      },
-      {
-        "number": 71,
-        "state": "Done"
-      },
-      {
-        "number": 72,
-        "state": "Done"
-      },
-      {
-        "number": 73,
-        "state": "Done"
-      },
-      {
-        "number": 76,
-        "state": "Done"
-      },
-      {
-        "number": 77,
-        "state": "Done"
-      },
-      {
-        "number": 78,
-        "state": "Done"
-      },
-      {
-        "number": 81,
-        "state": "Done"
-      },
-      {
-        "number": 82,
-        "state": "Done"
-      },
-      {
-        "number": 84,
-        "state": "Done"
-      },
-      {
-        "number": 89,
-        "state": "Done"
-      },
-      {
-        "number": 90,
-        "state": "Done"
-      },
-      {
-        "number": 91,
-        "state": "Done"
-      },
-      {
-        "number": 93,
-        "state": "Done"
-      }
+    "items": [
+      "Ancient Drill", "Ancient Drill", "Black Censer", "Bloody Axe", "Boots of Levitation", "Boots of Levitation",
+      "Brilliant Blade", "Brilliant Blade", "Circlet of Elements", "Circlet of Elements", "Cloak of the Hunter",
+      "Curious Gear", "Doctor's Coat", "Doomed Compass", "Drakescale Boots", "Drakescale Helm", "Elemental Boots",
+      "Endurance Footwraps", "Fueled Falchion", "Fueled Falchion", "Giant Remote Spider", "Helix Ring", "Horned Helm",
+      "Horned Helm", "Imposing Blade", "Inferno Blade", "Inferno Blade", "Magma Waders", "Major Cure Potion",
+      "Major Cure Potion", "Mask of Death", "Master's Lute", "Minor Cure Potion", "Minor Cure Potion",
+      "Mountain Hammer", "Necklace of Teeth", "Night Blade", "Night Blade", "Orb of Twilight", "Pendant of the Plague",
+      "Phasing Idol", "Power Core", "Resonant Crystal", "Ring of Skulls", "Ring of Skulls", "Robes of Summoning",
+      "Rocket Boots", "Rocket Boots", "Sacrificial Robes", "Scroll of Power", "Scroll of Power", "Scroll of Stamina",
+      "Scroll of Stamina", "Second Skin", "Shoes of Happiness", "Shoes of Happiness ", "Skullbane Axe", "Smoke Elixir",
+      "Staff of Command", "Staff of Xorn", "Steam Armor", "Storm Blade", "Storm Blade", "Swordedge Armor",
+      "Swordedge Armor", "Tremor Blade", "Tremor Blade", "Utility Belt", "Wand of Darkness", "Wand of Darkness",
+      "Wand of Frost", "Wand of Frost", "Wand of Tremors", "Wand of Tremors"
     ]
   },
+  "events": {
+    "city": {
+      "bottomUp": [10, 57, 50, 2, 31, 80, 24, 1, 55, 59, 49, 18, 22, 77, 54, 13, 46, 36],
+      "remove": [3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15, 16, 17, 19, 20, 21, 23, 25, 26, 27, 28, 29, 30]
+    },
+    "road": {
+      "bottomUp": [
+        56, 36, 9, 66, 26, 43, 51, 6, 37, 22, 25, 30, 68, 40, 54, 10, 55, 50, 58, 33, 59, 46, 2, 14, 15, 1, 49, 31, 3,
+        38
+      ],
+      "remove": [4, 5, 7, 8, 11, 12, 13, 16, 17, 18, 19, 20, 21, 23, 24, 27, 28, 29]
+    }
+  },
+  "global": {
+    "achievements": {
+      "Ancient Technology": 5,
+      "Artifact: Lost": 1,
+      "City Rule: Demonic": 1,
+      "End of Corruption": 2,
+      "End of the Invasion": 1,
+      "The Annihilation of the Order": 1,
+      "The Dead Invade": 1,
+      "The Drake Aided": 1,
+      "The Power of Enhancement": 1,
+      "The Voice Freed": 1,
+      "Water-Breathing": 1
+    },
+    "prosperity": 46,
+    "scenarios": {
+      "1": "Done",
+      "2": "Done",
+      "3": "Done",
+      "4": "Done",
+      "5": "Done",
+      "6": "Done",
+      "8": "Open",
+      "9": "Done",
+      "10": "Done",
+      "11": "Done",
+      "14": "Done",
+      "15": "Done",
+      "16": "Done",
+      "17": "Done",
+      "18": "Done",
+      "19": "Done",
+      "21": "Open",
+      "22": "Done",
+      "23": "Done",
+      "24": "Done",
+      "25": "Done",
+      "26": "Done",
+      "27": "Open",
+      "30": "Done",
+      "31": "Done",
+      "32": "Done",
+      "33": "Done",
+      "34": "Open",
+      "35": "Done",
+      "36": "Open",
+      "37": "Done",
+      "38": "Done",
+      "39": "Done",
+      "40": "Done",
+      "41": "Done",
+      "42": "Open",
+      "43": "Done",
+      "44": "Done",
+      "45": "Open",
+      "46": "Done",
+      "47": "Done",
+      "48": "Done",
+      "49": "Done",
+      "50": "Open",
+      "51": "Open",
+      "52": "Done",
+      "53": "Done",
+      "54": "Done",
+      "57": "Done",
+      "58": "Done",
+      "63": "Done",
+      "64": "Done",
+      "65": "Done",
+      "66": "Done",
+      "67": "Done",
+      "68": "Done",
+      "69": "Done",
+      "71": "Done",
+      "72": "Done",
+      "73": "Done",
+      "76": "Done",
+      "77": "Done",
+      "78": "Done",
+      "81": "Done",
+      "82": "Done",
+      "84": "Done",
+      "89": "Done",
+      "90": "Done",
+      "91": "Done",
+      "93": "Done"
+    }
+  },
   "party": {
+    "name": "Shadow Walkers",
+    "location": "Gloomhaven",
+    "reputation": 8,
     "achievements": [
       "    First Steps                   Dark Bounty                      Sin-Ra           ",
       "Jekserah's Plans          Following Clues       Through The Trench",
@@ -519,194 +163,68 @@
     ],
     "characters": [
       {
+        "class": "Sunkeeper",
+        "name": "Aerith",
+        "xp": 417,
+        "gold": 25,
+        "checkmarks": 3,
         "abilities": [
-          "Bright Aegis",
-          "Illuminate the Target",
-          "Mobilizing Axiom",
-          "Path of Glory",
-          "Practical Plans",
+          "Bright Aegis", "Illuminate the Target", "Mobilizing Axiom", "Path of Glory", "Practical Plans",
           "Righteous Strength"
         ],
-        "checkmarks": 3,
-        "class": "Sunkeeper",
-        "gold": 25,
-        "items": [
-          {
-            "name": "Boots of Striding",
-            "position": "Boots"
-          },
-          {
-            "name": "Minor Healing Potion",
-            "position": "Bag2"
-          },
-          {
-            "name": "Minor Stamina Potion",
-            "position": "Bag3"
-          },
-          {
-            "name": "Skullbane Axe",
-            "position": "Unequipped"
-          },
-          {
-            "name": "Swordedge Armor",
-            "position": "Armor"
-          },
-          {
-            "name": "Tower Shield",
-            "position": "HandLeft"
-          }
-        ],
-        "name": "Aerith",
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ],
-        "quest": 520,
-        "xp": 417
+        "perks": [1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15],
+        "items": {
+          "Armor": ["Swordedge Armor"],
+          "HandLeft": ["Tower Shield"],
+          "Boots": ["Boots of Striding"],
+          "Bag2": ["Minor Healing Potion"],
+          "Bag3": ["Minor Stamina Potion"],
+          "Unequipped": ["Skullbane Axe"]
+        },
+        "quest": 520
       },
       {
-        "abilities": [
-          "Accelerated End",
-          "Baneful Hex",
-          "Fetid Flurry",
-          "Mass Extinction",
-          "Nightmarish Affliction",
-          "Spreading Scrouge",
-          "Stinging Cloud",
-          "Under the Skin"
-        ],
-        "checkmarks": 5,
         "class": "Plagueherald",
-        "gold": 47,
-        "items": [
-          {
-            "name": "Boots of Striding",
-            "position": "Boots"
-          },
-          {
-            "name": "Cloak of Invisibility",
-            "position": "Armor"
-          },
-          {
-            "name": "Hawk Helm",
-            "position": "Head"
-          },
-          {
-            "name": "Hooked Chain",
-            "position": "HandLeft"
-          },
-          {
-            "name": "Major Power Potion",
-            "position": "Bag1"
-          },
-          {
-            "name": "Major Stamina Potion",
-            "position": "Bag2"
-          },
-          {
-            "name": "Minor Stamina Potion",
-            "position": "Bag3"
-          },
-          {
-            "name": "Ring of Brutality",
-            "position": "Unequipped"
-          },
-          {
-            "name": "Ring of Haste",
-            "position": "Unequipped"
-          },
-          {
-            "name": "Staff of Xorn",
-            "position": "Unequipped"
-          },
-          {
-            "name": "Volatile Bomb",
-            "position": "Unequipped"
-          }
-        ],
         "name": "Norx",
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
+        "xp": 521,
+        "gold": 47,
+        "checkmarks": 5,
+        "abilities": [
+          "Accelerated End", "Baneful Hex", "Fetid Flurry", "Mass Extinction", "Nightmarish Affliction",
+          "Spreading Scrouge", "Stinging Cloud", "Under the Skin"
         ],
-        "quest": 529,
-        "xp": 521
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15],
+        "items": {
+          "Head": ["Hawk Helm"],
+          "Armor": ["Cloak of Invisibility"],
+          "HandLeft": ["Hooked Chain"],
+          "Boots": ["Boots of Striding"],
+          "Bag1": ["Major Power Potion"],
+          "Bag2": ["Major Stamina Potion"],
+          "Bag3": ["Minor Stamina Potion"],
+          "Unequipped": ["Ring of Brutality", "Ring of Haste", "Staff of Xorn", "Volatile Bomb"]
+        },
+        "quest": 529
       },
       {
-        "abilities": [
-          "Burning Oil",
-          "Cull the Weak",
-          "Duelist's Advance",
-          "Flurry of Blades",
-          "Open Wound",
-          "Spring the Trap"
-        ],
-        "checkmarks": 0,
         "class": "Scoundrel",
-        "gold": 29,
-        "items": [
-          {
-            "name": "Horned Helm",
-            "position": "Head"
-          },
-          {
-            "name": "Minor Healing Potion",
-            "position": "Bag2"
-          },
-          {
-            "name": "Minor Stamina Potion",
-            "position": "Bag3"
-          },
-          {
-            "name": "Rocket Boots",
-            "position": "Boots"
-          }
-        ],
         "name": "Ariel",
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          15
+        "xp": 395,
+        "gold": 29,
+        "checkmarks": 0,
+        "abilities": [
+          "Burning Oil", "Cull the Weak", "Duelist's Advance", "Flurry of Blades", "Open Wound", "Spring the Trap"
         ],
-        "quest": 518,
-        "xp": 395
-      },
-      []
-    ],
-    "location": "Gloomhaven",
-    "name": "Shadow Walkers",
-    "notes": [],
-    "reputation": 8
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 15],
+        "items": {
+          "Head": ["Horned Helm"],
+          "Boots": ["Rocket Boots"],
+          "Bag2": ["Minor Healing Potion"],
+          "Bag3": ["Minor Stamina Potion"]
+        },
+        "quest": 518
+      }
+    ]
   },
   "retired": [
     {
@@ -754,98 +272,5 @@
     {
       "quest": "Vengeance"
     }
-  ],
-  "unlocked": {
-    "classes": [
-      "Berserker",
-      "Elementalist",
-      "Quartermaster",
-      "Beast Tyrant",
-      "Soothsinger",
-      "Plagueherald",
-      "Nightshroud",
-      "Sawbones",
-      "Sunkeeper",
-      "Summoner",
-      "Doomstalker",
-      "Diviner"
-    ],
-    "items": [
-      "Ancient Drill",
-      "Ancient Drill",
-      "Black Censer",
-      "Bloody Axe",
-      "Boots of Levitation",
-      "Boots of Levitation",
-      "Brilliant Blade",
-      "Brilliant Blade",
-      "Circlet of Elements",
-      "Circlet of Elements",
-      "Cloak of the Hunter",
-      "Curious Gear",
-      "Doctor's Coat",
-      "Doomed Compass",
-      "Drakescale Boots",
-      "Drakescale Helm",
-      "Elemental Boots",
-      "Endurance Footwraps",
-      "Fueled Falchion",
-      "Fueled Falchion",
-      "Giant Remote Spider",
-      "Helix Ring",
-      "Horned Helm",
-      "Horned Helm",
-      "Imposing Blade",
-      "Inferno Blade",
-      "Inferno Blade",
-      "Magma Waders",
-      "Major Cure Potion",
-      "Major Cure Potion",
-      "Mask of Death",
-      "Master's Lute",
-      "Minor Cure Potion",
-      "Minor Cure Potion",
-      "Mountain Hammer",
-      "Necklace of Teeth",
-      "Night Blade",
-      "Night Blade",
-      "Orb of Twilight",
-      "Pendant of the Plague",
-      "Phasing Idol",
-      "Power Core",
-      "Resonant Crystal",
-      "Ring of Skulls",
-      "Ring of Skulls",
-      "Robes of Summoning",
-      "Rocket Boots",
-      "Rocket Boots",
-      "Sacrificial Robes",
-      "Scroll of Power",
-      "Scroll of Power",
-      "Scroll of Stamina",
-      "Scroll of Stamina",
-      "Second Skin",
-      "Shoes of Happiness",
-      "Shoes of Happiness ",
-      "Skullbane Axe",
-      "Smoke Elixir",
-      "Staff of Command",
-      "Staff of Xorn",
-      "Steam Armor",
-      "Storm Blade",
-      "Storm Blade",
-      "Swordedge Armor",
-      "Swordedge Armor",
-      "Tremor Blade",
-      "Tremor Blade",
-      "Utility Belt",
-      "Wand of Darkness",
-      "Wand of Darkness",
-      "Wand of Frost",
-      "Wand of Frost",
-      "Wand of Tremors",
-      "Wand of Tremors"
-    ],
-    "sanctuary": 65
-  }
+  ]
 }

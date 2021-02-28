@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "1.0"
+    "version": "2.0"
   },
   "enhancements": [
     {
@@ -55,16 +55,8 @@
     }
   ],
   "unlocked": {
-    "classes": [
-      "Berserker"
-    ],
-    "items": [
-      "Major Healing Potion",
-      "Major Healing Potion",
-      "Power Core",
-      "Wand of Infernos",
-      "Wand of Infernos"
-    ],
+    "classes": ["Berserker"],
+    "items": ["Major Healing Potion", "Major Healing Potion", "Power Core", "Wand of Infernos", "Wand of Infernos"],
     "sanctuary": 18,
     "specialConditions": {
       "ancientTechnology": true,
@@ -76,145 +68,46 @@
       "lowReputation": true,
       "retired": true
     },
-    "treasures": [
-      7,
-      15,
-      95
-    ]
+    "treasures": [7, 15, 95]
   },
-  "events": [
-    {
-      "deck": "city",
+  "events": {
+    "city": {
       "bottomUp": [
-        1,
-        2,
-        3,
-        4,
-        55,
-        6,
-        39,
-        26,
-        10,
-        29,
-        7,
-        28,
-        16,
-        14,
-        21,
-        20,
-        11,
-        25,
-        13,
-        23,
-        9,
-        17,
-        5,
-        24,
-        30,
-        18,
-        19,
-        8,
-        15,
-        27,
-        22,
-        12
+        1, 2, 3, 4, 55, 6, 39, 26, 10, 29, 7, 28, 16, 14, 21, 20, 11, 25, 13, 23, 9, 17, 5, 24, 30, 18, 19, 8, 15, 27,
+        22, 12
       ]
     },
-    {
-      "deck": "road",
+    "road": {
       "bottomUp": [
-        1,
-        2,
-        3,
-        4,
-        55,
-        6,
-        18,
-        16,
-        5,
-        28,
-        29,
-        13,
-        39,
-        24,
-        23,
-        15,
-        30,
-        20,
-        22,
-        26,
-        17,
-        14,
-        21,
-        9,
-        8,
-        7,
-        27,
-        11,
-        25,
-        19,
-        10,
-        12
+        1, 2, 3, 4, 55, 6, 18, 16, 5, 28, 29, 13, 39, 24, 23, 15, 30, 20, 22, 26, 17, 14, 21, 9, 8, 7, 27, 11, 25, 19,
+        10, 12
       ]
     }
-  ],
+  },
   "global": {
-    "achievements": [
-      {
-        "count": 2,
-        "name": "Ancient Technology"
-      },
-      {
-        "count": 1,
-        "name": "City Rule: Militaristic"
-      },
-      {
-        "count": 1,
-        "name": "The Dead Invade"
-      }
-    ],
+    "achievements": {
+      "Ancient Technology": 2,
+      "City Rule: Militaristic": 1,
+      "The Dead Invade": 1
+    },
     "prosperity": 5,
-    "scenarios": [
-      {
-        "number": 1,
-        "state": "Done"
-      },
-      {
-        "number": 2,
-        "state": "Open"
-      },
-      {
-        "number": 3,
-        "state": "Locked"
-      },
-      {
-        "number": 8,
-        "state": "Open"
-      },
-      {
-        "number": 66,
-        "state": "Open"
-      }
-    ]
+    "scenarios": {
+      "1": "Done",
+      "2": "Open",
+      "3": "Locked",
+      "8": "Open",
+      "66": "Open"
+    }
   },
   "party": {
-    "achievements": [
-      "First Steps",
-      "Jerkserah's Plans"
-    ],
+    "achievements": ["First Steps", "Jerkserah's Plans"],
     "characters": [
       {
-        "abilities": [
-          "Hook and Chain",
-          "Juggernaut"
-        ],
-        "checkmarks": 4,
         "class": "Brute",
+        "abilities": ["Hook and Chain", "Juggernaut"],
+        "checkmarks": 4,
         "gold": 42,
-        "hiddenNotes": [
-          "TXkgTm90ZQ==",
-          "Tm9uIEJhc2U2NCBpcyBhbHNvIHBvc3NpYmxl"
-        ],
+        "hiddenNotes": ["TXkgTm90ZQ==", "Tm9uIEJhc2U2NCBpcyBhbHNvIHBvc3NpYmxl"],
         "items": [
           {
             "name": "Battle-Axe",

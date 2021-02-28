@@ -1,201 +1,65 @@
 {
   "metadata": {
-    "version": "1.0"
+    "version": "2.0"
   },
   "global": {
     "prosperity": 0
   },
+  "unlocked": {
+    "classes": ["Berserker", "Quartermaster"]
+  },
   "party": {
-    "achievements": [],
+    "reputation": 0,
     "characters": [
       {
-        "abilities": [
-          "Blind Destruction",
-          "Blunt Force",
-          "Brutal Momentum",
-          "Cataclysm",
-          "Clear the Way",
-          "Dig Pit",
-          "Explosive Punch",
-          "Kinetic Assault",
-          "Lumbering Bash",
-          "Meteor",
-          "Petrify",
-          "Pulverize",
-          "Rock Slide",
-          "Rocky End",
-          "Sentient Growth",
-          "Stone Pummel"
-        ],
-        "checkmarks": 0,
         "class": "Cragheart",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
+        "checkmarks": 0,
+        "abilities": [
+          "Blind Destruction", "Blunt Force", "Brutal Momentum", "Cataclysm", "Clear the Way", "Dig Pit",
+          "Explosive Punch", "Kinetic Assault", "Lumbering Bash", "Meteor", "Petrify", "Pulverize", "Rock Slide",
+          "Rocky End", "Sentient Growth", "Stone Pummel"
         ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
+        "class": "Tinkerer",
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
         "abilities": [
-          "Auto Turret",
-          "Chimeric Formula",
-          "Crank Bow",
-          "Curative Aerosol",
-          "Dangerous Contraption",
-          "Disintegration Beam",
-          "Disorienting Flash",
-          "Gas Canister",
-          "Harsh Stimulants",
-          "Jet Propulsion",
-          "Lethal Injection",
-          "Micro Bots",
-          "Murderous Contraption",
-          "Noxious Vials",
-          "Stamina Booster",
+          "Auto Turret", "Chimeric Formula", "Crank Bow", "Curative Aerosol", "Dangerous Contraption",
+          "Disintegration Beam", "Disorienting Flash", "Gas Canister", "Harsh Stimulants", "Jet Propulsion",
+          "Lethal Injection", "Micro Bots", "Murderous Contraption", "Noxious Vials", "Stamina Booster",
           "Tinkerer's Tools"
         ],
-        "checkmarks": 0,
-        "class": "Tinkerer",
-        "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
-        "abilities": [
-          "Bag of Holding",
-          "Bladed Boomerang",
-          "Catastrophic Bomb",
-          "Continual Supply",
-          "Fortified Position",
-          "Giant Club",
-          "Portable Balliswta",
-          "Quiver of Arrows",
-          "Reforge",
-          "Refreshments",
-          "Reinforced Steel",
-          "Scroll of Annihilation",
-          "Scroll of Blizzards",
-          "Scroll of Judgement",
-          "Scroll of Lightning",
-          "Side Pouch"
-        ],
-        "checkmarks": 0,
         "class": "Quartermaster",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "name": "",
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
+        "checkmarks": 0,
+        "abilities": [
+          "Bag of Holding", "Bladed Boomerang", "Catastrophic Bomb", "Continual Supply", "Fortified Position",
+          "Giant Club", "Portable Balliswta", "Quiver of Arrows", "Reforge", "Refreshments", "Reinforced Steel",
+          "Scroll of Annihilation", "Scroll of Blizzards", "Scroll of Judgement", "Scroll of Lightning", "Side Pouch"
         ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
-        "abilities": [
-          "Bone Breaker",
-          "Break the Chains",
-          "Burning Hatred",
-          "Careless Charge",
-          "Devil Horns",
-          "Fatal Fury",
-          "Final Fight",
-          "Flurry of Axes",
-          "Immortality",
-          "Reckless Offensive",
-          "Seeing Red",
-          "Shiny Distraction",
-          "Spiked Armor",
-          "The Maw of Madness",
-          "Unstoppable Destruction",
-          "Vengeful Barrage"
-        ],
-        "checkmarks": 0,
         "class": "Berserker",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "name": "",
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
+        "checkmarks": 0,
+        "abilities": [
+          "Bone Breaker", "Break the Chains", "Burning Hatred", "Careless Charge", "Devil Horns", "Fatal Fury",
+          "Final Fight", "Flurry of Axes", "Immortality", "Reckless Offensive", "Seeing Red", "Shiny Distraction",
+          "Spiked Armor", "The Maw of Madness", "Unstoppable Destruction", "Vengeful Barrage"
         ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ],
-    "location": "",
-    "name": "",
-    "notes": [],
-    "reputation": 0
-  },
-  "unlocked": {
-    "classes": [
-      "Berserker",
-      "Quartermaster"
     ]
   }
 }

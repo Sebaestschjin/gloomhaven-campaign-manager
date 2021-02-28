@@ -21,12 +21,11 @@ local State = {
     Locked = "Locked",
 }
 
----@param scenarios gh_Save_Scenario[]
+---@param scenarios gh_Save_Scenarios
 function Scenario.loadAll(scenarios)
     local scenarioStickers = --[[---@type fantasySetup_Scenario_Stickers]] Component.map().getTable("tableML")
 
-    for _, scenario in ipairs(scenarios) do
-        local number, state = scenario.number, scenario.state
+    for number, state in pairs(scenarios) do
         local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
         Scenario.placeSticker(stickerGuid, number, state)
 
@@ -37,21 +36,21 @@ function Scenario.loadAll(scenarios)
 end
 
 ---@param scenarioStickers fantasySetup_Scenario_Stickers
----@param number number
+---@param number string
 ---@return GUID
 function Scenario.findStickerGuid(scenarioStickers, number)
     for stickerGuid, info in pairs(scenarioStickers) do
-        if info.number == number then
+        if tostring(info.number) == number then
             return stickerGuid
         end
     end
 end
 
 ---@param stickerGuid GUID
----@param number number
+---@param number string
 ---@param state gh_Scenario_State
 function Scenario.placeSticker(stickerGuid, number, state)
-    Logger.verbose("Placing scenario " .. tostring(number) .. " as " .. state)
+    Logger.verbose("Placing scenario " .. number .. " as " .. state)
     local map = Component.map()
     if state == State.Open then
         map.call("clickedML", stickerGuid)
@@ -66,13 +65,13 @@ function Scenario.placeSticker(stickerGuid, number, state)
     end
 end
 
----@param number number
+---@param number string
 ---@return boolean
 function Scenario.isRandomScenario(number)
-    return Game.RandomScenarios[number] ~= nil
+    return Game.RandomScenarios[--[[---@not nil]] tonumber(number)] ~= nil
 end
 
----@param number number
+---@param number string
 function Scenario.removeRandomScenario(number)
     local deck = Component.randomScenarioDeck()
     if not deck then
@@ -80,7 +79,7 @@ function Scenario.removeRandomScenario(number)
         return
     end
 
-    local cardId = Component.getScenarioCardId(Game.RandomScenarios[number])
+    local cardId = Component.getScenarioCardId(Game.RandomScenarios[--[[---@not nil]] tonumber(number)])
     local scenarioCard, index = Search.inContainedObjects(deck, { cardId = cardId })
     if not scenarioCard then
         Logger.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
@@ -110,7 +109,7 @@ function Scenario.saveAll(saveFile)
                     state = State.Done
                 end
             end
-            table.insert(saveFile.global.scenarios, { number = info.number, state = state })
+            saveFile.global.scenarios[tostring(info.number)] = state
         end
     end
 end

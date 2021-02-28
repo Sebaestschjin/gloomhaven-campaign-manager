@@ -1,165 +1,45 @@
 {
   "unlocked": {
-    "classes": [
-      "Beast Tyrant",
-      "Soothsinger",
-      "Plagueherald",
-      "Nightshroud"
-    ]
+    "classes": ["Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud"]
   },
   "party": {
     "characters": [
       {
         "class": "Beast Tyrant",
         "abilities": [
-          "Ancient Ward",
-          "Blood Hunger",
-          "Earthen Spikes",
-          "Energizing Strike",
-          "Jaws of Death",
-          "Lash out",
-          "Natural Remedy",
-          "Primal Blessing",
-          "Punch Through",
-          "Rampage",
-          "Stone Sigil",
-          "Storm Sigil",
-          "Tribal Sigil",
-          "Tyrannical Force",
-          "Unstoppable Beast",
-          "Vicious Ally"
+          "Ancient Ward", "Blood Hunger", "Earthen Spikes", "Energizing Strike", "Jaws of Death", "Lash out",
+          "Natural Remedy", "Primal Blessing", "Punch Through", "Rampage", "Stone Sigil", "Storm Sigil", "Tribal Sigil",
+          "Tyrannical Force", "Unstoppable Beast", "Vicious Ally"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Soothsinger",
         "abilities": [
-          "Booming Proclamation",
-          "Captivating Performance",
-          "Change Tempo",
-          "Commanding Presence",
-          "Crippling Chrous",
-          "Disorienting Dirge",
-          "Echoing Aria",
-          "Inspiring Anthem",
-          "Melody and Harmony",
-          "Mobilizing Measure",
-          "Nightmare Serenade",
-          "Provoke Terror",
-          "Pull the Strings",
-          "Shadow Puppets",
-          "Soothing Lullaby",
+          "Booming Proclamation", "Captivating Performance", "Change Tempo", "Commanding Presence", "Crippling Chrous",
+          "Disorienting Dirge", "Echoing Aria", "Inspiring Anthem", "Melody and Harmony", "Mobilizing Measure",
+          "Nightmare Serenade", "Provoke Terror", "Pull the Strings", "Shadow Puppets", "Soothing Lullaby",
           "Tranquil Trill"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Plagueherald",
         "abilities": [
-          "Accelerated End",
-          "Airborne Toxin",
-          "Baneful Hex",
-          "Black Tides",
-          "Convert the Flock",
-          "Fetid Flurry",
-          "Grim Bargain",
-          "Mass Extinction",
-          "Nightmarish Affliction",
-          "Rot Maggots",
-          "Spreading Scrouge",
-          "Stinging Cloud",
-          "Storm of Wings",
-          "Succumb to the Gift",
-          "Under the Skin",
-          "Willing Sacrifice"
+          "Accelerated End", "Airborne Toxin", "Baneful Hex", "Black Tides", "Convert the Flock", "Fetid Flurry",
+          "Grim Bargain", "Mass Extinction", "Nightmarish Affliction", "Rot Maggots", "Spreading Scrouge",
+          "Stinging Cloud", "Storm of Wings", "Succumb to the Gift", "Under the Skin", "Willing Sacrifice"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Nightshroud",
         "abilities": [
-          "Angel of Death",
-          "Armor of the Night",
-          "Black Arrow",
-          "Claws of the Night",
-          "Eyes of the Night",
-          "Gloom Darts",
-          "Grim Sustenance",
-          "Lurking Ruin",
-          "Nightfall",
-          "Prepare for the Kill",
-          "Quiet Frenzy",
-          "Soulfire",
-          "Swallowed by Fear",
-          "Terror Blade",
-          "Unseen Dread",
-          "Voice of the Night"
+          "Angel of Death", "Armor of the Night", "Black Arrow", "Claws of the Night", "Eyes of the Night",
+          "Gloom Darts", "Grim Sustenance", "Lurking Ruin", "Nightfall", "Prepare for the Kill", "Quiet Frenzy",
+          "Soulfire", "Swallowed by Fear", "Terror Blade", "Unseen Dread", "Voice of the Night"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
     ]
   }

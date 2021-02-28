@@ -58,6 +58,15 @@ def test_load_and_save_custom_classes(class_name, main_menu):
     assert_same_content(saved, f"{savefile}-expected")
 
 
+@pytest.mark("manually")
+def test_load_manually():
+    test_name = "all_of_it"
+
+    saved = load_file("manually")
+
+    assert_same_content(saved, f"{test_name}-expected")
+
+
 def load_file(filename, parent='input'):
     with open(f"{parent}/{filename}.json", "r", encoding="utf-8") as file:
         return file.read()

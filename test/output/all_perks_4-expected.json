@@ -1,205 +1,65 @@
 {
   "metadata": {
-    "version": "1.0"
+    "version": "2.0"
   },
   "global": {
     "prosperity": 0
   },
+  "unlocked": {
+    "classes": ["Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud"]
+  },
   "party": {
-    "achievements": [],
+    "reputation": 0,
     "characters": [
       {
-        "abilities": [
-          "Ancient Ward",
-          "Blood Hunger",
-          "Earthen Spikes",
-          "Energizing Strike",
-          "Jaws of Death",
-          "Lash out",
-          "Natural Remedy",
-          "Primal Blessing",
-          "Punch Through",
-          "Rampage",
-          "Stone Sigil",
-          "Storm Sigil",
-          "Tribal Sigil",
-          "Tyrannical Force",
-          "Unstoppable Beast",
-          "Vicious Ally"
-        ],
-        "checkmarks": 0,
         "class": "Beast Tyrant",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "name": "",
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
+        "checkmarks": 0,
+        "abilities": [
+          "Ancient Ward", "Blood Hunger", "Earthen Spikes", "Energizing Strike", "Jaws of Death", "Lash out",
+          "Natural Remedy", "Primal Blessing", "Punch Through", "Rampage", "Stone Sigil", "Storm Sigil", "Tribal Sigil",
+          "Tyrannical Force", "Unstoppable Beast", "Vicious Ally"
         ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
+        "class": "Soothsinger",
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
         "abilities": [
-          "Booming Proclamation",
-          "Captivating Performance",
-          "Change Tempo",
-          "Commanding Presence",
-          "Crippling Chrous",
-          "Disorienting Dirge",
-          "Echoing Aria",
-          "Inspiring Anthem",
-          "Melody and Harmony",
-          "Mobilizing Measure",
-          "Nightmare Serenade",
-          "Provoke Terror",
-          "Pull the Strings",
-          "Shadow Puppets",
-          "Soothing Lullaby",
+          "Booming Proclamation", "Captivating Performance", "Change Tempo", "Commanding Presence", "Crippling Chrous",
+          "Disorienting Dirge", "Echoing Aria", "Inspiring Anthem", "Melody and Harmony", "Mobilizing Measure",
+          "Nightmare Serenade", "Provoke Terror", "Pull the Strings", "Shadow Puppets", "Soothing Lullaby",
           "Tranquil Trill"
         ],
-        "checkmarks": 0,
-        "class": "Soothsinger",
-        "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "name": "",
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
-        "abilities": [
-          "Accelerated End",
-          "Airborne Toxin",
-          "Baneful Hex",
-          "Black Tides",
-          "Convert the Flock",
-          "Fetid Flurry",
-          "Grim Bargain",
-          "Mass Extinction",
-          "Nightmarish Affliction",
-          "Rot Maggots",
-          "Spreading Scrouge",
-          "Stinging Cloud",
-          "Storm of Wings",
-          "Succumb to the Gift",
-          "Under the Skin",
-          "Willing Sacrifice"
-        ],
-        "checkmarks": 0,
         "class": "Plagueherald",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "name": "",
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
+        "checkmarks": 0,
+        "abilities": [
+          "Accelerated End", "Airborne Toxin", "Baneful Hex", "Black Tides", "Convert the Flock", "Fetid Flurry",
+          "Grim Bargain", "Mass Extinction", "Nightmarish Affliction", "Rot Maggots", "Spreading Scrouge",
+          "Stinging Cloud", "Storm of Wings", "Succumb to the Gift", "Under the Skin", "Willing Sacrifice"
         ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
-        "abilities": [
-          "Angel of Death",
-          "Armor of the Night",
-          "Black Arrow",
-          "Claws of the Night",
-          "Eyes of the Night",
-          "Gloom Darts",
-          "Grim Sustenance",
-          "Lurking Ruin",
-          "Nightfall",
-          "Prepare for the Kill",
-          "Quiet Frenzy",
-          "Soulfire",
-          "Swallowed by Fear",
-          "Terror Blade",
-          "Unseen Dread",
-          "Voice of the Night"
-        ],
-        "checkmarks": 0,
         "class": "Nightshroud",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [],
-        "name": "",
-        "notes": [],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
+        "checkmarks": 0,
+        "abilities": [
+          "Angel of Death", "Armor of the Night", "Black Arrow", "Claws of the Night", "Eyes of the Night",
+          "Gloom Darts", "Grim Sustenance", "Lurking Ruin", "Nightfall", "Prepare for the Kill", "Quiet Frenzy",
+          "Soulfire", "Swallowed by Fear", "Terror Blade", "Unseen Dread", "Voice of the Night"
         ],
-        "xp": 0
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ],
-    "location": "",
-    "name": "",
-    "notes": [],
-    "reputation": 0
-  },
-  "unlocked": {
-    "classes": [
-      "Beast Tyrant",
-      "Soothsinger",
-      "Plagueherald",
-      "Nightshroud"
     ]
   }
 }

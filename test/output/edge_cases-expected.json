@@ -1,154 +1,54 @@
 {
   "metadata": {
-    "version": "1.0"
+    "version": "2.0"
   },
-  "events": [
-    {
+  "events": {
+    "city": {
       "bottomUp": [
-        1,
-        31,
-        30,
-        29,
-        28,
-        27,
-        26,
-        25,
-        24,
-        23,
-        22,
-        21,
-        20,
-        19,
-        18,
-        17,
-        16,
-        15,
-        14,
-        13,
-        12,
-        11,
-        10,
-        9,
-        8,
-        7,
-        6,
-        5,
-        4,
-        90,
-        89,
-        88,
-        87,
-        86,
-        85,
-        84,
-        83,
-        82
+        1, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 90,
+        89, 88, 87, 86, 85, 84, 83, 82
       ],
-      "deck": "city",
-      "remove": [
-        2,
-        3
-      ]
+      "remove": [2, 3]
     },
-    {
+    "road": {
       "bottomUp": [
-        3,
-        2,
-        1,
-        30,
-        29,
-        28,
-        27,
-        26,
-        25,
-        24,
-        23,
-        22,
-        21,
-        20,
-        19,
-        18,
-        17,
-        16,
-        15,
-        14,
-        13,
-        12,
-        11,
-        10,
-        9,
-        8,
-        7,
-        6,
-        82,
-        83
+        3, 2, 1, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 82, 83
       ],
-      "deck": "road",
-      "remove": [
-        4,
-        5
-      ]
+      "remove": [4, 5]
     }
-  ],
+  },
   "global": {
-    "achievements": [
-      {
-        "count": 1,
-        "name": "City Rule: Militaristic"
-      }
-    ],
+    "achievements": {
+      "City Rule: Militaristic": 1
+    },
     "prosperity": 0
   },
+  "unlocked": {
+    "items": ["Boots of Speed", "Heavy Greaves"]
+  },
   "party": {
-    "achievements": [],
+    "reputation": 0,
     "characters": [
       {
-        "abilities": [],
-        "checkmarks": 0,
         "class": "Brute",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [
-          {
-            "name": "Boots of Striding",
-            "position": "Unequipped"
-          }
-        ],
-        "name": "",
-        "notes": [],
-        "perks": [],
-        "quest": 532,
-        "xp": 0
+        "checkmarks": 0,
+        "items": {
+          "Unequipped": ["Boots of Striding"]
+        },
+        "quest": 532
       },
       {
-        "abilities": [],
-        "checkmarks": 0,
         "class": "Scoundrel",
+        "xp": 0,
         "gold": 0,
-        "hiddenNotes": [],
-        "items": [
-          {
-            "name": "Boots of Speed",
-            "position": "Unequipped"
-          }
-        ],
-        "notes": [],
-        "perks": [],
-        "quest": 514,
-        "xp": 0
-      },
-      [],
-      []
-    ],
-    "location": "",
-    "name": "",
-    "notes": [],
-    "reputation": 0
-  },
-  "unlocked": {
-    "items": [
-      "Boots of Speed",
-      "Heavy Greaves"
+        "checkmarks": 0,
+        "items": {
+          "Unequipped": ["Boots of Speed"]
+        },
+        "quest": 514
+      }
     ]
   }
 }

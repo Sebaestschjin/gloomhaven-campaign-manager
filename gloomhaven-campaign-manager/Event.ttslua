@@ -1,4 +1,5 @@
 local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Search = require("sebaestschjin-tts.Search")
@@ -15,16 +16,18 @@ end
 
 local StartingEvents = 30
 
----@param eventDecks gh_Save_EventDeck[]
+---@param eventDecks gh_Save_EventDecks
 function Event.loadAll(eventDecks)
-    for _, eventDeck in ipairs(eventDecks) do
-        Event.load(eventDeck)
+    for deckType, eventDeck in pairs(eventDecks) do
+        Event.load(deckType, eventDeck)
     end
 end
 
+---@param deckType string
 ---@param eventDeck gh_Save_EventDeck
-function Event.load(eventDeck)
-    local eventsInfo = Component.EventDecks[eventDeck.deck]
+function Event.load(deckType, eventDeck)
+    Logger.info("Loading event deck %s", deckType)
+    local eventsInfo = Component.EventDecks[deckType]
     local initialDeck = Component.initialEventDeck(eventsInfo)
     local targetDeck = Component.eventDeck(eventsInfo)
     targetDeck.putObject(initialDeck)
@@ -46,7 +49,11 @@ function Event.findBottomDeck(events, deck)
     for _, event in TableUtil.pairs(events.bottomUp) do
         local eventName = string.format("%02d", event)
         local eventCard = --[[---@not nil]] Search.inContainedObjects(deck, { name = eventName })
-        table.insert(eventsToAdd, Object.guid(eventCard))
+        if eventCard then
+            table.insert(eventsToAdd, Object.guid(eventCard))
+        else
+            Logger.warn("No event card %s found for deck %s", eventName, deck.getName())
+        end
     end
 
     return eventsToAdd
@@ -109,8 +116,7 @@ function Event.saveAll(saveFile)
     for name, info in pairs(Component.EventDecks) do
         local eventDeck = Event.saveEventsFromDeck(info)
         if eventDeck then
-            (--[[---@not nil]] eventDeck).deck = name
-            table.insert(events, --[[---@not nil]] eventDeck)
+            events[name] = eventDeck
         end
     end
 end

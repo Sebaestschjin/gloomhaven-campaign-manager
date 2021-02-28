@@ -1,0 +1,23 @@
+{
+  "unlocked": {
+    "classes": [
+      "Diviner"
+    ]
+  },
+  "party": {
+    "characters": [
+      {
+        "class": "Brute",
+        "abilities": [
+          "Devastating Hack"
+        ]
+      },
+      {
+        "class": "Diviner",
+        "abilities": [
+          "Dimensinal Divide"
+        ]
+      }
+    ]
+  }
+}

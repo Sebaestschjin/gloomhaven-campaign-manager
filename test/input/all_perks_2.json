@@ -4,154 +4,39 @@
       {
         "class": "Brute",
         "abilities": [
-          "Brute Force",
-          "Crippling Offensive",
-          "Defensive Tactics",
-          "Devastating Hack",
-          "Face Your End",
-          "Fatal Advance",
-          "Frenzied Onslaught",
-          "Hook and Chain",
-          "Immovable Phalanx",
-          "Juggernaut",
-          "King of the Hill",
-          "Quietus",
-          "Selfish Retribution",
-          "Skirmishing Maneuver",
-          "Unstoppable Charge",
+          "Brute Force", "Crippling Offensive", "Defensive Tactics", "Devastating Hack", "Face Your End",
+          "Fatal Advance", "Frenzied Onslaught", "Hook and Chain", "Immovable Phalanx", "Juggernaut",
+          "King of the Hill", "Quietus", "Selfish Retribution", "Skirmishing Maneuver", "Unstoppable Charge",
           "Whirlwind"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Scoundrel",
         "abilities": [
-          "Burning Oil",
-          "Crippling Poison",
-          "Cull the Weak",
-          "Duelist's Advance",
-          "Flintlock",
-          "Flurry of Blades",
-          "Gruesome Advantage",
-          "Hidden Daggers",
-          "Long Con",
-          "Open Wound",
-          "Pain's End",
-          "Spring the Trap",
-          "Stick to the Shadows",
-          "Stiletto Storm",
-          "Visage of the Inevitable",
-          "Watch It Burn"
+          "Burning Oil", "Crippling Poison", "Cull the Weak", "Duelist's Advance", "Flintlock", "Flurry of Blades",
+          "Gruesome Advantage", "Hidden Daggers", "Long Con", "Open Wound", "Pain's End", "Spring the Trap",
+          "Stick to the Shadows", "Stiletto Storm", "Visage of the Inevitable", "Watch It Burn"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Spellweaver",
         "abilities": [
-          "Black Hole",
-          "Chromatic Explosion",
-          "Cold Fire",
-          "Cold Front",
-          "Elemental Aid",
-          "Engulfed in Flames",
-          "Flashing Burst",
-          "Forked Beam",
-          "Frozen Night",
-          "Icy Blast",
-          "Inferno",
-          "Living Torch",
-          "Spirit of Doom",
-          "Stone Fists",
-          "Twin Restoration",
-          "Zephyr Wings"
+          "Black Hole", "Chromatic Explosion", "Cold Fire", "Cold Front", "Elemental Aid", "Engulfed in Flames",
+          "Flashing Burst", "Forked Beam", "Frozen Night", "Icy Blast", "Inferno", "Living Torch", "Spirit of Doom",
+          "Stone Fists", "Twin Restoration", "Zephyr Wings"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Mindthief",
         "abilities": [
-          "Brain Leech",
-          "Corrupting Embrace",
-          "Cranium Overload",
-          "Dark Frenzy",
-          "Domination",
-          "Frozen Mind",
-          "Hostile Takeover",
-          "Many as One",
-          "Mass Hysteria",
-          "Phantasmal Killer",
-          "Pilfer",
-          "Psychic Projection",
-          "Shared Nightmare",
-          "Silent Scream",
-          "Vicious Blood",
-          "Wretched Creature"
+          "Brain Leech", "Corrupting Embrace", "Cranium Overload", "Dark Frenzy", "Domination", "Frozen Mind",
+          "Hostile Takeover", "Many as One", "Mass Hysteria", "Phantasmal Killer", "Pilfer", "Psychic Projection",
+          "Shared Nightmare", "Silent Scream", "Vicious Blood", "Wretched Creature"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
     ]
   }

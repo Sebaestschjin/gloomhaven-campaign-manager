@@ -1,163 +1,45 @@
 {
   "unlocked": {
-    "classes": [
-      "Berserker",
-      "Quartermaster"
-    ]
+    "classes": ["Berserker", "Quartermaster"]
   },
   "party": {
     "characters": [
       {
         "class": "Cragheart",
         "abilities": [
-          "Blind Destruction",
-          "Blunt Force",
-          "Brutal Momentum",
-          "Cataclysm",
-          "Clear the Way",
-          "Dig Pit",
-          "Explosive Punch",
-          "Kinetic Assault",
-          "Lumbering Bash",
-          "Meteor",
-          "Petrify",
-          "Pulverize",
-          "Rock Slide",
-          "Rocky End",
-          "Sentient Growth",
-          "Stone Pummel"
+          "Blind Destruction", "Blunt Force", "Brutal Momentum", "Cataclysm", "Clear the Way", "Dig Pit",
+          "Explosive Punch", "Kinetic Assault", "Lumbering Bash", "Meteor", "Petrify", "Pulverize", "Rock Slide",
+          "Rocky End", "Sentient Growth", "Stone Pummel"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Tinkerer",
         "abilities": [
-          "Auto Turret",
-          "Chimeric Formula",
-          "Crank Bow",
-          "Curative Aerosol",
-          "Dangerous Contraption",
-          "Disintegration Beam",
-          "Disorienting Flash",
-          "Gas Canister",
-          "Harsh Stimulants",
-          "Jet Propulsion",
-          "Lethal Injection",
-          "Micro Bots",
-          "Murderous Contraption",
-          "Noxious Vials",
-          "Stamina Booster",
+          "Auto Turret", "Chimeric Formula", "Crank Bow", "Curative Aerosol", "Dangerous Contraption",
+          "Disintegration Beam", "Disorienting Flash", "Gas Canister", "Harsh Stimulants", "Jet Propulsion",
+          "Lethal Injection", "Micro Bots", "Murderous Contraption", "Noxious Vials", "Stamina Booster",
           "Tinkerer's Tools"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Quartermaster",
         "abilities": [
-          "Bag of Holding",
-          "Bladed Boomerang",
-          "Catastrophic Bomb",
-          "Continual Supply",
-          "Fortified Position",
-          "Giant Club",
-          "Portable Balliswta",
-          "Quiver of Arrows",
-          "Reforge",
-          "Refreshments",
-          "Reinforced Steel",
-          "Scroll of Annihilation",
-          "Scroll of Blizzards",
-          "Scroll of Judgement",
-          "Scroll of Lightning",
-          "Side Pouch"
+          "Bag of Holding", "Bladed Boomerang", "Catastrophic Bomb", "Continual Supply", "Fortified Position",
+          "Giant Club", "Portable Balliswta", "Quiver of Arrows", "Reforge", "Refreshments", "Reinforced Steel",
+          "Scroll of Annihilation", "Scroll of Blizzards", "Scroll of Judgement", "Scroll of Lightning", "Side Pouch"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Berserker",
         "abilities": [
-          "Bone Breaker",
-          "Break the Chains",
-          "Burning Hatred",
-          "Careless Charge",
-          "Devil Horns",
-          "Fatal Fury",
-          "Final Fight",
-          "Flurry of Axes",
-          "Immortality",
-          "Reckless Offensive",
-          "Seeing Red",
-          "Shiny Distraction",
-          "Spiked Armor",
-          "The Maw of Madness",
-          "Unstoppable Destruction",
-          "Vengeful Barrage"
+          "Bone Breaker", "Break the Chains", "Burning Hatred", "Careless Charge", "Devil Horns", "Fatal Fury",
+          "Final Fight", "Flurry of Axes", "Immortality", "Reckless Offensive", "Seeing Red", "Shiny Distraction",
+          "Spiked Armor", "The Maw of Madness", "Unstoppable Destruction", "Vengeful Barrage"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
     ]
   }

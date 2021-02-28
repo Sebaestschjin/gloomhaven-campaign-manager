@@ -54,17 +54,17 @@ local DecalScale = { 0.16, 0.16, 3.07 }
 ---@param saveFile gh_Savefile
 ---@param className string
 function Enhancement.mayLoadForClass(saveFile, className)
-    for _, classEnhancements in ipairs(saveFile.enhancements) do
-        if classEnhancements.class == className then
-            Enhancement.loadClass(className, classEnhancements.abilities)
-            return
-        end
+    local classEnhancements = saveFile.enhancements[className]
+    if classEnhancements then
+        Enhancement.loadClass(className, classEnhancements)
+        return
     end
+
     Enhancement.finishLoadClass(className)
 end
 
 ---@param className string
----@param abilities gh_Save_Enhanced_Ability[]
+---@param abilities gh_Save_EnhancedClass
 function Enhancement.loadClass(className, abilities)
     Logger.info("Loading enhancements for class %s", className)
 
@@ -95,12 +95,12 @@ end
 
 ---@param deck tts__DeckState
 ---@param className string
----@param abilities gh_Save_Enhanced_Ability[]
+---@param abilities gh_Save_EnhancedClass
 function Enhancement.applyEnhancementsOnAbilityDeck(deck, className, abilities)
-    for _, ability in pairs(abilities) do
+    for abilityName, ability in pairs(abilities) do
         for _, abilityCard in pairs(deck.ContainedObjects) do
-            if Object.name(abilityCard):find(ability.name) then
-                Enhancement.applyEnhancementsOnCard(abilityCard, className, ability)
+            if Object.name(abilityCard):find(abilityName) then
+                Enhancement.applyEnhancementsOnCard(abilityCard, className, abilityName, ability)
             end
         end
     end
@@ -108,14 +108,15 @@ end
 
 ---@param abilityCard tts__ObjectState
 ---@param className string
+---@param abilityName string
 ---@param ability gh_Save_Enhanced_Ability
-function Enhancement.applyEnhancementsOnCard(abilityCard, className, ability)
-    local enhancementsInfo = (--[[---@not nil]] Game.ability(className, ability.name)).enhancements
-    for _, enhancement in pairs(ability.enhancements) do
-        local position = enhancementsInfo[enhancement.position]
+function Enhancement.applyEnhancementsOnCard(abilityCard, className, abilityName, ability)
+    local enhancementsInfo = (--[[---@not nil]] Game.ability(className, abilityName)).enhancements
+    for enhancementPosition, enhancement in pairs(ability) do
+        local position = enhancementsInfo[--[[---@not nil]] tonumber(enhancementPosition)]
         ObjectState.addDecal(abilityCard, {
-            name = "Enhancement " .. enhancement.enhancement,
-            url = Decals[enhancement.enhancement],
+            name = "Enhancement " .. enhancement,
+            url = Decals[enhancement],
             position = { position[1], DecalYCoordinate, position[2] },
             rotation = DecalRotation,
             scale = DecalScale,
@@ -132,12 +133,10 @@ function Enhancement.saveAll(saveFile)
     end
     Enhancement.saveFromPackedCharacters(enhancements)
     Enhancement.saveFromCharacterBoxes(enhancements)
-
-    enhancements = TableUtil.sortByAttribute(enhancements, "class")
 end
 
 ---@param player number
----@param enhancements gh_Save_EnhancedClass[]
+---@param enhancements gh_Save_Enhancements
 function Enhancement.saveFromZone(player, enhancements)
     local className = Character.findClassInZone(player)
     if not className then
@@ -147,7 +146,7 @@ function Enhancement.saveFromZone(player, enhancements)
     Enhancement.saveFromContainer(Component.playerZone(player), --[[---@not nil]] className, enhancements)
 end
 
----@param enhancements gh_Save_EnhancedClass[]
+---@param enhancements gh_Save_Enhancements
 function Enhancement.saveFromPackedCharacters(enhancements)
     for _, inactiveCharacter in pairs(Component.inactiveCharacters()) do
         local className = inactiveCharacter.getName()
@@ -155,7 +154,7 @@ function Enhancement.saveFromPackedCharacters(enhancements)
     end
 end
 
----@param enhancements gh_Save_EnhancedClass[]
+---@param enhancements gh_Save_Enhancements
 function Enhancement.saveFromCharacterBoxes(enhancements)
     for className, _ in pairs(Game.Classes) do
         local classBox = Component.classBox(className)
@@ -168,9 +167,9 @@ end
 
 ---@param container seb_Object_Container
 ---@param className string
----@param enhancements gh_Save_EnhancedClass[]
+---@param enhancements gh_Save_Enhancements
 function Enhancement.saveFromContainer(container, className, enhancements)
-    for _, object in ipairs(--[[---@type seb_Object[] ]]Object.objects(container)) do
+    for _, object in ipairs(--[[---@type seb_Object[] ]] Object.objects(container)) do
         if Component.isAbilityCardForClass(object, className) and TableUtil.isNotEmpty(Object.decals(object)) then
             Enhancement.saveForCard(object, className, enhancements)
         elseif Object.isContainer(object) then
@@ -181,7 +180,7 @@ end
 
 ---@param card seb_Object
 ---@param className string
----@param enhancements gh_Save_EnhancedClass[]
+---@param enhancements gh_Save_Enhancements
 function Enhancement.saveForCard(card, className, enhancements)
     Logger.verbose("Saving enhancements for " .. Object.name(card))
     local abilityName = Component.getAbilityName(className, card)
@@ -204,7 +203,7 @@ function Enhancement.saveForCard(card, className, enhancements)
     end
 end
 
----@param enhancements gh_Save_EnhancedClass[]
+---@param enhancements gh_Save_Enhancements
 ---@param className string
 ---@param abilityName string
 ---@param position number
@@ -212,39 +211,25 @@ end
 ---@return boolean
 function Enhancement.saveEnhancement(enhancements, className, abilityName, position, enhancementName)
     ---@type gh_Save_EnhancedClass
-    local classEnhancements
-    for _, enhancedClass in pairs(enhancements) do
-        if enhancedClass.class == className then
-            classEnhancements = enhancedClass
-            break
-        end
-    end
+    local classEnhancements = enhancements[className]
     if not classEnhancements then
-        classEnhancements = { class = className, abilities = {} }
-        table.insert(enhancements, classEnhancements)
+        classEnhancements = {}
+        enhancements[className] = classEnhancements
     end
 
     ---@type gh_Save_Enhanced_Ability
-    local abilityEnhancement
-    for _, enhancedAbility in pairs(classEnhancements.abilities) do
-        if enhancedAbility.name == abilityName then
-            abilityEnhancement = enhancedAbility
-            break
-        end
-    end
+    local abilityEnhancement = classEnhancements[abilityName]
     if not abilityEnhancement then
-        abilityEnhancement = { name = abilityName, enhancements = {} }
-        table.insert(classEnhancements.abilities, abilityEnhancement)
+        abilityEnhancement = {}
+        classEnhancements[abilityName] = abilityEnhancement
     end
 
-    for _, enhancedPosition in pairs(abilityEnhancement.enhancements) do
-        if enhancedPosition.position == position then
-            return false
-        end
+    local positionEnhancement = abilityEnhancement[tostring(position)]
+    if positionEnhancement then
+        return false
     end
-    local positionEnhancement = { position = position, enhancement = enhancementName }
-    table.insert(abilityEnhancement.enhancements, positionEnhancement)
 
+    abilityEnhancement[tostring(position)] = enhancementName
     return true
 end
 

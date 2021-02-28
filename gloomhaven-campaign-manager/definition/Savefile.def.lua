@@ -1,37 +1,27 @@
 --- The complete savefile format
 ---@shape gh_Savefile
----@field enhancements gh_Save_EnhancedClass[]
+---@field enhancements gh_Save_Enhancements
 ---@field unlocked gh_Save_Unlocked
 ---@field global gh_Save_Global
 ---@field party gh_Save_Party
 ---@field retired gh_Save_Retired[]
----@field events gh_Save_EventDeck[]
+---@field events gh_Save_EventDecks
 ---@field metadata gh_Save_Metadata
 
----@shape gh_Save_EnhancedClass
----@field class string
----@field abilities gh_Save_Enhanced_Ability[]
+---@alias gh_Save_Enhancements table<string, gh_Save_EnhancedClass>
 
----@shape gh_Save_Enhanced_Ability
----@field name string
----@field enhancements gh_Save_Ability_Enhancement[]
+---@alias gh_Save_EnhancedClass table<string, gh_Save_Enhanced_Ability>
 
----@shape gh_Save_Ability_Enhancement
----@field enhancement string
----@field position number
+---@alias gh_Save_Enhanced_Ability table<string, string>
 
 ---@shape gh_Save_Global
----@field scenarios gh_Save_Scenario[]
----@field achievements gh_Save_Achievement[]
+---@field scenarios gh_Save_Scenarios
+---@field achievements gh_Save_Achievements
 ---@field prosperity number the number of prosperity checkmarks
 
----@shape gh_Save_Scenario
----@field number number
----@field state gh_Scenario_State
+---@alias gh_Save_Scenarios table<string, gh_Scenario_State>
 
----@shape gh_Save_Achievement
----@field name string
----@field count nil | number
+---@alias gh_Save_Achievements table<string, number>
 
 ---@alias gh_Scenario_State 'Open' | 'Done' | 'Locked'
 
@@ -51,7 +41,7 @@
 ---@field quest gh_Save_Quest @Personal quest card
 ---@field checkmarks number @Number of checkmarks for battle goals
 ---@field perks number[] @List of unlocked perks
----@field items gh_Save_Character_Item[] @List of possessed items
+---@field items gh_Save_Character_Items @List of possessed items
 ---@field abilities string[] @List of unlocked abilities
 ---@field notes string[] @List of notes on the character sheet (visible to all)
 ---@field hiddenNotes string[] @List of hidden notes (only visible to player itself)
@@ -59,9 +49,7 @@
 
 ---@alias gh_Save_Quest string | number
 
----@shape gh_Save_Character_Item
----@field name string
----@field position gh_Save_Character_Item_Position
+---@alias gh_Save_Character_Items table<gh_Save_Character_Item_Position, string[]>
 
 ---@alias gh_Save_Character_Item_Position 'Head' | 'Armor' | 'HandLeft' | 'HandRight' | 'Boots' | 'Bag1' | 'Bag2' | 'Bag3' | 'Active4' | 'Active1' | 'Active2' | 'Active3' | 'Unequipped'
 
@@ -90,8 +78,9 @@
 ---@field perks number
 ---@field quest gh_Save_Quest
 
+---@alias gh_Save_EventDecks table<string, gh_Save_EventDeck>
+
 ---@shape gh_Save_EventDeck
----@field deck string
 ---@field bottomUp number[]
 ---@field add number[]
 ---@field remove number[]

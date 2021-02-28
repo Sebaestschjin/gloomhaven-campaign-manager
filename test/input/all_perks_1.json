@@ -1,165 +1,46 @@
 {
   "unlocked": {
-    "classes": [
-      "Sunkeeper",
-      "Summoner",
-      "Doomstalker",
-      "Diviner"
-    ]
+    "classes": ["Sunkeeper", "Summoner", "Doomstalker", "Diviner"]
   },
   "party": {
     "characters": [
       {
         "class": "Sunkeeper",
         "abilities": [
-          "Angelic Ascension",
-          "Bright Aegis",
-          "Burning Flash",
-          "Cleansing Force",
-          "Divine Intervention",
-          "Engulfing Radiance",
-          "Illuminate the Target",
-          "Inspiring Sanctity",
-          "Mobilizing Axiom",
-          "Path of Glory",
-          "Practical Plans",
-          "Righteous Strength",
-          "Scales of Justice",
-          "Supportive Chant",
-          "Unwavering Mandate",
+          "Angelic Ascension", "Bright Aegis", "Burning Flash", "Cleansing Force", "Divine Intervention",
+          "Engulfing Radiance", "Illuminate the Target", "Inspiring Sanctity", "Mobilizing Axiom", "Path of Glory",
+          "Practical Plans", "Righteous Strength", "Scales of Justice", "Supportive Chant", "Unwavering Mandate",
           "Weapon of Purity"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Doomstalker",
         "abilities": [
-          "Camouflage",
-          "Crashing Wave",
-          "Darkened Skies",
-          "Expose",
-          "Feral Instincts",
-          "Flight of Flame",
-          "Impending End",
-          "Inescapable Fate",
-          "Lead to Slaughter",
-          "Nature's Hunger",
-          "Predator and Prey",
-          "Press the Attack",
-          "Relentless Offensive",
-          "Rising Momentum",
-          "Singular Focus",
-          "Wild Commad"
+          "Camouflage", "Crashing Wave", "Darkened Skies", "Expose", "Feral Instincts", "Flight of Flame",
+          "Impending End", "Inescapable Fate", "Lead to Slaughter", "Nature's Hunger", "Predator and Prey",
+          "Press the Attack", "Relentless Offensive", "Rising Momentum", "Singular Focus", "Wild Commad"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Summoner",
         "abilities": [
-          "Conjured Aid",
-          "Divided Mind",
-          "Earthen Steed",
-          "Endless Spikers",
-          "Grasping the Void",
-          "Horned Majesty",
-          "Inexorable Momentum",
-          "Interplanar Mastery",
-          "Intervening Apparitions",
-          "Living Mountain",
-          "Negative Energy",
-          "Oozing Manifestation",
-          "Otherworldly Rage",
-          "Staff of Visions",
-          "Strength in Numbers",
-          "Tear the Fabric"
+          "Conjured Aid", "Divided Mind", "Earthen Steed", "Endless Spikers", "Grasping the Void", "Horned Majesty",
+          "Inexorable Momentum", "Interplanar Mastery", "Intervening Apparitions", "Living Mountain", "Negative Energy",
+          "Oozing Manifestation", "Otherworldly Rage", "Staff of Visions", "Strength in Numbers", "Tear the Fabric"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
       {
         "class": "Diviner",
         "abilities": [
-          "Anguish and Salvation",
-          "Call of the Nether",
-          "Careful Attunement",
-          "Cleansing Rite",
-          "Curative Flux",
-          "Deep Contemplation",
-          "Dimensional Divide",
-          "Enfeebling Hex",
-          "Envision the Course",
-          "Ethereal Vortex",
-          "Gift of the Void",
-          "Hand of Destiny",
-          "Planar Fissure",
-          "Preordain the Path",
-          "Revitalizing Fount ",
+          "Anguish and Salvation", "Call of the Nether", "Careful Attunement", "Cleansing Rite", "Curative Flux",
+          "Deep Contemplation", "Dimensional Divide", "Enfeebling Hex", "Envision the Course", "Ethereal Vortex",
+          "Gift of the Void", "Hand of Destiny", "Planar Fissure", "Preordain the Path", "Revitalizing Fount ",
           "Seal Their Fate"
         ],
-        "perks": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15
-        ]
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
     ]
   }

@@ -31,16 +31,21 @@ end
 ---@param character gh_Save_Character
 function Character.unpackCharacterBox(player, character)
     local classBox = --[[---@not nil]] Component.classBox(character.class)
-    classBox.takeObject({
-        index = 1,
-        smooth = false,
+    if not classBox then
+        Logger.error("Did not find the class box for class %s! Is it part of the unlocked classes?", character.class)
+        return
+    end
+
+    spawnObjectData({
+        data = classBox.getData().ContainedObjects[1],
         position = Component.safePosition(),
         -- TODO I'd like to get rid of the wait here, but don't know how. Somehow the taken object is not ready yet and
         --      will fail in the called function
-        callback_function = function(obj) Wait.frames(function()
-            Character.unpackCharacterAbilities(player, character, --[[---@type tts__Bag]] obj)
-        end, 30)
-        end,
+        callback_function = function(obj)
+            Wait.time(
+                    function() Character.unpackCharacterAbilities(player, character, --[[---@type tts__Bag]] obj) end
+            , 4)
+        end
     })
 end
 
@@ -329,29 +334,31 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Character.loadItems(player, character)
-    local items = --[[---@type string[] ]] {}
+    local holdItems = --[[---@type string[] ]] {}
 
-    for _, item in ipairs(character.items) do
-        local itemPosition = Component.itemPosition(player, item.position)
+    for position, items in pairs(character.items) do
+        local itemPosition = Component.itemPosition(player, position)
 
-        if Shop.takeItem(item.name, itemPosition, Constant.Rotation.NORTH) then
-            table.insert(items, item.name)
-            Character.checkForNegativeItemEffects(character, item, itemPosition)
-        else
-            Logger.error("The item '%s' does not exist. Won't load item.", item.name)
+        for _, itemName in ipairs(items) do
+            if Shop.takeItem(itemName, itemPosition, Constant.Rotation.NORTH) then
+                table.insert(holdItems, itemName)
+                Character.checkForNegativeItemEffects(character, itemName, itemPosition)
+            else
+                Logger.error("The item '%s' does not exist. Won't load item.", itemName)
+            end
         end
     end
 
     local characterSheet = Component.characterSheet(player)
-    characterSheet.UI.setAttribute("Items", "text", table.concat(items, "\n"))
+    characterSheet.UI.setAttribute("Items", "text", table.concat(holdItems, "\n"))
 end
 
 ---@param character gh_Save_Character
----@param item gh_Save_Character_Item
+---@param itemName string
 ---@param itemPosition tts__Vector
-function Character.checkForNegativeItemEffects(character, item, itemPosition)
+function Character.checkForNegativeItemEffects(character, itemName, itemPosition)
     if not Character.hasNegateItemEffectsPerk(character) then
-        local negativeEffect = Game.Items.NegativeEffects[item.name]
+        local negativeEffect = Game.Items.NegativeEffects[itemName]
         for _ = 1, negativeEffect or 0 do
             Character.dealNegativeItemEffectCard(itemPosition)
         end
@@ -455,24 +462,30 @@ function Character.saveHiddenNotes(characterSheet)
 end
 
 ---@param player number
----@return gh_Save_Character_Item[]
+---@return gh_Save_Character_Items
 function Character.saveItems(player)
     local playerMat = Component.playerMat(player)
-    local items = --[[---@type gh_Save_Character_Item[] ]] {}
+    local items = --[[---@type gh_Save_Character_Items ]] {}
     local zoneObjects = Component.playerObjects(player)
     Character.saveItemFromObjects(zoneObjects, playerMat, items)
 
-    return TableUtil.sortByAttribute(items, "name")
+    return items
 end
 
 ---@param objects tts__Object[] | tts__ObjectState[]
 ---@param playerMat tts__Object
----@param items gh_Save_Character_Item[]
+---@param items gh_Save_Character_Items
 function Character.saveItemFromObjects(objects, playerMat, items)
     for _, object in ipairs(--[[---@type (tts__Object | tts__ObjectState)[] ]] objects) do
         if Component.isItemCard(object) then
-            local item = { name = Object.name(object), position = Component.itemPositionName(playerMat, object) }
-            table.insert(items, item)
+            local position = Component.itemPositionName(playerMat, object)
+            local positionalItems = items[position]
+            if not positionalItems then
+                positionalItems = {}
+                items[position] = positionalItems
+            end
+            local itemName = Object.name(object)
+            table.insert(positionalItems, itemName)
         elseif Object.isContainer(object) then
             Character.saveItemFromObjects(Object.objects(--[[---@type tts__ContainerState]] object), playerMat, items)
         end

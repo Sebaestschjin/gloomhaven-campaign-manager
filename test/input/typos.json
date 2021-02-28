@@ -1,22 +1,16 @@
 {
   "unlocked": {
-    "classes": [
-      "Diviner"
-    ]
+    "classes": ["Diviner"]
   },
   "party": {
     "characters": [
       {
         "class": "Brute",
-        "abilities": [
-          "Devastating Hack"
-        ]
+        "abilities": ["Devastating Hack"]
       },
       {
         "class": "Diviner",
-        "abilities": [
-          "Dimensinal Divide"
-        ]
+        "abilities": ["Dimensinal Divide"]
       }
     ]
   }
