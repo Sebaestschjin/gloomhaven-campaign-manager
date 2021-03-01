@@ -2,58 +2,25 @@
   "metadata": {
     "version": "2.0"
   },
-  "enhancements": [
-    {
-      "abilities": [
-        {
-          "enhancements": [
-            {
-              "enhancement": "Plus 1",
-              "position": 1
-            },
-            {
-              "enhancement": "Ice",
-              "position": 2
-            }
-          ],
-          "name": "Eye for an Eye"
-        },
-        {
-          "enhancements": [
-            {
-              "enhancement": "Jump",
-              "position": 1
-            }
-          ],
-          "name": "Fatal Advance"
-        },
-        {
-          "enhancements": [
-            {
-              "enhancement": "Plus 1",
-              "position": 1
-            }
-          ],
-          "name": "Hook and Chain"
-        }
-      ],
-      "class": "Brute"
+  "enhancements": {
+    "Brute": {
+      "Eye for an Eye": {
+        "1": "Plus 1",
+        "2": "Ice"
+      },
+      "Fatal Advance": {
+        "1": "Jump"
+      },
+      "Hook and Chain": {
+        "1": "Plus 1"
+      }
     },
-    {
-      "abilities": [
-        {
-          "enhancements": [
-            {
-              "enhancement": "Fire",
-              "position": 1
-            }
-          ],
-          "name": "Ink Bomb"
-        }
-      ],
-      "class": "Tinkerer"
+    "Tinkerer": {
+      "Ink Bomb": {
+        "1": "Fire"
+      }
     }
-  ],
+  },
   "unlocked": {
     "classes": ["Berserker"],
     "items": ["Major Healing Potion", "Major Healing Potion", "Power Core", "Wand of Infernos", "Wand of Infernos"],
@@ -100,93 +67,48 @@
     }
   },
   "party": {
+    "name": "Devil's advocates",
+    "location": "Gloomhaven",
+    "reputation": -10,
     "achievements": ["First Steps", "Jerkserah's Plans"],
+    "notes": ["Some notes", "More notes"],
     "characters": [
       {
         "class": "Brute",
-        "abilities": ["Hook and Chain", "Juggernaut"],
-        "checkmarks": 4,
-        "gold": 42,
-        "hiddenNotes": ["TXkgTm90ZQ==", "Tm9uIEJhc2U2NCBpcyBhbHNvIHBvc3NpYmxl"],
-        "items": [
-          {
-            "name": "Battle-Axe",
-            "position": "HandRight"
-          },
-          {
-            "name": "Boots of Striding",
-            "position": "Boots"
-          },
-          {
-            "name": "Hide Armor",
-            "position": "Armor"
-          },
-          {
-            "name": "Iron Helmet",
-            "position": "Head"
-          },
-          {
-            "name": "Minor Healing Potion",
-            "position": "Bag3"
-          },
-          {
-            "name": "Minor Power Potion",
-            "position": "Bag2"
-          },
-          {
-            "name": "Minor Stamina Potion",
-            "position": "Bag1"
-          },
-          {
-            "name": "Poison Dagger",
-            "position": "HandLeft"
-          }
-        ],
         "name": "Rambo",
-        "notes": [
-          "My Note",
-          "More notes"
-        ],
-        "perks": [
-          1,
-          3,
-          6
-        ],
+        "xp": 100,
+        "gold": 42,
+        "checkmarks": 4,
+        "abilities": ["Hook and Chain", "Juggernaut"],
+        "perks": [1, 3, 6],
+        "items": {
+          "Head": ["Iron Helmet"],
+          "Armor": ["Hide Armor"],
+          "HandLeft": ["Poison Dagger"],
+          "HandRight": ["Battle-Axe"],
+          "Boots": ["Boots of Striding"],
+          "Bag3": ["Minor Healing Potion"],
+          "Bag2": ["Minor Power Potion"],
+          "Bag1": ["Minor Stamina Potion"]
+        },
         "quest": 513,
-        "xp": 100
+        "notes": ["My Note", "More notes"],
+        "hiddenNotes": ["TXkgTm90ZQ==", "Tm9uIEJhc2U2NCBpcyBhbHNvIHBvc3NpYmxl"]
       },
       {
-        "abilities": [
-          "Stamina Booster"
-        ],
-        "checkmarks": 0,
         "class": "Tinkerer",
-        "gold": 42,
-        "hiddenNotes": [],
-        "items": [
-          {
-            "name": "Minor Healing Potion",
-            "position": "Unequipped"
-          }
-        ],
         "name": "Dave",
-        "notes": [],
-        "perks": [
-          1
-        ],
-        "quest": 531,
-        "xp": 50
-      },
-      [],
-      []
-    ],
-    "location": "Gloomhaven",
-    "name": "Devil's advocates",
-    "notes": [
-      "Some notes",
-      "More notes"
-    ],
-    "reputation": -10
+        "xp": 50,
+        "gold": 42,
+        "checkmarks": 0,
+        "abilities": ["Stamina Booster"],
+        "perks": [1],
+        "items": {
+          "Unequipped": ["Minor Healing Potion"]
+        },
+        "quest": 531
+      }
+    ]
   },
   "retired": [
     {

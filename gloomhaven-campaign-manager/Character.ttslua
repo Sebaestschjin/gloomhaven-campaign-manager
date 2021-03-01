@@ -189,12 +189,20 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Character.loadAbilities(player, character)
-    local unlockedAbilities = TableUtil.merge(Game.startingAbilities(character.class), character.abilities)
+    local unlockedAbilities = Game.startingAbilities(character.class)
+    for _, ability in ipairs(character.abilities) do
+        table.insert(unlockedAbilities, ability)
+    end
+
     local secondHandAbilities = TableUtil.filter(unlockedAbilities,
             function(abilityName) return not TableUtil.contains(character.hand, abilityName) end)
 
-    Character.moveAbilityCards(player, 1, character.class, character.hand)
-    Character.moveAbilityCards(player, 2, character.class, secondHandAbilities)
+    if TableUtil.isEmpty(character.hand) then
+        Character.moveAbilityCards(player, 1, character.class, secondHandAbilities)
+    else
+        Character.moveAbilityCards(player, 1, character.class, character.hand)
+        Character.moveAbilityCards(player, 2, character.class, secondHandAbilities)
+    end
 end
 
 ---@param player number

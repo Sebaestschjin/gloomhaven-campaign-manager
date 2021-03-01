@@ -58,9 +58,10 @@ def test_load_and_save_custom_classes(class_name, main_menu):
     assert_same_content(saved, f"{savefile}-expected")
 
 
-@pytest.mark("manually")
+@pytest.mark.manually
 def test_load_manually():
-    test_name = "all_of_it"
+    test_name = "complete"
+    include = ["enhancements"]
 
     saved = load_file("manually")
 
@@ -117,7 +118,7 @@ def save_savefile():
     return tts.get_notebook("new_savefile")
 
 
-def assert_same_content(content, expected_file):
+def assert_same_content(content, expected_file, include=[]):
     content = json.loads(content)
     expected_content = json.loads(load_file(expected_file, 'output'))
 
@@ -126,4 +127,7 @@ def assert_same_content(content, expected_file):
     print(content)
     print('----')
     print(expected_content)
-    assert_that(content).is_equal_to(expected_content)
+    if include:
+        assert_that(content).is_equal_to(expected_content, include=include)
+    else:
+        assert_that(content).is_equal_to(expected_content)

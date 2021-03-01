@@ -129,7 +129,8 @@ function Scenario.saveScenarioTree(savefile)
         scenario.treasure = {}
         for _, treasure in ipairs(Game.Scenario[--[[---@not nil]] tonumber(id)]) do
             if TableUtil.contains(savefile.unlocked.treasures, treasure) then
-                scenario.treasure[tostring(treasure)] = { looted = "true" }
+                local treasureId = string.format("%02d", treasure)
+                scenario.treasure[treasureId] = { looted = "true" }
             end
         end
 

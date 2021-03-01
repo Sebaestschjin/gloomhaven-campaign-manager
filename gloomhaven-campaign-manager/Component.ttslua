@@ -171,11 +171,14 @@ end
 
 local MaxColumn = 40
 local positionCounter = 0
+
+---@overload fun(): tts__VectorShape
+---@param elevation nil | number
 ---@return tts__VectorShape
-function Component.safePosition()
+function Component.safePosition(elevation)
     positionCounter = positionCounter + 1
     local offsetZ = math.floor(positionCounter / MaxColumn)
-    return Vector(-23 + (positionCounter * 3), TableHigh, -85 - offsetZ)
+    return Vector(-23 + (positionCounter * 3), TableHigh + (elevation or 0), -85 - offsetZ)
 end
 
 ---@param player number
@@ -294,7 +297,7 @@ end
 function Component.placeSanctuarySticker()
     Component.map().call('unseal')
     Utils.waitForObject(Guid.SanctuarySticker, function()
-
+        EventManager.triggerEvent(EventType.Placed.SanctuarySticker)
     end)
 end
 

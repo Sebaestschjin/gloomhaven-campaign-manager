@@ -1,4 +1,7 @@
 {
+  "metadata": {
+    "version": "2.0"
+  },
   "enhancements": {
     "Brute": {
       "Eye for an Eye": {
@@ -72,9 +75,16 @@
     }
   },
   "party": {
+    "name": "Devil's advocates",
+    "location": "Gloomhaven",
+    "reputation": -10,
     "achievements": [
       "First Steps",
       "Jerkserah's Plans"
+    ],
+    "notes": [
+      "Some notes",
+      "More notes"
     ],
     "characters": [
       {
@@ -122,18 +132,9 @@
         ],
         "items": {
           "Unequipped": ["Minor Healing Potion"]
-        },
-        "notes": [],
-        "hiddenNotes": []
+        }
       }
-    ],
-    "location": "Gloomhaven",
-    "name": "Devil's advocates",
-    "notes": [
-      "Some notes",
-      "More notes"
-    ],
-    "reputation": -10
+    ]
   },
   "retired": [
     {

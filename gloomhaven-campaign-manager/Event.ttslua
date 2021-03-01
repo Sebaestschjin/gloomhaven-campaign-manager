@@ -101,7 +101,7 @@ function Event.dealEvents(deck, eventCards, info)
     for _, event in pairs(eventCards) do
         deck.takeObject({
             guid = event,
-            position = Component.safePosition(),
+            position = Component.safePosition(2),
             rotation = { 0, 180, 0 },
             smooth = false,
             callback_function = function(card) eventDeck.putObject(--[[---@type tts__Card]] card) end
