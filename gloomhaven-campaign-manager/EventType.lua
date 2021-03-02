@@ -22,6 +22,7 @@ local EventType = {
     Saved = {
         Achievements = "achievements_saved",
         Events = "events_saved",
+        Items = "items_saved",
     }
 }
 

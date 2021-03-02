@@ -58,7 +58,6 @@ local function setDefaultValues(content)
     setDefaultValue(content, {}, "unlocked", "items")
     setDefaultValue(content, {}, "unlocked", "specialConditions")
     setDefaultValue(content, {}, "unlocked", "treasures")
-    setDefaultValue(content, 0, "unlocked", "specialConditions", "donations")
     -- events?
     setDefaultValue(content, {}, "global", "achievements")
     setDefaultValue(content, {}, "global", "scenarios")
@@ -222,6 +221,10 @@ local function cleanup(content)
             if TableUtil.isEmpty(v) then
                 content[i] = nil
             end
+        elseif type(v) == "string" then
+            if not v or v == "" then
+                content[i] = nil
+            end
         end
     end
 end
@@ -259,16 +262,7 @@ function Savefile.create()
             classes = {},
             treasures = {},
             items = {},
-            specialConditions = {
-                ancientTechnology = false,
-                drakeAided = false,
-                lowReputation = false,
-                lowestReputation = false,
-                highReputation = false,
-                highestReputation = false,
-                retired = false,
-                donations = 0,
-            },
+            specialConditions = {},
         },
         metadata = {
             date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M"),

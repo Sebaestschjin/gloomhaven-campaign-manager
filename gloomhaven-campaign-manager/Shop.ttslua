@@ -28,19 +28,19 @@ function Shop.load()
     EventManager.triggerEvent(EventType.Loaded.Shop)
 end
 
----@param unlocked gh_Save_Unlocked
-function Shop.save(unlocked)
+---@param savefile gh_Savefile
+function Shop.save(savefile)
     local shopDeck = Component.shopDeck()
     if shopDeck.isEmpty() then
         Component.cityMat().call("layOut", 0)
-        Wait.time(function() Shop.doSave(unlocked) end, 1)
+        Wait.time(function() Shop.doSave(savefile) end, 1)
     else
-        Shop.doSave(unlocked)
+        Shop.doSave(savefile)
     end
 end
 
----@param unlocked gh_Save_Unlocked
-function Shop.doSave(unlocked)
+---@param savefile gh_Savefile
+function Shop.doSave(savefile)
     local shopDeck = Component.shopDeck()
     if shopDeck.isEmpty() then
         Logger.warn("Can't find shop deck, even after trying to recalling it."
@@ -48,13 +48,14 @@ function Shop.doSave(unlocked)
         return
     end
 
-    local items = unlocked.items
+    local items = savefile.unlocked.items
     Shop.saveFromObjects(shopDeck.getObjects(), items)
     for player = 1, Component.playerCount() do
         Shop.saveFromObjects(Component.playerObjects(player), items)
     end
 
     table.sort(items)
+    EventManager.triggerEvent(EventType.Saved.Items, savefile)
 end
 
 ---@param objects seb_Object_Array
@@ -63,6 +64,8 @@ function Shop.saveFromObjects(objects, items)
     for _, item in pairs(--[[---@type tts__Object[] ]] objects) do
         if Component.isRewardItemCard(item, Prosperity.getLevel()) then
             table.insert(items, Object.name(item))
+        elseif Object.isContainer(item) then
+            Shop.saveFromObjects(Object.objects(--[[---@type seb_Object_Container]] item), items)
         end
     end
 end

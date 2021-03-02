@@ -23,6 +23,7 @@ def main_menu():
     "all_perks_3",
     "all_perks_4",
     "all_perks_5",
+    "big",
     "complete",
     "forgotten_circles",
     "typos",
@@ -60,8 +61,7 @@ def test_load_and_save_custom_classes(class_name, main_menu):
 
 @pytest.mark.manually
 def test_load_manually():
-    test_name = "complete"
-    include = ["enhancements"]
+    test_name = "v1"
 
     saved = load_file("manually")
 
@@ -118,16 +118,15 @@ def save_savefile():
     return tts.get_notebook("new_savefile")
 
 
-def assert_same_content(content, expected_file, include=[]):
+def assert_same_content(content, expected_file):
     content = json.loads(content)
     expected_content = json.loads(load_file(expected_file, 'output'))
 
     del content['metadata']['date']
 
-    print(content)
-    print('----')
-    print(expected_content)
-    if include:
-        assert_that(content).is_equal_to(expected_content, include=include)
-    else:
-        assert_that(content).is_equal_to(expected_content)
+    if 'party' in content:
+        for character in content['party'].get('characters', []):
+            if 'hand' in character:
+                del character['hand']
+
+    assert_that(content).is_equal_to(expected_content)

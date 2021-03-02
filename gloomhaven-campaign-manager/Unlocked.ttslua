@@ -1,6 +1,7 @@
 local EventManager = require('ge_tts.EventManager')
 local Logger = require('sebaestschjin-tts.Logger')
 local Search = require("sebaestschjin-tts.Search")
+local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
@@ -20,6 +21,12 @@ function Unlocked.setup(savefile)
 
     EventManager.addHandler(EventType.Placed.OpeningConditions, function() Unlocked.loadOpeningConditions(savefile.unlocked.specialConditions) end)
     EventManager.addHandler(EventType.Placed.Treasure, function() Unlocked.loadTreasures(savefile.unlocked.treasures) end)
+
+    EventManager.addHandler(EventType.Loaded.Start, function()
+        if TableUtil.isNotEmpty(savefile.unlocked.specialConditions) then
+            Component.placeOpeningConditions()
+        end
+    end)
 
     EventManager.addHandler(EventType.Loaded.Shop, function()
         shopLoaded = true
@@ -109,7 +116,7 @@ function Unlocked.loadOpeningConditions(openingConditions)
 end
 
 ---@param sheet tts__Object
----@param done boolean
+---@param done nil | boolean
 ---@param conditionName string
 function Unlocked.setOpeningCondition(sheet, done, conditionName)
     if done then
@@ -143,7 +150,7 @@ function Unlocked.saveAll(savefile)
     savefile.unlocked.sanctuary = Sanctuary.save()
     Unlocked.saveOpeningConditions(savefile.unlocked.specialConditions)
     Unlocked.saveTreasures(savefile.unlocked.treasures)
-    Shop.save(savefile.unlocked)
+    Shop.save(savefile)
 end
 
 ---@param classes string[]

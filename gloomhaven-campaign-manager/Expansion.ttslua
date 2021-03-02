@@ -82,7 +82,7 @@ function Expansion.unpackEvents(chain, targetDeck, deckName)
     local newEvents = --[[---@not nil]] Search.inContainer(forgottenCirclesBox, { name = deckName })
 
     forgottenCirclesBox.takeObject({
-        guid = newEvents.guid,
+        index = newEvents.index,
         position = Component.safePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,

@@ -18,8 +18,8 @@ local StartingEvents = 30
 
 ---@param eventDecks gh_Save_EventDecks
 function Event.loadAll(eventDecks)
-    for deckType, eventDeck in pairs(eventDecks) do
-        Event.load(deckType, eventDeck)
+    for deckType, eventDeck in pairs(Component.EventDecks) do
+        Event.load(deckType, eventDecks[deckType])
     end
 end
 
@@ -46,13 +46,15 @@ end
 ---@return GUID[]
 function Event.findBottomDeck(events, deck)
     local eventsToAdd = {}
-    for _, event in TableUtil.pairs(events.bottomUp) do
-        local eventName = string.format("%02d", event)
-        local eventCard = --[[---@not nil]] Search.inContainedObjects(deck, { name = eventName })
-        if eventCard then
-            table.insert(eventsToAdd, Object.guid(eventCard))
-        else
-            Logger.warn("No event card %s found for deck %s", eventName, deck.getName())
+    if events then
+        for _, event in TableUtil.pairs(events.bottomUp) do
+            local eventName = string.format("%02d", event)
+            local eventCard = --[[---@not nil]] Search.inContainedObjects(deck, { name = eventName })
+            if eventCard then
+                table.insert(eventsToAdd, Object.guid(eventCard))
+            else
+                Logger.warn("No event card %s found for deck %s", eventName, deck.getName())
+            end
         end
     end
 
@@ -82,7 +84,7 @@ end
 ---@param eventNumber number
 ---@return boolean
 function Event.isRemoved(events, eventNumber)
-    return events.remove and TableUtil.contains(events.remove, eventNumber)
+    return events and events.remove and TableUtil.contains(events.remove, eventNumber)
 end
 
 ---@param events gh_Save_EventDeck
@@ -90,7 +92,7 @@ end
 ---@return boolean
 function Event.isAdded(events, eventNumber)
     return eventNumber <= 30
-            or (events.add and TableUtil.contains(events.add, eventNumber))
+            or (events and events.add and TableUtil.contains(events.add, eventNumber))
 end
 
 ---@param deck seb_WrappedDeck

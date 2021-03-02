@@ -26,12 +26,13 @@ local State = {
 function Scenario.loadAll(scenarios)
     local scenarioStickers = --[[---@type fantasySetup_Scenario_Stickers]] Component.map().getTable("tableML")
 
+    local randomScenarioDeck = Component.randomScenarioDeck()
     for number, state in pairs(scenarios) do
         local stickerGuid = Scenario.findStickerGuid(scenarioStickers, number)
         Scenario.placeSticker(stickerGuid, number, state)
 
         if Scenario.isRandomScenario(number) then
-            Scenario.removeRandomScenario(number)
+            Scenario.removeRandomScenario(randomScenarioDeck, number)
         end
     end
 end
@@ -72,22 +73,17 @@ function Scenario.isRandomScenario(number)
     return Game.RandomScenarios[--[[---@not nil]] tonumber(number)] ~= nil
 end
 
+---@param randomScenarioDeck seb_WrappedDeck
 ---@param number string
-function Scenario.removeRandomScenario(number)
-    local deck = Component.randomScenarioDeck()
-    if not deck then
-        Logger.error("Can't remove random scenarios. Nothing found at expected position.")
-        return
-    end
-
+function Scenario.removeRandomScenario(randomScenarioDeck, number)
     local cardId = Component.getScenarioCardId(Game.RandomScenarios[--[[---@not nil]] tonumber(number)])
-    local scenarioCard, index = Search.inContainedObjects(deck, { cardId = cardId })
+    local scenarioCard, index = Search.inContainedObjects(randomScenarioDeck, { cardId = cardId })
     if not scenarioCard then
-        Logger.error("Can't find the random scenario " .. number .. " in the deck. Can't remove the card.")
+        Logger.error("Can't find the random scenario %d in the deck. Can't remove the card. Expected cardId %s", number, cardId)
         return
     end
 
-    deck.takeObject({
+    randomScenarioDeck.takeObject({
         index = index,
         position = Component.safePosition(),
         callback_function = function(obj) obj.destruct() end,
@@ -123,28 +119,35 @@ function Scenario.saveScenarioTree(savefile)
         nodes = {}, version = "2",
     }
 
-    for id, state in pairs(savefile.global.scenarios) do
-        local scenario = --[[---@type gh_ScenarioTree_Node]]{}
-        scenario.id = id
-        scenario.treasure = {}
-        for _, treasure in ipairs(Game.Scenario[--[[---@not nil]] tonumber(id)]) do
-            if TableUtil.contains(savefile.unlocked.treasures, treasure) then
-                local treasureId = string.format("%02d", treasure)
-                scenario.treasure[treasureId] = { looted = "true" }
-            end
-        end
+    if savefile.global and savefile.global.scenarios then
+        for id, state in pairs(savefile.global.scenarios) do
+            local scenario = --[[---@type gh_ScenarioTree_Node]]{}
+            scenario.id = id
 
-        if state == State.Done then
-            scenario.status = "complete"
-        else
-            if TableUtil.isNotEmpty(scenario.treasure) then
-                scenario.status = "attempted"
+            local treasures = --[[---@type gh_ScenarioTree_Treasures]] {}
+            for _, treasure in ipairs(Game.Scenario[--[[---@not nil]] tonumber(id)]) do
+                if TableUtil.contains(savefile.unlocked.treasures, treasure) then
+                    local treasureId = string.format("%02d", treasure)
+                    treasures[treasureId] = { looted = "true" }
+                end
+            end
+
+            if TableUtil.isNotEmpty(treasures) then
+                scenario.treasure = treasures
+            end
+
+            if state == State.Done then
+                scenario.status = "complete"
             else
-                scenario.status = "incomplete"
+                if TableUtil.isNotEmpty(scenario.treasure) then
+                    scenario.status = "attempted"
+                else
+                    scenario.status = "incomplete"
+                end
             end
-        end
 
-        table.insert(scenarioTree.nodes, scenario)
+            table.insert(scenarioTree.nodes, scenario)
+        end
     end
 
     return scenarioTree

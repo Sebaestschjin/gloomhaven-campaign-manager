@@ -61,14 +61,14 @@
 ---@field specialConditions gh_Save_Unlocked_Conditions
 
 ---@shape gh_Save_Unlocked_Conditions
----@field ancientTechnology boolean
----@field drakeAided boolean
----@field lowReputation boolean
----@field lowestReputation boolean
----@field highReputation boolean
----@field highestReputation boolean
----@field retired boolean
----@field donations number
+---@field ancientTechnology nil | boolean
+---@field drakeAided nil | boolean
+---@field lowReputation nil | boolean
+---@field lowestReputation nil | boolean
+---@field highReputation nil | boolean
+---@field highestReputation nil | boolean
+---@field retired nil | boolean
+---@field donations nil | number
 
 ---@shape gh_Save_Retired
 ---@field player string

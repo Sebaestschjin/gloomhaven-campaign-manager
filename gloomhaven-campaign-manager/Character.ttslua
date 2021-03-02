@@ -477,6 +477,10 @@ function Character.saveItems(player)
     local zoneObjects = Component.playerObjects(player)
     Character.saveItemFromObjects(zoneObjects, playerMat, items)
 
+    for _, characterItems in pairs(items) do
+        table.sort(characterItems)
+    end
+
     return items
 end
 

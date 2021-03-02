@@ -16,7 +16,6 @@ function Preparation.start()
     Component.placeRuleBook()
     Component.placeTreasureDeck()
     Component.placeLockedCharacter()
-    Component.placeOpeningConditions()
 end
 
 

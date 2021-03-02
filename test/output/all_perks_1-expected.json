@@ -8,12 +8,23 @@
   "unlocked": {
     "classes": ["Sunkeeper", "Summoner", "Doomstalker", "Diviner"]
   },
+  "events": {
+    "city": {
+      "remove": [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+      ]
+    },
+    "road": {
+      "remove": [
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+      ]
+    }
+  },
   "party": {
     "reputation": 0,
     "characters": [
       {
         "class": "Sunkeeper",
-        "name": "",
         "abilities": [
           "Angelic Ascension", "Bright Aegis", "Burning Flash", "Cleansing Force", "Divine Intervention",
           "Engulfing Radiance", "Illuminate the Target", "Inspiring Sanctity", "Mobilizing Axiom", "Path of Glory",
@@ -27,7 +38,6 @@
       },
       {
         "class": "Doomstalker",
-        "name": "",
         "abilities": [
           "Camouflage", "Crashing Wave", "Darkened Skies", "Expose", "Feral Instincts", "Flight of Flame",
           "Impending End", "Inescapable Fate", "Lead to Slaughter", "Nature's Hunger", "Predator and Prey",
@@ -40,7 +50,6 @@
       },
       {
         "class": "Summoner",
-        "name": "",
         "abilities": [
           "Conjured Aid", "Divided Mind", "Earthen Steed", "Endless Spikers", "Grasping the Void", "Horned Majesty",
           "Inexorable Momentum", "Interplanar Mastery", "Intervening Apparitions", "Living Mountain", "Negative Energy",

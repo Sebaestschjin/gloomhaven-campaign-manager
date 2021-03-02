@@ -70,8 +70,6 @@ local Names = {
     PlayerMat = "Player Mat",
     CharacterSheet = "Character Sheet",
     AttachModifierCard = "Attack Modifier",
-    RoadEventsDeck = "Road Events",
-    CityEventsDeck = "City Events",
 }
 
 local TableHigh = 0.65
@@ -145,13 +143,13 @@ local PlayerColors = { "Red", "White", "Blue", "Green", }
 ---@type table<string, gh_EventDeckInfo>
 Component.EventDecks = {
     ["city"] = {
-        name = Names.CityEvents,
+        name = "City Events",
         initialDeckAt = DeckMatSnapPoints.CityEventsInitial,
         deckAt = DeckMatSnapPoints.CityEvents,
         atEventMat = 2,
     },
     ["road"] = {
-        name = Names.RoadEvents,
+        name = "Road Events",
         initialDeckAt = DeckMatSnapPoints.RoadEventsInitial,
         deckAt = DeckMatSnapPoints.RoadEvents,
         atEventMat = 1,

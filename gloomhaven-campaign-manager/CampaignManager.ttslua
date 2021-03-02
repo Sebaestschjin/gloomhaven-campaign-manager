@@ -1,4 +1,5 @@
 local EventManager = require('ge_tts.EventManager')
+local TableUtil = require('sebaestschjin-tts.TableUtil')
 
 local Savefile = require("gloomhaven-campaign-manager.Savefile")
 local Cleanup = require('gloomhaven-campaign-manager.Cleanup')
@@ -23,9 +24,9 @@ local CampaignManager = {}
 CampaignManager.VERSION = { 1, 3, 2 }
 
 function CampaignManager.loadAll()
-    local content = --[[---@not nil]] Savefile.load()
+    local content = Savefile.load()
     if content then
-        CampaignManager.setupEventHandlers(content)
+        CampaignManager.setupEventHandlers(--[[---@type gh_Savefile]] content)
         EventManager.triggerEvent(EventType.Loaded.Start)
     end
 end
@@ -48,14 +49,31 @@ function CampaignManager.setupEventHandlers(savefile)
     Unlocked.setup(savefile)
 end
 
+---@type string[]
+local requiredForSave = {}
+
 function CampaignManager.saveAll()
-    EventManager.addHandler(EventType.Saved.Achievements, function(savefile)
+    requiredForSave = { EventType.Saved.Achievements, EventType.Saved.Items }
+
+    for _, required in ipairs(requiredForSave) do
+        EventManager.addHandler(required, function(savefile)
+            CampaignManager.tryFinishSave(required, savefile)
+        end)
+    end
+
+    CampaignManager.createSaveFile()
+end
+
+---@param event string
+---@param savefile gh_Savefile
+function CampaignManager.tryFinishSave(event, savefile)
+    TableUtil.removeValue(requiredForSave, event)
+
+    if TableUtil.isEmpty(requiredForSave) then
         Savefile.save(savefile)
         local scenarioTree = Scenario.saveScenarioTree(savefile)
         Savefile.saveScenarioTree(scenarioTree)
-    end)
-
-    CampaignManager.createSaveFile()
+    end
 end
 
 function CampaignManager.createSaveFile()
