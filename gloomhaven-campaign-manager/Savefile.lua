@@ -1,5 +1,5 @@
 local Logger = require('sebaestschjin-tts.Logger')
-local Utils = require('sebaestschjin-tts.Utils')
+local Notebook = require('sebaestschjin-tts.Notebook')
 local StringUtil = require('sebaestschjin-tts.StringUtil')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
@@ -11,11 +11,11 @@ local Savefile = {}
 ---@type string
 local NotebookName = "Savefile"
 ---@type number[]
-local Version = { 2, 0 }
+local Version = { 2, 1 }
 
 ---@return nil | gh_Savefile_any
 local function readFromNotebook()
-    local savefile = Utils.readNotebook(NotebookName)
+    local savefile = Notebook.getContent(NotebookName)
     if not savefile or #savefile == 0 then
         Logger.error("No notebook found containing the save file!"
                 .. " Please add a notebook named %s.", NotebookName)
@@ -82,6 +82,8 @@ local function setDefaultValues(content)
     setDefaultValue(content, {}, "retired")
 
     setDefaultValue(content, {}, "events")
+
+    setDefaultValue(content, {}, "players")
 end
 
 ---@param savefile gh_Savefile_any
@@ -97,7 +99,7 @@ end
 
 ---@param content gh_Savefile_v1
 ---@return gh_Savefile
-local function upgradeTo2Dot0(content)
+local function upgradeToV2(content)
     local upgradedContent = --[[---@type gh_Savefile]] {}
 
     --- enhancements
@@ -192,7 +194,7 @@ local function upgradeTo2Dot0(content)
         date = content.metadata.date
     end
     upgradedContent.metadata = {
-        version = "2.0",
+        version = "2.1",
         date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M")
     }
 
@@ -206,7 +208,7 @@ local function upgrade(savefile)
 
     local major, _ = getVersion(savefile)
     if major == 1 then
-        savefile = upgradeTo2Dot0(--[[---@type gh_Savefile_v1]] savefile)
+        savefile = upgradeToV2(--[[---@type gh_Savefile_v1]] savefile)
     end
 
     return --[[---@type gh_Savefile]] savefile
@@ -264,6 +266,7 @@ function Savefile.create()
             items = {},
             specialConditions = {},
         },
+        players = {},
         metadata = {
             date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M"),
             version = table.concat(Version, "."),
@@ -277,7 +280,7 @@ function Savefile.save(savefile)
     cleanup(savefile)
     local jsonContent = JSON.encode_pretty(savefile)
     jsonContent = jsonContent .. "\n" -- to conform to POSIX :-)
-    Notes.addNotebookTab({ title = "New Savefile", body = jsonContent })
+    Notebook.setContent("New Savefile", jsonContent)
 
     printToAll("Savefile created!", "Green")
 end

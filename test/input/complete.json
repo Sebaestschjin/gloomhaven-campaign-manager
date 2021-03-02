@@ -153,5 +153,13 @@
       "perks": 1,
       "quest": "Seeker of Xorn"
     }
-  ]
+  ],
+  "players": {
+    "Blue": {
+      "notes": "Blue is fun"
+    },
+    "Red": {
+      "notes": "Red is a burden"
+    }
+  }
 }

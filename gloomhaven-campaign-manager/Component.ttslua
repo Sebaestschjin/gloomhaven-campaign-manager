@@ -130,7 +130,7 @@ local CityMatSnapPoints = {
 
 --- Player color associated with each player
 ---@type tts__PlayerColor[]
-local PlayerColors = { "Red", "White", "Blue", "Green", }
+Component.PlayerColors = { "Red", "White", "Blue", "Green", }
 
 --- Information about an event deck.
 ---@shape gh_EventDeckInfo
@@ -587,7 +587,7 @@ end
 ---@param player number
 ---@return tts__Object[]
 function Component.playerHand(player)
-    return Player[PlayerColors[player]].getHandObjects()
+    return Player[Component.PlayerColors[player]].getHandObjects()
 end
 
 ---@param player number
