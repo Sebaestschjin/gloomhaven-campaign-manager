@@ -7,6 +7,7 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Options = require("gloomhaven-campaign-manager.Options")
 
 local Scenario = {}
 
@@ -86,7 +87,9 @@ function Scenario.removeRandomScenario(randomScenarioDeck, number)
     randomScenarioDeck.takeObject({
         index = index,
         position = Component.safePosition(),
-        callback_function = function(obj) obj.destruct() end,
+        callback_function = function(obj)
+            Component.discardScenario(--[[---@type tts__Card]]obj, Options.keepDiscardedItems)
+        end,
     })
 end
 

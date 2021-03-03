@@ -18,7 +18,7 @@ local StartingEvents = 30
 
 ---@param eventDecks gh_Save_EventDecks
 function Event.loadAll(eventDecks)
-    for deckType, eventDeck in pairs(Component.EventDecks) do
+    for deckType, _ in pairs(Component.EventDecks) do
         Event.load(deckType, eventDecks[deckType])
     end
 end

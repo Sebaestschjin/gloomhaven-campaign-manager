@@ -6,6 +6,7 @@ local Character = require("gloomhaven-campaign-manager.Character")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Options = require("gloomhaven-campaign-manager.Options")
 local Quest = require("gloomhaven-campaign-manager.Quest")
 
 local Retirement = {}
@@ -42,7 +43,8 @@ function Retirement.startLoading(retired)
         retirementSheet.editInput({ index = offset + 4, value = retirement.perks })
 
         if retirement.quest then
-            Quest.take(retirement.quest, function(card) card.destruct() end)
+            Quest.take(retirement.quest, function(card)
+                Component.discardQuest(--[[---@type tts__Card]] card, Options.keepDiscardedItems) end)
         end
     end
 

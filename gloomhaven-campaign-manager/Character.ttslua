@@ -11,6 +11,7 @@ local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Options = require("gloomhaven-campaign-manager.Options")
 local Quest = require("gloomhaven-campaign-manager.Quest")
 local Shop = require("gloomhaven-campaign-manager.Shop")
 
@@ -268,7 +269,7 @@ function Character.loadPerks(player, character)
             end
             for _, card in TableUtil.ipairs(perkInfo[perk].remove) do
                 chain.add(function(c)
-                    Character.removeModifierCard(c, character, currentDeck, card)
+                    Character.removeModifierCard(c, player, character, currentDeck, card)
                 end)
             end
         else
@@ -313,11 +314,12 @@ function Character.addModifierCard(chain, character, additionalDeck, currentDeck
 end
 
 ---@param chain seb_Chain
+---@param player number
 ---@param character gh_Save_Character
 ---@param currentDeck tts__Deck
 ---@param card string
 ---@return boolean
-function Character.removeModifierCard(chain, character, currentDeck, card)
+function Character.removeModifierCard(chain, player, character, currentDeck, card)
     Logger.verbose("%s: Removing %s", character.class, card)
 
     local search = { name = Component.modifierNamePattern(card), isPattern = true }
@@ -332,7 +334,7 @@ function Character.removeModifierCard(chain, character, currentDeck, card)
         position = Component.safePosition(),
         smooth = false,
         callback_function = function(c)
-            c.destruct()
+            Component.discardAttackModifier(--[[---@type tts__Card]] c, player, Options.keepDiscardedItems)
             chain.proceed()
         end })
 
