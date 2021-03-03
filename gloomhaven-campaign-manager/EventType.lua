@@ -8,6 +8,7 @@ local EventType = {
     },
     Loaded = {
         Start = "start_loading",
+        Options = "options_loaded",
         Expansion = "expansion_loaded",
         Shop = "shop_loaded",
         Items = "items_loaded",

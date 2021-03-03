@@ -8,6 +8,7 @@
 ---@field events gh_Save_EventDecks
 ---@field metadata gh_Save_Metadata
 ---@field players gh_Save_Players
+---@field options gh_Save_Options
 
 ---@alias gh_Save_Enhancements table<string, gh_Save_EnhancedClass>
 
@@ -90,7 +91,12 @@
 ---@field version string
 ---@field date string
 
----@alias gh_Save_Players table<string | tts__PlayerColor, gh_Save_Player>
+---@alias gh_Save_Players table<tts__PlayerColor, gh_Save_Player>
 
 ---@shape gh_Save_Player
 ---@field notes string
+
+---@shape gh_Save_Options
+---@field fantasySetup nil | string @The settings stored in the notebook for the FantasySetup mod
+---@field keepDiscardedCards nil | boolean @Defaults to true
+---@field loadExtendedBattleGoals nil | boolean @Defaults to false

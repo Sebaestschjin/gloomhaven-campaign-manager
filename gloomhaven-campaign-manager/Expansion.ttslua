@@ -1,5 +1,6 @@
 local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
+local Object = require("sebaestschjin-tts.Object")
 
 local Chain = require("sebaestschjin-tts.Chain")
 local Search = require("sebaestschjin-tts.Search")
@@ -9,6 +10,7 @@ local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Options = require("gloomhaven-campaign-manager.Options")
 
 ---
 --- Handles everything about the Forgotten Circles expansion
@@ -17,6 +19,8 @@ local Expansion = {}
 
 function Expansion.setup()
     EventManager.addHandler(EventType.Placed.LockedCharacters, function() Expansion.unpack() end)
+
+    EventManager.addHandler(EventType.Loaded.Options, function() Expansion.mayLoadBattleGoals() end)
 end
 
 local StartEvent = 82
@@ -103,7 +107,7 @@ end
 
 ---@param chain seb_Chain
 ---@param expansionDeck seb_WrappedDeck @The event deck to unpack
----@param targetDeck tts__Deck @The event deck where the new events will be placed
+---@param targetDeck seb_WrappedDeck @The event deck where the new events will be placed
 ---@param index number
 function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index)
     expansionDeck.takeObject({
@@ -112,7 +116,7 @@ function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index
         smooth = false,
         callback_function = function(card)
             card.setName(tostring((index - 1) + StartEvent))
-            targetDeck.putObject(card)
+            targetDeck.putObject(--[[---@type tts__Card]] card)
             Wait.frames(chain.proceed, 1)
         end
     })
@@ -137,6 +141,25 @@ function Expansion.unpackItems(chain)
     })
 
     return false
+end
+
+function Expansion.mayLoadBattleGoals()
+    if Options.loadExtendedBattleGoals then
+        spawnObject({
+            type = Object.Name.DeckCustom,
+            callback_function = function(obj)
+                obj.setCustomObject({
+                    face = "http://cloud-3.steamusercontent.com/ugc/958613321553657772/8B55AD5F5A77B18577507903A07C5A6563969802/",
+                    back = "http://cloud-3.steamusercontent.com/ugc/83721958666016106/12EAB751A1FEE2AA1CDB21424883752EB181C174/",
+                    width = 10,
+                    height = 6,
+                    number = 54,
+                    back_is_hidden = true,
+                })
+                Component.battleGoalsDeck().putObject(--[[---@type tts__Deck]] obj)
+            end,
+        })
+    end
 end
 
 return Expansion

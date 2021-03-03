@@ -34,56 +34,60 @@ local function readFromNotebook()
     return content
 end
 
-local function setDefaultValue(content, default, ...)
+---@param name string
+local function setDefaultValue(content, name, default)
     local toCheck = content
-    local args = table.pack(...)
-    for i = 1, args.n - 1 do
-        local name = args[i]
-        if not toCheck[name] then
-            toCheck[name] = {}
+    local args = StringUtil.split(name, ".")
+    local total = TableUtil.length(args)
+    for i = 1, total - 1 do
+        local n = args[i]
+        if not toCheck[n] then
+            toCheck[n] = {}
         end
-        toCheck = toCheck[name]
+        toCheck = toCheck[n]
     end
 
-    if toCheck[args[args.n]] == nil then
-        toCheck[args[args.n]] = default
+    if toCheck[args[total]] == nil then
+        toCheck[args[total]] = default
     end
 end
 
 ---@param content gh_Savefile_any
 local function setDefaultValues(content)
-    setDefaultValue(content, {}, "enhancements")
+    setDefaultValue(content, "enhancements", {})
 
-    setDefaultValue(content, {}, "unlocked", "classes")
-    setDefaultValue(content, {}, "unlocked", "items")
-    setDefaultValue(content, {}, "unlocked", "specialConditions")
-    setDefaultValue(content, {}, "unlocked", "treasures")
+    setDefaultValue(content, "unlocked.classes", {})
+    setDefaultValue(content, "unlocked.items", {})
+    setDefaultValue(content, "unlocked.specialConditions", {})
+    setDefaultValue(content, "unlocked.treasures", {})
     -- events?
-    setDefaultValue(content, {}, "global", "achievements")
-    setDefaultValue(content, {}, "global", "scenarios")
-    setDefaultValue(content, 0, "global", "prosperity")
+    setDefaultValue(content, "global.achievements", {})
+    setDefaultValue(content, "global.scenarios", {})
+    setDefaultValue(content, "global.prosperity", 0)
 
-    setDefaultValue(content, "", "party", "name")
-    setDefaultValue(content, "", "party", "location")
-    setDefaultValue(content, {}, "party", "notes")
-    setDefaultValue(content, {}, "party", "achievements")
-    setDefaultValue(content, 0, "party", "reputation")
-    setDefaultValue(content, {}, "party", "characters")
+    setDefaultValue(content, "party.name", "")
+    setDefaultValue(content, "party.location", "")
+    setDefaultValue(content, "party.notes", {})
+    setDefaultValue(content, "party.achievements", {})
+    setDefaultValue(content, "party.reputation", 0)
+    setDefaultValue(content, "party.characters", {})
 
     for _, character in ipairs(--[[---@type gh_Save_Character_any[] ]] content.party.characters) do
-        setDefaultValue(character, {}, "abilities")
-        setDefaultValue(character, {}, "hand")
-        setDefaultValue(character, {}, "items")
-        setDefaultValue(character, {}, "perks")
-        setDefaultValue(character, {}, "notes")
-        setDefaultValue(character, {}, "hiddenNotes")
+        setDefaultValue(character, "abilities", {})
+        setDefaultValue(character, "hand", {})
+        setDefaultValue(character, "items", {})
+        setDefaultValue(character, "perks", {})
+        setDefaultValue(character, "notes", {})
+        setDefaultValue(character, "hiddenNotes", {})
     end
 
-    setDefaultValue(content, {}, "retired")
+    setDefaultValue(content, "retired", {})
 
-    setDefaultValue(content, {}, "events")
+    setDefaultValue(content, "events", {})
 
-    setDefaultValue(content, {}, "players")
+    setDefaultValue(content, "players", {})
+
+    setDefaultValue(content, "options", {})
 end
 
 ---@param savefile gh_Savefile_any
@@ -267,6 +271,7 @@ function Savefile.create()
             specialConditions = {},
         },
         players = {},
+        options = {},
         metadata = {
             date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M"),
             version = table.concat(Version, "."),

@@ -120,6 +120,7 @@ local DeckMatSnapPoints = {
     CityEvents = 7,
     RandomScenarios = 8,
     Quests = 11,
+    BattleGoals = 12,
 }
 
 --- A list of snap points on the city deck mat containing different decks.
@@ -420,6 +421,11 @@ end
 ---@return seb_WrappedDeck
 function Component.minusOneDeck()
     return fromDeckMat(DeckMatSnapPoints.MinusOneDeck)
+end
+
+---@return seb_WrappedDeck
+function Component.battleGoalsDeck()
+    return fromDeckMat(DeckMatSnapPoints.BattleGoals)
 end
 
 --------------------------------------------------------------------------------
