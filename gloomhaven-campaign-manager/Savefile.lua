@@ -1,5 +1,8 @@
+local SaveManager = require('ge_tts.SaveManager')
+
 local Logger = require('sebaestschjin-tts.Logger')
 local Notebook = require('sebaestschjin-tts.Notebook')
+local ObjectState = require('sebaestschjin-tts.ObjectState')
 local StringUtil = require('sebaestschjin-tts.StringUtil')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
@@ -10,19 +13,16 @@ local Savefile = {}
 
 ---@type string
 local NotebookName = "Savefile"
+---@type string
+local TagName = "Gloomhaven Campaign"
+local IconLocation = "https://github.com/Sebaestschjin/gloomhaven-campaign-manager/raw/master/docs/save-icon.png"
 ---@type number[]
 local Version = { 2, 1 }
 
+---@param savefile string
 ---@return nil | gh_Savefile_any
-local function readFromNotebook()
-    local savefile = Notebook.getContent(NotebookName)
-    if not savefile or #savefile == 0 then
-        Logger.error("No notebook found containing the save file!"
-                .. " Please add a notebook named %s.", NotebookName)
-        return nil
-    end
-
-    local status, content = pcall(function() return JSON.decode(--[[---@not nil]] savefile) end)
+local function parseJson(savefile)
+    local status, content = pcall(function() return JSON.decode(savefile) end)
     if not status then
         Logger.error("The provided save file contains errors."
                 .. " The error message from Lua is also very cryptic and doesn't really help. :-("
@@ -32,6 +32,31 @@ local function readFromNotebook()
     end
 
     return content
+end
+
+---@return nil | gh_Savefile_any
+local function readFromToken()
+    local tokens = getObjectsWithTag(TagName)
+    if TableUtil.isEmpty(tokens) then
+        return nil
+    end
+
+    if TableUtil.length(tokens) > 1 then
+        Logger.warn("Found more than 1 save file token! Don't know which one to use. Remove one of them and try again")
+        return nil
+    end
+
+    return parseJson(tokens[1].script_state)
+end
+
+---@return nil | gh_Savefile_any
+local function readFromNotebook()
+    local savefile = Notebook.getContent(NotebookName)
+    if not savefile or #savefile == 0 then
+        return nil
+    end
+
+    return parseJson(--[[---@not nil]] savefile)
 end
 
 ---@param name string
@@ -237,14 +262,23 @@ end
 
 ---@return nil | gh_Savefile_any
 function Savefile.load()
-    local savefile = readFromNotebook()
+    local savefile = readFromToken()
+    if not savefile then
+        savefile = readFromNotebook()
+    end
+    if not savefile then
+        Logger.error("Can not find a save file to load. Either add a notebook named %s containing the save file or " ..
+                "import a token containing you save file.", NotebookName)
+        return nil
+    end
+
     if savefile then
         return upgrade(--[[---@not nil]] savefile)
     end
     return savefile
 end
 
---- Creates an empty save file with tables already exisiting.
+--- Creates an empty save file with tables already existing.
 ---@return gh_Savefile
 function Savefile.create()
     return {
@@ -280,12 +314,56 @@ function Savefile.create()
 
 end
 
+---@param obj tts__Object
+function showSaveContent(obj)
+    Notebook.setContent("Savefile - " .. obj.getName(), obj.script_state)
+end
+
+---@param obj tts__Object
+local function addButton(obj)
+    obj.createButton({
+        click_function = "showSaveContent",
+        function_owner = self,
+        label = "Show",
+        tooltip = "Show the content of the save file by creating a notebook entry.",
+        position = { 0, 0.15, 0.65 },
+        scale = { 1, 1, 1 },
+        width = 1200,
+        height = 500,
+        font_size = 300,
+        color = { 0.753, 0.671, 0.565, 1 },
+        font_color = { 0.18, 0.047, 0.047, 1 },
+    })
+end
+
+local function addButtons()
+    for _, obj in ipairs(getObjectsWithTag(TagName)) do
+        addButton(obj)
+    end
+end
+
 ---@param savefile gh_Savefile
 function Savefile.save(savefile)
     cleanup(savefile)
     local jsonContent = JSON.encode_pretty(savefile)
     jsonContent = jsonContent .. "\n" -- to conform to POSIX :-)
     Notebook.setContent("New Savefile", jsonContent)
+
+    local disc = ObjectState.token({
+        image = IconLocation,
+    })
+
+    spawnObjectData({
+        data = disc,
+        position = { 0, 2, 0 },
+        callback_function = function(obj)
+            obj.script_state = jsonContent
+            obj.addTag(TagName)
+            obj.setName(savefile.party.name)
+            obj.setDescription(savefile.metadata.date)
+            addButton(obj)
+        end
+    })
 
     printToAll("Savefile created!", "Green")
 end
@@ -295,5 +373,7 @@ function Savefile.saveScenarioTree(scenarioTree)
     local jsonContent = JSON.encode_pretty(scenarioTree)
     Notes.addNotebookTab({ title = "Scenario Tree", body = jsonContent })
 end
+
+SaveManager.registerOnLoad(addButtons)
 
 return Savefile
