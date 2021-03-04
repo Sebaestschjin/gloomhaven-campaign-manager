@@ -260,7 +260,7 @@ local function cleanup(content)
     end
 end
 
----@return nil | gh_Savefile_any
+---@return nil | gh_Savefile
 function Savefile.load()
     local savefile = readFromToken()
     if not savefile then
@@ -272,10 +272,7 @@ function Savefile.load()
         return nil
     end
 
-    if savefile then
-        return upgrade(--[[---@not nil]] savefile)
-    end
-    return savefile
+    return upgrade(--[[---@not nil]] savefile)
 end
 
 --- Creates an empty save file with tables already existing.

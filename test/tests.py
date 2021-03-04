@@ -8,6 +8,7 @@ import pytest
 
 LOAD_TIME = 30  # time to wait for loading to finish
 SAVE_TIME = 30  # time to wait for saving to finish
+UPGRADE_TIME = 1  # time to wait for upgrading to finish
 
 
 @pytest.fixture()
@@ -59,6 +60,20 @@ def test_load_and_save_custom_classes(class_name, main_menu):
     assert_same_content(saved, f"{savefile}-expected")
 
 
+@pytest.mark.parametrize("savefile", [
+    "all_of_it",
+    "big",
+    "complete",
+    "forgotten_circles",
+    "typos",
+])
+def test_upgrade_save(savefile, main_menu):
+    load_latest_mod()
+    saved = load_and_upgrade(f"v1/{savefile}")
+
+    assert_same_content(saved, f"{savefile}-expected")
+
+
 @pytest.mark.manually
 def test_load_manually():
     test_name = "v1"
@@ -106,6 +121,11 @@ def load_and_save(savefile):
     return save_savefile()
 
 
+def load_and_upgrade(savefile):
+    savefile_content = load_file(savefile)
+    return upgrade_savefile(savefile_content)
+
+
 def load_savefile(savefile_content):
     tts.create_notebook("Savefile", savefile_content)
     tts.enter_chat("~load~")
@@ -114,7 +134,14 @@ def load_savefile(savefile_content):
 
 def save_savefile():
     tts.enter_chat("~save~")
-    time.sleep(SAVE_TIME)
+    tts.wait_for_image("res/chat/saving_complete.png", 300)
+    return tts.get_notebook("new_savefile")
+
+
+def upgrade_savefile(savefile_content):
+    tts.create_notebook("Savefile", savefile_content)
+    tts.enter_chat("~upgrade~")
+    time.sleep(UPGRADE_TIME)
     return tts.get_notebook("new_savefile")
 
 

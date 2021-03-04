@@ -23,7 +23,7 @@ local Unlocked = require('gloomhaven-campaign-manager.Unlocked')
 local CampaignManager = {}
 
 ---@type number[]
-CampaignManager.VERSION = { 1, 3, 2 }
+CampaignManager.VERSION = { 2, 0, 0 }
 
 function CampaignManager.loadAll()
     local content = Savefile.load()
@@ -101,6 +101,13 @@ function CampaignManager.doCreateSaveFile(savefile)
     Retirement.saveAll(savefile)
     Scenario.saveAll(savefile)
     Unlocked.saveAll(savefile)
+end
+
+function CampaignManager.upgradeSavefile()
+    local savefile = Savefile.load()
+    if savefile then
+        Savefile.save(--[[---@not nil]] savefile)
+    end
 end
 
 return CampaignManager

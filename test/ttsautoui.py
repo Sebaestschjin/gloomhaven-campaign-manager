@@ -62,7 +62,7 @@ def goto_main_menu():
     click_image("res/menu/menu.png")
     click_image("res/menu/main_menu.png")
     click_image("res/button/yes.png")
-    time.sleep(5)
+    time.sleep(10)
 
 
 def enter_chat(text):
