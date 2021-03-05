@@ -368,7 +368,7 @@ end
 ---@param scenarioTree gh_ScenarioTree
 function Savefile.saveScenarioTree(scenarioTree)
     local jsonContent = JSON.encode_pretty(scenarioTree)
-    Notes.addNotebookTab({ title = "Scenario Tree", body = jsonContent })
+    Notebook.setContent("Scenario Tree", jsonContent)
 end
 
 SaveManager.registerOnLoad(addButtons)

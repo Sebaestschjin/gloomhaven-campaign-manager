@@ -130,13 +130,15 @@
   ],
   "players": {
     "Blue": {
-      "notes": "Blue is fun"
+      "notes": "Qmx1ZSBpcyBmdW4="
     },
     "Red": {
-      "notes": "Red is a burden"
-    },
-    "Global": {
-      "notes": "Round Tracker:\ncount:down                          (up/down)\nmove:no                               (yes/no)\n\nStart Round Options:\nflip revealed:yes                   (yes/no)\n\nAuto Setup:\nsetup tool:new                      (old/new)\ndeal battle goals:yes            (yes/no)\nscenario page:change           (spawn/change/none)\n3D model:no                         (no/exchange/add) \n\nBroadcast Options:\nbroadcast hp changes:all     (all/chars/monster/none)     \n\nWin/Lose Options:\nsolo/open information:no   (yes/no)\n\n\n{\nExplanations\n    scenario page: \n        change: means if you have the pdf on the table, it will change the site to the current scenario\n        spawn: it creates a obj with the side of the scenario page, that can be deleted after the scenario is finished\n        none: no scenario page at all\n   solo/open information:\n        if you play solo or with open information you should increase the scenario level by one for traps and monster but not for gold and xp. Here you can do that with increasing the difficulty on the party sheet and the gold and xp will be reduced when using the win/lose button \n}\n"
+      "notes": "UmVkIGlzIGEgYnVyZGVu"
     }
+  },
+  "options": {
+    "fantasySetup": "Round Tracker:\ncount:down                          (up/down)\nmove:no                               (yes/no)\n\nStart Round Options:\nflip revealed:yes                   (yes/no)\n\nAuto Setup:\nsetup tool:new                      (old/new)\ndeal battle goals:yes            (yes/no)\nscenario page:change           (spawn/change/none)\n3D model:no                         (no/exchange/add) \n\nBroadcast Options:\nbroadcast hp changes:all     (all/chars/monster/none)     \n\nWin/Lose Options:\nsolo/open information:no   (yes/no)\n\n\n{\nExplanations\n    scenario page: \n        change: means if you have the pdf on the table, it will change the site to the current scenario\n        spawn: it creates a obj with the side of the scenario page, that can be deleted after the scenario is finished\n        none: no scenario page at all\n   solo/open information:\n        if you play solo or with open information you should increase the scenario level by one for traps and monster but not for gold and xp. Here you can do that with increasing the difficulty on the party sheet and the gold and xp will be reduced when using the win/lose button \n}\n",
+    "keepDiscardedCards": false,
+    "loadExtendedBattleGoals": true
   }
 }

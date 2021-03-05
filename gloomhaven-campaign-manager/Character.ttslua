@@ -1,5 +1,3 @@
-local Base64 = require("ge_tts.Base64")
-
 local Chain = require("sebaestschjin-tts.Chain")
 local Constant = require("sebaestschjin-tts.Constant")
 local Logger = require("sebaestschjin-tts.Logger")
@@ -148,7 +146,7 @@ function Character.loadHiddenNotes(characterSheet, hiddenNotes)
     local decodedNotes = --[[---@type string[] ]]{}
     for i, note in ipairs(hiddenNotes) do
         if StringUtil.isBase64(note) then
-            decodedNotes[i] = StringUtil.chars(Base64.decode(note))
+            decodedNotes[i] = StringUtil.decodeBase64(note)
         else
             decodedNotes[i] = note
         end
@@ -465,7 +463,7 @@ end
 function Character.saveHiddenNotes(characterSheet)
     local notes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), { "\n" })
     for i, note in ipairs(notes) do
-        notes[i] = Base64.encode(StringUtil.bytes(note))
+        notes[i] = StringUtil.encodeBase64(note)
     end
 
     return notes

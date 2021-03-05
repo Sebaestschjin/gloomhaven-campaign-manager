@@ -1,5 +1,6 @@
 local EventManager = require('ge_tts.EventManager')
 local Notebook = require("sebaestschjin-tts.Notebook")
+local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
@@ -10,7 +11,7 @@ local Options = {}
 local OptionsNotebook = "Options"
 
 ---@type boolean
-Options.keepDiscardedItems = true
+Options.keepDiscardedItems = nil
 ---@type boolean
 Options.loadExtendedBattleGoals = false
 
@@ -21,12 +22,20 @@ end
 
 ---@param savefile gh_Savefile
 function Options.loadAll(savefile)
-    if savefile.options.fantasySetup ~= "" then
+    if StringUtil.isNotEmpty(savefile.options.fantasySetup) then
         Notebook.setContent("Previous " .. OptionsNotebook, --[[---@not nil]] savefile.options.fantasySetup)
     end
 
-    Options.keepDiscardedItems = savefile.options.keepDiscardedCards or true
-    Options.loadExtendedBattleGoals = savefile.options.loadExtendedBattleGoals or false
+    if savefile.options.keepDiscardedCards ~= nil then
+        Options.keepDiscardedItems = --[[---@not nil]] savefile.options.keepDiscardedCards
+    else
+        Options.keepDiscardedItems = true
+    end
+    if savefile.options.loadExtendedBattleGoals ~= nil then
+        Options.loadExtendedBattleGoals = --[[---@not nil]] savefile.options.loadExtendedBattleGoals
+    else
+        Options.loadExtendedBattleGoals = false
+    end
 
     EventManager.triggerEvent(EventType.Loaded.Options)
 end

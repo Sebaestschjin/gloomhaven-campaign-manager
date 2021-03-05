@@ -1,5 +1,6 @@
 local EventManager = require('ge_tts.EventManager')
 local Notebook = require("sebaestschjin-tts.Notebook")
+local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
@@ -15,15 +16,17 @@ end
 ---@param savefile gh_Savefile
 function Player.loadAll(savefile)
     for player, content in pairs(savefile.players) do
-        Notebook.setContent(player, content.notes, --[[---@type tts__PlayerColor]] player)
+        local playerNotes = StringUtil.decodeBase64(content.notes)
+        Notebook.setContent(player, playerNotes, --[[---@type tts__PlayerColor]] player)
     end
 end
 
 ---@param savefile gh_Savefile
 function Player.saveAll(savefile)
     for _, notes in ipairs(Notes.getNotebookTabs()) do
-        if notes.body ~= "" and TableUtil.contains(Component.PlayergColors, notes.title) then
-            savefile.players[--[[---@type tts__PlayerColor]] notes.title] = { notes = notes.body }
+        if notes.body ~= "" and TableUtil.contains(Component.PlayerColors, notes.title) then
+            local playerNotes = StringUtil.encodeBase64(notes.body)
+            savefile.players[--[[---@type tts__PlayerColor]] notes.title] = { notes = playerNotes }
         end
     end
 end

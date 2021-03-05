@@ -5,10 +5,13 @@ import shutil
 import ttsautoui as tts
 import time
 import pytest
+import pprint
 
 LOAD_TIME = 30  # time to wait for loading to finish
-SAVE_TIME = 30  # time to wait for saving to finish
 UPGRADE_TIME = 1  # time to wait for upgrading to finish
+IGNORE_ALWAYS = ["metadata.date"]
+OPTIONS = "options"
+HAND = "party.characters.hand"
 
 
 @pytest.fixture()
@@ -17,70 +20,72 @@ def main_menu():
     tts.goto_main_menu()
 
 
-@pytest.mark.parametrize("savefile", [
-    "all_of_it",
-    "all_perks_1",
-    "all_perks_2",
-    "all_perks_3",
-    "all_perks_4",
-    "all_perks_5",
-    "big",
-    "complete",
-    "forgotten_circles",
-    "typos",
+@pytest.mark.parametrize("savefile,ignored", [
+    ("all_of_it", [OPTIONS, HAND]),
+    ("all_perks_1", [OPTIONS, HAND]),
+    ("all_perks_2", [OPTIONS, HAND]),
+    ("all_perks_3", [OPTIONS, HAND]),
+    ("all_perks_4", [OPTIONS, HAND]),
+    ("all_perks_5", [OPTIONS, HAND]),
+    ("big", [OPTIONS, HAND]),
+    ("complete", []),
+    ("forgotten_circles", [OPTIONS, HAND]),
+    ("typos", [OPTIONS, HAND]),
 ])
-def test_load_and_save(savefile, main_menu):
+def test_load_and_save(savefile, ignored, main_menu):
     load_latest_mod()
     saved = load_and_save(savefile)
 
-    assert_same_content(saved, f"{savefile}-expected")
+    assert_same_content(saved, f"{savefile}-expected", ignored)
 
 
-@pytest.mark.parametrize("savefile", [
-    "edge_cases",
-    "v1"
+@pytest.mark.parametrize("savefile,ignored", [
+    ("edge_cases", [OPTIONS, HAND]),
+    ("v1", [OPTIONS, HAND]),
 ])
-def test_save_from_existing_saves(savefile, main_menu):
+def test_save_from_existing_saves(savefile, ignored, main_menu):
     load_from_savegame(savefile)
     saved = save_savefile()
 
-    assert_same_content(saved, f"{savefile}-expected")
+    assert_same_content(saved, f"{savefile}-expected", ignored)
 
 
-@pytest.mark.parametrize("class_name", [
-    "witcher"
+@pytest.mark.parametrize("class_name,ignored", [
+    ("witcher", [OPTIONS, HAND]),
 ])
-def test_load_and_save_custom_classes(class_name, main_menu):
+def test_load_and_save_custom_classes(class_name, ignored, main_menu):
     savefile = f"custom_class_{class_name}"
 
     load_latest_mod()
     load_custom_class(class_name)
     saved = load_and_save(savefile)
 
-    assert_same_content(saved, f"{savefile}-expected")
+    assert_same_content(saved, f"{savefile}-expected", ignored)
 
 
-@pytest.mark.parametrize("savefile", [
-    "all_of_it",
-    "big",
-    "complete",
-    "forgotten_circles",
-    "typos",
+@pytest.mark.parametrize("savefile,ignored", [
+    ("all_of_it", [OPTIONS, HAND]),
+    ("big", [OPTIONS, HAND]),
+    ("complete", []),
+    ("forgotten_circles", [OPTIONS, HAND]),
+    ("typos", [OPTIONS, HAND]),
 ])
-def test_upgrade_save(savefile, main_menu):
+def test_upgrade_save(savefile, ignored, main_menu):
     load_latest_mod()
     saved = load_and_upgrade(f"v1/{savefile}")
 
-    assert_same_content(saved, f"{savefile}-expected")
+    assert_same_content(saved, f"{savefile}-expected", ignored)
 
 
 @pytest.mark.manually
 def test_load_manually():
-    test_name = "v1"
+    test_name = "big"
+    ignored = [HAND, OPTIONS, "players"]
+    # ignored = []
 
     saved = load_file("manually")
 
-    assert_same_content(saved, f"{test_name}-expected")
+    assert_same_content(saved, f"{test_name}-expected", ignored)
 
 
 def load_file(filename, parent='input'):
@@ -145,15 +150,26 @@ def upgrade_savefile(savefile_content):
     return tts.get_notebook("new_savefile")
 
 
-def assert_same_content(content, expected_file):
+def delete_part(element, parts):
+    if len(parts) == 1 and parts[0] in element:
+        del element[parts[0]]
+    else:
+        next_part = parts.pop(0)
+        if next_part in element:
+            next_element = element[next_part]
+            if type(next_element) == list:
+                for ele in next_element:
+                    delete_part(ele, [p for p in parts])
+            else:
+                delete_part(next_element, parts)
+
+
+def assert_same_content(content, expected_file, ignored):
     content = json.loads(content)
     expected_content = json.loads(load_file(expected_file, 'output'))
 
-    del content['metadata']['date']
-
-    if 'party' in content:
-        for character in content['party'].get('characters', []):
-            if 'hand' in character:
-                del character['hand']
+    for ign in ignored + IGNORE_ALWAYS:
+        parts = ign.split(".")
+        delete_part(content, parts)
 
     assert_that(content).is_equal_to(expected_content)

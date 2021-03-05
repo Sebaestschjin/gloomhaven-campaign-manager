@@ -156,10 +156,14 @@
   ],
   "players": {
     "Blue": {
-      "notes": "Blue is fun"
+      "notes": "Qmx1ZSBpcyBmdW4="
     },
     "Red": {
-      "notes": "Red is a burden"
+      "notes": "UmVkIGlzIGEgYnVyZGVu"
     }
+  },
+  "options": {
+    "keepDiscardedCards": false,
+    "loadExtendedBattleGoals": true
   }
 }
