@@ -122,7 +122,7 @@ local function getVersion(savefile)
     if not metadata or not metadata.version then
         return 1, 0
     end
-    local version = StringUtil.split(metadata.version, { "." })
+    local version = StringUtil.split(metadata.version, ".")
     return --[[---@not nil]] tonumber(version[1]), --[[---@not nil]] tonumber(version[2])
 end
 

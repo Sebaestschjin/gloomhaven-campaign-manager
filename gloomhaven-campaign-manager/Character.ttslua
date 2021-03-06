@@ -430,7 +430,7 @@ function Character.save(player, characters)
             character.name = characterSheet.UI.getAttribute("Name", "text")
             character.xp = --[[---@not nil]] tonumber(characterSheet.UI.getAttribute("xp", "text"))
             character.gold = --[[---@not nil]] tonumber(characterSheet.UI.getAttribute("gold", "text"))
-            character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), { "\n" })
+            character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), "\n")
             character.hiddenNotes = Character.saveHiddenNotes(characterSheet)
         end
 
@@ -461,7 +461,7 @@ end
 ---@param characterSheet tts__Object
 ---@return string[]
 function Character.saveHiddenNotes(characterSheet)
-    local notes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), { "\n" })
+    local notes = StringUtil.split(characterSheet.UI.getAttribute("Notes", "text"), "\n")
     for i, note in ipairs(notes) do
         notes[i] = StringUtil.encodeBase64(note)
     end

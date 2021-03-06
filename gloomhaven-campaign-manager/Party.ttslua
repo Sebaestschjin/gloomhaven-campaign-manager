@@ -88,7 +88,7 @@ function Party.saveAll(savefile)
     local partySheet = Component.partySheet()
     party.name = partySheet.UI.getAttribute("partyName", "text")
     party.location = partySheet.UI.getAttribute("location", "text")
-    party.notes = StringUtil.split(partySheet.UI.getAttribute("notes", "text"), { "\n" })
+    party.notes = StringUtil.split(partySheet.UI.getAttribute("notes", "text"), "\n")
     party.achievements = StringUtil.split(partySheet.UI.getAttribute("partyAchiev", "text"), { ",", "\n" })
     party.reputation = --[[---@not nil]] tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
 

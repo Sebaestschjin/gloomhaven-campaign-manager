@@ -1,4 +1,5 @@
 local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local Search = require("sebaestschjin-tts.Search")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
@@ -162,6 +163,26 @@ Component.EventDecks = {
     },
 }
 
+---@param guidName string
+---@param search seb_Search_Full
+---@return tts__Object
+local function findComponent(guidName, search)
+    local guid = Guid[guidName]
+
+    local byId = getObjectFromGUID(guid)
+    if byId ~= nil then
+        return --[[---@not nil]] byId
+    end
+
+    local bySearch = Search.inAllObjects(search)
+    if bySearch ~= nil then
+        Guid[guidName] = (--[[---@not nil]] bySearch).getGUID()
+        return --[[---@not nil]] bySearch
+    else
+        Logger.error("Fatal error! Can not find component %s", guidName)
+    end
+end
+
 --------------------------------------------------------------------------------
 --- Positioning ----------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -232,12 +253,14 @@ end
 
 ---@return tts__Bag
 function Component.gamebox()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.Gamebox)
+    return --[[---@type tts__Bag]] findComponent("Gamebox",
+            { type = Object.Type.Bag, name = "Unlockable Content" })
 end
 
 ---@return tts__Bag
 function Component.forgottenCirclesBox()
-    return --[[---@type tts__Bag]] getObjectFromGUID(Guid.ForgottenCirclesBox)
+    return --[[---@type tts__Bag]] findComponent("ForgottenCirclesBox",
+            { type = Object.Type.Bag, name = "Gloomhaven: Forgotten Circles" })
 end
 
 ---@return tts__Bag
@@ -262,7 +285,7 @@ end
 
 ---@return nil | tts__Object
 function Component.openingConditions()
-    return getObjectFromGUID(Guid.OpeningConditions)
+    return findComponent("OpeningConditions", { name = "Opening Conditions" })
 end
 
 function Component.placeScenarioBook()
@@ -350,7 +373,7 @@ end
 
 ---@return tts__Object
 function Component.partySheet()
-    return --[[---@not nil]] getObjectFromGUID(Guid.PartySheet)
+    return findComponent("PartySheet", { type = Object.Type.Board, description = "Party Sheet" })
 end
 
 ---@return nil | tts__Object
@@ -497,7 +520,7 @@ function Component.abilityDeck(player)
 end
 
 ---@param player number
----@return tts__VectorShape
+---@return tts__Vector
 function Component.abilityDeckPosition(player)
     return relativeToZone(player, Positions.AbilityDeck)
 end
