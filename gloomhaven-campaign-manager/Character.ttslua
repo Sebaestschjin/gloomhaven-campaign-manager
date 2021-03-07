@@ -26,6 +26,21 @@ function Character.load(index, character)
     Component.loadPlayer(index, function() Character.unpackCharacterBox(index, character) end)
 end
 
+---@param obj tts__Object
+---@return boolean
+local function isReady(obj)
+    if not obj.getObjects then
+        return false
+    end
+
+    local status, content = pcall(function() return obj.getObjects() end)
+    if not status then
+        return false
+    end
+
+    return content ~= nil
+end
+
 ---@param player number
 ---@param character gh_Save_Character
 function Character.unpackCharacterBox(player, character)
@@ -41,9 +56,9 @@ function Character.unpackCharacterBox(player, character)
         -- TODO I'd like to get rid of the wait here, but don't know how. Somehow the taken object is not ready yet and
         --      will fail in the called function
         callback_function = function(obj)
-            Wait.time(
+            Wait.condition(
                     function() Character.unpackCharacterAbilities(player, character, --[[---@type tts__Bag]] obj) end
-            , 4)
+            , function() return isReady(obj) end)
         end
     })
 end
