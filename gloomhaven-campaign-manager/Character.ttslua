@@ -18,27 +18,12 @@ local Character = {}
 local AbilityDefaultDistance = 5
 local AbilityMaxDistance = AbilityDefaultDistance + 2
 
----@param index number
+---@param player number
 ---@param character gh_Save_Character
-function Character.load(index, character)
-    Logger.info("Loading Character %s at %d", character.class, index)
+function Character.load(player, character)
+    Logger.info("Loading Character %s at %d", character.class, player)
 
-    Component.loadPlayer(index, function() Character.unpackCharacterBox(index, character) end)
-end
-
----@param obj tts__Object
----@return boolean
-local function isReady(obj)
-    if not obj.getObjects then
-        return false
-    end
-
-    local status, content = pcall(function() return obj.getObjects() end)
-    if not status then
-        return false
-    end
-
-    return content ~= nil
+    Component.loadPlayer(player, function() Character.unpackCharacterBox(player, character) end)
 end
 
 ---@param player number
@@ -50,64 +35,36 @@ function Character.unpackCharacterBox(player, character)
         return
     end
 
+    local characterBoxData = --[[---@type tts__BagState]] classBox.getData().ContainedObjects[1]
+    local targetAbilityDeck = WrappedDeck(Component.abilityDeckPosition(player))
+    local containedObjects = {}
+
+    for i = #characterBoxData.ContainedObjects, 1, -1 do
+        local contained = characterBoxData.ContainedObjects[i]
+        if Component.isAbilityDeck(contained) then
+            spawnObjectData({
+                data = contained,
+                position = Component.safePosition(),
+                rotation = { 0, 180, 0 },
+                callback_function = function(obj)
+                    targetAbilityDeck.putObject(--[[---@type tts__Deck]] obj)
+                    targetAbilityDeck.setName("Advanced Abilities")
+                end
+            })
+        else
+            table.insert(containedObjects, contained)
+        end
+    end
+
+    characterBoxData.ContainedObjects = containedObjects
     spawnObjectData({
-        data = classBox.getData().ContainedObjects[1],
+        data = characterBoxData,
         position = Component.safePosition(),
-        -- TODO I'd like to get rid of the wait here, but don't know how. Somehow the taken object is not ready yet and
-        --      will fail in the called function
         callback_function = function(obj)
-            Wait.condition(
-                    function() Character.unpackCharacterAbilities(player, character, --[[---@type tts__Bag]] obj) end
-            , function() return isReady(obj) end)
-        end
+            local onCharacterBoxPlaced = function() Character.doLoad(player, character) end
+            Component.placeCharacterBox(player, --[[---@type tts__Bag]] obj, onCharacterBoxPlaced)
+        end,
     })
-end
-
----@param indices number[]
----@param index number
----@return number
-local function adjustIndex(indices, index)
-    table.insert(indices, index)
-    local realIndex = index
-    for _, v in ipairs(indices) do
-        if v < index then
-            realIndex = realIndex - 1
-        end
-    end
-    return realIndex
-end
-
----@param player number
----@param character gh_Save_Character
----@param characterBox tts__Bag
-function Character.unpackCharacterAbilities(player, character, characterBox)
-    local chain = Chain()
-    local indices = {}
-    local targetDeck = WrappedDeck(Component.abilityDeckPosition(player))
-
-    for _, content in ipairs(characterBox.getObjects()) do
-        if Component.isAbilityDeck(content) then
-            local adjustedIndex = adjustIndex(indices, content.index)
-
-            chain.add(function(c)
-                characterBox.takeObject({
-                    index = adjustedIndex,
-                    smooth = false,
-                    rotation = { 0, 180, 0 },
-                    callback_function = function(obj)
-                        targetDeck.putObject(--[[---@type tts__Deck]] obj)
-                        targetDeck.setName("Advanced Abilities")
-                        c.proceed()
-                    end,
-                })
-            end)
-        end
-    end
-
-    local onCharacterBoxPlaced = function() Character.doLoad(player, character) end
-    chain.add(function() Component.placeCharacterBox(player, characterBox, onCharacterBoxPlaced) end)
-
-    chain.proceed()
 end
 
 ---@param player number

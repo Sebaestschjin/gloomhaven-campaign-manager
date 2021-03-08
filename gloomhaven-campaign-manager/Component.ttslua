@@ -407,6 +407,12 @@ function Component.rewardItemsDeck()
     return fromCityMat(CityMatSnapPoints.RewardItems)
 end
 
+---@param index number
+---@return seb_WrappedDeck
+function Component.itemDeck(index)
+    return fromCityMat(index + 1)
+end
+
 --------------------------------------------------------------------------------
 --- Deck-Mat -------------------------------------------------------------------
 --------------------------------------------------------------------------------

@@ -18,12 +18,13 @@ end
 function Shop.load()
     Logger.info("Loading shop from prosperity")
 
-    local cityMat = Component.cityMat()
+    local shopDeck = Component.shopDeck()
+    shopDeck.setRotation({ 0, 90, 180 })
 
     for i = 1, Prosperity.getLevel() do
-        cityMat.call("layOut", i)
+        local itemDeck = Component.itemDeck(i)
+        shopDeck.putObject(--[[---@not nil]] itemDeck.unwrap())
     end
-    cityMat.call("layOut", 0)
 
     EventManager.triggerEvent(EventType.Loaded.Shop)
 end
