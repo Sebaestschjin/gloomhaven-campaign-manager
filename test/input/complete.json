@@ -162,6 +162,12 @@
       "notes": "UmVkIGlzIGEgYnVyZGVu"
     }
   },
+  "notes": [
+    {
+      "name": "My Notebook",
+      "content": "Some content"
+    }
+  ],
   "options": {
     "keepDiscardedCards": false,
     "loadExtendedBattleGoals": true

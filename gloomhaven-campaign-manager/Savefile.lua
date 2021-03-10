@@ -112,6 +112,8 @@ local function setDefaultValues(content)
 
     setDefaultValue(content, "players", {})
 
+    setDefaultValue(content, "notes", {})
+
     setDefaultValue(content, "options", {})
 end
 
@@ -303,6 +305,7 @@ function Savefile.create()
         },
         players = {},
         options = {},
+        notes = {},
         metadata = {
             date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M"),
             version = table.concat(Version, "."),
