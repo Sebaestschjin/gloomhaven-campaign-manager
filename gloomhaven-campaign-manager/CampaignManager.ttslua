@@ -23,7 +23,7 @@ local Unlocked = require('gloomhaven-campaign-manager.Unlocked')
 local CampaignManager = {}
 
 ---@type number[]
-CampaignManager.VERSION = { 2, 0, 3 }
+CampaignManager.VERSION = { 2, 1, 0 }
 
 function CampaignManager.loadAll()
     local content = Savefile.load()
