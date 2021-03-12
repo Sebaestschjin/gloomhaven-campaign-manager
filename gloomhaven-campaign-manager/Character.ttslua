@@ -80,6 +80,8 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Character.loadCharacterSheet(player, character)
+    Component.adjustPlayerMatSnapPoints(player)
+
     local characterSheet = Component.characterSheet(player)
 
     if character.name then
@@ -382,52 +384,53 @@ function Character.getLevel(curXP)
 end
 
 ---@param player number
----@param characters gh_Save_Character[]
+---@param characters gh_Save_Characters
 function Character.save(player, characters)
-    local character = --[[---@type gh_Save_Character]] {}
-
     local characterMat = Component.characterMat(player)
-    if characterMat then
-        character.class = (--[[---@not nil]] characterMat).getDescription()
-        local characterSheet = Component.characterSheet(player)
-        local characterSheetButtons = characterSheet.getTable("buttons")
-        local characterSheetInputs = characterSheet.getTable("inputs")
-
-        if characterSheetInputs then
-            -- this is an older version of the sheet, without the inputs where you can directly set the values
-            character.name = characterSheetInputs.Name
-            character.xp = --[[---@not nil]] tonumber(characterSheetButtons.xp.label)
-            character.gold = --[[---@not nil]] tonumber(characterSheetButtons.gold.label)
-        else
-            character.name = characterSheet.UI.getAttribute("Name", "text")
-            character.xp = --[[---@not nil]] tonumber(characterSheet.UI.getAttribute("xp", "text"))
-            character.gold = --[[---@not nil]] tonumber(characterSheet.UI.getAttribute("gold", "text"))
-            character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), "\n")
-            character.hiddenNotes = Character.saveHiddenNotes(characterSheet)
-        end
-
-        local totalCheckmarks = 0
-        for i = 1, 18 do
-            if characterSheetButtons["notes" .. i].label ~= "" then
-                totalCheckmarks = totalCheckmarks + 1
-            end
-        end
-        character.checkmarks = totalCheckmarks
-
-        character.perks = {}
-        for i = 1, 15 do
-            if characterSheetButtons["perk" .. i].label ~= "" then
-                table.insert(character.perks, i)
-            end
-        end
-
-        character.items = Character.saveItems(player)
-        character.abilities = Character.saveAbilities(character.class, player)
-        character.hand = Character.saveHand(character.class, player)
-        character.quest = Character.saveQuest(player)
+    if not characterMat then
+        return
     end
 
-    table.insert(characters, character)
+    local character = --[[---@type gh_Save_Character]] {}
+    character.class = (--[[---@not nil]] characterMat).getDescription()
+    local characterSheet = Component.characterSheet(player)
+    local characterSheetButtons = characterSheet.getTable("buttons")
+    local characterSheetInputs = characterSheet.getTable("inputs")
+
+    if characterSheetInputs then
+        -- this is an older version of the sheet, without the inputs where you can directly set the values
+        character.name = characterSheetInputs.Name
+        character.xp = --[[---@not nil]] tonumber(characterSheetButtons.xp.label)
+        character.gold = --[[---@not nil]] tonumber(characterSheetButtons.gold.label)
+    else
+        character.name = characterSheet.UI.getAttribute("Name", "text")
+        character.xp = --[[---@not nil]] tonumber(characterSheet.UI.getAttribute("xp", "text"))
+        character.gold = --[[---@not nil]] tonumber(characterSheet.UI.getAttribute("gold", "text"))
+        character.notes = StringUtil.split(characterSheet.UI.getAttribute("NotesFront", "text"), "\n")
+        character.hiddenNotes = Character.saveHiddenNotes(characterSheet)
+    end
+
+    local totalCheckmarks = 0
+    for i = 1, 18 do
+        if characterSheetButtons["notes" .. i].label ~= "" then
+            totalCheckmarks = totalCheckmarks + 1
+        end
+    end
+    character.checkmarks = totalCheckmarks
+
+    character.perks = {}
+    for i = 1, 15 do
+        if characterSheetButtons["perk" .. i].label ~= "" then
+            table.insert(character.perks, i)
+        end
+    end
+
+    character.items = Character.saveItems(player)
+    character.abilities = Character.saveAbilities(character.class, player)
+    character.hand = Character.saveHand(character.class, player)
+    character.quest = Character.saveQuest(player)
+
+    characters[tostring(player)] = character
 end
 
 ---@param characterSheet tts__Object

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.1"
+    "version": "3.0"
   },
   "enhancements": {
     "Brute": {
@@ -72,8 +72,8 @@
     "reputation": -10,
     "achievements": ["First Steps", "Jerkserah's Plans"],
     "notes": ["Some notes", "More notes"],
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Brute",
         "name": "Rambo",
         "xp": 100,
@@ -89,13 +89,17 @@
           "Boots": ["Boots of Striding"],
           "Bag3": ["Minor Healing Potion"],
           "Bag2": ["Minor Power Potion"],
-          "Bag1": ["Minor Stamina Potion"]
+          "Bag1": ["Minor Stamina Potion"],
+          "Bag4": ["Minor Power Potion"],
+          "Bag6": ["Stun Powder"],
+          "Bag5": ["Stun Powder"],
+          "Bag7": ["Minor Mana Potion"]
         },
         "quest": 513,
         "notes": ["My Note", "More notes"],
         "hiddenNotes": ["TXkgTm90ZQ==", "Tm9uIEJhc2U2NCBpcyBhbHNvIHBvc3NpYmxl"]
       },
-      {
+      "3": {
         "class": "Tinkerer",
         "name": "Dave",
         "xp": 50,
@@ -108,7 +112,7 @@
         },
         "quest": 531
       }
-    ]
+    }
   },
   "retired": [
     {

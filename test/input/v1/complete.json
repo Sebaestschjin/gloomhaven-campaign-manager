@@ -99,7 +99,11 @@
           "Boots": ["Boots of Striding"],
           "Bag1": ["Minor Stamina Potion"],
           "Bag2": ["Minor Power Potion"],
-          "Bag3": ["Minor Healing Potion"]
+          "Bag3": ["Minor Healing Potion"],
+          "Bag4": ["Minor Power Potion"],
+          "Bag6": ["Stun Powder"],
+          "Bag5": ["Stun Powder"],
+          "Bag7": ["Minor Mana Potion"]
         },
         "notes": [
           "My Note",

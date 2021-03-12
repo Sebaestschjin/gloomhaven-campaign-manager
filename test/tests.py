@@ -5,13 +5,15 @@ import shutil
 import ttsautoui as tts
 import time
 import pytest
-import pprint
 
 LOAD_TIME = 30  # time to wait for loading to finish
 UPGRADE_TIME = 1  # time to wait for upgrading to finish
 IGNORE_ALWAYS = ["metadata.date"]
 OPTIONS = "options"
-HAND = "party.characters.hand"
+HANDS = ["party.characters.1.hand",
+         "party.characters.2.hand",
+         "party.characters.3.hand",
+         "party.characters.4.hand"]
 
 
 @pytest.fixture()
@@ -21,16 +23,16 @@ def main_menu():
 
 
 @pytest.mark.parametrize("savefile,ignored", [
-    ("all_of_it", [OPTIONS, HAND]),
-    ("all_perks_1", [OPTIONS, HAND]),
-    ("all_perks_2", [OPTIONS, HAND]),
-    ("all_perks_3", [OPTIONS, HAND]),
-    ("all_perks_4", [OPTIONS, HAND]),
-    ("all_perks_5", [OPTIONS, HAND]),
-    ("big", [OPTIONS, HAND]),
+    ("all_of_it", [OPTIONS] + HANDS),
+    ("all_perks_1", [OPTIONS] + HANDS),
+    ("all_perks_2", [OPTIONS] + HANDS),
+    ("all_perks_3", [OPTIONS] + HANDS),
+    ("all_perks_4", [OPTIONS] + HANDS),
+    ("all_perks_5", [OPTIONS] + HANDS),
+    ("big", [OPTIONS] + HANDS),
     ("complete", []),
-    ("forgotten_circles", [OPTIONS, HAND]),
-    ("typos", [OPTIONS, HAND]),
+    ("forgotten_circles", [OPTIONS] + HANDS),
+    ("typos", [OPTIONS] + HANDS),
 ])
 def test_load_and_save(savefile, ignored, main_menu):
     load_latest_mod()
@@ -40,8 +42,8 @@ def test_load_and_save(savefile, ignored, main_menu):
 
 
 @pytest.mark.parametrize("savefile,ignored", [
-    ("edge_cases", [OPTIONS, HAND]),
-    ("v1", [OPTIONS, HAND]),
+    ("edge_cases", [OPTIONS] + HANDS),
+    ("v1", [OPTIONS] + HANDS),
 ])
 def test_save_from_existing_saves(savefile, ignored, main_menu):
     load_from_savegame(savefile)
@@ -51,7 +53,7 @@ def test_save_from_existing_saves(savefile, ignored, main_menu):
 
 
 @pytest.mark.parametrize("class_name,ignored", [
-    ("witcher", [OPTIONS, HAND]),
+    ("witcher", [OPTIONS] + HANDS),
 ])
 def test_load_and_save_custom_classes(class_name, ignored, main_menu):
     savefile = f"custom_class_{class_name}"
@@ -64,23 +66,34 @@ def test_load_and_save_custom_classes(class_name, ignored, main_menu):
 
 
 @pytest.mark.parametrize("savefile,ignored", [
-    ("all_of_it", [OPTIONS, HAND]),
-    ("big", [OPTIONS, HAND]),
+    ("all_of_it", []),
+    ("big", []),
     ("complete", []),
-    ("forgotten_circles", [OPTIONS, HAND]),
-    ("typos", [OPTIONS, HAND]),
+    ("forgotten_circles", []),
+    ("typos", []),
 ])
-def test_upgrade_save(savefile, ignored, main_menu):
+def test_upgrade_save_v1(savefile, ignored, main_menu):
     load_latest_mod()
     saved = load_and_upgrade(f"v1/{savefile}")
 
     assert_same_content(saved, f"{savefile}-expected", ignored)
 
 
+@pytest.mark.parametrize("savefile,ignored", [
+    ("big", []),
+    ("complete", []),
+])
+def test_upgrade_save_v2(savefile, ignored, main_menu):
+    load_latest_mod()
+    saved = load_and_upgrade(f"v2/{savefile}")
+
+    assert_same_content(saved, f"{savefile}-expected", ignored)
+
+
 @pytest.mark.manually
 def test_load_manually():
-    test_name = "big"
-    ignored = [HAND, OPTIONS, "players"]
+    test_name = "complete"
+    ignored = HANDS
     # ignored = []
 
     saved = load_file("manually")

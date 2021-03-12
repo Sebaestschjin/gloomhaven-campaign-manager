@@ -1,0 +1,22 @@
+--- The complete savefile format (v2)
+---@shape gh_Savefile_v2
+---@field enhancements gh_Save_Enhancements
+---@field unlocked gh_Save_Unlocked
+---@field global gh_Save_Global
+---@field party gh_Save_Party_v2
+---@field retired gh_Save_Retired[]
+---@field events gh_Save_EventDecks
+---@field metadata gh_Save_Metadata
+---@field players gh_Save_Players
+---@field notes gh_Save_Notes[]
+---@field options gh_Save_Options
+
+---@shape gh_Save_Party_v2
+---@field name string
+---@field location string
+---@field notes string[]
+---@field achievements string[]
+---@field reputation number
+---@field characters gh_Save_Characters_v2
+
+---@alias gh_Save_Characters_v2 gh_Save_Character[]

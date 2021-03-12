@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "3.0"
+    "version": "2.0"
   },
   "enhancements": {
     "Brute": {
@@ -86,8 +86,8 @@
       "Some notes",
       "More notes"
     ],
-    "characters": {
-      "1": {
+    "characters": [
+      {
         "class": "Brute",
         "name": "Rambo",
         "abilities": ["Hook and Chain", "Juggernaut"],
@@ -109,7 +109,6 @@
           "Boots": ["Boots of Striding"],
           "Bag1": ["Minor Stamina Potion"],
           "Bag2": ["Minor Power Potion"],
-          "Bag3": ["Minor Healing Potion"],
           "Bag4": ["Minor Power Potion"],
           "Bag6": ["Stun Powder"],
           "Bag5": ["Stun Powder"],
@@ -123,7 +122,7 @@
         "quest": 513,
         "xp": 100
       },
-      "3": {
+      {
         "class": "Tinkerer",
         "name": "Dave",
         "xp": 50,
@@ -138,7 +137,7 @@
           "Unequipped": ["Minor Healing Potion"]
         }
       }
-    }
+    ]
   },
   "retired": [
     {

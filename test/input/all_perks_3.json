@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.0"
+    "version": "3.0"
   },
   "unlocked": {
     "classes": ["Berserker", "Quartermaster"]
@@ -18,8 +18,8 @@
     }
   },
   "party": {
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Cragheart",
         "abilities": [
           "Blind Destruction", "Blunt Force", "Brutal Momentum", "Cataclysm", "Clear the Way", "Dig Pit",
@@ -28,7 +28,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "2": {
         "class": "Tinkerer",
         "abilities": [
           "Auto Turret", "Chimeric Formula", "Crank Bow", "Curative Aerosol", "Dangerous Contraption",
@@ -38,7 +38,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "3": {
         "class": "Quartermaster",
         "abilities": [
           "Bag of Holding", "Bladed Boomerang", "Catastrophic Bomb", "Continual Supply", "Fortified Position",
@@ -47,7 +47,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "4": {
         "class": "Berserker",
         "abilities": [
           "Bone Breaker", "Break the Chains", "Burning Hatred", "Careless Charge", "Devil Horns", "Fatal Fury",
@@ -56,6 +56,6 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ]
+    }
   }
 }

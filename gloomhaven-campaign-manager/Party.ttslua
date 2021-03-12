@@ -34,9 +34,10 @@ function Party.load(party)
     partySheet.UI.setAttribute("partyAchiev", "text", table.concat(party.achievements, "\n"))
     partySheet.call("addSub", { "partyReputation", party.reputation })
 
-    for i, character in ipairs(party.characters) do
+    for i, character in pairs(party.characters) do
+        local player = --[[---@not nil]] tonumber(i)
         if TableUtil.isNotEmpty(character) then
-            Party.setPartySheetCharacter(i, character)
+            Party.setPartySheetCharacter(player, character)
         end
     end
     Party.setPartySheetAverageLevel(party.characters)
@@ -45,9 +46,10 @@ end
 ---@param content gh_Savefile
 ---@param characterClass string
 function Party.mayLoadCharacter(content, characterClass)
-    for i, character in ipairs(content.party.characters) do
+    for i, character in pairs(content.party.characters) do
+        local player = --[[---@not nil]] tonumber(i)
         if character.class == characterClass then
-            Character.load(i, character)
+            Character.load(player, character)
         end
     end
 end
@@ -65,15 +67,13 @@ function Party.setPartySheetCharacter(position, character)
     partySheet.UI.setAttribute(attributeLvlName, "text", level)
 end
 
----@param characters gh_Save_Character[]
+---@param characters gh_Save_Characters
 function Party.setPartySheetAverageLevel(characters)
     local partySheet = Component.partySheet()
     local sum, numPlayers = 0, 0
-    for _, character in ipairs(characters) do
-        if TableUtil.isNotEmpty(character) then
-            sum = sum + Character.getLevel(character.xp)
-            numPlayers = numPlayers + 1
-        end
+    for _, character in pairs(characters) do
+        sum = sum + Character.getLevel(character.xp)
+        numPlayers = numPlayers + 1
     end
     local average = sum / numPlayers
     local scenarioLevel = math.ceil(average / 2)
@@ -92,7 +92,7 @@ function Party.saveAll(savefile)
     party.achievements = StringUtil.split(partySheet.UI.getAttribute("partyAchiev", "text"), { ",", "\n" })
     party.reputation = --[[---@not nil]] tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
 
-    party.characters = --[[---@type gh_Save_Character[] ]]{}
+    party.characters = --[[---@type gh_Save_Characters ]]{}
     for player = 1, Component.playerCount() do
         Character.save(player, party.characters)
     end

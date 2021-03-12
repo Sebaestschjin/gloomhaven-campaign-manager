@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.0"
+    "version": "3.0"
   },
   "events": {
     "city": {
@@ -15,8 +15,8 @@
     }
   },
   "party": {
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Brute",
         "abilities": [
           "Brute Force", "Crippling Offensive", "Defensive Tactics", "Devastating Hack", "Face Your End",
@@ -26,7 +26,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "2": {
         "class": "Scoundrel",
         "abilities": [
           "Burning Oil", "Crippling Poison", "Cull the Weak", "Duelist's Advance", "Flintlock", "Flurry of Blades",
@@ -35,7 +35,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "3": {
         "class": "Spellweaver",
         "abilities": [
           "Black Hole", "Chromatic Explosion", "Cold Fire", "Cold Front", "Elemental Aid", "Engulfed in Flames",
@@ -44,7 +44,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "4": {
         "class": "Mindthief",
         "abilities": [
           "Brain Leech", "Corrupting Embrace", "Cranium Overload", "Dark Frenzy", "Domination", "Frozen Mind",
@@ -53,6 +53,6 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ]
+    }
   }
 }

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.0"
+    "version": "3.0"
   },
   "unlocked": {
     "classes": ["Witcher"]
@@ -18,8 +18,8 @@
     }
   },
   "party": {
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Witcher",
         "abilities": [
           "Bomb: Northern Wind", "Crossbow Shot", "Hightened Tolerance", "Potion: Ekimmara", "Potion: Petri's philter",
@@ -29,6 +29,6 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ]
+    }
   }
 }

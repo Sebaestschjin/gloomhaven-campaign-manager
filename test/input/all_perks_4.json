@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.0"
+    "version": "3.0"
   },
   "unlocked": {
     "classes": ["Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud"]
@@ -18,8 +18,8 @@
     }
   },
   "party": {
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Beast Tyrant",
         "abilities": [
           "Ancient Ward", "Blood Hunger", "Earthen Spikes", "Energizing Strike", "Jaws of Death", "Lash out",
@@ -28,7 +28,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "2": {
         "class": "Soothsinger",
         "abilities": [
           "Booming Proclamation", "Captivating Performance", "Change Tempo", "Commanding Presence", "Crippling Chrous",
@@ -38,7 +38,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "3": {
         "class": "Plagueherald",
         "abilities": [
           "Accelerated End", "Airborne Toxin", "Baneful Hex", "Black Tides", "Convert the Flock", "Fetid Flurry",
@@ -47,7 +47,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "4": {
         "class": "Nightshroud",
         "abilities": [
           "Angel of Death", "Armor of the Night", "Black Arrow", "Claws of the Night", "Eyes of the Night",
@@ -56,6 +56,6 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ]
+    }
   }
 }

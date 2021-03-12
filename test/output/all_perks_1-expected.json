@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.1"
+    "version": "3.0"
   },
   "global": {
     "prosperity": 0
@@ -22,8 +22,8 @@
   },
   "party": {
     "reputation": 0,
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Sunkeeper",
         "abilities": [
           "Angelic Ascension", "Bright Aegis", "Burning Flash", "Cleansing Force", "Divine Intervention",
@@ -36,7 +36,7 @@
         "gold": 0,
         "checkmarks": 0
       },
-      {
+      "2": {
         "class": "Doomstalker",
         "abilities": [
           "Camouflage", "Crashing Wave", "Darkened Skies", "Expose", "Feral Instincts", "Flight of Flame",
@@ -48,7 +48,7 @@
         "gold": 0,
         "checkmarks": 0
       },
-      {
+      "3": {
         "class": "Summoner",
         "abilities": [
           "Conjured Aid", "Divided Mind", "Earthen Steed", "Endless Spikers", "Grasping the Void", "Horned Majesty",
@@ -60,7 +60,7 @@
         "gold": 0,
         "checkmarks": 0
       },
-      {
+      "4": {
         "class": "Diviner",
         "abilities": [
           "Anguish and Salvation", "Call of the Nether", "Careful Attunement", "Cleansing Rite", "Curative Flux",
@@ -73,6 +73,6 @@
         "gold": 0,
         "checkmarks": 0
       }
-    ]
+    }
   }
 }

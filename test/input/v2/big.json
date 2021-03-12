@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "3.0"
+    "version": "2.0"
   },
   "enhancements": {
     "Spellweaver": {
@@ -26,6 +26,33 @@
     "road": {
       "bottomUp": [53, 29, 11, 38, 27, 9, 14, 58, 44, 32, 51, 54, 2, 33, 67, 3, 18, 1, 49, 25, 50, 40, 15, 36, 6],
       "remove": [4, 5, 7, 8, 10, 12, 13, 16, 17, 19, 20, 21, 22, 23, 24, 26, 28, 30]
+    }
+  },
+  "unlocked": {
+    "classes": [
+      "Berserker", "Elementalist", "Quartermaster", "Beast Tyrant", "Soothsinger", "Nightshroud", "Sawbones",
+      "Sunkeeper", "Summoner", "Doomstalker", "Diviner"
+    ],
+    "items": [
+      "Circlet of Elements", "Circlet of Elements", "Curious Gear", "Doctor's Coat", "Doomed Compass",
+      "Drakescale Boots", "Drakescale Helm", "Endurance Footwraps", "Fueled Falchion", "Fueled Falchion",
+      "Heart of the Betrayer", "Helix Ring", "Horned Helm", "Horned Helm", "Inferno Blade", "Inferno Blade",
+      "Magma Waders", "Major Cure Potion", "Major Cure Potion", "Master's Lute", "Minor Cure Potion",
+      "Mountain Hammer", "Phasing Idol", "Power Core", "Ring of Skulls", "Ring of Skulls", "Robes of Summoning",
+      "Rocket Boots", "Rocket Boots", "Sacrificial Robes", "Scroll of Healing", "Scroll of Healing", "Second Skin",
+      "Skullbane Axe", "Staff of Command", "Steam Armor", "Sun Shield", "Swordedge Armor", "Swordedge Armor",
+      "Wand of Frost", "Wand of Frost", "Wand of Infernos", "Wand of Infernos", "Wand of Tremors", "Wand of Tremors"
+    ],
+    "sanctuary": 39,
+    "specialConditions": {
+      "ancientTechnology": true,
+      "donations": 10,
+      "drakeAided": true,
+      "highestReputation": true,
+      "highReputation": true,
+      "lowestReputation": false,
+      "lowReputation": false,
+      "retired": true
     }
   },
   "global": {
@@ -113,17 +140,19 @@
     "name": "Rock 'N' Rob!!!",
     "location": "Gloomhaven",
     "reputation": 20,
-    "characters": {
-      "1": {
+    "characters": [
+      {
         "class": "Sunkeeper",
         "name": "Shakrae",
-        "xp": 584,
-        "gold": 10,
-        "checkmarks": 4,
         "abilities": [
           "Angelic Ascension", "Bright Aegis", "Illuminate the Target", "Mobilizing Axiom", "Path of Glory",
           "Practical Plans", "Righteous Strength", "Weapon of Purity"
         ],
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15],
+        "xp": 584,
+        "gold": 10,
+        "checkmarks": 4,
+        "quest": 533,
         "items": {
           "Head": ["Iron Helmet"],
           "HandRight": ["Sun Shield"],
@@ -133,19 +162,19 @@
           "Bag2": ["Minor Healing Potion"],
           "Bag3": ["Minor Stamina Potion"],
           "Unequipped": ["Black Knife", "Minor Cure Potion", "Ring of Brutality", "Swordedge Armor"]
-        },
-        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15],
-        "quest": 533
+        }
       },
-      "2": {
+      {
         "class": "Elementalist",
         "name": "Hu Bris",
-        "xp": 411,
-        "gold": 32,
-        "checkmarks": 1,
         "abilities": [
           "Burial", "Crystallizing Blast", "Obsidian Shards", "Primal Duality", "Vengeance", "Winter's Edge"
         ],
+        "perks": [1, 2, 3, 4, 5, 10, 11, 14, 15],
+        "xp": 411,
+        "gold": 32,
+        "checkmarks": 1,
+        "quest": 515,
         "items": {
           "Head": ["Circlet of Elements"],
           "Armor": ["Robes of Evocation"],
@@ -155,18 +184,19 @@
           "Bag2": ["Minor Stamina Potion"],
           "Bag3": ["Major Stamina Potion"],
           "Unequipped": ["Minor Mana Potion", "Sacrificial Robes"]
-        },
-        "perks": [1, 2, 3, 4, 5, 10, 11, 14, 15],
-        "quest": 515
+        }
       },
-      "3": {
+      {
         "class": "Spellweaver",
-        "xp": 417,
-        "gold": 36,
-        "checkmarks": 2,
+        "name": "",
         "abilities": [
           "Chromatic Explosion", "Cold Fire", "Engulfed in Flames", "Flashing Burst", "Forked Beam", "Living Torch"
         ],
+        "perks": [1, 2, 3, 6, 7, 9, 10, 11, 12, 13],
+        "xp": 417,
+        "gold": 36,
+        "checkmarks": 2,
+        "quest": 523,
         "items": {
           "Head": ["Eagle-Eye Goggles"],
           "Armor": ["Cloak of Invisibility"],
@@ -176,30 +206,28 @@
           "Bag2": ["Minor Stamina Potion"],
           "Bag3": ["Minor Power Potion"],
           "Unequipped": ["Major Mana Potion"]
-        },
-        "perks": [1, 2, 3, 6, 7, 9, 10, 11, 12, 13],
-        "quest": 523
+        }
       },
-      "4": {
+      {
         "class": "Diviner",
         "name": "Amaterasu",
-        "xp": 469,
-        "gold": 8,
-        "checkmarks": 7,
         "abilities": [
           "Anguish and Salvation", "Call of the Nether", "Enfeebling Hex", "Ethereal Vortex", "Gift of the Void",
           "Revitalizing Fount ", "Seal Their Fate"
         ],
+        "perks": [1, 2, 4, 6, 7, 9, 12, 14, 15],
+        "xp": 469,
+        "gold": 8,
+        "checkmarks": 7,
+        "quest": 528,
         "items": {
           "Unequipped": [
-            "Cloak of Pockets", "Major Mana Potion", "Major Power Potion", "Major Stamina Potion", "Minor Mana Potion",
-            "Pendant of Dark Pacts"
+            "Cloak of Pockets", "Major Mana Potion", "Major Power Potion", "Major Stamina Potion",
+            "Minor Mana Potion", "Pendant of Dark Pacts"
           ]
-        },
-        "perks": [1, 2, 4, 6, 7, 9, 12, 14, 15],
-        "quest": 528
+        }
       }
-    }
+    ]
   },
   "retired": [
     {
@@ -307,33 +335,5 @@
     {
       "quest": "Zealot of the Blood God"
     }
-  ],
-  "unlocked": {
-    "classes": [
-      "Berserker", "Elementalist", "Quartermaster", "Beast Tyrant", "Soothsinger", "Nightshroud", "Sawbones",
-      "Sunkeeper", "Summoner", "Doomstalker", "Diviner"
-    ],
-    "items": [
-      "Circlet of Elements", "Circlet of Elements", "Curious Gear", "Doctor's Coat", "Doomed Compass",
-      "Drakescale Boots", "Drakescale Helm", "Endurance Footwraps", "Fueled Falchion", "Fueled Falchion",
-      "Heart of the Betrayer", "Helix Ring", "Horned Helm", "Horned Helm", "Inferno Blade", "Inferno Blade",
-      "Magma Waders", "Major Cure Potion", "Major Cure Potion", "Master's Lute", "Minor Cure Potion",
-      "Mountain Hammer", "Phasing Idol", "Power Core", "Ring of Skulls", "Ring of Skulls", "Robes of Summoning",
-      "Rocket Boots", "Rocket Boots", "Sacrificial Robes", "Scroll of Healing", "Scroll of Healing", "Second Skin",
-      "Skullbane Axe",
-      "Staff of Command", "Steam Armor", "Sun Shield", "Swordedge Armor", "Swordedge Armor", "Wand of Frost",
-      "Wand of Frost", "Wand of Infernos", "Wand of Infernos", "Wand of Tremors", "Wand of Tremors"
-    ],
-    "sanctuary": 39,
-    "specialConditions": {
-      "ancientTechnology": true,
-      "donations": 10,
-      "drakeAided": true,
-      "highestReputation": true,
-      "highReputation": true,
-      "lowestReputation": false,
-      "lowReputation": false,
-      "retired": true
-    }
-  }
+  ]
 }

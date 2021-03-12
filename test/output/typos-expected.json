@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.1"
+    "version": "3.0"
   },
   "global": {
     "prosperity": 0
@@ -22,21 +22,21 @@
   },
   "party": {
     "reputation": 0,
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Brute",
         "xp": 0,
         "gold": 0,
         "checkmarks": 0,
         "abilities": ["Devastating Hack"]
       },
-      {
+      "2": {
         "class": "Diviner",
         "xp": 0,
         "gold": 0,
         "checkmarks": 0,
         "abilities": ["Dimensional Divide"]
       }
-    ]
+    }
   }
 }

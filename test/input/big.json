@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.0"
+    "version": "3.0"
   },
   "enhancements": {
     "Spellweaver": {
@@ -140,8 +140,8 @@
     "name": "Rock 'N' Rob!!!",
     "location": "Gloomhaven",
     "reputation": 20,
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Sunkeeper",
         "name": "Shakrae",
         "abilities": [
@@ -164,7 +164,7 @@
           "Unequipped": ["Black Knife", "Minor Cure Potion", "Ring of Brutality", "Swordedge Armor"]
         }
       },
-      {
+      "2": {
         "class": "Elementalist",
         "name": "Hu Bris",
         "abilities": [
@@ -186,7 +186,7 @@
           "Unequipped": ["Minor Mana Potion", "Sacrificial Robes"]
         }
       },
-      {
+      "3": {
         "class": "Spellweaver",
         "name": "",
         "abilities": [
@@ -208,7 +208,7 @@
           "Unequipped": ["Major Mana Potion"]
         }
       },
-      {
+      "4": {
         "class": "Diviner",
         "name": "Amaterasu",
         "abilities": [
@@ -227,7 +227,7 @@
           ]
         }
       }
-    ]
+    }
   },
   "retired": [
     {

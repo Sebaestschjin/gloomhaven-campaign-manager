@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.1"
+    "version": "3.0"
   },
   "global": {
     "prosperity": 0
@@ -22,8 +22,8 @@
   },
   "party": {
     "reputation": 0,
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Witcher",
         "xp": 0,
         "gold": 0,
@@ -36,6 +36,6 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ]
+    }
   }
 }

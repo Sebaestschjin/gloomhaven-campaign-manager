@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.0"
+    "version": "3.0"
   },
   "unlocked": {
     "classes": ["Sunkeeper", "Summoner", "Doomstalker", "Diviner"]
@@ -18,8 +18,8 @@
     }
   },
   "party": {
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Sunkeeper",
         "abilities": [
           "Angelic Ascension", "Bright Aegis", "Burning Flash", "Cleansing Force", "Divine Intervention",
@@ -29,7 +29,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "2": {
         "class": "Doomstalker",
         "abilities": [
           "Camouflage", "Crashing Wave", "Darkened Skies", "Expose", "Feral Instincts", "Flight of Flame",
@@ -38,7 +38,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "3": {
         "class": "Summoner",
         "abilities": [
           "Conjured Aid", "Divided Mind", "Earthen Steed", "Endless Spikers", "Grasping the Void", "Horned Majesty",
@@ -47,7 +47,7 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       },
-      {
+      "4": {
         "class": "Diviner",
         "abilities": [
           "Anguish and Salvation", "Call of the Nether", "Careful Attunement", "Cleansing Rite", "Curative Flux",
@@ -57,6 +57,6 @@
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }
-    ]
+    }
   }
 }

@@ -6,7 +6,12 @@ local ObjectState = require('sebaestschjin-tts.ObjectState')
 local StringUtil = require('sebaestschjin-tts.StringUtil')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
----@alias gh_Savefile_any gh_Savefile | gh_Savefile_v1
+-- Aliases for latest version
+---@alias gh_Savefile gh_Savefile_v3
+---@alias gh_Save_Party gh_Save_Party_v3
+---@alias gh_Save_Characters gh_Save_Characters_v3
+
+---@alias gh_Savefile_any gh_Savefile | gh_Savefile_v1 | gh_Savefile_v2
 ---@alias gh_Save_Character_any gh_Save_Character | gh_Save_v1_Character
 
 local Savefile = {}
@@ -17,7 +22,12 @@ local NotebookName = "Savefile"
 local TagName = "Gloomhaven Campaign"
 local IconLocation = "https://github.com/Sebaestschjin/gloomhaven-campaign-manager/raw/master/docs/save-icon.png"
 ---@type number[]
-local Version = { 2, 1 }
+local Version = { 3, 0 }
+
+---@return string
+local function currentDate()
+    return --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M")
+end
 
 ---@param savefile string
 ---@return nil | gh_Savefile_any
@@ -129,9 +139,9 @@ local function getVersion(savefile)
 end
 
 ---@param content gh_Savefile_v1
----@return gh_Savefile
+---@return gh_Savefile_v2
 local function upgradeToV2(content)
-    local upgradedContent = --[[---@type gh_Savefile]] {}
+    local upgradedContent = --[[---@type gh_Savefile_v2]] {}
 
     --- enhancements
     local newEnhancements = --[[---@type gh_Save_Enhancements]] {}
@@ -168,14 +178,14 @@ local function upgradeToV2(content)
     upgradedContent.global.achievements = newAchievements
 
     --- party
-    upgradedContent.party = --[[---@type gh_Save_Party]] {}
+    upgradedContent.party = --[[---@type gh_Save_Party_v2]] {}
     upgradedContent.party.name = content.party.name
     upgradedContent.party.location = content.party.location
     upgradedContent.party.notes = content.party.notes
     upgradedContent.party.achievements = content.party.achievements
     upgradedContent.party.reputation = content.party.reputation
 
-    local newCharacters = --[[---@type gh_Save_Character[] ]] {}
+    local newCharacters = --[[---@type gh_Save_Characters_v2 ]] {}
     for _, character in ipairs(--[[---@type gh_Save_v1_Character[] ]]content.party.characters) do
         local newCharacter = --[[---@type gh_Save_Character]] {}
         newCharacter.class = character.class
@@ -226,7 +236,40 @@ local function upgradeToV2(content)
     end
     upgradedContent.metadata = {
         version = "2.1",
-        date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M")
+        date = currentDate(),
+    }
+
+    return upgradedContent
+end
+
+---@param content gh_Savefile_v2
+---@return gh_Savefile_v3
+local function upgradeToV3(content)
+    local upgradedContent = --[[---@type gh_Savefile_v3]] {}
+
+    upgradedContent.enhancements = content.enhancements
+    upgradedContent.events = content.events
+    upgradedContent.global = content.global
+    upgradedContent.notes = content.notes
+    upgradedContent.options = content.options
+    upgradedContent.players = content.players
+    upgradedContent.retired = content.retired
+    upgradedContent.unlocked = content.unlocked
+
+    upgradedContent.party = --[[---@type gh_Save_Party_v3 ]] {}
+    upgradedContent.party.achievements = content.party.achievements
+    upgradedContent.party.location = content.party.location
+    upgradedContent.party.name = content.party.name
+    upgradedContent.party.notes = content.party.notes
+    upgradedContent.party.reputation = content.party.reputation
+    upgradedContent.party.characters = --[[---@type gh_Save_Characters_v3]] {}
+    for i, character in ipairs(content.party.characters) do
+        upgradedContent.party.characters[tostring(i)] = character
+    end
+
+    upgradedContent.metadata = {
+        version = "3.0",
+        date = currentDate(),
     }
 
     return upgradedContent
@@ -235,11 +278,13 @@ end
 ---@param savefile gh_Savefile_any
 ---@return gh_Savefile
 local function upgrade(savefile)
-    setDefaultValues(--[[---@type gh_Savefile]] savefile)
-
     local major, _ = getVersion(savefile)
     if major == 1 then
         savefile = upgradeToV2(--[[---@type gh_Savefile_v1]] savefile)
+        return upgrade(savefile)
+    elseif major == 2 then
+        savefile = upgradeToV3(--[[---@type gh_Savefile_v2]] savefile)
+        return upgrade(savefile)
     end
 
     return --[[---@type gh_Savefile]] savefile
@@ -274,6 +319,7 @@ function Savefile.load()
         return nil
     end
 
+    setDefaultValues(--[[---@type gh_Savefile]] savefile)
     return upgrade(--[[---@not nil]] savefile)
 end
 
@@ -307,7 +353,7 @@ function Savefile.create()
         options = {},
         notes = {},
         metadata = {
-            date = --[[---@type string]] os.date("%Y-%m-%d'T'%H:%M"),
+            date = currentDate(),
             version = table.concat(Version, "."),
         },
     }

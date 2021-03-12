@@ -109,10 +109,10 @@ local PlayerMatSnapPoints = {
     Bag1 = 12,
     Bag2 = 13,
     Bag3 = 14,
-    Active4 = 9,
     Active1 = 6,
-    Active3 = 8,
     Active2 = 7,
+    Active3 = 8,
+    Active4 = 9,
 }
 
 --- A list of snap points on the deck mat containing different decks.
@@ -628,6 +628,32 @@ end
 ---@return tts__Object[]
 function Component.playerHand(player)
     return Player[Component.PlayerColors[player]].getHandObjects()
+end
+
+---@param player number
+function Component.adjustPlayerMatSnapPoints(player)
+    ---@param snaps tts__Object_SnapPointParameters[]
+    ---@param bag gh_Save_Character_Item_Position
+    ---@param zPosition number
+    local function addSnapPoint(snaps, bag, zPosition)
+        if PlayerMatSnapPoints[bag] == nil then
+            PlayerMatSnapPoints[bag] = TableUtil.length(snaps) + 1
+        end
+
+        table.insert(snaps, {
+            position = { 1.52, 0.1, zPosition },
+            rotation = { 0, 0, 0 },
+        })
+    end
+
+    local playerMat = Component.playerMat(player)
+    local snaps = --[[---@type tts__Object_SnapPointParameters[] ]] playerMat.getSnapPoints()
+    addSnapPoint(snaps, 'Bag4', -0.72)
+    addSnapPoint(snaps, 'Bag5', -0.24)
+    addSnapPoint(snaps, 'Bag6', 0.24)
+    addSnapPoint(snaps, 'Bag7', 0.72)
+
+    playerMat.setSnapPoints(snaps)
 end
 
 ---@param player number

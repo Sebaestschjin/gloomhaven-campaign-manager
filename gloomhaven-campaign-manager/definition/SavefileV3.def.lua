@@ -1,9 +1,9 @@
---- The complete savefile format
----@shape gh_Savefile
+--- The complete savefile format (v3)
+---@shape gh_Savefile_v3
 ---@field enhancements gh_Save_Enhancements
 ---@field unlocked gh_Save_Unlocked
 ---@field global gh_Save_Global
----@field party gh_Save_Party
+---@field party gh_Save_Party_v3
 ---@field retired gh_Save_Retired[]
 ---@field events gh_Save_EventDecks
 ---@field metadata gh_Save_Metadata
@@ -28,13 +28,15 @@
 
 ---@alias gh_Scenario_State 'Open' | 'Done' | 'Locked'
 
----@shape gh_Save_Party
+---@shape gh_Save_Party_v3
 ---@field name string
 ---@field location string
 ---@field notes string[]
 ---@field achievements string[]
 ---@field reputation number
----@field characters gh_Save_Character[]
+---@field characters gh_Save_Characters_v3
+
+---@alias gh_Save_Characters_v3 table<string, gh_Save_Character>
 
 ---@shape gh_Save_Character
 ---@field class string @Name of the class
@@ -54,7 +56,7 @@
 
 ---@alias gh_Save_Character_Items table<gh_Save_Character_Item_Position, string[]>
 
----@alias gh_Save_Character_Item_Position 'Head' | 'Armor' | 'HandLeft' | 'HandRight' | 'Boots' | 'Bag1' | 'Bag2' | 'Bag3' | 'Active4' | 'Active1' | 'Active2' | 'Active3' | 'Unequipped'
+---@alias gh_Save_Character_Item_Position 'Head' | 'Armor' | 'HandLeft' | 'HandRight' | 'Boots' | 'Bag1' | 'Bag2' | 'Bag3' | 'Bag4' | 'Bag5' | 'Bag6' | 'Bag7' | 'Active4' | 'Active1' | 'Active2' | 'Active3' | 'Unequipped'
 
 ---@shape gh_Save_Unlocked
 ---@field classes string[]

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "2.1"
+    "version": "3.0"
   },
   "enhancements": {
     "Plagueherald": {
@@ -162,8 +162,8 @@
       "Stonebreaker's Censer        Redthorn's Aid      ",
       "The Drake's Command     The Drake's Treasure"
     ],
-    "characters": [
-      {
+    "characters": {
+      "1": {
         "class": "Sunkeeper",
         "name": "Aerith",
         "xp": 417,
@@ -184,7 +184,7 @@
         },
         "quest": 520
       },
-      {
+      "2": {
         "class": "Plagueherald",
         "name": "Norx",
         "xp": 521,
@@ -207,7 +207,7 @@
         },
         "quest": 529
       },
-      {
+      "3": {
         "class": "Scoundrel",
         "name": "Ariel",
         "xp": 395,
@@ -225,7 +225,7 @@
         },
         "quest": 518
       }
-    ]
+    }
   },
   "retired": [
     {

@@ -1,4 +1,4 @@
---- The complete savefile format
+--- The complete savefile format (v1)
 ---@shape gh_Savefile_v1
 ---@field enhancements gh_Save_v1_EnhancedClass[]
 ---@field unlocked gh_Save_Unlocked
