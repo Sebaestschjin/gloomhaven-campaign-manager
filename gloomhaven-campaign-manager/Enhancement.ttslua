@@ -148,7 +148,7 @@ end
 
 ---@param enhancements gh_Save_Enhancements
 function Enhancement.saveFromPackedCharacters(enhancements)
-    for _, inactiveCharacter in pairs(Component.inactiveCharacters()) do
+    for _, inactiveCharacter in pairs(Component.packedCharacters()) do
         local className = inactiveCharacter.getName()
         Enhancement.saveFromContainer(inactiveCharacter.getData(), className, enhancements)
     end

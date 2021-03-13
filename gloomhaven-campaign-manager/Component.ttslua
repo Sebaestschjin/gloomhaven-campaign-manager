@@ -1,6 +1,7 @@
 local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
+local ObjectState = require("sebaestschjin-tts.ObjectState")
 local Search = require("sebaestschjin-tts.Search")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
@@ -15,6 +16,12 @@ local Game = require("gloomhaven-campaign-manager.Game")
 --- to locate and place those components.
 ---
 local Component = {}
+
+---@type table<string, string>
+Component.Tag = {
+    CampaignManager = "Gloomhaven - Campaign Manager",
+    InactiveCharacter = "Gloomhaven - Inactive Character",
+}
 
 --- A list of GUIDs of relevant components.
 ---@type table<string, GUID>
@@ -96,6 +103,13 @@ local Positions = {
     ScenarioDiscard = { 56.0, 2, -1.52 },
     CompletedQuests = { 56.0, 2, -12.5 },
     LootedTreasures = { -68, 2, 17 },
+    InactiveCharacterZone = { -65.19, 1.6, -27.96 },
+}
+
+---@type table<string, tts__VectorShape>
+local Scales = {
+    InactiveCharacterZone = { 8.14, 10, 8.63 },
+    CharacterBox = { 0.48, 0.48, 0.48 },
 }
 
 --- A list of snap points on the player mat, e.g. for item slots.
@@ -161,6 +175,14 @@ Component.EventDecks = {
         atEventMat = 1,
         oldMat = Guid.OldEventsMat,
     },
+}
+
+---@type table<string, tts__ColorShape>
+Component.ObjectColor = {
+    Red = { 0.82, 0.25, 0.18, 1 },
+    Yellow = { 0.75, 0.67, 0.56, 1 },
+    Black = { 0.18, 0.047, 0.047, 1 },
+    White = { 0.812, 0.70, 0.60, 1 },
 }
 
 ---@param guidName string
@@ -326,6 +348,78 @@ function Component.placeSanctuarySticker()
     Utils.waitForObject(Guid.SanctuarySticker, function()
         EventManager.triggerEvent(EventType.Placed.SanctuarySticker)
     end)
+end
+
+function Component.placeInactiveCharacterZone()
+    local layoutZone = ObjectState.layoutZone({
+        direction = Object.LayoutZone.Direction.UpRight,
+        includeNonCards = true,
+    }, {
+        position = Positions.InactiveCharacterZone,
+        scale = Scales.InactiveCharacterZone,
+    })
+
+    local spawned = spawnObjectData({ data = layoutZone })
+    Guid.InactiveCharacterZone = spawned.getGUID()
+end
+
+---@param character gh_Save_Character
+---@param callback tts__ObjectCallbackFunction
+function Component.placeInactiveCharacter(character, callback)
+    local zone = --[[---@not nil]] getObjectFromGUID(Guid.InactiveCharacterZone)
+
+    local script = [[
+function onLoad()
+    self.createButton({
+        label = "Unpack",
+        tooltip = "Unpacks the inactive character represented by this box.",
+        function_owner = self, click_function = "unpackBox",
+        position = { 0, 7, 0 }, rotation = { 0, 270, 0 }, scale = { 1, 1, 1 },
+        width = 1500, height = 1500, font_size = 400,
+        color = ]] .. TableUtil.dump(Component.ObjectColor.Red) .. [[,
+        font_color = ]] .. TableUtil.dump(Component.ObjectColor.Black) .. [[,
+   })
+end
+
+function findManager()
+    local withTag = getObjectsWithTag("]] .. Component.Tag.CampaignManager .. [[")
+    if withTag == nil or #withTag == 0 then
+        return nil
+    end
+    return withTag[1]
+end
+
+function unpackBox()
+    local manager = findManager()
+    if manager == nil then
+        print("Can not find the campaign manager! :-(")
+    else
+        manager.call("unpackCharacter", { guid = self.getGUID(), character = self.script_state })
+    end
+end]]
+
+    local characterBox = ObjectState.model({
+        type = Object.ModelType.Bag,
+        mesh = "http://cloud-3.steamusercontent.com/ugc/1019444160335469875/95153271C7CD7884C578B5380A8BBE94AB99C77B/",
+        diffuse = "http://cloud-3.steamusercontent.com/ugc/1019444160335380185/9B1AEC2AD18A823636E7B3898D00722794817A53/",
+        tint = Component.ObjectColor.White,
+        state = character,
+        script = script,
+        tags = { Component.Tag.InactiveCharacter },
+    }, {
+        position = Component.safePosition(),
+        rotation = { 0, 270, 0 },
+        scale = Scales.CharacterBox,
+    })
+
+    Utils.spawnObjectData({
+        data = characterBox,
+        callback_function = function(spawned)
+            local pos = zone.getPosition()
+            spawned.setPosition({ pos.x, TableHigh, pos.z })
+            callback(spawned)
+        end,
+    })
 end
 
 --------------------------------------------------------------------------------
@@ -564,6 +658,11 @@ end
 
 ---@return tts__Bag[]
 function Component.inactiveCharacters()
+    return --[[---@type tts__Bag[] ]] getObjectsWithTag(Component.Tag.InactiveCharacter)
+end
+
+---@return tts__Bag[]
+function Component.packedCharacters()
     return --[[---@type tts__Bag[] ]] TableUtil.filter(getObjects(), function(obj)
         return Object.isBag(obj) and obj.getDescription() == Names.InactiveCharacter
     end)
@@ -622,6 +721,14 @@ function Component.playerObjects(player)
     local zone = Component.playerZone(player)
     return TableUtil.filter(zone.getObjects(),
             function(object) return Utils.isCenterInZone(zone, object) end)
+end
+
+---@param player number
+---@param object tts__Object
+---@return boolean
+function Component.isPlayerObject(player, object)
+    local zone = Component.playerZone(player)
+    return Utils.isCenterInZone(zone, object)
 end
 
 ---@param player number

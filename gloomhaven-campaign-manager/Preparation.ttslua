@@ -6,12 +6,13 @@ local EventType = require("gloomhaven-campaign-manager.EventType")
 local Preparation = {}
 
 function Preparation.setup()
-    EventManager.addHandler(EventType.Loaded.Start, function() Preparation.start() end)
+    EventManager.addHandler(EventType.Loaded.Start, function() Preparation.prepareLoad() end)
 end
 
-function Preparation.start()
+function Preparation.prepareLoad()
     Component.verifyLoad()
 
+    Component.placeInactiveCharacterZone()
     Component.placeScenarioBook()
     Component.placeRuleBook()
     Component.placeTreasureDeck()

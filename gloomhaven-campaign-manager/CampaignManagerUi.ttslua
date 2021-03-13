@@ -1,10 +1,12 @@
 local ChatCommands = require("ge_tts.ChatCommands")
 
 local CampaignManager = require("gloomhaven-campaign-manager.CampaignManager")
+local Component = require("gloomhaven-campaign-manager.Component")
 
 function onLoad(_)
+    self.setTags({ Component.Tag.CampaignManager })
+
     self.setPosition(self.getPosition() + Vector(0, 2, 0))
-    local colors = { yellow = { 0.753, 0.671, 0.565, 1 }, black = { 0.18, 0.047, 0.047, 1 } }
 
     self.createButton({
         click_function = "noop",
@@ -15,7 +17,7 @@ function onLoad(_)
         width = 0,
         height = 0,
         font_size = 300,
-        font_color = colors.black,
+        font_color = Component.ObjectColor.Black,
     })
 
     self.createButton({
@@ -27,8 +29,8 @@ function onLoad(_)
         width = 1600,
         height = 400,
         font_size = 300,
-        color = colors.yellow,
-        font_color = colors.black,
+        color = Component.ObjectColor.Yellow,
+        font_color = Component.ObjectColor.Black,
         tooltip = "Loads the save file from the notebook 'Savefile'"
     })
 
@@ -41,8 +43,8 @@ function onLoad(_)
         width = 1600,
         height = 400,
         font_size = 300,
-        color = colors.yellow,
-        font_color = colors.black,
+        color = Component.ObjectColor.Yellow,
+        font_color = Component.ObjectColor.Black,
         tooltip = "Saves the current game progress into the notebook 'Savefile'"
     })
 

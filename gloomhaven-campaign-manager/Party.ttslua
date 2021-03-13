@@ -1,4 +1,5 @@
 local EventManager = require("ge_tts.EventManager")
+local Json = require("ge_tts.Json")
 
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
@@ -34,10 +35,12 @@ function Party.load(party)
     partySheet.UI.setAttribute("partyAchiev", "text", table.concat(party.achievements, "\n"))
     partySheet.call("addSub", { "partyReputation", party.reputation })
 
-    for i, character in pairs(party.characters) do
-        local player = --[[---@not nil]] tonumber(i)
-        if TableUtil.isNotEmpty(character) then
-            Party.setPartySheetCharacter(player, character)
+    for id, character in pairs(party.characters) do
+        if Character.isActive(id) then
+            local player = --[[---@not nil]] tonumber(id)
+            if TableUtil.isNotEmpty(character) then
+                Party.setPartySheetCharacter(player, character)
+            end
         end
     end
     Party.setPartySheetAverageLevel(party.characters)
@@ -46,10 +49,14 @@ end
 ---@param content gh_Savefile
 ---@param characterClass string
 function Party.mayLoadCharacter(content, characterClass)
-    for i, character in pairs(content.party.characters) do
-        local player = --[[---@not nil]] tonumber(i)
+    for id, character in pairs(content.party.characters) do
         if character.class == characterClass then
-            Character.load(player, character)
+            if Character.isActive(id) then
+                local player = --[[---@not nil]] tonumber(id)
+                Character.load(player, character)
+            else
+                Character.loadInactive(character)
+            end
         end
     end
 end
@@ -71,9 +78,11 @@ end
 function Party.setPartySheetAverageLevel(characters)
     local partySheet = Component.partySheet()
     local sum, numPlayers = 0, 0
-    for _, character in pairs(characters) do
-        sum = sum + Character.getLevel(character.xp)
-        numPlayers = numPlayers + 1
+    for id, character in pairs(characters) do
+        if Character.isActive(id) then
+            sum = sum + Character.getLevel(character.xp)
+            numPlayers = numPlayers + 1
+        end
     end
     local average = sum / numPlayers
     local scenarioLevel = math.ceil(average / 2)
@@ -95,6 +104,11 @@ function Party.saveAll(savefile)
     party.characters = --[[---@type gh_Save_Characters ]]{}
     for player = 1, Component.playerCount() do
         Character.save(player, party.characters)
+    end
+
+    for i, inactiveCharacterBox in ipairs(Component.inactiveCharacters()) do
+        local id = "inactive" .. tostring(i)
+        party.characters[id] = Json.decode(inactiveCharacterBox.script_state)
     end
 end
 

@@ -102,6 +102,32 @@ function Shop.takeItem(name, toPosition, toRotation, startAt)
     return false
 end
 
+---@param name string
+---@param callback tts__ObjectCallbackFunction
+---@return boolean
+function Shop.takeItem2(name, callback)
+    local cityMat = Component.cityMat()
+
+    for i = 1, 14 do
+        local deckPosition = Utils.getSnapPosition(cityMat, i)
+        local deck = WrappedDeck(deckPosition)
+        if not deck.isEmpty() then
+            local item, index = Search.inContainedObjects(deck, { name = name })
+            if item then
+                deck.takeObject({
+                    index = index,
+                    smooth = false,
+                    position = Component.safePosition(),
+                    callback_function = callback,
+                })
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
 ---@overload fun(name: string, toPosition: tts__VectorShape): boolean
 ---@param name string
 ---@param toPosition tts__VectorShape

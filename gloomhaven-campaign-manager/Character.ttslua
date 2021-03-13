@@ -26,6 +26,28 @@ function Character.load(player, character)
     Component.loadPlayer(player, function() Character.unpackCharacterBox(player, character) end)
 end
 
+---@param character gh_Save_Character
+function Character.loadInactive(character)
+    local callback = function(box) Character.fillInactive(character, box) end
+    Component.placeInactiveCharacter(character, callback)
+end
+
+---@param character gh_Save_Character
+---@param characterBox tts__Bag
+function Character.fillInactive(character, characterBox)
+    local putIntoBox = function(o) characterBox.putObject(o) end
+
+    Quest.take(character.quest, putIntoBox)
+
+    for _, items in pairs(character.items) do
+        for _, itemName in ipairs(items) do
+            if not Shop.takeItem2(itemName, putIntoBox) then
+                Logger.error("The item '%s' does not exist. Won't load item.", itemName)
+            end
+        end
+    end
+end
+
 ---@param player number
 ---@param character gh_Save_Character
 function Character.unpackCharacterBox(player, character)
@@ -65,6 +87,27 @@ function Character.unpackCharacterBox(player, character)
             Component.placeCharacterBox(player, --[[---@type tts__Bag]] obj, onCharacterBoxPlaced)
         end,
     })
+end
+
+---@param player number
+function Character.packCharacterBox(player)
+
+end
+
+---@param boxGuid GUID
+---@param character gh_Save_Character
+function Character.unpackInactiveCharacterBox(boxGuid, character)
+    local inactiveCharacterBox = --[[---@not nil]] getObjectFromGUID(boxGuid)
+
+    for player = 1, Component.playerCount() do
+        if Component.isPlayerObject(player, inactiveCharacterBox) then
+            inactiveCharacterBox.destruct()
+            Character.load(player, character)
+            return
+        end
+    end
+
+    Logger.error("The character box is not in a player zone. Put the box into a player zone of your choice and try again.")
 end
 
 ---@param player number
@@ -550,6 +593,18 @@ function Character.findQuest(player)
         end
     end
     return nil
+end
+
+---@param id string
+---@return boolean
+function Character.isActive(id)
+    return tonumber(id) ~= nil
+end
+
+---@param id string
+---@return boolean
+function Character.isInactive(id)
+    return not Character.isActive(id)
 end
 
 return Character

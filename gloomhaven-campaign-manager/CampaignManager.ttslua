@@ -1,9 +1,11 @@
 local EventManager = require('ge_tts.EventManager')
+local Json = require('ge_tts.Json')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
 local Savefile = require("gloomhaven-campaign-manager.Savefile")
 local Cleanup = require('gloomhaven-campaign-manager.Cleanup')
 local Achievement = require('gloomhaven-campaign-manager.Achievement')
+local Character = require('gloomhaven-campaign-manager.Character')
 local Enhancement = require('gloomhaven-campaign-manager.Enhancement')
 local Event = require('gloomhaven-campaign-manager.Event')
 local EventType = require('gloomhaven-campaign-manager.EventType')
@@ -108,6 +110,15 @@ function CampaignManager.upgradeSavefile()
     if savefile then
         Savefile.save(--[[---@not nil]] savefile)
     end
+end
+
+---@shape gh_Func_unpackCharacters
+---@field guid GUID
+---@field character string
+
+---@param parameters gh_Func_unpackCharacters
+function unpackCharacter(parameters)
+    Character.unpackInactiveCharacterBox(parameters.guid, Json.decode(parameters.character))
 end
 
 return CampaignManager
