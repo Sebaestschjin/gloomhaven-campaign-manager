@@ -49,6 +49,7 @@ local Guid = {
     CityMat = "f3ffb7",
     EventsMat = "b53fb2",
     OldEventsMat = "41393b",
+    FantasySetupScripts = "75ab50",
 }
 
 --- A list of components with multiple GUIDs (e.g. where newer versions have different GUIDs) or where multiple objects exist.
@@ -412,7 +413,7 @@ end]]
         scale = Scales.CharacterBox,
     })
 
-    Utils.spawnObjectData({
+    spawnObjectData({
         data = characterBox,
         callback_function = function(spawned)
             local pos = zone.getPosition()
@@ -778,7 +779,8 @@ end
 ---@param callback fun(): void
 function Component.placeCharacterBox(player, characterBox, callback)
     local playerMat = Component.playerMat(player)
-    characterBox.setPosition(playerMat.getPosition())
+    local fantasySetupScripts = --[[---@not nil]] getObjectFromGUID(Guid.FantasySetupScripts)
+    fantasySetupScripts.call("cleanArea", { playerMat, characterBox })
 
     Utils.waitForObjectInZone(Guids.Zones[player], { name = Names.CharacterSheet }, callback)
 end

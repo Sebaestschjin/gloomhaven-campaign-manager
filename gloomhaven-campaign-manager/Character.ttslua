@@ -89,20 +89,53 @@ function Character.unpackCharacterBox(player, character)
     })
 end
 
----@param player number
-function Character.packCharacterBox(player)
+---@param _ number
+function Character.packCharacterBox(_)
 
 end
 
 ---@param boxGuid GUID
 ---@param character gh_Save_Character
 function Character.unpackInactiveCharacterBox(boxGuid, character)
-    local inactiveCharacterBox = --[[---@not nil]] getObjectFromGUID(boxGuid)
+    local inactiveCharacterBox = --[[---@type tts__Bag]] getObjectFromGUID(boxGuid)
 
     for player = 1, Component.playerCount() do
         if Component.isPlayerObject(player, inactiveCharacterBox) then
-            inactiveCharacterBox.destruct()
-            Character.load(player, character)
+            local unpackChain = Chain()
+
+            ---@param object tts__ObjectState
+            ---@param deckSupplier fun(): seb_WrappedDeck
+            local function putObjectOnDeck(object, deckSupplier)
+                unpackChain.add(function(chain)
+                    inactiveCharacterBox.takeObject({
+                        guid = object.GUID,
+                        smooth = false,
+                        callback_function = function(card)
+                            deckSupplier().putObject(--[[---@type tts__Card]] card)
+                            chain.proceed()
+                        end
+                    })
+                end)
+            end
+
+            for _, object in ipairs(inactiveCharacterBox.getData().ContainedObjects) do
+                if Component.isItemCard(object) then
+                    putObjectOnDeck(object, Component.shopDeck)
+                elseif Component.isPersonalQuestCard(object) then
+                    putObjectOnDeck(object, Component.questDeck)
+                end
+            end
+
+            unpackChain.add(function(chain)
+                inactiveCharacterBox.destruct()
+                chain.proceed()
+            end)
+            unpackChain.add(function(chain)
+                Character.load(player, character)
+                chain.proceed()
+            end)
+
+            unpackChain.proceed()
             return
         end
     end
