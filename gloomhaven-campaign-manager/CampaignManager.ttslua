@@ -112,11 +112,21 @@ function CampaignManager.upgradeSavefile()
     end
 end
 
----@shape gh_Func_unpackCharacters
----@field guid GUID
----@field character string
+---@shape gh_Func_packCharacter
+---@field player number
 
----@param parameters gh_Func_unpackCharacters
+--- Called from the replaced "Remove Character" button
+---@param parameters gh_Func_packCharacter
+function packCharacter(parameters)
+    Character.packCharacterBox(parameters.player)
+end
+
+---@shape gh_Func_unpackCharacter
+---@field guid GUID the GUID of the bag containing the character
+---@field character string the character data as a string (of type gh_Save_Character)
+
+--- Called from the "Unpack" button on packed characters
+---@param parameters gh_Func_unpackCharacter
 function unpackCharacter(parameters)
     Character.unpackInactiveCharacterBox(parameters.guid, Json.decode(parameters.character))
 end

@@ -89,9 +89,49 @@ function Character.unpackCharacterBox(player, character)
     })
 end
 
----@param _ number
-function Character.packCharacterBox(_)
+--- Find all components within objects that are limited and should be placed into an inactive player box.
+---@param limitedComponents tts__ObjectState[]
+---@param objects seb_Object_Array
+local function findLimitedComponents(limitedComponents, objects)
+    for _, obj in ipairs(--[[---@type seb_Object[] ]] objects) do
+        if Component.isPersonalQuestCard(obj) or Component.isItemCard(obj) then
+            table.insert(limitedComponents, Object.data(obj))
+        elseif Object.isContainer(obj) then
+            findLimitedComponents(limitedComponents, Object.objects(--[[---@type seb_Object_Container]] obj))
+        end
+    end
+end
 
+---@param player number
+function Character.packCharacterBox(player)
+    if not Component.characterSheet(player) then
+        local playerMat = Component.playerMat(player)
+        if playerMat then
+            playerMat.destruct()
+        end
+        return
+    end
+
+    local characters = --[[---@type gh_Save_Characters]] {}
+    Character.save(player, characters)
+    local character = characters[tostring(player)]
+
+    local callback = function(characterBox)
+        local limitedComponents = {}
+        local playerObjects = Component.playerObjects(player)
+        findLimitedComponents(limitedComponents, playerObjects)
+
+        for _, object in ipairs(playerObjects) do
+            object.destruct()
+        end
+
+        local characterBoxData = characterBox.getData()
+        characterBoxData.ContainedObjects = limitedComponents
+
+        characterBox.destruct()
+        spawnObjectData({ data = characterBoxData })
+    end
+    Component.placeInactiveCharacter(character, callback)
 end
 
 ---@param boxGuid GUID
@@ -118,7 +158,7 @@ function Character.unpackInactiveCharacterBox(boxGuid, character)
                 end)
             end
 
-            for _, object in ipairs(inactiveCharacterBox.getData().ContainedObjects) do
+            for _, object in TableUtil.ipairs(inactiveCharacterBox.getData().ContainedObjects) do
                 if Component.isItemCard(object) then
                     putObjectOnDeck(object, Component.shopDeck)
                 elseif Component.isPersonalQuestCard(object) then
@@ -131,7 +171,7 @@ function Character.unpackInactiveCharacterBox(boxGuid, character)
                 chain.proceed()
             end)
             unpackChain.add(function(chain)
-                Character.load(player, character)
+                Character.unpackCharacterBox(player, character)
                 chain.proceed()
             end)
 
