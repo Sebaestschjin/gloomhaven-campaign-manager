@@ -1,6 +1,6 @@
 local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
-local Object = require("sebaestschjin-tts.Object")
+local ObjectState = require("sebaestschjin-tts.ObjectState")
 
 local Chain = require("sebaestschjin-tts.Chain")
 local Search = require("sebaestschjin-tts.Search")
@@ -145,17 +145,19 @@ end
 
 function Expansion.mayLoadBattleGoals()
     if Options.loadExtendedBattleGoals then
-        spawnObject({
-            type = Object.Name.DeckCustom,
+        local deck = ObjectState.deckCustom({
+            deck = {
+                image = "http://cloud-3.steamusercontent.com/ugc/958613321553657772/8B55AD5F5A77B18577507903A07C5A6563969802/",
+                imageBack = "http://cloud-3.steamusercontent.com/ugc/83721958666016106/12EAB751A1FEE2AA1CDB21424883752EB181C174/",
+                width = 10,
+                height = 6,
+                number = 54,
+                backIsHidden = true,
+            }
+        })
+        spawnObjectData({
+            data = deck,
             callback_function = function(obj)
-                obj.setCustomObject({
-                    face = "http://cloud-3.steamusercontent.com/ugc/958613321553657772/8B55AD5F5A77B18577507903A07C5A6563969802/",
-                    back = "http://cloud-3.steamusercontent.com/ugc/83721958666016106/12EAB751A1FEE2AA1CDB21424883752EB181C174/",
-                    width = 10,
-                    height = 6,
-                    number = 54,
-                    back_is_hidden = true,
-                })
                 Component.battleGoalsDeck().putObject(--[[---@type tts__Deck]] obj)
             end,
         })
