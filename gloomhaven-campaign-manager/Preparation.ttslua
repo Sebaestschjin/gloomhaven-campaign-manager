@@ -12,7 +12,7 @@ end
 function Preparation.prepareLoad()
     Component.verifyLoad()
 
-    Component.placeInactiveCharacterZone()
+    Component.replacePlayerAddButtons()
     Component.placeScenarioBook()
     Component.placeRuleBook()
     Component.placeTreasureDeck()

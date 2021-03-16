@@ -6,7 +6,6 @@ local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local Character = require("gloomhaven-campaign-manager.Character")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 
@@ -56,16 +55,18 @@ local DecalScale = { 0.16, 0.16, 3.07 }
 function Enhancement.mayLoadForClass(savefile, className)
     local classEnhancements = savefile.enhancements[className]
     if classEnhancements then
-        Enhancement.loadClass(className, classEnhancements)
+        Enhancement.loadClass(className, classEnhancements, Enhancement.finishLoadClass)
         return
     end
 
     Enhancement.finishLoadClass(className)
 end
 
+---@overload fun(className: string, abilities: gh_Save_EnhancedClass): void
 ---@param className string
 ---@param abilities gh_Save_EnhancedClass
-function Enhancement.loadClass(className, abilities)
+---@param callback fun(className: string): void
+function Enhancement.loadClass(className, abilities, callback)
     Logger.info("Loading enhancements for class %s", className)
 
     local classBox = --[[---@not nil]] Component.classBox(className)
@@ -83,7 +84,9 @@ function Enhancement.loadClass(className, abilities)
         data = classBoxData,
         callback_function = function()
             Logger.info("Enhancements for class %s loaded", className)
-            Enhancement.finishLoadClass(className)
+            if callback then
+                callback(className)
+            end
         end,
     })
 end
@@ -111,16 +114,44 @@ end
 ---@param abilityName string
 ---@param ability gh_Save_Enhanced_Ability
 function Enhancement.applyEnhancementsOnCard(abilityCard, className, abilityName, ability)
+    ---@param object tts__ObjectState
+    ---@param position tts__Vector
+    ---@return nil | (tts__Object_Decal, number)
+    local function findExistingDecalAt(object, position)
+        for i, decal in ipairs(Object.decals(object)) do
+            if decal.position:equals(position) then
+                return decal, i
+            end
+        end
+    end
+
     local enhancementsInfo = (--[[---@not nil]] Game.ability(className, abilityName)).enhancements
     for enhancementPosition, enhancement in pairs(ability) do
-        local position = enhancementsInfo[--[[---@not nil]] tonumber(enhancementPosition)]
-        ObjectState.addDecal(abilityCard, {
+        local position2d = enhancementsInfo[--[[---@not nil]] tonumber(enhancementPosition)]
+        local decal = {
             name = "Enhancement " .. enhancement,
             url = Decals[enhancement],
-            position = { position[1], DecalYCoordinate, position[2] },
-            rotation = DecalRotation,
-            scale = DecalScale,
-        })
+            position = { position2d[1], DecalYCoordinate, position2d[2] },
+        }
+        local existingDecal, index = findExistingDecalAt(abilityCard, Vector(decal.position))
+
+        if existingDecal ~= nil then
+            if (--[[---@not nil]] existingDecal).name ~= decal.name then
+                Logger.warn("The ability '%s' of class %s already has an '%s' at position %d. This will now be overwritten with '%s'!",
+                        abilityName, className, (--[[---@not nil]] existingDecal).name, enhancementPosition, decal.name)
+                local attachedDecals = --[[---@not nil]] abilityCard.AttachedDecals
+                attachedDecals[index].CustomDecal.ImageURL = decal.url
+                attachedDecals[index].CustomDecal.Name = decal.name
+            end
+        else
+            ObjectState.addDecal(abilityCard, {
+                name = decal.name,
+                url = decal.url,
+                position = decal.position,
+                rotation = DecalRotation,
+                scale = DecalScale,
+            })
+        end
     end
 end
 
@@ -138,11 +169,10 @@ end
 ---@param player number
 ---@param enhancements gh_Save_Enhancements
 function Enhancement.saveFromZone(player, enhancements)
-    local className = Character.findClassInZone(player)
+    local className = Component.playerClass(player)
     if not className then
         return
     end
-
     Enhancement.saveFromContainer(Component.playerZone(player), --[[---@not nil]] className, enhancements)
 end
 

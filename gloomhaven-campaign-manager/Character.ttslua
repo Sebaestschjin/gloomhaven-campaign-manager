@@ -8,6 +8,7 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
+local Enhancement = require("gloomhaven-campaign-manager.Enhancement")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Options = require("gloomhaven-campaign-manager.Options")
 local Quest = require("gloomhaven-campaign-manager.Quest")
@@ -115,6 +116,13 @@ function Character.packCharacterBox(player)
     local characters = --[[---@type gh_Save_Characters]] {}
     Character.save(player, characters)
     local character = characters[tostring(player)]
+
+    local enhancements = --[[---@type gh_Save_Enhancements]] {}
+    Enhancement.saveFromZone(player, enhancements)
+    local classEnhancements = enhancements[character.class]
+    if TableUtil.isNotEmpty(classEnhancements) then
+        Enhancement.loadClass(character.class, classEnhancements)
+    end
 
     local callback = function(characterBox)
         local limitedComponents = {}
@@ -645,16 +653,6 @@ function Character.saveQuest(player)
     if info then
         return (--[[---@not nil]] info).number
     end
-end
-
----@param player number
----@return nil | string
-function Character.findClassInZone(player)
-    local characterMat = Component.characterMat(player)
-    if characterMat then
-        return (--[[---@not nil]] characterMat).getDescription()
-    end
-    return nil
 end
 
 ---@param player number
