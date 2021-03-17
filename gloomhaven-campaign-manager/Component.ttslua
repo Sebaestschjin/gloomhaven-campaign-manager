@@ -49,6 +49,8 @@ local Guid = {
     EventsMat = "b53fb2",
     OldEventsMat = "41393b",
     FantasySetupScripts = "75ab50",
+    HpTrackerBag = "6c775e",
+    XpTrackerBag = "0625c4",
 }
 
 --- A list of components with multiple GUIDs (e.g. where newer versions have different GUIDs) or where multiple objects exist.
@@ -56,6 +58,7 @@ local Guids = {
     Zones = --[[---@type GUID[] ]] { "49a4e0", "dac936", "62cd94", "963318" },
     AddPlayers = --[[---@type GUID[] ]] { "3f0cda", "4d61da", "f98ff8", "d0f661" },
     AchievementBoard = --[[---@type GUID[] ]] { "43d5b8", "546b57" },
+    ModifierDecks = --[[---@type GUID[] ]] { "bb85b9", "d23231", "74238d", "20d00f" }
 }
 
 --- A list of CustomDeck-IDs to identify cards. May have multiple entries if newer version have other IDs.
@@ -76,6 +79,8 @@ local Names = {
     PlayerMat = "Player Mat",
     CharacterSheet = "Character Sheet",
     AttachModifierCard = "Attack Modifier",
+    Summons = "Summons",
+    Trackers = "Trackers",
 }
 
 local TableHigh = 0.65
@@ -89,6 +94,11 @@ local Positions = {
     SecondHand = --[[---@type tts__NumVectorShape]] { 0, 3, -2 },
     AbilityDeck = --[[---@type tts__NumVectorShape]] { -3.2, 2, -15.17 },
     AttackModifierDiscard = --[[---@type tts__NumVectorShape]] { -4.69, 2, 26.5 },
+    CharacterSheet = --[[---@type tts__NumVectorShape]] { 6.31, 0, -17 },
+    Figurine = --[[---@type tts__NumVectorShape]]  { 0, 0, 23.23 },
+    AttackModifierDeck = --[[---@type tts__NumVectorShape]] { -7, 0, -14.27 },
+    CharacterBox = --[[---@type tts__NumVectorShape]] { 0.62, 0, -15.77 },
+    PlayerMat = { 0, -1, 17.23 },
     -- absolute
     AchievementBoard = --[[---@type tts__NumVectorShape]] { 87.26, 2, 26.12 },
     OpeningConditions = --[[---@type tts__NumVectorShape]] { 65.19, 1.70, -29.55 },
@@ -110,7 +120,7 @@ local Scales = {
 
 --- A list of snap points on the player mat, e.g. for item slots.
 ---@type table<gh_Save_Character_Item_Position, number>
-local PlayerMatSnapPoints = {
+local PlayerMatItemPositions = {
     Head = 15,
     Armor = 16,
     HandLeft = 17,
@@ -119,6 +129,10 @@ local PlayerMatSnapPoints = {
     Bag1 = 12,
     Bag2 = 13,
     Bag3 = 14,
+    Bag4 = 22,
+    Bag5 = 23,
+    Bag6 = 24,
+    Bag7 = 25,
     Active1 = 6,
     Active2 = 7,
     Active3 = 8,
@@ -170,6 +184,71 @@ Component.EventDecks = {
         deckAt = DeckMatSnapPoints.RoadEvents,
         atEventMat = 1,
         oldMat = Guid.OldEventsMat,
+    },
+}
+
+---@shape gh_PlayerComponent
+---@field name nil | string
+---@field class nil | boolean
+---@field snapPoint nil | number
+---@field position nil | tts__VectorShape
+---@field rotation nil | tts__VectorShape
+---@field locked nil | boolean
+---@field playerBag nil | GUID[]
+---@field bag nil | GUID
+---@field event nil | string
+
+---@type table<string, gh_PlayerComponent>
+Component.PlayerComponent = {
+    CharacterMat = {
+        name = Names.CharacterMat,
+        snapPoint = 3,
+        locked = true,
+    },
+    Figurine = {
+        class = true,
+        position = Positions.Figurine,
+        rotation = { 0, 0, 0 },
+        event = EventType.Character.Figurine,
+    },
+    Summons = {
+        name = Names.Summons,
+        snapPoint = 2,
+    },
+    Trackers = {
+        name = Names.Trackers,
+        snapPoint = 1,
+    },
+    AttackModifierDeck = {
+        name = Names.AttackModifierDeck,
+        position = Positions.AttackModifierDeck,
+        rotation = { 0, 180, 0 },
+    },
+    CharacterSheet = {
+        name = Names.CharacterSheet,
+        position = Positions.CharacterSheet,
+        rotation = { 0, 180, 0 },
+        event = EventType.Character.Sheet,
+    },
+}
+
+---@type table<string, gh_PlayerComponent>
+Component.ExtraPlayerComponent = {
+    Hp = {
+        snapPoint = 10,
+        rotation = { 0, 180, 0 },
+        bag = Guid.HpTrackerBag,
+        event = EventType.Character.HpTrack,
+    },
+    Xp = {
+        snapPoint = 11,
+        rotation = { 0, 180, 0 },
+        bag = Guid.XpTrackerBag,
+    },
+    AttackModifierPlayerDeck = {
+        snapPoint = 4,
+        rotation = { 0, 180, 180 },
+        playerBag = Guids.ModifierDecks,
     },
 }
 
@@ -610,12 +689,17 @@ function Component.characterBox(classBox)
 end
 
 ---@param object seb_Object_Identifiable
+function Component.isPlayerMat(object)
+    return Object.name(object):find(Names.PlayerMat) ~= nil
+end
+
+---@param object seb_Object_Identifiable
 function Component.isAbilityDeck(object)
     if not (Object.isSimple(object) or Object.isDeck(--[[---@type seb_Object]] object)) then
         return false
     end
     local name = Object.name(object)
-    return name:find(Names.AbilityDeck) or name:find(Names.StartingAbilityDeck)
+    return name:find(Names.AbilityDeck) ~= nil or name:find(Names.StartingAbilityDeck) ~= nil
 end
 
 ---@param player number
@@ -678,7 +762,7 @@ end
 ---@param positionName gh_Save_Character_Item_Position
 function Component.itemPosition(player, positionName)
     if positionName then
-        local snapPoint = PlayerMatSnapPoints[positionName]
+        local snapPoint = PlayerMatItemPositions[positionName]
         if snapPoint then
             return Utils.getSnapPosition(Component.playerMat(player), snapPoint)
         end
@@ -690,7 +774,7 @@ end
 ---@param object tts__Object | tts__ObjectState
 ---@return gh_Save_Character_Item_Position
 function Component.itemPositionName(playerMat, object)
-    for name, snap in pairs(PlayerMatSnapPoints) do
+    for name, snap in pairs(PlayerMatItemPositions) do
         if Utils.getSnapPosition(playerMat, snap) == Object.position(object) then
             return name
         end
@@ -743,30 +827,28 @@ function Component.playerHand(player)
     return Player[Component.PlayerColors[player]].getHandObjects()
 end
 
----@param player number
-function Component.adjustPlayerMatSnapPoints(player)
-    ---@param snaps tts__Object_SnapPointParameters[]
-    ---@param bag gh_Save_Character_Item_Position
+---@param playerMat tts__ObjectState
+function Component.adjustPlayerMatSnapPoints(playerMat)
+    ---@param snaps tts__ObjectState_SnapPoint[]
     ---@param zPosition number
-    local function addSnapPoint(snaps, bag, zPosition)
-        if PlayerMatSnapPoints[bag] == nil then
-            PlayerMatSnapPoints[bag] = TableUtil.length(snaps) + 1
-        end
-
+    local function addSnapPoint(snaps, zPosition)
         table.insert(snaps, {
-            position = { 1.52, 0.1, zPosition },
-            rotation = { 0, 0, 0 },
+            Position = { x = 1.52, y = 0.1, z = zPosition },
+            Tags = {},
         })
     end
 
-    local playerMat = Component.playerMat(player)
-    local snaps = --[[---@type tts__Object_SnapPointParameters[] ]] playerMat.getSnapPoints()
-    addSnapPoint(snaps, 'Bag4', -0.72)
-    addSnapPoint(snaps, 'Bag5', -0.24)
-    addSnapPoint(snaps, 'Bag6', 0.24)
-    addSnapPoint(snaps, 'Bag7', 0.72)
+    local snaps = --[[---@not nil]] playerMat.AttachedSnapPoints
+    addSnapPoint(snaps, -0.72)
+    addSnapPoint(snaps, -0.24)
+    addSnapPoint(snaps, 0.24)
+    addSnapPoint(snaps, 0.72)
 
-    playerMat.setSnapPoints(snaps)
+    if playerMat.States then
+        for _, state in pairs(--[[---@not nil]] playerMat.States) do
+            Component.adjustPlayerMatSnapPoints(state)
+        end
+    end
 end
 
 ---@param player number
@@ -780,14 +862,57 @@ function Component.loadPlayer(player, callback)
 end
 
 ---@param player number
----@param characterBox tts__Bag
----@param callback fun(): void
-function Component.placeCharacterBox(player, characterBox, callback)
-    local playerMat = Component.playerMat(player)
-    local fantasySetupScripts = --[[---@not nil]] getObjectFromGUID(Guid.FantasySetupScripts)
-    fantasySetupScripts.call("cleanArea", { playerMat, characterBox })
+---@param characterBoxData tts__BagState
+function Component.placeCharacterBox(player, characterBoxData)
+    spawnObjectData({
+        data = characterBoxData,
+        position = relativeToZone(player, Positions.CharacterBox),
+    })
+end
 
-    Utils.waitForObjectInZone(Guids.Zones[player], { name = Names.CharacterSheet }, callback)
+---@param player number
+---@param character gh_Save_Character
+---@param object tts__ObjectState
+---@param component gh_PlayerComponent
+function Component.placePlayerComponent(player, character, object, component)
+    local position
+    if component.snapPoint then
+        position = Utils.getSnapPosition(Component.playerMat(player), --[[---@not nil]] component.snapPoint)
+    else
+        position = relativeToZone(player, --[[---@not nil]] component.position)
+    end
+
+    spawnObjectData({
+        data = object,
+        position = position:add({ x = 0, y = 1, z = 0 }),
+        rotation = component.rotation,
+        callback_function = function(obj)
+            if component.event then
+                Wait.time(function()
+                    EventManager.triggerEvent(--[[---@not nil]] component.event, obj, player, character)
+                end, 1)
+            end
+        end,
+    })
+end
+
+---@param player number
+---@param character gh_Save_Character
+---@param component gh_PlayerComponent
+function Component.placeExtraPlayerComponents(player, character, component)
+    ---@type nil | tts__Bag
+    local fromBag
+    if component.playerBag then
+        local bagGuid = (--[[---@not nil]] component.playerBag)[player]
+        fromBag = --[[---@type tts__Bag]] getObjectFromGUID(bagGuid)
+    elseif component.bag then
+        fromBag = --[[---@type tts__Bag]] getObjectFromGUID(--[[---@not nil]] component.bag)
+    end
+
+    if fromBag then
+        local object = (--[[---@not nil]] fromBag).getData().ContainedObjects[1]
+        Component.placePlayerComponent(player, character, object, component)
+    end
 end
 
 ---@return GUID[]

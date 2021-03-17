@@ -166,6 +166,7 @@ Game.Classes = {
     Brute = {
         isStartingClass = true,
         boxGuid = "697f18",
+        playerMat = 2,
         hp = HpProgression.High,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
@@ -277,6 +278,7 @@ Game.Classes = {
     Scoundrel = {
         isStartingClass = true,
         boxGuid = "66309d",
+        playerMat = 5,
         hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
@@ -385,6 +387,7 @@ Game.Classes = {
     Spellweaver = {
         isStartingClass = true,
         boxGuid = "0507cf",
+        playerMat = 6,
         hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" } },
@@ -490,6 +493,7 @@ Game.Classes = {
     Mindthief = {
         isStartingClass = true,
         boxGuid = "8c1ca4",
+        playerMat = 4,
         hp = HpProgression.Low,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
@@ -601,6 +605,7 @@ Game.Classes = {
     Cragheart = {
         isStartingClass = true,
         boxGuid = "ec1d2a",
+        playerMat = 3,
         hp = HpProgression.High,
         perks = {
             [1] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" } },
@@ -715,6 +720,7 @@ Game.Classes = {
     Tinkerer = {
         isStartingClass = true,
         boxGuid = "fdef02",
+        playerMat = 7,
         hp = HpProgression.Medium,
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },

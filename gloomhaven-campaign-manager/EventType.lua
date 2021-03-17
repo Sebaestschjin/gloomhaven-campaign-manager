@@ -1,4 +1,10 @@
 local EventType = {
+    Character = {
+        Sheet = "character_sheet_placed",
+        Figurine = "character_figurine_placed",
+        HpTrack = "character_hp_placed",
+        Mat = "character_mat_placed",
+    },
     Placed = {
         LockedCharacters = "locked_classes_placed",
         OpeningConditions = "opening_conditions_placed",

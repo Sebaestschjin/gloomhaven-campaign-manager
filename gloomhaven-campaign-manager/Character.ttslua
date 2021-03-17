@@ -13,8 +13,16 @@ local Game = require("gloomhaven-campaign-manager.Game")
 local Options = require("gloomhaven-campaign-manager.Options")
 local Quest = require("gloomhaven-campaign-manager.Quest")
 local Shop = require("gloomhaven-campaign-manager.Shop")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Character = {}
+
+local function setupHandler()
+    Task.registerPerPlayer(Character.loadCharacterSheet, Task.Event.Character.Sheet)
+    Task.registerPerPlayer(Character.loadFigureHp, Task.Event.Character.Figurine)
+    Task.registerPerPlayer(Character.loadHealthToken, Task.Event.Character.HpTrack)
+    Task.registerPerPlayer(Character.loadItems, { Task.Event.Character.Sheet, Task.Event.Character.Mat })
+end
 
 local AbilityDefaultDistance = 5
 local AbilityMaxDistance = AbilityDefaultDistance + 2
@@ -58,49 +66,69 @@ function Character.unpackCharacterBox(player, character)
         return
     end
 
+    local abilityDecksPlaced = 0
     local characterBoxData = --[[---@type tts__BagState]] classBox.getData().ContainedObjects[1]
     local targetAbilityDeck = WrappedDeck(Component.abilityDeckPosition(player))
     local containedObjects = {}
 
+    ---@param object tts__ObjectState
+    ---@param component gh_PlayerComponent
+    ---@return boolean
+    local function matchesComponent(object, component)
+        if component.name then
+            return object.Nickname ~= nil and (--[[---@not nil]] object.Nickname):find(--[[---@not nil]] component.name) ~= nil
+        elseif component.class then
+            return object.Nickname == character.class
+        end
+
+        return false
+    end
+
+    ---@param contained tts__ObjectState
+    local function placeAbilityDeck(contained)
+        spawnObjectData({
+            data = contained,
+            position = Component.safePosition(),
+            rotation = { 0, 180, 0 },
+            callback_function = function(obj)
+                abilityDecksPlaced = abilityDecksPlaced + 1
+                targetAbilityDeck.putObject(--[[---@type tts__Deck]] obj)
+                targetAbilityDeck.setName("Advanced Abilities")
+                if abilityDecksPlaced == 2 then
+                    Character.loadAbilities(targetAbilityDeck, player, character)
+                end
+            end
+        })
+    end
+
     for i = #characterBoxData.ContainedObjects, 1, -1 do
         local contained = characterBoxData.ContainedObjects[i]
         if Component.isAbilityDeck(contained) then
-            spawnObjectData({
-                data = contained,
-                position = Component.safePosition(),
-                rotation = { 0, 180, 0 },
-                callback_function = function(obj)
-                    targetAbilityDeck.putObject(--[[---@type tts__Deck]] obj)
-                    targetAbilityDeck.setName("Advanced Abilities")
-                end
-            })
+            placeAbilityDeck(contained)
+        elseif Component.isPlayerMat(contained) then
+            Character.selectPlayerMat(contained, player, character)
         else
-            table.insert(containedObjects, contained)
+            local taken = false
+            for _, component in pairs(Component.PlayerComponent) do
+                if matchesComponent(contained, component) then
+                    Component.placePlayerComponent(player, character, contained, component)
+                    taken = true
+                    break
+                end
+            end
+
+            if not taken then
+                table.insert(containedObjects, contained)
+            end
         end
+    end
+    for _, component in pairs(Component.ExtraPlayerComponent) do
+        Component.placeExtraPlayerComponents(player, character, component)
     end
 
     characterBoxData.ContainedObjects = containedObjects
-    spawnObjectData({
-        data = characterBoxData,
-        position = Component.safePosition(),
-        callback_function = function(obj)
-            local onCharacterBoxPlaced = function() Character.doLoad(player, character) end
-            Component.placeCharacterBox(player, --[[---@type tts__Bag]] obj, onCharacterBoxPlaced)
-        end,
-    })
-end
-
---- Find all components within objects that are limited and should be placed into an inactive player box.
----@param limitedComponents tts__ObjectState[]
----@param objects seb_Object_Array
-local function findLimitedComponents(limitedComponents, objects)
-    for _, obj in ipairs(--[[---@type seb_Object[] ]] objects) do
-        if Component.isPersonalQuestCard(obj) or Component.isItemCard(obj) then
-            table.insert(limitedComponents, Object.data(obj))
-        elseif Object.isContainer(obj) then
-            findLimitedComponents(limitedComponents, Object.objects(--[[---@type seb_Object_Container]] obj))
-        end
-    end
+    Component.placeCharacterBox(player, characterBoxData)
+    Character.loadQuest(player, character)
 end
 
 ---@param player number
@@ -113,33 +141,60 @@ function Character.packCharacterBox(player)
         return
     end
 
-    local characters = --[[---@type gh_Save_Characters]] {}
-    Character.save(player, characters)
-    local character = characters[tostring(player)]
-
-    local enhancements = --[[---@type gh_Save_Enhancements]] {}
-    Enhancement.saveFromZone(player, enhancements)
-    local classEnhancements = enhancements[character.class]
-    if TableUtil.isNotEmpty(classEnhancements) then
-        Enhancement.loadClass(character.class, classEnhancements)
+    ---@return gh_Save_Character
+    local function storeCharacter()
+        local characters = --[[---@type gh_Save_Characters]] {}
+        Character.save(player, characters)
+        return characters[tostring(player)]
     end
 
-    local callback = function(characterBox)
+    ---@param className string
+    local function storeEnhancements(className)
+        local enhancements = --[[---@type gh_Save_Enhancements]] {}
+        Enhancement.saveFromZone(player, enhancements)
+        local classEnhancements = enhancements[className]
+        if TableUtil.isNotEmpty(classEnhancements) then
+            Enhancement.loadClass(className, classEnhancements)
+        end
+    end
+
+    --- Find all components within objects that are limited and should be placed into an inactive player box.
+    ---@param limitedComponents tts__ObjectState[]
+    ---@param objects seb_Object_Array
+    local function findLimitedComponents(limitedComponents, objects)
+        for _, obj in ipairs(--[[---@type seb_Object[] ]] objects) do
+            if Component.isPersonalQuestCard(obj) or Component.isItemCard(obj) then
+                table.insert(limitedComponents, Object.data(obj))
+            elseif Object.isContainer(obj) then
+                findLimitedComponents(limitedComponents, Object.objects(--[[---@type seb_Object_Container]] obj))
+            end
+        end
+    end
+
+    ---@param playerObjects tts__Object[]
+    local function removeObjects(playerObjects)
+        for _, obj in ipairs(playerObjects) do
+            obj.destruct()
+        end
+    end
+
+    local function inputLimitedObjects(characterBox)
         local limitedComponents = {}
         local playerObjects = Component.playerObjects(player)
         findLimitedComponents(limitedComponents, playerObjects)
-
-        for _, object in ipairs(playerObjects) do
-            object.destruct()
-        end
 
         local characterBoxData = characterBox.getData()
         characterBoxData.ContainedObjects = limitedComponents
 
         characterBox.destruct()
         spawnObjectData({ data = characterBoxData })
+        removeObjects(playerObjects)
     end
-    Component.placeInactiveCharacter(character, callback)
+
+    local character = storeCharacter()
+    storeEnhancements(character.class)
+
+    Component.placeInactiveCharacter(character, inputLimitedObjects)
 end
 
 ---@param boxGuid GUID
@@ -191,23 +246,10 @@ function Character.unpackInactiveCharacterBox(boxGuid, character)
     Logger.error("The character box is not in a player zone. Put the box into a player zone of your choice and try again.")
 end
 
+---@param characterSheet tts__Object
 ---@param player number
 ---@param character gh_Save_Character
-function Character.doLoad(player, character)
-    -- still need more waiting to init the UI of the sheet :-(
-    Wait.time(function() Character.loadCharacterSheet(player, character) end, 1)
-    Wait.time(function() Character.loadMaxHp(player, character) end, 5)
-    Character.loadAbilities(player, character)
-    Character.loadQuest(player, character)
-end
-
----@param player number
----@param character gh_Save_Character
-function Character.loadCharacterSheet(player, character)
-    Component.adjustPlayerMatSnapPoints(player)
-
-    local characterSheet = Component.characterSheet(player)
-
+function Character.loadCharacterSheet(characterSheet, player, character)
     if character.name then
         characterSheet.UI.setAttribute("Name", "text", character.name)
     end
@@ -224,9 +266,6 @@ function Character.loadCharacterSheet(player, character)
     end
     if character.perks then
         Character.loadPerks(player, character)
-    end
-    if character.items then
-        Character.loadItems(player, character)
     end
     if character.notes then
         characterSheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
@@ -252,40 +291,62 @@ function Character.loadHiddenNotes(characterSheet, hiddenNotes)
     characterSheet.UI.setAttribute("Notes", "text", table.concat(decodedNotes, "\n"))
 end
 
+---@param playerMat tts__ObjectState
 ---@param player number
 ---@param character gh_Save_Character
-function Character.loadMaxHp(player, character)
+function Character.selectPlayerMat(playerMat, player, character)
+    Component.adjustPlayerMatSnapPoints(playerMat)
+    local currentMat = Component.playerMat(player)
+    local matPosition = currentMat.getPosition()
+    currentMat.destruct()
+
+    spawnObjectData({
+        data = playerMat,
+        position = matPosition + Vector(0, 0.1, 0),
+        callback_function = function(obj)
+            local effectivePlayerMat = obj
+            local class = Game.class(character.class)
+            if class.playerMat then
+                effectivePlayerMat = obj.setState(--[[---@not nil]] class.playerMat)
+            end
+            effectivePlayerMat.setLock(true)
+            Task.complete(Task.Event.Character.Mat, effectivePlayerMat, player, character)
+        end
+    })
+end
+
+---@param figure tts__Object
+---@param player number
+---@param character gh_Save_Character
+function Character.loadFigureHp(figure, _, character)
     local characterInfo = Game.class(character.class)
     local level = Character.getLevel(character.xp)
     local maxHealth = characterInfo.hp[level]
-    local startingHealth = characterInfo.hp[1]
 
-    Character.loadFigureHealth(player, character.class, maxHealth)
-    if maxHealth > startingHealth then
-        local tokenName = startingHealth .. " hp"
-        local healthToken = --[[---@not nil]] Search.inZone(Component.playerZone(player), { name = tokenName })
-        healthToken.setState(maxHealth)
-    end
-
-    if characterInfo.extraFigure then
-        maxHealth = (--[[---@not nil]] characterInfo.extraFigure).hp[level]
-        Character.loadFigureHealth(player, (--[[---@not nil]] characterInfo.extraFigure).name, maxHealth)
-    end
-end
-
----@param player number
----@param name string
----@param health number
-function Character.loadFigureHealth(player, name, health)
-    local figure = --[[---@not nil]] Search.inZone(Component.playerZone(player), { name = name, type = Object.Type.Figurine })
-
-    figure.setTable("health", { value = health, max = health })
+    figure.setTable("health", { value = maxHealth, max = maxHealth })
     figure.call("setHealth")
+
+    -- TODO make this work again
+    --if characterInfo.extraFigure then
+    --    maxHealth = (--[[---@not nil]] characterInfo.extraFigure).hp[level]
+    --    Character.loadFigureHealth(player, (--[[---@not nil]] characterInfo.extraFigure).name, maxHealth)
+    --end
 end
 
+---@param token tts__Object
+---@param character gh_Save_Character
+function Character.loadHealthToken(token, _, character)
+    local characterInfo = Game.class(character.class)
+    local level = Character.getLevel(character.xp)
+    local maxHealth = characterInfo.hp[level]
+
+    token.setState(maxHealth)
+end
+
+---@param abilityDeck seb_WrappedDeck
 ---@param player number
 ---@param character gh_Save_Character
-function Character.loadAbilities(player, character)
+function Character.loadAbilities(abilityDeck, player, character)
     local unlockedAbilities = Game.startingAbilities(character.class)
     for _, ability in ipairs(character.abilities) do
         table.insert(unlockedAbilities, ability)
@@ -295,19 +356,19 @@ function Character.loadAbilities(player, character)
             function(abilityName) return not TableUtil.contains(character.hand, abilityName) end)
 
     if TableUtil.isEmpty(character.hand) then
-        Character.moveAbilityCards(player, 1, character.class, secondHandAbilities)
+        Character.moveAbilityCards(abilityDeck, player, 1, character.class, secondHandAbilities)
     else
-        Character.moveAbilityCards(player, 1, character.class, character.hand)
-        Character.moveAbilityCards(player, 2, character.class, secondHandAbilities)
+        Character.moveAbilityCards(abilityDeck, player, 1, character.class, character.hand)
+        Character.moveAbilityCards(abilityDeck, player, 2, character.class, secondHandAbilities)
     end
 end
 
+---@param abilityDeck seb_WrappedDeck
 ---@param player number
 ---@param targetHand number
 ---@param className string
 ---@param abilities string[]
-function Character.moveAbilityCards(player, targetHand, className, abilities)
-    local abilityDeck = --[[---@not nil]] Component.abilityDeck(player)
+function Character.moveAbilityCards(abilityDeck, player, targetHand, className, abilities)
     local targetPosition = Component.handPosition(player, targetHand)
     for _, abilityName in ipairs(abilities) do
         local abilityCard, distance = Search.nearestInContainedObjects(abilityDeck, abilityName, AbilityMaxDistance)
@@ -439,7 +500,7 @@ end
 
 ---@param player number
 ---@param character gh_Save_Character
-function Character.loadItems(player, character)
+function Character.loadItems(_, player, character)
     local holdItems = --[[---@type string[] ]] {}
 
     for position, items in pairs(character.items) do
@@ -677,5 +738,7 @@ end
 function Character.isInactive(id)
     return not Character.isActive(id)
 end
+
+setupHandler()
 
 return Character

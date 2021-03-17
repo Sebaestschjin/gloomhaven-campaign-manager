@@ -6,6 +6,7 @@
 ---@field boxGuid GUID
 ---@field hp gh_Game_HpProgression
 ---@field perks gh_Game_Perk[]
+---@field playerMat nil | number
 ---@field abilities table<string, gh_Game_Ability>
 ---@field extraFigure nil | gh_Game_Class_ExtraFigure
 

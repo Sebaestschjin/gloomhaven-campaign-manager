@@ -319,8 +319,10 @@ function Savefile.load()
         return nil
     end
 
-    setDefaultValues(--[[---@type gh_Savefile]] savefile)
-    return upgrade(--[[---@not nil]] savefile)
+    setDefaultValues(--[[---@not nil]] savefile)
+    local upgraded = upgrade(--[[---@not nil]] savefile)
+    setDefaultValues(upgraded)
+    return upgraded
 end
 
 --- Creates an empty save file with tables already existing.
