@@ -13,6 +13,7 @@ local FoundAbility = {
 }
 
 ---@param className string
+---@return gh_Game_Class
 function Game.class(className)
     local classInfo = Game.Classes[className]
     if not classInfo then
@@ -1165,9 +1166,16 @@ Game.Classes = {
     ["Beast Tyrant"] = {
         boxGuid = "89bec7",
         hp = HpProgression.Low,
-        extraFigure = {
-            name = "Bear Companion",
-            hp = HpProgression.High
+        extra = {
+            {
+                type = "Figurine",
+                name = "Bear Companion",
+                hp = HpProgression.High,
+            },
+            {
+                type = "Card",
+                name = "Beast Tyrant Special Rules",
+            }
         },
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
@@ -2052,6 +2060,12 @@ Game.Classes = {
     Diviner = {
         boxGuid = "ae2ea4",
         hp = HpProgression.Low,
+        extra = {
+            {
+                name = "Rifts",
+                Type = "Token",
+            }
+        },
         perks = {
             [1] = { remove = { "(-1)", "(-1)" } },
             [2] = { remove = { "(-1)", "(-1)" } },
@@ -2161,6 +2175,12 @@ Game.Classes = {
         boxGuid = "57b739",
         hp = HpProgression.Medium,
         isCustomClass = true,
+        extra = {
+            {
+                name = "Toxicity Card rules 1/2 and 2/2",
+                type = "Card",
+            }
+        },
         perks = {
             [1] = { remove = { "(-1)" }, add = { "(+1) (Toxicity -1)" } },
             [2] = { remove = { "(-1)" }, add = { "(+1) (Toxicity -1)" } },

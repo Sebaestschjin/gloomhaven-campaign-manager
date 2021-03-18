@@ -107,7 +107,7 @@ local function setDefaultValues(content)
     setDefaultValue(content, "party.reputation", 0)
     setDefaultValue(content, "party.characters", {})
 
-    for _, character in ipairs(--[[---@type gh_Save_Character_any[] ]] content.party.characters) do
+    for _, character in pairs(--[[---@type gh_Save_Characters ]] content.party.characters) do
         setDefaultValue(character, "abilities", {})
         setDefaultValue(character, "hand", {})
         setDefaultValue(character, "items", {})

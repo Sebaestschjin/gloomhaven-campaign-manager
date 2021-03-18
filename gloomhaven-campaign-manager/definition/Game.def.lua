@@ -8,11 +8,12 @@
 ---@field perks gh_Game_Perk[]
 ---@field playerMat nil | number
 ---@field abilities table<string, gh_Game_Ability>
----@field extraFigure nil | gh_Game_Class_ExtraFigure
+---@field extra nil | gh_Game_Class_Extra[]
 
----@shape gh_Game_Class_ExtraFigure
+---@shape gh_Game_Class_Extra
+---@field type string
 ---@field name string
----@field hp gh_Game_HpProgression
+---@field hp nil | gh_Game_HpProgression
 
 ---@shape gh_Game_Perk
 ---@field add nil | string[]

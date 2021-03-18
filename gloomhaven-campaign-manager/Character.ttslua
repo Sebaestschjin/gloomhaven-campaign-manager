@@ -66,11 +66,6 @@ function Character.unpackCharacterBox(player, character)
         return
     end
 
-    local abilityDecksPlaced = 0
-    local characterBoxData = --[[---@type tts__BagState]] classBox.getData().ContainedObjects[1]
-    local targetAbilityDeck = WrappedDeck(Component.abilityDeckPosition(player))
-    local containedObjects = {}
-
     ---@param object tts__ObjectState
     ---@param component gh_PlayerComponent
     ---@return boolean
@@ -84,34 +79,50 @@ function Character.unpackCharacterBox(player, character)
         return false
     end
 
+    local abilityDecksPlaced = 0
+    ---@param targetDeck seb_WrappedDeck
     ---@param contained tts__ObjectState
-    local function placeAbilityDeck(contained)
+    local function placeAbilityDeck(targetDeck, contained)
         spawnObjectData({
             data = contained,
             position = Component.safePosition(),
             rotation = { 0, 180, 0 },
             callback_function = function(obj)
                 abilityDecksPlaced = abilityDecksPlaced + 1
-                targetAbilityDeck.putObject(--[[---@type tts__Deck]] obj)
-                targetAbilityDeck.setName("Advanced Abilities")
+                targetDeck.putObject(--[[---@type tts__Deck]] obj)
+                targetDeck.setName("Advanced Abilities")
                 if abilityDecksPlaced == 2 then
-                    Character.loadAbilities(targetAbilityDeck, player, character)
+                    Character.loadAbilities(targetDeck, player, character)
                 end
             end
         })
     end
 
+    local characterBoxData = --[[---@type tts__BagState]] classBox.getData().ContainedObjects[1]
+    local containedObjects = {}
+    local classInfo = Game.class(character.class)
+    local extras = classInfo.extra or --[[---@type gh_Game_Class_Extra[] ]] {}
+    local targetAbilityDeck = WrappedDeck(Component.abilityDeckPosition(player))
+
     for i = #characterBoxData.ContainedObjects, 1, -1 do
         local contained = characterBoxData.ContainedObjects[i]
         if Component.isAbilityDeck(contained) then
-            placeAbilityDeck(contained)
+            placeAbilityDeck(targetAbilityDeck, contained)
         elseif Component.isPlayerMat(contained) then
-            Character.selectPlayerMat(contained, player, character)
+            Character.placePlayerMat(contained, player, character)
         else
             local taken = false
             for _, component in pairs(Component.PlayerComponent) do
                 if matchesComponent(contained, component) then
                     Component.placePlayerComponent(player, character, contained, component)
+                    taken = true
+                    break
+                end
+            end
+
+            for _, extra in ipairs(extras) do
+                if contained.Nickname == extra.name then
+                    Component.placeExtraPlayerComponent(player, character, contained, extra)
                     taken = true
                     break
                 end
@@ -123,7 +134,7 @@ function Character.unpackCharacterBox(player, character)
         end
     end
     for _, component in pairs(Component.ExtraPlayerComponent) do
-        Component.placeExtraPlayerComponents(player, character, component)
+        Component.placeAdditionalPlayerComponents(player, character, component)
     end
 
     characterBoxData.ContainedObjects = containedObjects
@@ -294,7 +305,7 @@ end
 ---@param playerMat tts__ObjectState
 ---@param player number
 ---@param character gh_Save_Character
-function Character.selectPlayerMat(playerMat, player, character)
+function Character.placePlayerMat(playerMat, player, character)
     Component.adjustPlayerMatSnapPoints(playerMat)
     local currentMat = Component.playerMat(player)
     local matPosition = currentMat.getPosition()
@@ -316,21 +327,23 @@ function Character.selectPlayerMat(playerMat, player, character)
 end
 
 ---@param figure tts__Object
----@param player number
 ---@param character gh_Save_Character
 function Character.loadFigureHp(figure, _, character)
     local characterInfo = Game.class(character.class)
     local level = Character.getLevel(character.xp)
+
     local maxHealth = characterInfo.hp[level]
+    if figure.getName() ~= character.class then
+        for _, extra in ipairs(--[[---@not nil]] characterInfo.extra) do
+            if extra.name == figure.getName() then
+                maxHealth = (--[[---@not nil]] extra.hp)[level]
+                break
+            end
+        end
+    end
 
     figure.setTable("health", { value = maxHealth, max = maxHealth })
     figure.call("setHealth")
-
-    -- TODO make this work again
-    --if characterInfo.extraFigure then
-    --    maxHealth = (--[[---@not nil]] characterInfo.extraFigure).hp[level]
-    --    Character.loadFigureHealth(player, (--[[---@not nil]] characterInfo.extraFigure).name, maxHealth)
-    --end
 end
 
 ---@param token tts__Object

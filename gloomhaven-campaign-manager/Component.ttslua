@@ -92,13 +92,14 @@ local Positions = {
     ItemUnequipped = --[[---@type tts__NumVectorShape]] { -7, 2, -7 },
     Hand = --[[---@type tts__NumVectorShape]] { 0, 3, 5 },
     SecondHand = --[[---@type tts__NumVectorShape]] { 0, 3, -2 },
-    AbilityDeck = --[[---@type tts__NumVectorShape]] { -3.2, 2, -15.17 },
+    AbilityDeck = --[[---@type tts__NumVectorShape]] { -3.2, -2.26, -15.17 },
     AttackModifierDiscard = --[[---@type tts__NumVectorShape]] { -4.69, 2, 26.5 },
     CharacterSheet = --[[---@type tts__NumVectorShape]] { 6.31, 0, -17 },
     Figurine = --[[---@type tts__NumVectorShape]]  { 0, 0, 23.23 },
     AttackModifierDeck = --[[---@type tts__NumVectorShape]] { -7, 0, -14.27 },
     CharacterBox = --[[---@type tts__NumVectorShape]] { 0.62, 0, -15.77 },
     PlayerMat = { 0, -1, 17.23 },
+    CharacterMat = { 2.18, -3, 16.95 },
     -- absolute
     AchievementBoard = --[[---@type tts__NumVectorShape]] { 87.26, 2, 26.12 },
     OpeningConditions = --[[---@type tts__NumVectorShape]] { 65.19, 1.70, -29.55 },
@@ -202,7 +203,7 @@ Component.EventDecks = {
 Component.PlayerComponent = {
     CharacterMat = {
         name = Names.CharacterMat,
-        snapPoint = 3,
+        position = Positions.CharacterMat,
         locked = true,
     },
     Figurine = {
@@ -887,6 +888,9 @@ function Component.placePlayerComponent(player, character, object, component)
         position = position:add({ x = 0, y = 1, z = 0 }),
         rotation = component.rotation,
         callback_function = function(obj)
+            if component.locked then
+                obj.setLock(true)
+            end
             if component.event then
                 Wait.time(function()
                     EventManager.triggerEvent(--[[---@not nil]] component.event, obj, player, character)
@@ -898,8 +902,25 @@ end
 
 ---@param player number
 ---@param character gh_Save_Character
+---@param contained tts__ObjectState
+---@param component gh_Game_Class_Extra
+function Component.placeExtraPlayerComponent(player, character, contained, component)
+    if component.type == "Figurine" then
+        Component.placePlayerComponent(player, character, contained, {
+            position = Vector(--[[---@not nil]] Component.PlayerComponent.Figurine.position) + Vector(2, 0, 0),
+            event = EventType.Character.Figurine,
+        })
+    elseif component.type == "Card" then
+        Component.placePlayerComponent(player, character, contained, {
+            position = Positions.Hand,
+        })
+    end
+end
+
+---@param player number
+---@param character gh_Save_Character
 ---@param component gh_PlayerComponent
-function Component.placeExtraPlayerComponents(player, character, component)
+function Component.placeAdditionalPlayerComponents(player, character, component)
     ---@type nil | tts__Bag
     local fromBag
     if component.playerBag then
