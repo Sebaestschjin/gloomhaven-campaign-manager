@@ -111,6 +111,42 @@
           "Unequipped": ["Minor Healing Potion"]
         },
         "quest": 531
+      },
+      "inactive1": {
+        "class": "Brute",
+        "name": "Homeboy",
+        "abilities": ["Hook and Chain", "Juggernaut"],
+        "checkmarks": 4,
+        "gold": 42,
+        "hiddenNotes": [
+          "TXkgTm90ZQ==",
+          "Non Base64 is also possible"
+        ],
+        "hand": [
+          "Eye for an Eye", "Trample", "Overwhelming Assault", "Shield Bash", "Sweeping Blow", "Spare Dagger",
+          "Hook and Chain", "Juggernaut", "Wall of Doom", "Skewer"
+        ],
+        "items": {
+          "Head": ["Iron Helmet"],
+          "Armor": ["Hide Armor"],
+          "HandRight": ["Battle-Axe"],
+          "HandLeft": ["Poison Dagger"],
+          "Boots": ["Boots of Striding"],
+          "Bag1": ["Minor Stamina Potion"],
+          "Bag2": ["Minor Power Potion"],
+          "Bag3": ["Minor Healing Potion"],
+          "Bag4": ["Minor Power Potion"],
+          "Bag6": ["Minor Stamina Potion"],
+          "Bag5": ["Minor Mana Potion"],
+          "Bag7": ["Minor Mana Potion"]
+        },
+        "notes": [
+          "My Note",
+          "More notes"
+        ],
+        "perks": [1, 3, 6],
+        "quest": 514,
+        "xp": 100
       }
     }
   },

@@ -78,7 +78,7 @@ local Names = {
     InactiveCharacter = "Repacked",
     PlayerMat = "Player Mat",
     CharacterSheet = "Character Sheet",
-    AttachModifierCard = "Attack Modifier",
+    AttackModifierCard = "Attack Modifier",
     Summons = "Summons",
     Trackers = "Trackers",
 }
@@ -224,12 +224,7 @@ Component.PlayerComponent = {
         name = Names.AttackModifierDeck,
         position = Positions.AttackModifierDeck,
         rotation = { 0, 180, 0 },
-    },
-    CharacterSheet = {
-        name = Names.CharacterSheet,
-        position = Positions.CharacterSheet,
-        rotation = { 0, 180, 0 },
-        event = EventType.Character.Sheet,
+        event = EventType.Character.AttackModifiers,
     },
 }
 
@@ -250,6 +245,7 @@ Component.ExtraPlayerComponent = {
         snapPoint = 4,
         rotation = { 0, 180, 180 },
         playerBag = Guids.ModifierDecks,
+        event = EventType.Character.AttackModifiersPlayer,
     },
 }
 
@@ -327,6 +323,12 @@ end
 ---@return tts__Vector
 function Component.questPosition(player)
     return relativeToZone(player, Positions.QuestCard)
+end
+
+---@param player number
+---@return tts__Vector
+function Component.characterSheetPosition(player)
+    return relativeToZone(player, Positions.CharacterSheet)
 end
 
 --------------------------------------------------------------------------------
@@ -581,7 +583,7 @@ end
 ---@return seb_WrappedDeck
 local function fromCityMat(snapPoint)
     local deckPosition = Utils.getSnapPosition(Component.cityMat(), snapPoint)
-    return WrappedDeck(deckPosition)
+    return WrappedDeck(--[[---@not nil]] deckPosition)
 end
 
 ---@return seb_WrappedDeck
@@ -613,7 +615,7 @@ end
 ---@return seb_WrappedDeck
 local function fromDeckMat(snapPoint)
     local deckPosition = Utils.getSnapPosition(Component.deckMat(), snapPoint)
-    return WrappedDeck(deckPosition)
+    return WrappedDeck(--[[---@not nil]] deckPosition)
 end
 
 ---@return seb_WrappedDeck
@@ -665,12 +667,12 @@ function Component.eventMatDeck(info)
     local position
     if getObjectFromGUID(Guid.OldEventsMat) then
         if info.oldMat then
-            position = Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(--[[---@not nil]] info.oldMat), 1)
+            position = --[[---@not nil]] Utils.getSnapPosition(--[[---@not nil]] getObjectFromGUID(--[[---@not nil]] info.oldMat), 1)
         else
-            position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), 1)
+            position = --[[---@not nil]] Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), 1)
         end
     else
-        position = Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), info.atEventMat)
+        position = --[[---@not nil]] Utils.getSnapPosition(--[[---@not nil]] Component.eventMat(), info.atEventMat)
     end
 
     return WrappedDeck(position)
@@ -697,8 +699,15 @@ function Component.characterBox(classBox)
 end
 
 ---@param object seb_Object_Identifiable
+---@return boolean
 function Component.isPlayerMat(object)
     return Object.name(object):find(Names.PlayerMat) ~= nil
+end
+
+---@param object tts__ObjectState
+---@return boolean
+function Component.isCharacterSheet(object)
+    return Object.name(object) == Names.CharacterSheet
 end
 
 ---@param object seb_Object_Identifiable
@@ -730,7 +739,8 @@ function Component.isAbilityCardForClass(object, className)
 
     if not Object.isCard(object)
             or not Object.description(object):find(className)
-            or name:find(Names.AttachModifierCard) then
+            or name:find(Names.AttackModifierCard)
+    then
         return false
     end
 
@@ -784,12 +794,14 @@ end
 function Component.itemPositionName(playerMat, object)
     for name, snap in pairs(PlayerMatItemPositions) do
         local snapPosition = Utils.getSnapPosition(playerMat, snap)
-        snapPosition.y = 0
-        local objectPosition = Object.position(object)
-        objectPosition.y = 0
+        if snapPosition then
+            (--[[---@not nil]] snapPosition).y = 0
+            local objectPosition = Object.position(object)
+            objectPosition.y = 0
 
-        if snapPosition:equals(objectPosition) then
-            return name
+            if (--[[---@not nil]] snapPosition):equals(objectPosition) then
+                return name
+            end
         end
     end
 
@@ -999,7 +1011,7 @@ end
 ---@param name string
 ---@return string
 function Component.modifierNamePattern(name)
-    return "^" .. Names.AttachModifierCard .. " " .. StringUtil.escapePattern(name) .. "$"
+    return "^" .. Names.AttackModifierCard .. " " .. StringUtil.escapePattern(name) .. "$"
 end
 
 ---@param player number

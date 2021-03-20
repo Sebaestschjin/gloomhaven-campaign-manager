@@ -102,13 +102,16 @@ function Shop.takeItem(name, toPosition, toRotation, startAt)
     return false
 end
 
+---@overload fun(name: string, callback: tts__ObjectCallbackFunction): boolean
 ---@param name string
 ---@param callback tts__ObjectCallbackFunction
+---@param startAt number
 ---@return boolean
-function Shop.takeItem2(name, callback)
+function Shop.takeItem2(name, callback, startAt)
     local cityMat = Component.cityMat()
+    startAt = startAt or 1
 
-    for i = 1, 14 do
+    for i = startAt, 14 do
         local deckPosition = Utils.getSnapPosition(cityMat, i)
         local deck = WrappedDeck(deckPosition)
         if not deck.isEmpty() then
@@ -128,13 +131,11 @@ function Shop.takeItem2(name, callback)
     return false
 end
 
----@overload fun(name: string, toPosition: tts__VectorShape): boolean
 ---@param name string
----@param toPosition tts__VectorShape
----@param toRotation tts__VectorShape
+---@param callback tts__ObjectCallbackFunction
 ---@return boolean
-function Shop.takeRewardItem(name, toPosition, toRotation)
-    return Shop.takeItem(name, toPosition, toRotation, 2)
+function Shop.takeRewardItem(name, callback)
+    return Shop.takeItem2(name, callback, 2)
 end
 
 return Shop

@@ -8,6 +8,7 @@ local Character = require("gloomhaven-campaign-manager.Character")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Party = {}
 
@@ -110,6 +111,8 @@ function Party.saveAll(savefile)
         local id = "inactive" .. tostring(i)
         party.characters[id] = Json.decode(inactiveCharacterBox.script_state)
     end
+
+    Task.completeSave(Task.Event.Saved.Party, savefile)
 end
 
 return Party

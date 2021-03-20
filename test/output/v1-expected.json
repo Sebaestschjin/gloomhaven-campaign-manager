@@ -273,5 +273,11 @@
     {
       "quest": "Vengeance"
     }
+  ],
+  "notes": [
+    {
+      "content": "count:down\nmove:no\n\n-->count> down or up\n-->move> yes or no",
+      "name": "Round Tracker"
+    }
   ]
 }

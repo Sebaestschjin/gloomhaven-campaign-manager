@@ -1,9 +1,10 @@
 local EventType = {
     Character = {
-        Sheet = "character_sheet_placed",
         Figurine = "character_figurine_placed",
         HpTrack = "character_hp_placed",
         Mat = "character_mat_placed",
+        AttackModifiers = "attack_modifiers_placed",
+        AttackModifiersPlayer = "attack_modifiers_player_placed",
     },
     Placed = {
         LockedCharacters = "locked_classes_placed",
@@ -30,6 +31,7 @@ local EventType = {
         Achievements = "achievements_saved",
         Events = "events_saved",
         Items = "items_saved",
+        Party = "party_saved",
     }
 }
 

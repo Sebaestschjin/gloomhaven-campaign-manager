@@ -131,7 +131,11 @@ function Event.saveEventsFromDeck(info)
 
     for _, card in pairs(eventDeck.getObjects()) do
         local eventNumber = Event.getNumber(card)
-        table.insert(eventsFromDeck.bottomUp, eventNumber)
+        if TableUtil.contains(eventsFromDeck.bottomUp, eventNumber) then
+            Logger.warn("Event %s found multiple times in %s. Will ignore additional copies.", eventNumber, info.name)
+        else
+            table.insert(eventsFromDeck.bottomUp, eventNumber)
+        end
     end
 
     for event = 1, StartingEvents do
@@ -158,6 +162,5 @@ function Event.getNumber(card)
     end
     return cardIndex + 82
 end
-
 
 return Event

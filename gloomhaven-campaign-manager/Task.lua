@@ -9,6 +9,18 @@ function Task.complete(event, ...)
     EventManager.triggerEvent(event, ...)
 end
 
+---@param handler fun(savefile: gh_Savefile): void
+---@param event string
+function Task.registerSave(handler, event)
+    EventManager.addHandler(event, handler)
+end
+
+---@param event string
+---@param savefile gh_Savefile
+function Task.completeSave(event, savefile)
+    EventManager.triggerEvent(event, savefile)
+end
+
 ---@param handler fun(obj: tts__Object, player: number, character: gh_Save_Character): void
 ---@param events string | string[]
 function Task.registerPerPlayer(handler, events)
@@ -28,7 +40,7 @@ function Task.registerPerPlayer(handler, events)
                 handler(obj, player, character)
             end
         end
-        for _, event in ipairs(--[[---@type string[] ]]events) do
+        for _, event in ipairs(--[[---@type string[] ]] events) do
             EventManager.addHandler(event, callback)
         end
     else

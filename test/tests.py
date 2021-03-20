@@ -92,9 +92,9 @@ def test_upgrade_save_v2(savefile, ignored, main_menu):
 
 @pytest.mark.manually
 def test_load_manually():
-    test_name = "all_of_it"
+    test_name = "big"
     ignored = HANDS + [OPTIONS]
-    # ignored = []
+#     ignored = HANDS
 
     saved = load_file("manually")
 

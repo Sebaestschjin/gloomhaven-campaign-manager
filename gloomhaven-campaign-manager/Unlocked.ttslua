@@ -1,3 +1,4 @@
+local Chain = require('sebaestschjin-tts.Chain')
 local EventManager = require('ge_tts.EventManager')
 local Logger = require('sebaestschjin-tts.Logger')
 local Search = require("sebaestschjin-tts.Search")
@@ -81,13 +82,23 @@ function Unlocked.loadItems(savefile)
 
     Logger.info("Loading unlocked items")
 
-    local shopPosition = Component.shopDeck().getPosition()
+    local chain = Chain()
+    local shopDeck = Component.shopDeck()
 
     for _, item in pairs(savefile.unlocked.items) do
-        Shop.takeRewardItem(item, shopPosition)
+        chain.add(function(c)
+            Shop.takeRewardItem(item, function(--[[---@type tts__Card]] itemCard)
+                shopDeck.putObject(itemCard)
+                c.proceed()
+            end)
+        end)
     end
 
-    EventManager.triggerEvent(EventType.Loaded.Items)
+    chain.add(function()
+        EventManager.triggerEvent(EventType.Loaded.Items)
+    end)
+
+    chain.proceed()
 end
 
 ---@param openingConditions gh_Save_Unlocked_Conditions

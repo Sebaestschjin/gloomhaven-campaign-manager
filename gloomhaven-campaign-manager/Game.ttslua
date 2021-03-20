@@ -89,6 +89,29 @@ function Game.startingAbilities(className)
     return abilities
 end
 
+---@param quest gh_Save_Quest
+---@return gh_Game_Quest_Info
+function Game.quest(quest)
+    local questByName = Game.Quests[--[[---@type string]] quest]
+    if questByName then
+        return {
+            name = --[[---@type string]] quest,
+            number = questByName.number,
+            index = questByName.index,
+        }
+    end
+
+    for questName, questInfo in pairs(Game.Quests) do
+        if questInfo.number == quest then
+            return {
+                name = questName,
+                number = questInfo.number,
+                index = questInfo.index,
+            }
+        end
+    end
+end
+
 --- Max HP per level.
 ---@type table<string, gh_Game_HpProgression>
 local HpProgression = {
