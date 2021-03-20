@@ -100,7 +100,6 @@ function CampaignManager.doCreateSaveFile(savefile)
     Party.saveAll(savefile)
     Player.saveAll(savefile)
     Prosperity.saveAll(savefile)
-    Retirement.saveAll(savefile)
     Scenario.saveAll(savefile)
     Unlocked.saveAll(savefile)
 end

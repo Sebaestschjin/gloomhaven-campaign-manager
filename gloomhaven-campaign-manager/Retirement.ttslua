@@ -2,14 +2,18 @@ local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
-local Character = require("gloomhaven-campaign-manager.Character")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Options = require("gloomhaven-campaign-manager.Options")
 local Quest = require("gloomhaven-campaign-manager.Quest")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Retirement = {}
+
+local function setupHandlers()
+    Task.registerSave(Retirement.saveAll, Task.Event.Saved.Party)
+end
 
 ---@param savefile gh_Savefile
 function Retirement.setup(savefile)
@@ -54,7 +58,7 @@ end
 ---@param savefile gh_Savefile
 function Retirement.saveAll(savefile)
     Retirement.saveRetirementSheet(savefile.retired)
-    Retirement.saveCompletedQuests(savefile.retired)
+    Retirement.saveCompletedQuests(savefile)
 end
 
 ---@param retired gh_Save_Retired[]
@@ -93,8 +97,8 @@ function Retirement.saveRetirementSheet(retired)
     end
 end
 
----@param retired gh_Save_Retired[]
-function Retirement.saveCompletedQuests(retired)
+---@param savefile gh_Savefile
+function Retirement.saveCompletedQuests(savefile)
     local completedQuests = --[[---@type table<string, number> ]] {}
     for name, _ in pairs(Game.Quests) do
         completedQuests[name] = 1
@@ -106,21 +110,23 @@ function Retirement.saveCompletedQuests(retired)
         completedQuests[questInfo.name] = nil
     end
 
-    for player = 1, Component.playerCount() do
-        local playerQuest = Character.findQuest(player)
-        if playerQuest then
-            completedQuests[(--[[---@not nil]] playerQuest).name] = nil
+    for _, character in pairs(savefile.party.characters) do
+        if character.quest then
+            local playerQuest = Game.quest(character.quest)
+            completedQuests[playerQuest.name] = nil
         end
     end
 
     local i = 1
     for completed, _ in pairs(completedQuests) do
-        if not retired[i] then
-            retired[i] = --[[---@type gh_Save_Retired]] {}
+        if not savefile.retired[i] then
+            savefile.retired[i] = --[[---@type gh_Save_Retired]] {}
         end
-        retired[i].quest = completed
+        savefile.retired[i].quest = completed
         i = i + 1
     end
 end
+
+setupHandlers()
 
 return Retirement
