@@ -24,6 +24,7 @@ function Task.registerPerPlayer(handler, events)
             perPlayer[player] = current
 
             if current == totalSize then
+                perPlayer[player] = 0
                 handler(obj, player, character)
             end
         end

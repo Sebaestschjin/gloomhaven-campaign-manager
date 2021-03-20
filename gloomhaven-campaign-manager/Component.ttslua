@@ -261,10 +261,15 @@ Component.ObjectColor = {
     Invisible = --[[---@type tts__ColorShape]] { 0, 0, 0, 0 },
 }
 
+---@overload fun(guidName: string, search: seb_Search_Full): tts__Object
 ---@param guidName string
 ---@param search seb_Search_Full
+---@param isError boolean
 ---@return tts__Object
-local function findComponent(guidName, search)
+local function findComponent(guidName, search, isError)
+    if isError == nil then
+        isError = true
+    end
     local guid = Guid[guidName]
 
     local byId = getObjectFromGUID(guid)
@@ -277,7 +282,9 @@ local function findComponent(guidName, search)
         Guid[guidName] = (--[[---@not nil]] bySearch).getGUID()
         return --[[---@not nil]] bySearch
     else
-        Logger.error("Fatal error! Can not find component %s", guidName)
+        if isError then
+            Logger.error("Fatal error! Can not find component %s", guidName)
+        end
     end
 end
 
@@ -383,7 +390,7 @@ end
 
 ---@return nil | tts__Object
 function Component.openingConditions()
-    return findComponent("OpeningConditions", { name = "Opening Conditions" })
+    return findComponent("OpeningConditions", { name = "Opening Conditions" }, false)
 end
 
 function Component.placeScenarioBook()
@@ -487,11 +494,11 @@ end]]
                 local xPos = Positions.InactiveCharacter[1] + (j - 1) * 3
                 local hit = Physics.cast({
                     type = 1,
-                    origin = { xPos, 10, zPos },
-                    direction = { 0, -1, 0 },
+                    origin = { xPos, TableHigh + 1, zPos },
+                    direction = { 0, 1, 0 },
                 })
 
-                if hit or hit[1] == nil or hit[1].hit_object.type ~= Object.Type.Bag then
+                if TableUtil.isEmpty(hit) then
                     return { xPos, Positions.InactiveCharacter[2], zPos }
                 end
             end
@@ -776,7 +783,12 @@ end
 ---@return gh_Save_Character_Item_Position
 function Component.itemPositionName(playerMat, object)
     for name, snap in pairs(PlayerMatItemPositions) do
-        if Utils.getSnapPosition(playerMat, snap) == Object.position(object) then
+        local snapPosition = Utils.getSnapPosition(playerMat, snap)
+        snapPosition.y = 0
+        local objectPosition = Object.position(object)
+        objectPosition.y = 0
+
+        if snapPosition:equals(objectPosition) then
             return name
         end
     end
