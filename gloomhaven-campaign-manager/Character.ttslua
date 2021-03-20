@@ -18,10 +18,10 @@ local Task = require("gloomhaven-campaign-manager.Task")
 local Character = {}
 
 local function setupHandler()
-    Task.registerPerPlayer(Character.loadCharacterSheet, Task.Event.Character.Sheet)
     Task.registerPerPlayer(Character.loadFigureHp, Task.Event.Character.Figurine)
     Task.registerPerPlayer(Character.loadHealthToken, Task.Event.Character.HpTrack)
-    Task.registerPerPlayer(Character.loadItems, { Task.Event.Character.Sheet, Task.Event.Character.Mat })
+    Task.registerPerPlayer(Character.loadItems, Task.Event.Character.Mat)
+    Task.registerPerPlayer(Character.loadPerks, { Task.Event.Character.AttackModifiers, Task.Event.Character.AttackModifiersPlayer })
 end
 
 local AbilityDefaultDistance = 5
@@ -110,6 +110,8 @@ function Character.unpackCharacterBox(player, character)
             placeAbilityDeck(targetAbilityDeck, contained)
         elseif Component.isPlayerMat(contained) then
             Character.placePlayerMat(contained, player, character)
+        elseif Component.isCharacterSheet(contained) then
+            Character.placeCharacterSheet(contained, player, character)
         else
             local taken = false
             for _, component in pairs(Component.PlayerComponent) do
@@ -257,51 +259,6 @@ function Character.unpackInactiveCharacterBox(boxGuid, character)
     Logger.error("The character box is not in a player zone. Put the box into a player zone of your choice and try again.")
 end
 
----@param characterSheet tts__Object
----@param player number
----@param character gh_Save_Character
-function Character.loadCharacterSheet(characterSheet, player, character)
-    if character.name then
-        characterSheet.UI.setAttribute("Name", "text", character.name)
-    end
-    if character.gold then
-        characterSheet.call("addEx", { name = "gold", amount = character.gold })
-    end
-    if character.xp then
-        characterSheet.call("addEx", { name = "xp", amount = character.xp })
-    end
-    if character.checkmarks then
-        for i = 1, character.checkmarks do
-            characterSheet.call("clickedToggle", "notes" .. tostring(i))
-        end
-    end
-    if character.perks then
-        Character.loadPerks(player, character)
-    end
-    if character.notes then
-        characterSheet.UI.setAttribute("NotesFront", "text", table.concat(character.notes, "\n"))
-    end
-    Character.loadHiddenNotes(characterSheet, character.hiddenNotes)
-end
-
----@param characterSheet tts__Object
----@param hiddenNotes string[]
-function Character.loadHiddenNotes(characterSheet, hiddenNotes)
-    if not hiddenNotes then
-        return
-    end
-
-    local decodedNotes = --[[---@type string[] ]]{}
-    for i, note in ipairs(hiddenNotes) do
-        if StringUtil.isBase64(note) then
-            decodedNotes[i] = StringUtil.decodeBase64(note)
-        else
-            decodedNotes[i] = note
-        end
-    end
-    characterSheet.UI.setAttribute("Notes", "text", table.concat(decodedNotes, "\n"))
-end
-
 ---@param playerMat tts__ObjectState
 ---@param player number
 ---@param character gh_Save_Character
@@ -323,6 +280,83 @@ function Character.placePlayerMat(playerMat, player, character)
             effectivePlayerMat.setLock(true)
             Task.complete(Task.Event.Character.Mat, effectivePlayerMat, player, character)
         end
+    })
+end
+
+---@param characterSheet tts__ObjectState
+---@param player number
+---@param character gh_Save_Character
+function Character.placeCharacterSheet(characterSheet, player, character)
+    ---@param notes string[]
+    ---@return string
+    local function notesToString(notes)
+        return table.concat(notes, "\n")
+    end
+
+    ---@param hiddenNotes string[]
+    ---@return string
+    local function hiddenNotesToString(hiddenNotes)
+        if not hiddenNotes then
+            return ""
+        end
+
+        local decodedNotes = --[[---@type string[] ]]{}
+        for i, note in ipairs(hiddenNotes) do
+            if StringUtil.isBase64(note) then
+                decodedNotes[i] = StringUtil.decodeBase64(note)
+            else
+                decodedNotes[i] = note
+            end
+        end
+
+        return notesToString(decodedNotes)
+    end
+
+    ---@param items gh_Save_Character_Items
+    ---@return string
+    local function getAllItems(items)
+        local holdItems = --[[---@type string[] ]] {}
+
+        for _, itemPosition in pairs(items) do
+            for _, itemName in ipairs(itemPosition) do
+                table.insert(holdItems, itemName)
+            end
+        end
+
+        table.sort(holdItems)
+        return table.concat(holdItems, "\n")
+    end
+
+    local characterSheetState = --[[---@type fantasySetup_CharacterSheet]] {
+        ui = {
+            Name = character.name,
+            xp = tostring(character.xp),
+            gold = tostring(character.gold),
+            Items = getAllItems(character.items),
+            Notes = hiddenNotesToString(character.hiddenNotes),
+            NotesFront = notesToString(character.notes),
+        },
+        buttons = {},
+    }
+
+    for i = 1, Character.getLevel(character.xp) do
+        characterSheetState.buttons["level" .. tostring(i)] = "u{2717}"
+    end
+
+    for i = 1, character.checkmarks do
+        characterSheetState.buttons["notes" .. tostring(i)] = "u{2717}"
+    end
+
+    for _, perk in ipairs(character.perks) do
+        characterSheetState.buttons["perk" .. tostring(perk)] = "u{2717}"
+    end
+
+    characterSheet.LuaScriptState = JSON.encode(characterSheetState)
+
+    spawnObjectData({
+        data = characterSheet,
+        position = Component.characterSheetPosition(player),
+        rotation = { 0, 180, 0 },
     })
 end
 
@@ -421,17 +455,14 @@ end
 
 ---@param player number
 ---@param character gh_Save_Character
-function Character.loadPerks(player, character)
+function Character.loadPerks(_, player, character)
     local perkInfo = Game.class(character.class).perks
-    local characterSheet = --[[---@not nil]] Component.characterSheet(player)
     local currentDeck = Component.attackModifiers(player)
     local additionalDeck = Component.additionalAttackModifiers(player)
 
     local chain = Chain()
     for _, perk in ipairs(character.perks) do
         if perkInfo[perk] then
-            characterSheet.call("clickedToggle", "perk" .. tostring(perk))
-
             for _, card in TableUtil.ipairs(perkInfo[perk].add) do
                 chain.add(function(c)
                     Character.addModifierCard(c, character, additionalDeck, currentDeck, card)
@@ -446,9 +477,9 @@ function Character.loadPerks(player, character)
             Logger.error("A perk '%s' does not exist for class '%s'.", perk, character.class)
         end
     end
-    chain.add(function()
+    chain.add(function(c)
         currentDeck.shuffle()
-        return true
+        c.proceed()
     end)
 
     chain.proceed()
