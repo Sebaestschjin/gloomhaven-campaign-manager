@@ -461,7 +461,7 @@ function Component.placeSanctuarySticker()
 end
 
 function Component.replacePlayerButtons()
-    Logger.info("Replacing the functions of the 'Add Player' with custom functionality.")
+    Logger.info("Replacing the functions of the 'Add Player' buttons with custom functionality.")
 
     ---@param player number
     ---@return string

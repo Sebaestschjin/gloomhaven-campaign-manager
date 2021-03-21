@@ -6,6 +6,8 @@ local ObjectState = require('sebaestschjin-tts.ObjectState')
 local StringUtil = require('sebaestschjin-tts.StringUtil')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
+local Game = require('gloomhaven-campaign-manager.Game')
+
 -- Aliases for latest version
 ---@alias gh_Savefile gh_Savefile_v3
 ---@alias gh_Save_Party gh_Save_Party_v3
@@ -125,6 +127,14 @@ local function setDefaultValues(content)
     setDefaultValue(content, "notes", {})
 
     setDefaultValue(content, "options", {})
+
+    for _, character in pairs(--[[---@type gh_Save_Characters]] content.party.characters) do
+        local class = character.class
+        if not Game.class(class).isStartingClass
+                and not TableUtil.contains(content.unlocked.classes, class) then
+            table.insert(content.unlocked.classes, class)
+        end
+    end
 end
 
 ---@param savefile gh_Savefile_any
