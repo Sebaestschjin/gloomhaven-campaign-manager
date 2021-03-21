@@ -511,7 +511,7 @@ end]]
     end
 
     for i, removeGuid in ipairs(removePlayerButtonsGuids()) do
-        replaceButton(i, removeGuid, true)
+        replaceButton(i, removeGuid, false)
     end
 end
 
@@ -788,19 +788,22 @@ end
 
 ---@param object seb_Object
 ---@param className string
-function Component.isAbilityCardForClass(object, className)
+---@return nil | string
+function Component.getAbilityNameForClass(object, className)
     local name = Object.name(object)
 
     if not Object.isCard(object)
             or not Object.description(object):find(className)
             or name:find(Names.AttackModifierCard)
     then
-        return false
+        return nil
     end
 
-    local cardName = StringUtil.replace(name, "[%(%)]%d%d[%)%(]")
+    local cardName = StringUtil.replace(name, "%s?[%(%)]%d%d[%)%(]")
     local nearest, _ = Game.nearestAbility(className, cardName)
-    return nearest ~= nil
+    if nearest then
+        return (--[[---@not nil]] nearest).name
+    end
 end
 
 ---@param className string
@@ -808,14 +811,6 @@ end
 function Component.isStartingAbility(className, abilityName)
     local ability = --[[---@not nil]] Game.ability(className, abilityName)
     return ability.level == 1 or ability.level == "X"
-end
-
----@param class string
----@param abilityCard seb_Object
----@return string
-function Component.getAbilityName(class, abilityCard)
-    local cardName = StringUtil.replace(Object.name(abilityCard), "%s?[%(%)]%d+[%)%(]")
-    return --[[---@not nil]] (--[[---@not nil]] Game.ability(class, cardName)).name
 end
 
 ---@return tts__Bag[]

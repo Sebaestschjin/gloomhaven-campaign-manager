@@ -727,10 +727,10 @@ end
 ---@param abilities string[]
 function Character.saveAbilitiesFromObjects(objects, class, abilities)
     for _, object in ipairs(--[[---@type (tts__Object | tts__ObjectState)[] ]] objects) do
-        if Component.isAbilityCardForClass(object, class) then
-            local name = Component.getAbilityName(class, object)
-            if not Component.isStartingAbility(class, name) then
-                table.insert(abilities, name)
+        local abilityName = Component.getAbilityNameForClass(object, class)
+        if abilityName ~= nil then
+            if not Component.isStartingAbility(class, --[[---@not nil]] abilityName) then
+                table.insert(abilities, --[[---@not nil]] abilityName)
             end
         elseif Object.isContainer(object) and not Component.isAbilityDeck(object) then
             Character.saveAbilitiesFromObjects(Object.objects(--[[---@type tts__ContainerState]] object), class, abilities)
@@ -744,9 +744,9 @@ end
 function Character.saveHand(className, player)
     local handAbilities = --[[---@type string[] ]] {}
     for _, object in ipairs(Component.playerHand(player)) do
-        if Component.isAbilityCardForClass(object, className) then
-            local abilityName = Component.getAbilityName(className, object)
-            table.insert(handAbilities, abilityName)
+        local abilityName = Component.getAbilityNameForClass(object, className)
+        if abilityName ~= nil then
+            table.insert(handAbilities, --[[---@not nil]] abilityName)
         end
     end
 

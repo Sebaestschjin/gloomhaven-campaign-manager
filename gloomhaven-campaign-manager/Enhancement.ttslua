@@ -200,8 +200,9 @@ end
 ---@param enhancements gh_Save_Enhancements
 function Enhancement.saveFromContainer(container, className, enhancements)
     for _, object in ipairs(--[[---@type seb_Object[] ]] Object.objects(container)) do
-        if Component.isAbilityCardForClass(object, className) and TableUtil.isNotEmpty(Object.decals(object)) then
-            Enhancement.saveForCard(object, className, enhancements)
+        local abilityName = Component.getAbilityNameForClass(object, className)
+        if abilityName ~= nil and TableUtil.isNotEmpty(Object.decals(object)) then
+            Enhancement.saveForCard(object, className, --[[---@not nil]] abilityName, enhancements)
         elseif Object.isContainer(object) then
             Enhancement.saveFromContainer(--[[---@type seb_Object_Container]] object, className, enhancements)
         end
@@ -210,10 +211,10 @@ end
 
 ---@param card seb_Object
 ---@param className string
+---@param abilityName string
 ---@param enhancements gh_Save_Enhancements
-function Enhancement.saveForCard(card, className, enhancements)
+function Enhancement.saveForCard(card, className, abilityName, enhancements)
     Logger.verbose("Saving enhancements for " .. Object.name(card))
-    local abilityName = Component.getAbilityName(className, card)
     local enhancementInfo = (--[[---@not nil]] Game.ability(className, abilityName)).enhancements
 
     for _, decal in ipairs(Object.decals(card)) do
