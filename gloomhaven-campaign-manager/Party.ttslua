@@ -1,6 +1,7 @@
 local EventManager = require("ge_tts.EventManager")
 local Json = require("ge_tts.Json")
 
+local Logger = require("sebaestschjin-tts.Logger")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
@@ -37,7 +38,7 @@ function Party.load(party)
     partySheet.call("addSub", { "partyReputation", party.reputation })
 
     for id, character in pairs(party.characters) do
-        if Character.isActive(id) then
+        if Character.isActive(id) and Character.isSupported(id) then
             local player = --[[---@not nil]] tonumber(id)
             if TableUtil.isNotEmpty(character) then
                 Party.setPartySheetCharacter(player, character)
@@ -54,7 +55,13 @@ function Party.mayLoadCharacter(content, characterClass)
         if character.class == characterClass then
             if Character.isActive(id) then
                 local player = --[[---@not nil]] tonumber(id)
-                Character.load(player, character)
+                if Character.isSupported(id) then
+                    Character.load(player, character)
+                else
+                    Logger.warn("Tried to load character number %s, but this version only supports %s players."
+                            .. " The character will be loaded as an inactive character instead", player, Component.playerCount())
+                    Character.loadInactive(character)
+                end
             else
                 Character.loadInactive(character)
             end
@@ -65,6 +72,12 @@ end
 ---@param position number
 ---@param character gh_Save_Character
 function Party.setPartySheetCharacter(position, character)
+    if position > 4 then
+        Logger.warn("The party sheet only supports 4 players, but a fifth should be added. It will not be added, but"
+                .. " its level will still be considered for calculating the scenario level.")
+        return
+    end
+
     local partySheet = Component.partySheet()
     local partySheetAttributeNames = --[[---@type string[] ]] { "playerone", "playertwo", "playerthree", "playerfour" }
     local attributeName = partySheetAttributeNames[position]
@@ -80,7 +93,7 @@ function Party.setPartySheetAverageLevel(characters)
     local partySheet = Component.partySheet()
     local sum, numPlayers = 0, 0
     for id, character in pairs(characters) do
-        if Character.isActive(id) then
+        if Character.isActive(id) and Character.isSupported(id) then
             sum = sum + Character.getLevel(character.xp)
             numPlayers = numPlayers + 1
         end

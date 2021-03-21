@@ -46,7 +46,9 @@ end
 function Character.fillInactive(character, characterBox)
     local putIntoBox = function(o) characterBox.putObject(o) end
 
-    Quest.take(character.quest, putIntoBox)
+    if character.quest then
+        Quest.take(character.quest, putIntoBox)
+    end
 
     for _, items in pairs(character.items) do
         for _, itemName in ipairs(items) do
@@ -779,8 +781,9 @@ end
 
 ---@param id string
 ---@return boolean
-function Character.isInactive(id)
-    return not Character.isActive(id)
+function Character.isSupported(id)
+    local number = tonumber(id)
+    return number == nil or number <= Component.playerCount()
 end
 
 setupHandler()

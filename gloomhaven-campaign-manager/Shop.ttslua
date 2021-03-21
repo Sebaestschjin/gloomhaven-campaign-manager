@@ -83,7 +83,7 @@ function Shop.takeItem(name, toPosition, toRotation, startAt)
     local cityMat = Component.cityMat()
 
     for i = startAt, 14 do
-        local deckPosition = Utils.getSnapPosition(cityMat, i)
+        local deckPosition = --[[---@not nil]] Utils.getSnapPosition(cityMat, i)
         local deck = WrappedDeck(deckPosition)
         if not deck.isEmpty() then
             local item, index = Search.inContainedObjects(deck, { name = name })
@@ -112,7 +112,7 @@ function Shop.takeItem2(name, callback, startAt)
     startAt = startAt or 1
 
     for i = startAt, 14 do
-        local deckPosition = Utils.getSnapPosition(cityMat, i)
+        local deckPosition = --[[---@not nil]] Utils.getSnapPosition(cityMat, i)
         local deck = WrappedDeck(deckPosition)
         if not deck.isEmpty() then
             local item, index = Search.inContainedObjects(deck, { name = name })

@@ -56,7 +56,11 @@ local Guid = {
 --- A list of components with multiple GUIDs (e.g. where newer versions have different GUIDs) or where multiple objects exist.
 local Guids = {
     Zones = --[[---@type GUID[] ]] { "49a4e0", "dac936", "62cd94", "963318" },
+    Zones5Players = --[[---@type GUID[] ]] { "49a4e0", "dac936", "62cd94", "963318", "aa25be" },
     AddPlayers = --[[---@type GUID[] ]] { "3f0cda", "4d61da", "f98ff8", "d0f661" },
+    AddPlayers5Players = --[[---@type GUID[] ]] { "d0f661", "4d61da", "f98ff8", "3f0cdb", "3f0cda" },
+    RemovePlayers = --[[---@type GUID[] ]] { "", "", "", "", "bdfe0b" },
+    RemovePlayers5Players = --[[---@type GUID[] ]] { "", "", "", "", "bdfe0b" },
     AchievementBoard = --[[---@type GUID[] ]] { "43d5b8", "546b57" },
     ModifierDecks = --[[---@type GUID[] ]] { "bb85b9", "d23231", "74238d", "20d00f" }
 }
@@ -161,7 +165,7 @@ local CityMatSnapPoints = {
 
 --- Player color associated with each player
 ---@type tts__PlayerColor[]
-Component.PlayerColors = { "Red", "White", "Blue", "Green", }
+Component.PlayerColors = { "Red", "White", "Blue", "Green", "Purple" }
 
 --- Information about an event deck.
 ---@shape gh_EventDeckInfo
@@ -436,7 +440,7 @@ function Component.placeSanctuarySticker()
 end
 
 function Component.replacePlayerAddButtons()
-    for player, add in ipairs(Guids.AddPlayers) do
+    for player, add in ipairs(Component.playerButtons()) do
         local obj = --[[---@not nil]] getObjectFromGUID(add)
         local data = obj.getData()
 
@@ -778,11 +782,12 @@ end
 
 ---@param player number
 ---@param positionName gh_Save_Character_Item_Position
+---@return tts__Vector
 function Component.itemPosition(player, positionName)
     if positionName then
         local snapPoint = PlayerMatItemPositions[positionName]
         if snapPoint then
-            return Utils.getSnapPosition(Component.playerMat(player), snapPoint)
+            return --[[---@not nil]] Utils.getSnapPosition(Component.playerMat(player), snapPoint)
         end
     end
     return relativeToZone(player, Positions.ItemUnequipped)
@@ -812,20 +817,31 @@ end
 --- Player specific ------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+---@return boolean
+local function is5PlayerVersion()
+    return getObjectFromGUID(Guids.Zones[5]) ~= nil
+end
+
 ---@return number
 function Component.playerCount()
+    if is5PlayerVersion() then
+        return 5
+    end
     return 4
 end
 
 ---@return GUID[]
 function Component.playerZones()
+    if is5PlayerVersion() then
+        return Guids.Zones5Players
+    end
     return Guids.Zones
 end
 
 ---@param player number
 ---@return tts__ScriptingTrigger
 function Component.playerZone(player)
-    return --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(Guids.Zones[player])
+    return --[[---@type tts__ScriptingTrigger]] getObjectFromGUID(Component.playerZones()[player])
 end
 
 --- Returns all objects of the given player. Only objects which center is within the planar bounds of the player zone
@@ -879,7 +895,7 @@ end
 ---@param player number
 ---@param callback fun(): void
 function Component.loadPlayer(player, callback)
-    local playerZoneGuid = Guids.Zones[player]
+    local playerZoneGuid = Component.playerZones()[player]
     Component.playerButton(player).call("addPlayer")
     Utils.waitForObjectInZone(playerZoneGuid, { name = Names.PlayerMat }, function()
         callback()
@@ -962,13 +978,16 @@ end
 
 ---@return GUID[]
 function Component.playerButtons()
+    if is5PlayerVersion() then
+        return Guids.AddPlayers5Players
+    end
     return Guids.AddPlayers
 end
 
 ---@param index number
 ---@return tts__Object
 function Component.playerButton(index)
-    return --[[---@not nil]] getObjectFromGUID(Guids.AddPlayers[index])
+    return --[[---@not nil]] getObjectFromGUID(Component.playerButtons()[index])
 end
 
 ---@param player number
@@ -1153,7 +1172,8 @@ function Component.verifyLoad()
     verifyObject(Component.cityMat(), "City Mat")
     verifyObject(Component.eventMat(), "Events Mat")
     verifyObject(Component.partySheet(), "Party Sheet")
-    for i, zone in pairs(Guids.Zones) do
+
+    for i, zone in ipairs(Component.playerZones()) do
         verifyObject(getObjectFromGUID(zone), "Player zone " .. i)
     end
     for i, button in pairs(Component.playerButtons()) do
