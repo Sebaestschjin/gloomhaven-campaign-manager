@@ -59,8 +59,8 @@ local Guids = {
     Zones5Players = --[[---@type GUID[] ]] { "49a4e0", "dac936", "62cd94", "963318", "aa25be" },
     AddPlayers = --[[---@type GUID[] ]] { "3f0cda", "4d61da", "f98ff8", "d0f661" },
     AddPlayers5Players = --[[---@type GUID[] ]] { "d0f661", "4d61da", "f98ff8", "3f0cdb", "3f0cda" },
-    RemovePlayers = --[[---@type GUID[] ]] { "", "", "", "", "bdfe0b" },
-    RemovePlayers5Players = --[[---@type GUID[] ]] { "", "", "", "", "bdfe0b" },
+    RemovePlayers = --[[---@type GUID[] ]] { "bdfe0a", "a93090", "86087f", "9749e9" },
+    RemovePlayers5Players = --[[---@type GUID[] ]] { "6ded50", "a93090", "86087f", "bdfe0b", "bdfe0a" },
     AchievementBoard = --[[---@type GUID[] ]] { "43d5b8", "546b57" },
     ModifierDecks = --[[---@type GUID[] ]] { "bb85b9", "d23231", "74238d", "20d00f" }
 }
@@ -288,6 +288,27 @@ local function findComponent(guidName, search, isError)
     end
 end
 
+---@return boolean
+local function is5PlayerVersion()
+    return getObjectFromGUID(Guids.Zones5Players[5]) ~= nil
+end
+
+---@return GUID[]
+local function addPlayerButtonsGuids()
+    if is5PlayerVersion() then
+        return Guids.AddPlayers5Players
+    end
+    return Guids.AddPlayers
+end
+
+---@return GUID[]
+local function removePlayerButtonsGuids()
+    if is5PlayerVersion() then
+        return Guids.RemovePlayers5Players
+    end
+    return Guids.RemovePlayers
+end
+
 --------------------------------------------------------------------------------
 --- Positioning ----------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -439,11 +460,12 @@ function Component.placeSanctuarySticker()
     end)
 end
 
-function Component.replacePlayerAddButtons()
-    for player, add in ipairs(Component.playerButtons()) do
-        local obj = --[[---@not nil]] getObjectFromGUID(add)
-        local data = obj.getData()
+function Component.replacePlayerButtons()
+    Logger.info("Replacing the functions of the 'Add Player' with custom functionality.")
 
+    ---@param player number
+    ---@return string
+    local function createScript(player)
         local script = Component.scriptOnManager() ..
                 Component.scriptButton({
                     tooltip = "Right click to Remove Player!",
@@ -455,13 +477,41 @@ function Component.replacePlayerAddButtons()
 function packBox(_, _, alt_click)
     if not alt_click then return end
 
-    performOnManager("packCharacter", { player = ]] .. tostring(player) .. [[ })
-    self.setState(1)
+    if performOnManager("packCharacter", { player = ]] .. tostring(player) .. [[ }) then
+        self.setState(1)
+    end
 end]]
+        return script
+    end
 
-        (--[[---@not nil]] data.States)[2].LuaScript = script
-        obj.destruct()
+    ---@param player number
+    ---@param buttonGuid string
+    ---@param isAddButton boolean
+    local function replaceButton(player, buttonGuid, isAddButton)
+        local button = getObjectFromGUID(buttonGuid)
+        if not button then
+            return
+        end
+
+        local data = (--[[---@not nil]] button).getData()
+        local script = createScript(player)
+
+        if isAddButton then
+            (--[[---@not nil]] data.States)[2].LuaScript = script
+        else
+            data.LuaScript = script
+        end
+
+        (--[[---@not nil]] button).destruct()
         spawnObjectData({ data = data })
+    end
+
+    for i, addGuid in ipairs(addPlayerButtonsGuids()) do
+        replaceButton(i, addGuid, true)
+    end
+
+    for i, removeGuid in ipairs(removePlayerButtonsGuids()) do
+        replaceButton(i, removeGuid, true)
     end
 end
 
@@ -817,11 +867,6 @@ end
 --- Player specific ------------------------------------------------------------
 --------------------------------------------------------------------------------
 
----@return boolean
-local function is5PlayerVersion()
-    return getObjectFromGUID(Guids.Zones[5]) ~= nil
-end
-
 ---@return number
 function Component.playerCount()
     if is5PlayerVersion() then
@@ -896,7 +941,7 @@ end
 ---@param callback fun(): void
 function Component.loadPlayer(player, callback)
     local playerZoneGuid = Component.playerZones()[player]
-    Component.playerButton(player).call("addPlayer")
+    Component.addPlayerButton(player).call("addPlayer")
     Utils.waitForObjectInZone(playerZoneGuid, { name = Names.PlayerMat }, function()
         callback()
     end)
@@ -976,21 +1021,12 @@ function Component.placeAdditionalPlayerComponents(player, character, component)
     end
 end
 
----@return GUID[]
-function Component.playerButtons()
-    if is5PlayerVersion() then
-        return Guids.AddPlayers5Players
-    end
-    return Guids.AddPlayers
-end
-
 ---@param index number
 ---@return tts__Object
-function Component.playerButton(index)
-    return --[[---@not nil]] getObjectFromGUID(Component.playerButtons()[index])
+function Component.addPlayerButton(index)
+    return --[[---@not nil]] getObjectFromGUID(addPlayerButtonsGuids()[index])
 end
 
----@param player number
 ---@return tts__Object
 function Component.playerMat(player)
     return --[[---@not nil]] Search.inZone(Component.playerZone(player), { name = Names.PlayerMat, isPattern = true })
@@ -1176,7 +1212,7 @@ function Component.verifyLoad()
     for i, zone in ipairs(Component.playerZones()) do
         verifyObject(getObjectFromGUID(zone), "Player zone " .. i)
     end
-    for i, button in pairs(Component.playerButtons()) do
+    for i, button in pairs(addPlayerButtonsGuids()) do
         verifyObject(getObjectFromGUID(button), "Add Player button " .. i)
     end
 end
@@ -1238,12 +1274,29 @@ end
 ---@return string
 function Component.scriptOnManager()
     return [[
-function performOnManager(functionName, parameters)
+---@return nil | tts__Object
+function findManager()
     local withTag = getObjectsWithTag("]] .. Component.Tag.CampaignManager .. [[")
-    if withTag == nil or #withTag == 0 then
-        print("Can not find the campaign manager! :-(")
+    if withTag == nil then
+        return nil
+    end
+
+    return withTag[1]
+end
+
+---@param functionName string
+---@param parameters table
+---@return boolean
+function performOnManager(functionName, parameters)
+    local manager = findManager()
+    if not manager then
+        printToAll("Can not find the Gloomhaven Campaign Manager!]]
+            .. " In order to execute this function its presence is required."
+            .. " Add it somewhere on the table and try again." .. [[", { r=1, g=0, b=0 })
+        return false
     else
-        withTag[1].call(functionName, parameters)
+        manager.call(functionName, parameters)
+        return true
     end
 end
 ]]

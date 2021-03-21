@@ -5,6 +5,7 @@ local Component = require("gloomhaven-campaign-manager.Component")
 
 function onLoad(_)
     self.setTags({ Component.Tag.CampaignManager })
+    CampaignManager.replaceComponents()
 
     self.setPosition(self.getPosition() + Vector(0, 2, 0))
 

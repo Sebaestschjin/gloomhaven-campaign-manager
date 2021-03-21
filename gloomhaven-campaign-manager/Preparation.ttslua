@@ -9,16 +9,18 @@ function Preparation.setup()
     EventManager.addHandler(EventType.Loaded.Start, function() Preparation.prepareLoad() end)
 end
 
+function Preparation.replaceComponents()
+    Component.replacePlayerButtons()
+end
+
 function Preparation.prepareLoad()
     Component.verifyLoad()
 
-    Component.replacePlayerAddButtons()
     Component.placeScenarioBook()
     Component.placeRuleBook()
     Component.placeTreasureDeck()
     Component.placeLockedCharacter()
 end
-
 
 function Preparation.prepareSave()
     for _, playerZone in pairs(Component.playerZones()) do
