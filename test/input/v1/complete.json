@@ -1,23 +1,56 @@
 {
-  "enhancements": {
-    "Brute": {
-      "Eye for an Eye": {
-        "1": "Plus 1",
-        "2": "Ice"
-      },
-      "Fatal Advance": {
-        "1": "Jump"
-      },
-      "Hook and Chain": {
-        "1": "Plus 1"
-      }
+  "enhancements": [
+    {
+      "abilities": [
+        {
+          "enhancements": [
+            {
+              "enhancement": "Plus 1",
+              "position": 1
+            },
+            {
+              "enhancement": "Ice",
+              "position": 2
+            }
+          ],
+          "name": "Eye for an Eye"
+        },
+        {
+          "enhancements": [
+            {
+              "enhancement": "Jump",
+              "position": 1
+            }
+          ],
+          "name": "Fatal Advance"
+        },
+        {
+          "enhancements": [
+            {
+              "enhancement": "Plus 1",
+              "position": 1
+            }
+          ],
+          "name": "Hook and Chain"
+        }
+      ],
+      "class": "Brute"
     },
-    "Tinkerer": {
-      "Ink Bomb": {
-        "1": "Fire"
-      }
+    {
+      "abilities": [
+        {
+          "enhancements": [
+            {
+              "enhancement": "Fire",
+              "position": 1
+            }
+          ],
+          "name": "Ink Bomb"
+        }
+      ],
+      "class": "Tinkerer"
     }
-  },
+  ],
   "unlocked": {
     "classes": [
       "Berserker"
@@ -42,34 +75,60 @@
     },
     "treasures": [7, 15, 95]
   },
-  "events": {
-    "city": {
+  "events": [
+    {
+      "deck": "city",
       "bottomUp": [
         1, 2, 3, 4, 55, 6, 39, 26, 10, 29, 7, 28, 16, 14, 21, 20, 11, 25, 13, 23, 9, 17, 5, 24, 30, 18, 19, 8, 15, 27,
         22, 12
       ]
     },
-    "road": {
+    {
+      "deck": "road",
       "bottomUp": [
         1, 2, 3, 4, 55, 6, 18, 16, 5, 28, 29, 13, 39, 24, 23, 15, 30, 20, 22, 26, 17, 14, 21, 9, 8, 7, 27, 11, 25, 19,
         10, 12
       ]
     }
-  },
+  ],
   "global": {
-    "achievements": {
-      "Ancient Technology": 2,
-      "City Rule: Militaristic": 1,
-      "The Dead Invade": 1
-    },
+    "achievements": [
+      {
+        "count": 2,
+        "name": "Ancient Technology"
+      },
+      {
+        "count": 1,
+        "name": "City Rule: Militaristic"
+      },
+      {
+        "count": 1,
+        "name": "The Dead Invade"
+      }
+    ],
     "prosperity": 5,
-    "scenarios": {
-      "1": "Done",
-      "2": "Open",
-      "3": "Locked",
-      "8": "Open",
-      "66": "Open"
-    }
+    "scenarios": [
+      {
+        "number": 1,
+        "state": "Done"
+      },
+      {
+        "number": 2,
+        "state": "Open"
+      },
+      {
+        "number": 3,
+        "state": "Locked"
+      },
+      {
+        "number": 8,
+        "state": "Open"
+      },
+      {
+        "number": 66,
+        "state": "Open"
+      }
+    ]
   },
   "party": {
     "achievements": [
@@ -91,20 +150,40 @@
           "Eye for an Eye", "Trample", "Overwhelming Assault", "Shield Bash", "Sweeping Blow", "Spare Dagger",
           "Hook and Chain", "Juggernaut", "Wall of Doom", "Skewer"
         ],
-        "items": {
-          "Head": ["Iron Helmet"],
-          "Armor": ["Hide Armor"],
-          "HandRight": ["Battle-Axe"],
-          "HandLeft": ["Poison Dagger"],
-          "Boots": ["Boots of Striding"],
-          "Bag1": ["Minor Stamina Potion"],
-          "Bag2": ["Minor Power Potion"],
-          "Bag3": ["Minor Healing Potion"],
-          "Bag4": ["Minor Power Potion"],
-          "Bag6": ["Stun Powder"],
-          "Bag5": ["Stun Powder"],
-          "Bag7": ["Minor Mana Potion"]
-        },
+        "items": [
+          {
+            "name": "Battle-Axe",
+            "position": "HandRight"
+          },
+          {
+            "name": "Boots of Striding",
+            "position": "Boots"
+          },
+          {
+            "name": "Hide Armor",
+            "position": "Armor"
+          },
+          {
+            "name": "Iron Helmet",
+            "position": "Head"
+          },
+          {
+            "name": "Minor Healing Potion",
+            "position": "Bag3"
+          },
+          {
+            "name": "Minor Power Potion",
+            "position": "Bag2"
+          },
+          {
+            "name": "Minor Stamina Potion",
+            "position": "Bag1"
+          },
+          {
+            "name": "Poison Dagger",
+            "position": "HandLeft"
+          }
+        ],
         "notes": [
           "My Note",
           "More notes"
@@ -124,9 +203,12 @@
         "abilities": [
           "Stamina Booster"
         ],
-        "items": {
-          "Unequipped": ["Minor Healing Potion"]
-        },
+        "items": [
+          {
+            "name": "Minor Healing Potion",
+            "position": "Unequipped"
+          }
+        ],
         "notes": [],
         "hiddenNotes": []
       }

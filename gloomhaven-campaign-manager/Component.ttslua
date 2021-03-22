@@ -104,6 +104,8 @@ local Positions = {
     CharacterBox = --[[---@type tts__NumVectorShape]] { 0.62, 0, -15.77 },
     PlayerMat = { 0, -1, 17.23 },
     CharacterMat = { 2.18, -3, 16.95 },
+    ExtraRules = --[[---@type tts__NumVectorShape]] { 6.31, 0, -28 },
+    ExtraTokens = --[[---@type tts__NumVectorShape]] { 6.31, 0, -11 },
     -- absolute
     AchievementBoard = --[[---@type tts__NumVectorShape]] { 87.26, 2, 26.12 },
     OpeningConditions = --[[---@type tts__NumVectorShape]] { 65.19, 1.70, -29.55 },
@@ -992,6 +994,17 @@ function Component.placeExtraPlayerComponent(player, character, contained, compo
     elseif component.type == "Card" then
         Component.placePlayerComponent(player, character, contained, {
             position = Positions.Hand,
+        })
+    else
+        ---@type table<string, tts__VectorShape>
+        local positionByType = {
+            Rules = Positions.ExtraRules,
+            Token = Positions.ExtraTokens,
+        }
+        local position = positionByType[component.type]
+        Component.placePlayerComponent(player, character, contained, {
+            position = position,
+            rotation = { 0, 180, 0 }
         })
     end
 end

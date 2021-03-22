@@ -338,6 +338,9 @@ function Character.placeCharacterSheet(characterSheet, player, character)
             NotesFront = notesToString(character.notes),
         },
         buttons = {},
+        inputs = { -- this is for older versions of the character sheet which you might find in custom classes
+            Name = character.name,
+        },
     }
 
     for i = 1, Character.getLevel(character.xp) do
@@ -561,8 +564,17 @@ function Character.loadItems(_, player, character)
         end
     end
 
+    local itemsAsText = table.concat(holdItems, "\n")
     local characterSheet = Component.characterSheet(player)
-    characterSheet.UI.setAttribute("Items", "text", table.concat(holdItems, "\n"))
+    if TableUtil.isEmpty(characterSheet.getInputs()) then
+        characterSheet.UI.setAttribute("Items", "text", itemsAsText)
+    else
+        -- this is for older versions of the character sheet which you might find in custom classes
+        characterSheet.editInput({
+            index = 1,
+            value = itemsAsText,
+        })
+    end
 end
 
 ---@param character gh_Save_Character

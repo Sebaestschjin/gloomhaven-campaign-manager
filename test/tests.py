@@ -13,7 +13,8 @@ OPTIONS = "options"
 HANDS = ["party.characters.1.hand",
          "party.characters.2.hand",
          "party.characters.3.hand",
-         "party.characters.4.hand"]
+         "party.characters.4.hand",
+         "party.characters.5.hand"]
 
 
 @pytest.fixture()
@@ -92,13 +93,17 @@ def test_upgrade_save_v2(savefile, ignored, main_menu):
 
 @pytest.mark.manually
 def test_load_manually():
-    test_name = "big"
+    test_name = "custom_class_witcher"
+    expected_name = None
+#     expected_name = "five_player_in_four"
     ignored = HANDS + [OPTIONS]
 #     ignored = HANDS
 
     saved = load_file("manually")
 
-    assert_same_content(saved, f"{test_name}-expected", ignored)
+    if not expected_name:
+        expected_name = test_name
+    assert_same_content(saved, f"{expected_name}-expected", ignored)
 
 
 def load_file(filename, parent='input'):

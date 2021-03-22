@@ -2086,7 +2086,7 @@ Game.Classes = {
         extra = {
             {
                 name = "Rifts",
-                Type = "Token",
+                type = "Token",
             }
         },
         perks = {
@@ -2201,7 +2201,7 @@ Game.Classes = {
         extra = {
             {
                 name = "Toxicity Card rules 1/2 and 2/2",
-                type = "Card",
+                type = "Rules",
             }
         },
         perks = {

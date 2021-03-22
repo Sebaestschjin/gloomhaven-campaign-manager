@@ -130,13 +130,25 @@ local function setDefaultValues(content)
     setDefaultValue(content, "notes", {})
 
     setDefaultValue(content, "options", {})
+end
 
-    for _, character in pairs(--[[---@type gh_Save_Characters]] content.party.characters) do
-        local class = character.class
-        if not Game.class(class).isStartingClass
-                and not TableUtil.contains(content.unlocked.classes, class) then
-            table.insert(content.unlocked.classes, class)
+---@param content gh_Savefile
+local function setDefaultValuesLatest(content)
+    ---@param className string
+    local function addToUnlocked(className)
+        local isAlreadyUnlocked = Game.class(className).isStartingClass
+                or TableUtil.contains(content.unlocked.classes, className)
+        if not isAlreadyUnlocked then
+            table.insert(content.unlocked.classes, className)
         end
+    end
+
+    for _, character in pairs(content.party.characters) do
+        addToUnlocked(character.class)
+    end
+
+    for className, _ in pairs(content.enhancements) do
+        addToUnlocked(className)
     end
 end
 
@@ -334,7 +346,7 @@ function Savefile.load()
 
     setDefaultValues(--[[---@not nil]] savefile)
     local upgraded = upgrade(--[[---@not nil]] savefile)
-    setDefaultValues(upgraded)
+    setDefaultValuesLatest(upgraded)
     return upgraded
 end
 
