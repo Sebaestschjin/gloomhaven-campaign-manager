@@ -2009,7 +2009,7 @@ Game.Classes = {
             ["Vital Charge"] = { level = 1,
                                  enhancements = { [1] = { 0.2, -0.71 }, [2] = { -0.25, -0.71 }, [3] = { 0.19, -0.51 } }
             },
-            ["Felling Swoop"] = { level = 1,
+            ["Feeling Swoop"] = { level = 1,
                                   enhancements = { [1] = { 0.2, -0.73 }, [2] = { -0.23, -0.73 }, [3] = { 0.2, -0.52 } }
             },
             ["Crippling Noose"] = { level = 1,

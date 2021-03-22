@@ -201,8 +201,7 @@ function Character.packCharacterBox(player)
         local characterBoxData = characterBox.getData()
         characterBoxData.ContainedObjects = limitedComponents
 
-        characterBox.destruct()
-        spawnObjectData({ data = characterBoxData })
+        Object.respawn(characterBoxData)
         removeObjects(playerObjects)
     end
 

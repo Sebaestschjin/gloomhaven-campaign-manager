@@ -1,5 +1,6 @@
 local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
+local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
 
 local Chain = require("sebaestschjin-tts.Chain")
@@ -24,6 +25,7 @@ end
 
 local StartEvent = 82
 local NewItemsDeck = "Forgotten Circles Items"
+local RevisedAbilityCards = "Revised Cards"
 
 --- Unpacks the expansion box.
 function Expansion.unpack()
@@ -44,6 +46,7 @@ function Expansion.unpack()
     end
 
     chain.add(Expansion.unpackItems)
+    chain.add(Expansion.reviseAbilityCards)
     chain.add(Expansion.finishUnpack)
 
     chain.proceed()
@@ -104,14 +107,10 @@ function Expansion.unpackEventDeck(chain, expansionDeck, targetDeck)
         event.Nickname = tostring(StartEvent + totalSize - index)
     end
 
-    expansionDeck.destruct()
-    spawnObjectData({
-        data = deckData,
-        callback_function = function(obj)
-            targetDeck.putObject(--[[---@type tts__Deck]] obj)
-            chain.proceed()
-        end
-    })
+    Object.respawn(deckData, function(obj)
+        targetDeck.putObject(--[[---@type tts__Deck]] obj)
+        chain.proceed()
+    end)
 end
 
 ---@param chain seb_Chain
@@ -133,6 +132,44 @@ function Expansion.unpackItems(chain)
     })
 
     return false
+end
+
+---@param chain seb_Chain
+function Expansion.reviseAbilityCards(chain)
+    local forgottenCirclesBox = Component.forgottenCirclesBox()
+    local revisedCardDeck = --[[---@type tts__DeckState]] Search.inContainedObjects(forgottenCirclesBox, { name = RevisedAbilityCards })
+    local revisedCards = revisedCardDeck.ContainedObjects
+    local lockedClasses = Component.lockedClasses().getData()
+
+    ---@param abilityCard tts__ObjectState
+    ---@return nil | tts__ObjectState
+    local function getRevisedCard(abilityCard)
+        for _, revised in ipairs(revisedCards) do
+            if (abilityCard.Description or ""):find(revised.Description or "") ~= nil
+                    and (revised.Nickname == abilityCard.Nickname
+                    or revised.Nickname == "Feeling Swoop (75)" and abilityCard.Nickname == "Felling Swoop (75)") -- Stupid Typos...
+            then
+                return revised
+            end
+        end
+    end
+
+    for _, classBox in ipairs(lockedClasses.ContainedObjects) do
+        local characterBox = --[[---@type tts__BagState]] (--[[---@type tts__BagState]] classBox).ContainedObjects[1]
+        for _, contained in ipairs(characterBox.ContainedObjects) do
+            if Component.isAbilityDeck(contained) then
+                local abilityDeck = (--[[---@type tts__DeckState]] contained).ContainedObjects
+                for k, abilityCard in ipairs(abilityDeck) do
+                    local revisedCard = getRevisedCard(abilityCard)
+                    if revisedCard then
+                        abilityDeck[k] = --[[---@not nil]] revisedCard
+                    end
+                end
+            end
+        end
+    end
+
+    Object.respawn(lockedClasses, chain.proceed)
 end
 
 function Expansion.mayLoadBattleGoals()

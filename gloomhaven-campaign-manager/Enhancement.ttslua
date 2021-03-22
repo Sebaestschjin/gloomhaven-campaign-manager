@@ -69,9 +69,8 @@ end
 function Enhancement.loadClass(className, abilities, callback)
     Logger.info("Loading enhancements for class %s", className)
 
-    local classBox = --[[---@not nil]] Component.classBox(className)
-    local classBoxData = classBox.getData()
-    local characterBox = Component.characterBox(classBoxData)
+    local classBox = (--[[---@not nil]] Component.classBox(className)).getData()
+    local characterBox = Component.characterBox(classBox)
 
     for _, contained in pairs(characterBox.ContainedObjects) do
         if Component.isAbilityDeck(contained) then
@@ -79,16 +78,12 @@ function Enhancement.loadClass(className, abilities, callback)
         end
     end
 
-    classBox.destruct()
-    spawnObjectData({
-        data = classBoxData,
-        callback_function = function()
-            Logger.info("Enhancements for class %s loaded", className)
-            if callback then
-                callback(className)
-            end
-        end,
-    })
+    Object.respawn(classBox, function()
+        Logger.info("Enhancements for class %s loaded", className)
+        if callback then
+            callback(className)
+        end
+    end)
 end
 
 ---@param className string

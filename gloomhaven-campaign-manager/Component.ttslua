@@ -502,8 +502,7 @@ end]]
             data.LuaScript = script
         end
 
-        (--[[---@not nil]] button).destruct()
-        spawnObjectData({ data = data })
+        Object.respawn(data)
     end
 
     for i, addGuid in ipairs(addPlayerButtonsGuids()) do
