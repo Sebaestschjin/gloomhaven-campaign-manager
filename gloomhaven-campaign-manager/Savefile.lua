@@ -110,6 +110,9 @@ local function setDefaultValues(content)
     setDefaultValue(content, "party.characters", {})
 
     for _, character in pairs(--[[---@type gh_Save_Characters ]] content.party.characters) do
+        setDefaultValue(character, "checkmarks", 0)
+        setDefaultValue(character, "xp", 0)
+        setDefaultValue(character, "gold", 0)
         setDefaultValue(character, "abilities", {})
         setDefaultValue(character, "hand", {})
         setDefaultValue(character, "items", {})

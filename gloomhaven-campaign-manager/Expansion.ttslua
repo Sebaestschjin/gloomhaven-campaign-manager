@@ -5,7 +5,6 @@ local ObjectState = require("sebaestschjin-tts.ObjectState")
 local Chain = require("sebaestschjin-tts.Chain")
 local Search = require("sebaestschjin-tts.Search")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
-local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
@@ -90,34 +89,27 @@ function Expansion.unpackEvents(chain, targetDeck, deckName)
         position = Component.safePosition(),
         rotation = targetDeck.getRotation(),
         smooth = false,
-        callback_function = function(obj) Expansion.unpackEventDeck(chain, WrappedDeck(--[[---@type tts__Deck]] obj), targetDeck) end,
+        callback_function = function(obj) Expansion.unpackEventDeck(chain, --[[---@type tts__Deck]] obj, targetDeck) end,
     })
 end
 
 ---@param chain seb_Chain
----@param expansionDeck seb_WrappedDeck @The event deck to unpack
+---@param expansionDeck tts__Deck @The event deck to unpack
 ---@param targetDeck seb_WrappedDeck @The event deck where the new events will be placed
 function Expansion.unpackEventDeck(chain, expansionDeck, targetDeck)
-    for i, _ in ipairs(expansionDeck.getObjects()) do
-        chain.addNext(function(c) Expansion.placeAndNameEventCard(c, expansionDeck, targetDeck, i) end)
+    local deckData = expansionDeck.getData()
+
+    local totalSize = TableUtil.length(deckData.ContainedObjects)
+    for index, event in ipairs(deckData.ContainedObjects) do
+        event.Nickname = tostring(StartEvent + totalSize - index)
     end
 
-    chain.proceed()
-end
-
----@param chain seb_Chain
----@param expansionDeck seb_WrappedDeck @The event deck to unpack
----@param targetDeck seb_WrappedDeck @The event deck where the new events will be placed
----@param index number
-function Expansion.placeAndNameEventCard(chain, expansionDeck, targetDeck, index)
-    expansionDeck.takeObject({
-        index = index - 1,
-        position = Component.safePosition(),
-        smooth = false,
-        callback_function = function(card)
-            card.setName(tostring((index - 1) + StartEvent))
-            targetDeck.putObject(--[[---@type tts__Card]] card)
-            Wait.frames(chain.proceed, 1)
+    expansionDeck.destruct()
+    spawnObjectData({
+        data = deckData,
+        callback_function = function(obj)
+            targetDeck.putObject(--[[---@type tts__Deck]] obj)
+            chain.proceed()
         end
     })
 end
