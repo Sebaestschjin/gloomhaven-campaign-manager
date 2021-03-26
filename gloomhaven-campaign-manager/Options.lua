@@ -49,7 +49,7 @@ function Options.saveAll(savefile)
     end
 
     savefile.options.keepDiscardedCards = Options.keepDiscardedItems
-
+    savefile.options.requirePerkFix = false
     local battleGoals = Component.battleGoalsDeck().getObjects()
     savefile.options.loadExtendedBattleGoals = TableUtil.length(battleGoals) > 24
 end

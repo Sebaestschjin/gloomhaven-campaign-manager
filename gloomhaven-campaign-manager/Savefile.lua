@@ -300,6 +300,20 @@ local function upgradeToV3(content)
     return upgradedContent
 end
 
+---@param savefile gh_Savefile
+local function performFixes(savefile)
+    if savefile.options.requirePerkFix == nil or savefile.options.requirePerkFix then
+        for _, character in pairs(savefile.party.characters) do
+            local fixedPerks = {}
+            for _, perk in ipairs(character.perks) do
+                local realPerk = Game.internalToRealPerk(character.class, perk)
+                table.insert(fixedPerks, realPerk)
+            end
+            character.perks = fixedPerks
+        end
+    end
+end
+
 ---@param savefile gh_Savefile_any
 ---@return gh_Savefile
 local function upgrade(savefile)
@@ -347,6 +361,7 @@ function Savefile.load()
     setDefaultValues(--[[---@not nil]] savefile)
     local upgraded = upgrade(--[[---@not nil]] savefile)
     setDefaultValuesLatest(upgraded)
+    performFixes(upgraded)
     return upgraded
 end
 

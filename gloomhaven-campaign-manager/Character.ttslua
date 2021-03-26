@@ -352,7 +352,8 @@ function Character.placeCharacterSheet(characterSheet, player, character)
     end
 
     for _, perk in ipairs(character.perks) do
-        characterSheetState.buttons["perk" .. tostring(perk)] = "u{2717}"
+        local _, perkIndex = Game.perk(character.class, perk)
+        characterSheetState.buttons["perk" .. tostring(perkIndex)] = "u{2717}"
     end
 
     characterSheet.LuaScriptState = JSON.encode(characterSheetState)
@@ -460,25 +461,23 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Character.loadPerks(_, player, character)
-    local perkInfo = Game.class(character.class).perks
     local currentDeck = Component.attackModifiers(player)
     local additionalDeck = Component.additionalAttackModifiers(player)
 
     local chain = Chain()
     for _, perk in ipairs(character.perks) do
-        if perkInfo[perk] then
-            for _, card in TableUtil.ipairs(perkInfo[perk].add) do
-                chain.add(function(c)
-                    Character.addModifierCard(c, character, additionalDeck, currentDeck, card)
-                end)
-            end
-            for _, card in TableUtil.ipairs(perkInfo[perk].remove) do
-                chain.add(function(c)
-                    Character.removeModifierCard(c, player, character, currentDeck, card)
-                end)
-            end
-        else
-            Logger.error("A perk '%s' does not exist for class '%s'.", perk, character.class)
+        local perkInfo, _ = Game.perk(character.class, perk)
+
+        for _, card in TableUtil.ipairs(perkInfo.add) do
+            chain.add(function(c)
+                Character.addModifierCard(c, character, additionalDeck, currentDeck, card)
+            end)
+        end
+
+        for _, card in TableUtil.ipairs(perkInfo.remove) do
+            chain.add(function(c)
+                Character.removeModifierCard(c, player, character, currentDeck, card)
+            end)
         end
     end
     chain.add(function(c)
@@ -592,9 +591,9 @@ end
 ---@param character gh_Save_Character
 ---@return boolean
 function Character.hasNegateItemEffectsPerk(character)
-    local perkInfo = Game.class(character.class).perks
     for _, perk in ipairs(character.perks) do
-        if perkInfo[perk].ignore == "I" then
+        local perkInfo, _ = Game.perk(character.class, perk)
+        if perkInfo.ignore == "I" then
             -- TODO use constant
             return true
         end
@@ -663,7 +662,8 @@ function Character.save(player, characters)
     character.perks = {}
     for i = 1, 15 do
         if characterSheetButtons["perk" .. i].label ~= "" then
-            table.insert(character.perks, i)
+            local perkIndex = Game.internalToRealPerk(character.class, i)
+            table.insert(character.perks, perkIndex)
         end
     end
 

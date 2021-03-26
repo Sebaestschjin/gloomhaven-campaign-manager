@@ -23,6 +23,34 @@ function Game.class(className)
 end
 
 ---@param className string
+---@param perk number
+---@return gh_Game_Perk, number
+function Game.perk(className, perk)
+    local allPerks = Game.class(className).perks
+    local perkInfo = allPerks[perk]
+
+    if perkInfo.mapTo ~= nil then
+        local perkIndex = --[[---@not nil]] perkInfo.mapTo
+        return allPerks[perkIndex], perkIndex
+    end
+
+    return perkInfo, perk
+end
+
+---@param className string
+---@param perk number
+---@return number
+function Game.internalToRealPerk(className, perk)
+    for perkIndex, perkInfo in ipairs(Game.class(className).perks) do
+        if perkInfo.mapTo == perk then
+            return perkIndex
+        end
+    end
+
+    return perk
+end
+
+---@param className string
 ---@param abilityName string
 ---@return nil | gh_Game_Ability
 function Game.ability(className, abilityName)
@@ -202,10 +230,10 @@ Game.Classes = {
             [7] = { add = { "(Push 1) (Rolling)", "(Push 1) (Rolling)", "(Push 1) (Rolling)" } },
             [8] = { add = { "(Pierce 3) (Rolling)", "(Pierce 3) (Rolling)" } },
             [9] = { add = { "(Stun) (Rolling)" } },
-            [10] = { add = { "(Stun) (Rolling)" }, map = 13 },
-            [11] = { add = { "(Disarm) (Rolling)", "(Muddle) (Rolling)" }, map = 10 },
-            [12] = { add = { "(Add Target) (Rolling)" }, map = 11 },
-            [13] = { add = { "(Add Target) (Rolling)" }, map = 12 },
+            [10] = { add = { "(Stun) (Rolling)" }, mapTo = 13 },
+            [11] = { add = { "(Disarm) (Rolling)", "(Muddle) (Rolling)" }, mapTo = 10 },
+            [12] = { add = { "(Add Target) (Rolling)" }, mapTo = 11 },
+            [13] = { add = { "(Add Target) (Rolling)" }, mapTo = 12 },
             [14] = { add = { "(+1) (Shield 1 Self)" } },
             [15] = { add = { "(+1)" }, ignore = "I" }
         },

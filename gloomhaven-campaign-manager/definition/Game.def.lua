@@ -19,6 +19,7 @@
 ---@field add nil | string[]
 ---@field remove nil | string[]
 ---@field ignore nil | gh_Game_Perk_Ignore
+---@field mapTo nil | number
 
 ---@alias gh_Game_Perk_Ignore 'I' | 'S'
 

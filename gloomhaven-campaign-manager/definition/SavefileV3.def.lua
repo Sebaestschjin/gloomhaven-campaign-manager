@@ -107,3 +107,4 @@
 ---@field fantasySetup nil | string @The settings stored in the notebook for the FantasySetup mod
 ---@field keepDiscardedCards nil | boolean @Defaults to true
 ---@field loadExtendedBattleGoals nil | boolean @Defaults to false
+---@field requirePerkFix nil | boolean @Defaults to true

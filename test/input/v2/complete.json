@@ -22,16 +22,8 @@
     }
   },
   "unlocked": {
-    "classes": [
-      "Berserker"
-    ],
-    "items": [
-      "Major Healing Potion",
-      "Major Healing Potion",
-      "Power Core",
-      "Wand of Infernos",
-      "Wand of Infernos"
-    ],
+    "classes": ["Berserker"],
+    "items": ["Major Healing Potion", "Major Healing Potion", "Power Core", "Wand of Infernos", "Wand of Infernos"],
     "sanctuary": 18,
     "specialConditions": {
       "ancientTechnology": true,
@@ -118,7 +110,7 @@
           "My Note",
           "More notes"
         ],
-        "perks": [1, 3, 6],
+        "perks": [1, 3, 6, 10, 13],
         "quest": 513,
         "xp": 100
       },
