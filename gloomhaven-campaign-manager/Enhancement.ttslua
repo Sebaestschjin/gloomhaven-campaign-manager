@@ -13,7 +13,9 @@ local Enhancement = {}
 
 ---@param savefile gh_Savefile
 function Enhancement.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Class.Unlocked, function(className) Enhancement.mayLoadForClass(savefile, className) end)
+    EventManager.addHandler(EventType.Loaded.Class.Unlocked, function(className)
+        Enhancement.mayLoadForClass(savefile, className)
+    end)
 end
 
 ---@type table<string, URL>
@@ -213,20 +215,39 @@ function Enhancement.saveForCard(card, className, abilityName, enhancements)
     local enhancementInfo = (--[[---@not nil]] Game.ability(className, abilityName)).enhancements
 
     for _, decal in ipairs(Object.decals(card)) do
-        local enhancementName = StringUtil.replace(decal.name, "Enhancement ")
-        local nearestIndex, distance = Enhancement.findNearestIndex(decal.position, enhancementInfo)
+        local enhancementName = Enhancement.getName(decal.name)
+        if enhancementName then
+            local nearestIndex, distance = Enhancement.findNearestIndex(decal.position, enhancementInfo)
 
-        if Enhancement.saveEnhancement(enhancements, className, abilityName, nearestIndex, enhancementName) then
-            if distance > MaxDistance then
-                Logger.warn("Enhancement for ability " .. className .. "\n"
-                        .. "The distance to any known enhancement position for this ability is bigger"
-                        .. " than expected (" .. distance .. "). This might mean, that the known"
-                        .. " information is outdated (e.g. a newer printing of the card exists),"
-                        .. " the card shouldn't have enhancements or that the decal was added"
-                        .. " rather sloppy. Please verify that the enhancement loads correctly.")
+            if Enhancement.saveEnhancement(enhancements, className, abilityName, nearestIndex, --[[---@not nil]] enhancementName)
+            then
+                if distance > MaxDistance then
+                    Logger.warn("Enhancement for ability " .. className .. "\n"
+                            .. "The distance to any known enhancement position for this ability is bigger"
+                            .. " than expected (" .. distance .. "). This might mean, that the known"
+                            .. " information is outdated (e.g. a newer printing of the card exists),"
+                            .. " the card shouldn't have enhancements or that the decal was added"
+                            .. " rather sloppy. Please verify that the enhancement loads correctly.")
+                end
             end
         end
     end
+end
+
+---@param decalName string
+---@return nil | string
+function Enhancement.getName(decalName)
+    local baseName = StringUtil.replace(decalName, "Enhancement ")
+    if baseName:lower() == "aoe hex" then
+        baseName = "Area"
+    end
+
+    if not Decals[baseName] then
+        Logger.warn("The enhancement " .. baseName .. " is unknown")
+        return nil
+    end
+
+    return baseName
 end
 
 ---@param enhancements gh_Save_Enhancements
