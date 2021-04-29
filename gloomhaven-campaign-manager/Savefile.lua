@@ -1,11 +1,10 @@
-local SaveManager = require('ge_tts.SaveManager')
-
 local Logger = require('sebaestschjin-tts.Logger')
 local Notebook = require('sebaestschjin-tts.Notebook')
 local ObjectState = require('sebaestschjin-tts.ObjectState')
 local StringUtil = require('sebaestschjin-tts.StringUtil')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
+local Component = require('gloomhaven-campaign-manager.Component')
 local Game = require('gloomhaven-campaign-manager.Game')
 
 -- Aliases for latest version
@@ -34,7 +33,9 @@ end
 ---@param savefile string
 ---@return nil | gh_Savefile_any
 local function parseJson(savefile)
-    local status, content = pcall(function() return JSON.decode(savefile) end)
+    local status, content = pcall(function()
+        return JSON.decode(savefile)
+    end)
     if not status then
         Logger.error("The provided save file contains errors."
                 .. " The error message from Lua is also very cryptic and doesn't really help. :-("
@@ -404,30 +405,35 @@ end
 
 ---@param obj tts__Object
 function showSaveContent(obj)
-    Notebook.setContent("Savefile - " .. obj.getName(), obj.script_state)
+    local notebookName = "Savefile"
+    if obj.getName() then
+        notebookName = notebookName .. " - " .. obj.getName()
+    end
+
+    Notebook.setContent(notebookName, obj.script_state)
 end
 
 ---@param obj tts__Object
 local function addButton(obj)
-    obj.createButton({
-        click_function = "showSaveContent",
-        function_owner = self,
-        label = "Show",
-        tooltip = "Show the content of the save file by creating a notebook entry.",
-        position = { 0, 0.15, 0.65 },
-        scale = { 1, 1, 1 },
-        width = 1200,
-        height = 500,
-        font_size = 300,
-        color = { 0.753, 0.671, 0.565, 1 },
-        font_color = { 0.18, 0.047, 0.047, 1 },
-    })
-end
+    local script = Component.scriptOnManager() ..
+            Component.scriptButton({
+                label = "Show",
+                tooltip = "Show the content of the save file by creating a notebook entry.",
+                click_function = "showContent",
+                position = { 0, 0.15, 0.65 },
+                scale = { 1, 1, 1 },
+                width = 1200,
+                height = 500,
+                font_size = 300,
+                color = { 0.753, 0.671, 0.565, 1 },
+                font_color = { 0.18, 0.047, 0.047, 1 },
+            }) .. [[
+function showContent()
+    performOnManager("showSaveContent", self)
+end]]
 
-local function addButtons()
-    for _, obj in ipairs(getObjectsWithTag(TagName)) do
-        addButton(obj)
-    end
+    obj.script_code = script
+    obj.reload()
 end
 
 ---@param savefile gh_Savefile
@@ -461,7 +467,5 @@ function Savefile.saveScenarioTree(scenarioTree)
     local jsonContent = JSON.encode_pretty(scenarioTree)
     Notebook.setContent("Scenario Tree", jsonContent)
 end
-
-SaveManager.registerOnLoad(addButtons)
 
 return Savefile
