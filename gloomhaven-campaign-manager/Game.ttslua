@@ -140,6 +140,14 @@ function Game.quest(quest)
     end
 end
 
+---@type table<gh_Game_Difficulty, number>
+Game.Difficulty = {
+    Easy = -1,
+    Normal = 0,
+    Hard = 1,
+    ["Very Hard"] = 2,
+}
+
 --- Max HP per level.
 ---@type table<string, gh_Game_HpProgression>
 local HpProgression = {

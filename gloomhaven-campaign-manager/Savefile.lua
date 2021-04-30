@@ -131,6 +131,7 @@ local function setDefaultValues(content)
     setDefaultValue(content, "notes", {})
 
     setDefaultValue(content, "options", {})
+    setDefaultValue(content, "options.difficulty", "Normal")
 end
 
 ---@param content gh_Savefile

@@ -100,12 +100,12 @@ function CampaignManager.doCreateSaveFile(savefile)
     Achievement.saveAll(savefile)
     Enhancement.saveAll(savefile)
     Event.saveAll(savefile)
-    Options.saveAll(savefile)
     Party.saveAll(savefile)
     Player.saveAll(savefile)
     Prosperity.saveAll(savefile)
     Scenario.saveAll(savefile)
     Unlocked.saveAll(savefile)
+    Options.saveAll(savefile)
 end
 
 function CampaignManager.upgradeSavefile()

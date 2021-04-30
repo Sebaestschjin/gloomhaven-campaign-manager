@@ -53,3 +53,5 @@
 ---@alias gh_Game_ProsperityLevel 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
 ---@alias gh_Game_Item_RewardType 'loot' | 'random'
+
+---@alias gh_Game_Difficulty 'Easy' | 'Normal' | 'Hard' | 'Very Hard'

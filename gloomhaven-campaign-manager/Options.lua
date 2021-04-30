@@ -14,6 +14,8 @@ local OptionsNotebook = "Options"
 Options.keepDiscardedItems = nil
 ---@type boolean
 Options.loadExtendedBattleGoals = false
+---@type gh_Game_Difficulty
+Options.difficulty = "Normal"
 
 ---@param savefile gh_Savefile
 function Options.setup(savefile)
@@ -37,6 +39,8 @@ function Options.loadAll(savefile)
         Options.loadExtendedBattleGoals = false
     end
 
+    Options.difficulty = savefile.options.difficulty or "Normal"
+
     EventManager.triggerEvent(EventType.Loaded.Options)
 end
 
@@ -48,6 +52,7 @@ function Options.saveAll(savefile)
         end
     end
 
+    savefile.options.difficulty = Options.difficulty
     savefile.options.keepDiscardedCards = Options.keepDiscardedItems
     savefile.options.requirePerkFix = false
     local battleGoals = Component.battleGoalsDeck().getObjects()
