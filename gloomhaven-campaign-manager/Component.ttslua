@@ -376,7 +376,9 @@ local function takeFromGamebox(guid, position, event)
             rotation = { 0, 180, 0 },
             callback_function = function()
                 if event then
-                    Wait.frames(function() EventManager.triggerEvent(--[[---@not nil]] event) end, 1)
+                    Wait.frames(function()
+                        EventManager.triggerEvent(--[[---@not nil]] event)
+                    end, 1)
                 end
             end,
         })
@@ -747,10 +749,19 @@ end
 ---@param classBox tts__Bag | tts__ContainerState
 ---@return tts__ContainerState
 function Component.characterBox(classBox)
+    ---@type tts__ObjectState[]
+    local contained = {}
     if Object.isObject(classBox) then
-        return --[[---@type tts__ContainerState]] (--[[---@type tts__Bag]] classBox).getData().ContainedObjects[1]
+        contained = (--[[---@type tts__Bag]] classBox).getData().ContainedObjects
+    else
+        contained = (--[[---@type tts__ContainerState]] classBox).ContainedObjects
     end
-    return --[[---@type tts__ContainerState]] (--[[---@type tts__ContainerState]] classBox).ContainedObjects[1]
+
+    if TableUtil.isEmpty(contained) then
+        Logger.error("The class box for '%s' seems to be empty. This will result in an error! Did you reset the box and forget to include a new character box?", Object.name(classBox))
+    end
+
+    return --[[---@type tts__ContainerState]] contained[1]
 end
 
 ---@param object seb_Object_Identifiable
@@ -892,7 +903,9 @@ end
 function Component.playerObjects(player)
     local zone = Component.playerZone(player)
     return TableUtil.filter(zone.getObjects(),
-            function(object) return Utils.isCenterInZone(zone, object) end)
+            function(object)
+                return Utils.isCenterInZone(zone, object)
+            end)
 end
 
 ---@param player number
@@ -1315,8 +1328,11 @@ function Component.scriptButton(parameters)
     ---@param tab nil | table
     ---@return string
     local function tableString(tab)
-        if not tab then return "nil"
-        else return TableUtil.dump(--[[---@not nil]] tab) end
+        if not tab then
+            return "nil"
+        else
+            return TableUtil.dump(--[[---@not nil]] tab)
+        end
     end
 
     return [[

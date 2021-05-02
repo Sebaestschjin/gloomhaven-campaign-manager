@@ -230,6 +230,9 @@ function Enhancement.saveForCard(card, className, abilityName, enhancements)
                             .. " rather sloppy. Please verify that the enhancement loads correctly.")
                 end
             end
+        else
+            Logger.warn("The ability '%s' has an unknown enhancement named '%s'. This one will be ignored. Did you place the correct sticker?",
+                    abilityName, decal.name)
         end
     end
 end
@@ -243,7 +246,6 @@ function Enhancement.getName(decalName)
     end
 
     if not Decals[baseName] then
-        Logger.warn("The enhancement " .. baseName .. " is unknown")
         return nil
     end
 
