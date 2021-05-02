@@ -231,8 +231,8 @@ function Enhancement.saveForCard(card, className, abilityName, enhancements)
                 end
             end
         else
-            Logger.warn("The ability '%s' has an unknown enhancement named '%s'. This one will be ignored. Did you place the correct sticker?",
-                    abilityName, decal.name)
+            Logger.warn("The ability '%s' (%s) has an unknown enhancement named '%s'."
+                    .. " This one will be ignored. Did you place the correct sticker?", abilityName, className, decal.name)
         end
     end
 end
