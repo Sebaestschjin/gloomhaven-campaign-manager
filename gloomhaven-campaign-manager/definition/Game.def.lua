@@ -19,6 +19,7 @@
 ---@field add nil | string[]
 ---@field remove nil | string[]
 ---@field ignore nil | gh_Game_Perk_Ignore
+---@field mapTo nil | number
 
 ---@alias gh_Game_Perk_Ignore 'I' | 'S'
 
@@ -52,3 +53,5 @@
 ---@alias gh_Game_ProsperityLevel 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
 ---@alias gh_Game_Item_RewardType 'loot' | 'random'
+
+---@alias gh_Game_Difficulty 'Easy' | 'Normal' | 'Hard' | 'Very Hard'

@@ -25,7 +25,7 @@ local Unlocked = require('gloomhaven-campaign-manager.Unlocked')
 local CampaignManager = {}
 
 ---@type number[]
-CampaignManager.VERSION = { 2, 4, 0 }
+CampaignManager.VERSION = { 2, 5, 0 }
 
 function CampaignManager.replaceComponents()
     Preparation.replaceComponents()
@@ -100,12 +100,12 @@ function CampaignManager.doCreateSaveFile(savefile)
     Achievement.saveAll(savefile)
     Enhancement.saveAll(savefile)
     Event.saveAll(savefile)
-    Options.saveAll(savefile)
     Party.saveAll(savefile)
     Player.saveAll(savefile)
     Prosperity.saveAll(savefile)
     Scenario.saveAll(savefile)
     Unlocked.saveAll(savefile)
+    Options.saveAll(savefile)
 end
 
 function CampaignManager.upgradeSavefile()

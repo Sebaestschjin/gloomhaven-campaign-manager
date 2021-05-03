@@ -12,7 +12,9 @@ local Prosperity = require("gloomhaven-campaign-manager.Prosperity")
 local Shop = {}
 
 function Shop.setup()
-    EventManager.addHandler(EventType.Loaded.Prosperity, function() Shop.load() end)
+    EventManager.addHandler(EventType.Loaded.Prosperity, function()
+        Shop.load()
+    end)
 end
 
 function Shop.load()
@@ -34,7 +36,9 @@ function Shop.save(savefile)
     local shopDeck = Component.shopDeck()
     if shopDeck.isEmpty() then
         Component.cityMat().call("layOut", 0)
-        Wait.time(function() Shop.doSave(savefile) end, 1)
+        Wait.time(function()
+            Shop.doSave(savefile)
+        end, 1)
     else
         Shop.doSave(savefile)
     end
@@ -43,19 +47,20 @@ end
 ---@param savefile gh_Savefile
 function Shop.doSave(savefile)
     local shopDeck = Component.shopDeck()
+
     if shopDeck.isEmpty() then
         Logger.warn("Can't find shop deck, even after trying to recalling it."
                 .. " This means unlocked items can't be saved.")
-        return
+    else
+        local items = savefile.unlocked.items
+        Shop.saveFromObjects(shopDeck.getObjects(), items)
+        for player = 1, Component.playerCount() do
+            Shop.saveFromObjects(Component.playerObjects(player), items)
+        end
+
+        table.sort(items)
     end
 
-    local items = savefile.unlocked.items
-    Shop.saveFromObjects(shopDeck.getObjects(), items)
-    for player = 1, Component.playerCount() do
-        Shop.saveFromObjects(Component.playerObjects(player), items)
-    end
-
-    table.sort(items)
     EventManager.triggerEvent(EventType.Saved.Items, savefile)
 end
 

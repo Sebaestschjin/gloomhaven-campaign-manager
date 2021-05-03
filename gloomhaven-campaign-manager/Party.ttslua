@@ -9,6 +9,7 @@ local Character = require("gloomhaven-campaign-manager.Character")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Options = require("gloomhaven-campaign-manager.Options")
 local Task = require("gloomhaven-campaign-manager.Task")
 
 local Party = {}
@@ -100,6 +101,17 @@ function Party.setPartySheetAverageLevel(characters)
     end
     local average = sum / numPlayers
     local scenarioLevel = math.ceil(average / 2)
+
+    local difficultyName = Options.difficulty
+    local difficulty = Game.Difficulty[difficultyName]
+    if not difficulty then
+        Logger.warn("Difficulty %s is not available. Will default to 'Normal'.", difficultyName)
+    else
+        partySheet.UI.setAttribute("difficulty", "text", difficultyName)
+        partySheet.UI.setAttribute("difficulty", "value", tostring(difficulty))
+        scenarioLevel = scenarioLevel + difficulty
+    end
+
     partySheet.UI.setAttribute("averageLevel", "text", --[[---@not nil]] tonumber(string.format("%.2f", average)))
     partySheet.UI.setAttribute("scenarioLevel", "text", --[[---@not nil]] tonumber(string.format("%d", scenarioLevel)))
 end
@@ -114,6 +126,7 @@ function Party.saveAll(savefile)
     party.notes = StringUtil.split(partySheet.UI.getAttribute("notes", "text"), "\n")
     party.achievements = StringUtil.split(partySheet.UI.getAttribute("partyAchiev", "text"), { ",", "\n" })
     party.reputation = --[[---@not nil]] tonumber(partySheet.UI.getAttribute("partyReputation", "text"))
+    Options.difficulty = --[[---@type gh_Game_Difficulty]] partySheet.UI.getAttribute("difficulty", "text")
 
     party.characters = --[[---@type gh_Save_Characters ]]{}
     for player = 1, Component.playerCount() do
