@@ -3,7 +3,8 @@
     "version": "3.0"
   },
   "unlocked": {
-    "classes": ["Diviner"]
+    "classes": ["Diviner"],
+    "items": ["Shoes of Happiness"]
   },
   "events": {
     "city": {

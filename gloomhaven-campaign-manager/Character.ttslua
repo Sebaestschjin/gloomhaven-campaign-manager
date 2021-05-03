@@ -713,7 +713,7 @@ function Character.saveItemFromObjects(objects, playerMat, items)
                 positionalItems = {}
                 items[position] = positionalItems
             end
-            local itemName = Object.name(object)
+            local itemName = StringUtil.strip(Object.name(object))
             table.insert(positionalItems, itemName)
         elseif Object.isContainer(object) then
             Character.saveItemFromObjects(Object.objects(--[[---@type tts__ContainerState]] object), playerMat, items)
