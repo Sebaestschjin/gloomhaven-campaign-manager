@@ -2232,7 +2232,7 @@ Game.Classes = {
     --- JOTL
     Demolitionist = {
       isStartingClass = true,
-      boxGuid = "1c647e",
+      boxGuid = "aa9c80",
       hp = HpProgression.Medium,
       extra = {
           {
@@ -2343,7 +2343,7 @@ Game.Classes = {
     },
     Hatchet = {
       isStartingClass = true,
-      boxGuid = "aa9c80",
+      boxGuid = "1c647e",
       hp = HpProgression.Medium,
       perks = {
           [1] = { remove = { "(-1)", "(-1)" } },
@@ -2456,7 +2456,7 @@ Game.Classes = {
       perks = {
           [1] = { remove = { "(+0)", "(+0)", "(+0)", "(+0)" } },
           [2] = { remove = { "(-1)", "(-1)" } },
-          [3] = { remove = { "(-2)" }, add = {"(+1)"} },
+          [3] = { remove = { "(-2)", "(+1)" } },
           [4] = { remove = { "(-1)" }, add = { "(+1)" } },
           [5] = { remove = { "(-1)" }, add = { "(+1)" } },
           [6] = { remove = { "(+1)" }, add = { "(+2) (Infuse Fire)" } },

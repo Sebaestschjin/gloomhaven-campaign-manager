@@ -500,7 +500,7 @@ function Character.addModifierCard(chain, character, additionalDeck, currentDeck
     local search = { name = Component.modifierNamePattern(card), isPattern = true }
     local foundCard, _ = Search.inContainedObjects(additionalDeck, search)
     if not foundCard then
-        Logger.error("%, adding: Can't find modifier card %s.", character.class, card)
+        Logger.error("%s, adding: Can't find modifier card %s.", character.class, card)
         return true
     end
 
