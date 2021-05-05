@@ -6,7 +6,6 @@ local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
-local Options = require("gloomhaven-campaign-manager.Options")
 
 local Event = {}
 
@@ -149,9 +148,10 @@ function Event.removeEvents(deck, eventCards, info)
         deck.takeObject({
             guid = event,
             position = Component.safePosition(2),
+            rotation = { 0, 180, 0 },
             smooth = false,
             callback_function = function(card)
-                Component.discardEvent(--[[---@type tts__Card]] card, info, Options.keepDiscardedItems)
+                Component.discardEvent(--[[---@type tts__Card]] card, info)
             end
         })
     end
@@ -197,17 +197,24 @@ function Event.saveEventsFromDeck(info)
     for eventNumber = 1, info.count do
         if isRemoved(eventNumber) then
             table.insert(savedDeckInfo.remove, eventNumber)
-        end
-    end
-
-    local expansionEventsTaken = Search.inContainer(Component.forgottenCirclesBox(), { name = info.name }) ~= nil
-    if expansionEventsTaken then
-        for eventNumber = ExpansionStartingEvent, ExpansionStartingEvent + info.expansionCount do
-            if isRemoved(eventNumber) then
-                table.insert(savedDeckInfo.remove, eventNumber)
+            if eventNumber > StartingEvents then
+                table.insert(savedDeckInfo.add, eventNumber)
             end
         end
     end
+
+    local expansionEventsTaken = Search.inContainer(Component.forgottenCirclesBox(), { name = info.name }) == nil
+    if expansionEventsTaken then
+        for eventNumber = ExpansionStartingEvent, ExpansionStartingEvent + info.expansionCount - 1 do
+            if isRemoved(eventNumber) then
+                table.insert(savedDeckInfo.remove, eventNumber)
+                table.insert(savedDeckInfo.add, eventNumber)
+            end
+        end
+    end
+
+    table.sort(savedDeckInfo.add)
+    table.sort(savedDeckInfo.remove)
 
     return savedDeckInfo
 end
