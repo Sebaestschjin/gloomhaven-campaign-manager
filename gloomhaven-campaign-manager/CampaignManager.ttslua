@@ -64,7 +64,7 @@ end
 local requiredForSave = {}
 
 function CampaignManager.saveAll()
-    requiredForSave = { EventType.Saved.Achievements, EventType.Saved.Items }
+    requiredForSave = { EventType.Saved.Achievements, EventType.Saved.Items, EventType.Saved.Options }
 
     for _, required in ipairs(requiredForSave) do
         EventManager.addHandler(required, function(savefile)

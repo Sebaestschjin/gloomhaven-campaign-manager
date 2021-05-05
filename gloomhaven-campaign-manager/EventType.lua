@@ -32,6 +32,7 @@ local EventType = {
         Events = "events_saved",
         Items = "items_saved",
         Party = "party_saved",
+        Options = "options_saved"
     }
 }
 

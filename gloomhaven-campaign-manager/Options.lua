@@ -2,14 +2,14 @@ local EventManager = require('ge_tts.EventManager')
 local Notebook = require("sebaestschjin-tts.Notebook")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 
-local EventType = require("gloomhaven-campaign-manager.EventType")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Options = {}
 
 local OptionsNotebook = "Options"
 
 ---@type boolean
-Options.keepDiscardedItems = nil
+Options.keepDiscardedItems = true
 ---@type boolean
 Options.loadExtendedBattleGoals = false
 ---@type gh_Game_Difficulty
@@ -17,7 +17,7 @@ Options.difficulty = "Normal"
 
 ---@param savefile gh_Savefile
 function Options.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function()
+    EventManager.addHandler(Task.Event.Loaded.Start, function()
         Options.loadAll(savefile)
     end)
 end
@@ -41,7 +41,7 @@ function Options.loadAll(savefile)
 
     Options.difficulty = savefile.options.difficulty or "Normal"
 
-    EventManager.triggerEvent(EventType.Loaded.Options)
+    EventManager.triggerEvent(Task.Event.Loaded.Options)
 end
 
 ---@param savefile gh_Savefile
@@ -56,6 +56,8 @@ function Options.saveAll(savefile)
     savefile.options.keepDiscardedCards = Options.keepDiscardedItems
     savefile.options.requirePerkFix = false
     savefile.options.loadExtendedBattleGoals = Options.loadExtendedBattleGoals
+
+    Task.completeSave(Task.Event.Saved.Options, savefile)
 end
 
 return Options

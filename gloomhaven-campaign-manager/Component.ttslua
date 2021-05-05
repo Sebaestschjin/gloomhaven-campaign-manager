@@ -117,7 +117,7 @@ local Positions = {
     TreasureDeck = --[[---@type tts__NumVectorShape]] { -75, 2, -5.3 },
     ScenarioDiscard = --[[---@type tts__NumVectorShape]] { 56.0, 2, -1.52 },
     CompletedQuests = --[[---@type tts__NumVectorShape]] { 56.0, 2, -12.5 },
-    EventDiscardCity = --[[---@type tts__NumVectorShape]] { 56.0, 2, 1.5 },
+    EventDiscardCity = --[[---@type tts__NumVectorShape]] { 56.0, 2, 1.8 },
     EventDiscardRoad = --[[---@type tts__NumVectorShape]] { 56.0, 2, 9.1 },
     LootedTreasures = --[[---@type tts__NumVectorShape]]{ -68, 2, 17 },
     InactiveCharacter = --[[---@type tts__NumVectorShape]] { -66.29, 1.6, -23.91 },
@@ -405,10 +405,15 @@ function Component.gamebox()
             { type = Object.Type.Bag, name = "Unlockable Content" })
 end
 
----@return tts__Bag
-function Component.forgottenCirclesBox()
+---@overload fun(): tts__Bag
+---@param required boolean
+---@return nil | tts__Bag
+function Component.forgottenCirclesBox(required)
+    if required == nil then
+        required = true
+    end
     return --[[---@type tts__Bag]] findComponent("ForgottenCirclesBox",
-            { type = Object.Type.Bag, name = "Gloomhaven: Forgotten Circles" })
+            { type = Object.Type.Bag, name = "Gloomhaven: Forgotten Circles" }, required)
 end
 
 ---@return tts__Bag

@@ -203,12 +203,15 @@ function Event.saveEventsFromDeck(info)
         end
     end
 
-    local expansionEventsTaken = Search.inContainer(Component.forgottenCirclesBox(), { name = info.name }) == nil
-    if expansionEventsTaken then
-        for eventNumber = ExpansionStartingEvent, ExpansionStartingEvent + info.expansionCount - 1 do
-            if isRemoved(eventNumber) then
-                table.insert(savedDeckInfo.remove, eventNumber)
-                table.insert(savedDeckInfo.add, eventNumber)
+    local expansionBox = Component.forgottenCirclesBox(false)
+    if expansionBox ~= nil then
+        local expansionEventsTaken = Search.inContainer(--[[---@not nil]] expansionBox, { name = info.name }) == nil
+        if expansionEventsTaken then
+            for eventNumber = ExpansionStartingEvent, ExpansionStartingEvent + info.expansionCount - 1 do
+                if isRemoved(eventNumber) then
+                    table.insert(savedDeckInfo.remove, eventNumber)
+                    table.insert(savedDeckInfo.add, eventNumber)
+                end
             end
         end
     end
