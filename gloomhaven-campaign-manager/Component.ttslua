@@ -116,6 +116,8 @@ local Positions = {
     TreasureDeck = --[[---@type tts__NumVectorShape]] { -75, 2, -5.3 },
     ScenarioDiscard = --[[---@type tts__NumVectorShape]] { 56.0, 2, -1.52 },
     CompletedQuests = --[[---@type tts__NumVectorShape]] { 56.0, 2, -12.5 },
+    EventDiscardCity = --[[---@type tts__NumVectorShape]] { 56.0, 2, 1.5 },
+    EventDiscardRoad = --[[---@type tts__NumVectorShape]] { 56.0, 2, 9.1 },
     LootedTreasures = --[[---@type tts__NumVectorShape]]{ -68, 2, 17 },
     InactiveCharacter = --[[---@type tts__NumVectorShape]] { -66.29, 1.6, -23.91 },
 }
@@ -171,11 +173,14 @@ Component.PlayerColors = { "Red", "White", "Blue", "Green", "Purple" }
 
 --- Information about an event deck.
 ---@shape gh_EventDeckInfo
+---@field name string
 ---@field initialDeckAt number
 ---@field deckAt number
 ---@field atEventMat number
----@field name string
+---@field count number
+---@field expansionCount number
 ---@field oldMat nil | GUID
+---@field discardPosition tts__NumVectorShape
 
 ---@type table<string, gh_EventDeckInfo>
 Component.EventDecks = {
@@ -184,6 +189,9 @@ Component.EventDecks = {
         initialDeckAt = DeckMatSnapPoints.CityEventsInitial,
         deckAt = DeckMatSnapPoints.CityEvents,
         atEventMat = 2,
+        count = 81,
+        expansionCount = 9,
+        discardPosition = Positions.EventDiscardCity,
     },
     ["road"] = {
         name = "Road Events",
@@ -191,6 +199,9 @@ Component.EventDecks = {
         deckAt = DeckMatSnapPoints.RoadEvents,
         atEventMat = 1,
         oldMat = Guid.OldEventsMat,
+        count = 69,
+        expansionCount = 2,
+        discardPosition = Positions.EventDiscardRoad,
     },
 }
 
@@ -1285,6 +1296,19 @@ function Component.discardQuest(card, keepDiscarded)
     if keepDiscarded then
         local discarded = WrappedDeck(Vector(Positions.CompletedQuests))
         discarded.setName("Completed Quests")
+        discarded.putObject(card)
+    else
+        card.destruct()
+    end
+end
+
+---@param card tts__Card
+---@param eventInfo gh_EventDeckInfo
+---@param keepDiscarded boolean
+function Component.discardEvent(card, eventInfo, keepDiscarded)
+    if keepDiscarded then
+        local discarded = WrappedDeck(Vector(eventInfo.discardPosition))
+        discarded.setName("Discarded " .. eventInfo.name)
         discarded.putObject(card)
     else
         card.destruct()

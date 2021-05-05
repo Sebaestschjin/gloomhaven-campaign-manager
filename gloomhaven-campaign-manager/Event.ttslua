@@ -6,15 +6,19 @@ local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
+local Options = require("gloomhaven-campaign-manager.Options")
 
 local Event = {}
 
 ---@param savefile gh_Savefile
 function Event.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Expansion, function() Event.loadAll(savefile.events) end)
+    EventManager.addHandler(EventType.Loaded.Expansion, function()
+        Event.loadAll(savefile.events)
+    end)
 end
 
 local StartingEvents = 30
+local ExpansionStartingEvent = 82
 
 ---@param eventDecks gh_Save_EventDecks
 function Event.loadAll(eventDecks)
@@ -28,17 +32,19 @@ end
 function Event.load(deckType, eventDeck)
     Logger.info("Loading event deck %s", deckType)
     local eventsInfo = Component.EventDecks[deckType]
-    local initialDeck = Component.initialEventDeck(eventsInfo)
-    local targetDeck = Component.eventDeck(eventsInfo)
-    targetDeck.putObject(initialDeck)
+    local initialEventsDeck = Component.initialEventDeck(eventsInfo)
+    local completeEventsDeck = Component.eventDeck(eventsInfo)
+    completeEventsDeck.putObject(initialEventsDeck)
 
-    local bottomCards = Event.findBottomDeck(eventDeck, targetDeck)
-    local addedCards = Event.findAddedCards(eventDeck, targetDeck, bottomCards)
+    local bottomCards = Event.findBottomDeck(eventDeck, completeEventsDeck)
+    local addedCards = Event.findAddedCards(eventDeck, completeEventsDeck, bottomCards)
+    local removedCards = Event.findRemovedCards(eventDeck, completeEventsDeck)
 
     TableUtil.shuffle(addedCards)
     local eventCards = TableUtil.merge(bottomCards, addedCards)
 
-    Event.dealEvents(targetDeck, eventCards, eventsInfo)
+    Event.dealEvents(completeEventsDeck, eventCards, eventsInfo)
+    Event.removeEvents(completeEventsDeck, removedCards, eventsInfo)
 end
 
 ---@param events gh_Save_EventDeck
@@ -81,6 +87,28 @@ function Event.findAddedCards(events, deck, alreadyAdded)
 end
 
 ---@param events gh_Save_EventDeck
+---@param deck seb_WrappedDeck
+---@return GUID[]
+function Event.findRemovedCards(events, deck)
+    local eventsRemoved = {}
+    for _, eventCard in ipairs(deck.getObjects()) do
+        local eventNumber = --[[---@not nil]] tonumber(Object.name(eventCard))
+        if Event.isRemoved(events, eventNumber) then
+            table.insert(eventsRemoved, Object.guid(eventCard))
+        end
+    end
+
+    return eventsRemoved
+end
+
+---@param eventNumber number
+---@param eventDeck seb_WrappedDeck
+function Event.find(eventNumber, eventDeck)
+    local eventName = string.format("%02d", eventNumber)
+    return Search.inContainedObjects(eventDeck, { name = eventName })
+end
+
+---@param events gh_Save_EventDeck
 ---@param eventNumber number
 ---@return boolean
 function Event.isRemoved(events, eventNumber)
@@ -106,7 +134,25 @@ function Event.dealEvents(deck, eventCards, info)
             position = Component.safePosition(2),
             rotation = { 0, 180, 0 },
             smooth = false,
-            callback_function = function(card) eventDeck.putObject(--[[---@type tts__Card]] card) end
+            callback_function = function(card)
+                eventDeck.putObject(--[[---@type tts__Card]] card)
+            end
+        })
+    end
+end
+
+---@param deck seb_WrappedDeck
+---@param eventCards GUID[]
+---@param info gh_EventDeckInfo
+function Event.removeEvents(deck, eventCards, info)
+    for _, event in pairs(eventCards) do
+        deck.takeObject({
+            guid = event,
+            position = Component.safePosition(2),
+            smooth = false,
+            callback_function = function(card)
+                Component.discardEvent(--[[---@type tts__Card]] card, info, Options.keepDiscardedItems)
+            end
         })
     end
 end
@@ -126,25 +172,44 @@ end
 ---@param info gh_EventDeckInfo
 ---@return gh_Save_EventDeck
 function Event.saveEventsFromDeck(info)
-    local eventDeck = Component.eventMatDeck(info)
-    local eventsFromDeck = --[[---@type gh_Save_EventDeck]] { bottomUp = {}, remove = {} }
+    local activeEventsDeck = Component.eventMatDeck(info)
+    local availableEventsDeck = Component.eventDeck(info)
+    local savedDeckInfo = --[[---@type gh_Save_EventDeck]] { bottomUp = {}, remove = {}, add = {} }
 
-    for _, card in pairs(eventDeck.getObjects()) do
+    ---@param eventNumber number
+    ---@return boolean
+    local function isRemoved(eventNumber)
+        return not TableUtil.contains(savedDeckInfo.bottomUp, eventNumber)
+                and Event.find(eventNumber, availableEventsDeck) == nil
+    end
+
+    for _, card in pairs(activeEventsDeck.getObjects()) do
         local eventNumber = Event.getNumber(card)
-        if TableUtil.contains(eventsFromDeck.bottomUp, eventNumber) then
-            Logger.warn("Event %s found multiple times in %s. Will ignore additional copies.", eventNumber, info.name)
-        else
-            table.insert(eventsFromDeck.bottomUp, eventNumber)
+        if not TableUtil.contains(savedDeckInfo.bottomUp, eventNumber) then
+            table.insert(savedDeckInfo.bottomUp, eventNumber)
+        end
+
+        if eventNumber > StartingEvents and not TableUtil.contains(savedDeckInfo.add, eventNumber) then
+            table.insert(savedDeckInfo.add, eventNumber)
         end
     end
 
-    for event = 1, StartingEvents do
-        if not TableUtil.contains(eventsFromDeck.bottomUp, event) then
-            table.insert(eventsFromDeck.remove, event)
+    for eventNumber = 1, info.count do
+        if isRemoved(eventNumber) then
+            table.insert(savedDeckInfo.remove, eventNumber)
         end
     end
 
-    return eventsFromDeck
+    local expansionEventsTaken = Search.inContainer(Component.forgottenCirclesBox(), { name = info.name }) ~= nil
+    if expansionEventsTaken then
+        for eventNumber = ExpansionStartingEvent, ExpansionStartingEvent + info.expansionCount do
+            if isRemoved(eventNumber) then
+                table.insert(savedDeckInfo.remove, eventNumber)
+            end
+        end
+    end
+
+    return savedDeckInfo
 end
 
 ---@param card tts__ObjectState
