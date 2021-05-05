@@ -1,9 +1,7 @@
 local EventManager = require('ge_tts.EventManager')
 local Notebook = require("sebaestschjin-tts.Notebook")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
-local TableUtil = require("sebaestschjin-tts.TableUtil")
 
-local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 
 local Options = {}
@@ -19,7 +17,9 @@ Options.difficulty = "Normal"
 
 ---@param savefile gh_Savefile
 function Options.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Options.loadAll(savefile) end)
+    EventManager.addHandler(EventType.Loaded.Start, function()
+        Options.loadAll(savefile)
+    end)
 end
 
 ---@param savefile gh_Savefile
@@ -55,8 +55,7 @@ function Options.saveAll(savefile)
     savefile.options.difficulty = Options.difficulty
     savefile.options.keepDiscardedCards = Options.keepDiscardedItems
     savefile.options.requirePerkFix = false
-    local battleGoals = Component.battleGoalsDeck().getObjects()
-    savefile.options.loadExtendedBattleGoals = TableUtil.length(battleGoals) > 24
+    savefile.options.loadExtendedBattleGoals = Options.loadExtendedBattleGoals
 end
 
 return Options

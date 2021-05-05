@@ -7,7 +7,6 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
-local Options = require("gloomhaven-campaign-manager.Options")
 local Sanctuary = require("gloomhaven-campaign-manager.Sanctuary")
 local Shop = require("gloomhaven-campaign-manager.Shop")
 
@@ -21,8 +20,12 @@ function Unlocked.setup(savefile)
     shopLoaded = false
     expansionLoaded = false
 
-    EventManager.addHandler(EventType.Placed.OpeningConditions, function() Unlocked.loadOpeningConditions(savefile.unlocked.specialConditions) end)
-    EventManager.addHandler(EventType.Placed.Treasure, function() Unlocked.loadTreasures(savefile.unlocked.treasures) end)
+    EventManager.addHandler(EventType.Placed.OpeningConditions, function()
+        Unlocked.loadOpeningConditions(savefile.unlocked.specialConditions)
+    end)
+    EventManager.addHandler(EventType.Placed.Treasure, function()
+        Unlocked.loadTreasures(savefile.unlocked.treasures)
+    end)
 
     EventManager.addHandler(EventType.Loaded.Start, function()
         if TableUtil.isNotEmpty(savefile.unlocked.specialConditions) then
@@ -38,7 +41,9 @@ function Unlocked.setup(savefile)
         expansionLoaded = true
         Unlocked.loadItems(savefile)
     end)
-    EventManager.addHandler(EventType.Loaded.Class.Start, function(className) Unlocked.mayLoadClass(savefile, className) end)
+    EventManager.addHandler(EventType.Loaded.Class.Start, function(className)
+        Unlocked.mayLoadClass(savefile, className)
+    end)
 end
 
 ---@param savefile gh_Savefile
@@ -87,8 +92,8 @@ function Unlocked.loadItems(savefile)
 
     for _, item in pairs(savefile.unlocked.items) do
         chain.add(function(c)
-            Shop.takeRewardItem(item, function(--[[---@type tts__Card]] itemCard)
-                shopDeck.putObject(itemCard)
+            Shop.takeRewardItem(item, function(itemCard)
+                shopDeck.putObject(--[[---@type tts__Card]] itemCard)
                 c.proceed()
             end)
         end)
@@ -149,7 +154,8 @@ function Unlocked.loadTreasures(treasures)
                 index = (--[[---@not nil]] treasureCard).index,
                 position = Component.safePosition(),
                 callback_function = function(obj)
-                    Component.discardTreasure(--[[---@type tts__Card]] obj, Options.keepDiscardedItems) end,
+                    Component.discardTreasure(--[[---@type tts__Card]] obj)
+                end,
             })
         end
     end

@@ -5,7 +5,6 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Component = require("gloomhaven-campaign-manager.Component")
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
-local Options = require("gloomhaven-campaign-manager.Options")
 local Quest = require("gloomhaven-campaign-manager.Quest")
 local Task = require("gloomhaven-campaign-manager.Task")
 
@@ -48,7 +47,8 @@ function Retirement.startLoading(retired)
 
         if retirement.quest then
             Quest.take(retirement.quest, function(card)
-                Component.discardQuest(--[[---@type tts__Card]] card, Options.keepDiscardedItems) end)
+                Component.discardQuest(--[[---@type tts__Card]] card)
+            end)
         end
     end
 

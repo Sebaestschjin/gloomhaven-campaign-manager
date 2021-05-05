@@ -4,6 +4,7 @@ local TableUtil = require('sebaestschjin-tts.TableUtil')
 
 local Savefile = require("gloomhaven-campaign-manager.Savefile")
 local Cleanup = require('gloomhaven-campaign-manager.Cleanup')
+local Component = require('gloomhaven-campaign-manager.Component')
 local Achievement = require('gloomhaven-campaign-manager.Achievement')
 local Character = require('gloomhaven-campaign-manager.Character')
 local Enhancement = require('gloomhaven-campaign-manager.Enhancement')
@@ -92,11 +93,16 @@ function CampaignManager.createSaveFile()
     Preparation.prepareSave()
     -- this wait is necessary, because the scripting zones have to be adjusted, otherwise they won't detect cards lying
     -- directly on the table
-    Wait.time(function() CampaignManager.doCreateSaveFile(savefile) end, 1)
+    Wait.time(function()
+        CampaignManager.doCreateSaveFile(savefile)
+    end, 1)
 end
 
 ---@param savefile gh_Savefile
 function CampaignManager.doCreateSaveFile(savefile)
+    local battleGoals = Component.battleGoalsDeck().getObjects()
+    Options.loadExtendedBattleGoals = TableUtil.length(battleGoals) > 24
+
     Achievement.saveAll(savefile)
     Enhancement.saveAll(savefile)
     Event.saveAll(savefile)

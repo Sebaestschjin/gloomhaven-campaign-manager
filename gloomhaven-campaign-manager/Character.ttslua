@@ -10,7 +10,6 @@ local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 local Component = require("gloomhaven-campaign-manager.Component")
 local Enhancement = require("gloomhaven-campaign-manager.Enhancement")
 local Game = require("gloomhaven-campaign-manager.Game")
-local Options = require("gloomhaven-campaign-manager.Options")
 local Quest = require("gloomhaven-campaign-manager.Quest")
 local Shop = require("gloomhaven-campaign-manager.Shop")
 local Task = require("gloomhaven-campaign-manager.Task")
@@ -538,7 +537,7 @@ function Character.removeModifierCard(chain, player, character, currentDeck, car
         position = Component.safePosition(),
         smooth = false,
         callback_function = function(c)
-            Component.discardAttackModifier(--[[---@type tts__Card]] c, player, Options.keepDiscardedItems)
+            Component.discardAttackModifier(--[[---@type tts__Card]] c, player)
             chain.proceed()
         end })
 

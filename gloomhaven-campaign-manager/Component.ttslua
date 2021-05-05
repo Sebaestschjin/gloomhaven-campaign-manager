@@ -10,6 +10,7 @@ local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Options = require("gloomhaven-campaign-manager.Options")
 
 ---
 --- Handles everything about the different game components required to load and save a Gloomhaven-Campaign. Has methods
@@ -1252,67 +1253,51 @@ end
 --- Discard --------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+---@overload fun(card: tts__Card, name: string, position: tts__NumVectorShape): void
+---@param card tts__Card
+---@param name string
+---@param discardPosition tts__NumVectorShape
+---@param player number
+local function discardCard(card, name, discardPosition, player)
+    if Options.keepDiscardedItems then
+        local position = Vector(discardPosition)
+        if player then
+            position = relativeToZone(player, Positions.AttackModifierDiscard)
+        end
+
+        local discarded = WrappedDeck(position)
+        discarded.setName(name)
+        discarded.putObject(card)
+    else
+        card.destruct()
+    end
+end
+
 ---@param card tts__Card
 ---@param player number
----@param keepDiscarded boolean
-function Component.discardAttackModifier(card, player, keepDiscarded)
-    if keepDiscarded then
-        local position = relativeToZone(player, Positions.AttackModifierDiscard)
-        local discarded = WrappedDeck(position)
-        discarded.setName("Discarded Attack Modifiers")
-        discarded.putObject(card)
-    else
-        card.destruct()
-    end
+function Component.discardAttackModifier(card, player)
+    discardCard(card, "Discarded Attack Modifiers", Positions.AttackModifierDiscard, player)
 end
 
 ---@param card tts__Card
----@param keepDiscarded boolean
-function Component.discardScenario(card, keepDiscarded)
-    if keepDiscarded then
-        local discarded = WrappedDeck(Vector(Positions.ScenarioDiscard))
-        discarded.setName("Discarded Random Dungeons")
-        discarded.putObject(card)
-    else
-        card.destruct()
-    end
+function Component.discardScenario(card)
+    discardCard(card, "Discovered Scenarios", Positions.ScenarioDiscard)
 end
 
 ---@param card tts__Card
----@param keepDiscarded boolean
-function Component.discardTreasure(card, keepDiscarded)
-    if keepDiscarded then
-        local discarded = WrappedDeck(Vector(Positions.LootedTreasures))
-        discarded.setName("Looted Treasures")
-        discarded.putObject(card)
-    else
-        card.destruct()
-    end
+function Component.discardTreasure(card)
+    discardCard(card, "Looted Treasures", Positions.LootedTreasures)
 end
 
 ---@param card tts__Card
----@param keepDiscarded boolean
-function Component.discardQuest(card, keepDiscarded)
-    if keepDiscarded then
-        local discarded = WrappedDeck(Vector(Positions.CompletedQuests))
-        discarded.setName("Completed Quests")
-        discarded.putObject(card)
-    else
-        card.destruct()
-    end
+function Component.discardQuest(card)
+    discardCard(card, "Completed Quests", Positions.CompletedQuests)
 end
 
 ---@param card tts__Card
 ---@param eventInfo gh_EventDeckInfo
----@param keepDiscarded boolean
-function Component.discardEvent(card, eventInfo, keepDiscarded)
-    if keepDiscarded then
-        local discarded = WrappedDeck(Vector(eventInfo.discardPosition))
-        discarded.setName("Discarded " .. eventInfo.name)
-        discarded.putObject(card)
-    else
-        card.destruct()
-    end
+function Component.discardEvent(card, eventInfo)
+    discardCard(card, "Discarded " .. eventInfo.name, eventInfo.discardPosition)
 end
 
 ---@return string
