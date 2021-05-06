@@ -3,9 +3,9 @@ The Gloomhaven Campaign Manager aims to simplify keeping your [Gloomhaven](https
 It generates save files describing the current campaign progress which can then be used to automatically set up the campaign in the Tabletop Simulator mod.
 
 # Spoiler Warning
-This code contains some spoilers for Gloomhaven.
-The names of all available classes, their perks and ability names are listed in the file `Game.ttslua`.
-All other files _should_ be spoiler free, but no guarantee given.
+This code contains some spoilers for Gloomhaven. The names of all available classes, their perks and ability names are
+listed in the file `Game.ttslua`. It also contains information about the final reward for the envelope X. Some other
+files might also contain spoilers.
 
 # How to use
 There's [Steam Workshop Mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2163619993) including this code.

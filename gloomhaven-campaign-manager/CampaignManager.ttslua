@@ -27,7 +27,7 @@ require('gloomhaven-campaign-manager.Unlocked')
 local CampaignManager = {}
 
 ---@type number[]
-CampaignManager.VERSION = { 2, 5, 0 }
+CampaignManager.VERSION = { 2, 6, 0 }
 
 function CampaignManager.replaceComponents()
     Preparation.replaceComponents()
