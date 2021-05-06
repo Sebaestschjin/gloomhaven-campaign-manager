@@ -14,8 +14,8 @@ local Numbers = {
 }
 
 local currentClass = "Doomstalker"
-local add = false
-local print = true
+local addKnownDecals = true
+local printAppliedDecals = false
 
 local function addDecals(obj)
     local name = StringUtil.replace(obj.getName(), "%s?%(%d+%)")
@@ -81,10 +81,10 @@ end
 function onCollisionEnter(collision_info)
     local obj = collision_info.collision_object
 
-    if print then
+    if printAppliedDecals then
         printDecals(obj)
     end
-    if add then
+    if addKnownDecals then
         addDecals(obj)
     end
 end

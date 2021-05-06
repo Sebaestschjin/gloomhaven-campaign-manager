@@ -252,7 +252,6 @@ local function upgradeToV2(content)
     for _, eventDeck in ipairs(--[[---@type gh_Save_v1_EventDeck[] ]]content.events) do
         newEventDecks[eventDeck.deck] = {
             bottomUp = eventDeck.bottomUp,
-            add = eventDeck.add,
             remove = eventDeck.remove,
         }
     end
