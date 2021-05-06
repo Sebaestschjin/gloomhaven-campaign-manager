@@ -10,6 +10,7 @@
 ---@field players gh_Save_Players
 ---@field notes gh_Save_Notes[]
 ---@field options gh_Save_Options
+---@field extensions gh_Save_Extensions
 
 ---@alias gh_Save_Enhancements table<string, gh_Save_EnhancedClass>
 
@@ -109,3 +110,6 @@
 ---@field loadExtendedBattleGoals nil | boolean @Defaults to false
 ---@field requirePerkFix nil | boolean @Defaults to true
 ---@field difficulty nil | gh_Game_Difficulty @Defaults to 'Normal'
+
+---@shape gh_Save_Extensions
+---@field objects string[]

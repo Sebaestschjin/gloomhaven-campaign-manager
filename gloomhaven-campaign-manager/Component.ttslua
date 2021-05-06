@@ -17,10 +17,10 @@ local Task = require("gloomhaven-campaign-manager.Task")
 ---
 local Component = {}
 
----@type table<string, string>
 Component.Tag = {
     CampaignManager = "Gloomhaven - Campaign Manager",
     InactiveCharacter = "Gloomhaven - Inactive Character",
+    ExtensionObject = "Gloomhaven - Extension Object",
 }
 
 --- A list of GUIDs of relevant components.

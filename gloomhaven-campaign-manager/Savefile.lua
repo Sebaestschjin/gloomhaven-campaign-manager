@@ -132,6 +132,8 @@ local function setDefaultValues(content)
 
     setDefaultValue(content, "options", {})
     setDefaultValue(content, "options.difficulty", "Normal")
+
+    setDefaultValue(content, "extensions.objects", {})
 end
 
 ---@param content gh_Savefile
@@ -396,6 +398,9 @@ function Savefile.create()
         players = {},
         options = {},
         notes = {},
+        extensions = {
+            objects = {},
+        },
         metadata = {
             date = currentDate(),
             version = table.concat(Version, "."),
