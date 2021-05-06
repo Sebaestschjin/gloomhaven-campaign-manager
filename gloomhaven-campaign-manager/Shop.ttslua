@@ -1,4 +1,3 @@
-local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local Search = require("sebaestschjin-tts.Search")
@@ -6,18 +5,17 @@ local Utils = require("sebaestschjin-tts.Utils")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Prosperity = require("gloomhaven-campaign-manager.Prosperity")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Shop = {}
 
-function Shop.setup()
-    EventManager.addHandler(EventType.Loaded.Prosperity, function()
-        Shop.load()
-    end)
+local function setupHandler()
+    Task.registerLoad(Shop.load, Task.Event.Loaded.Prosperity)
 end
 
-function Shop.load()
+---@param savefile gh_Savefile
+function Shop.load(savefile)
     Logger.info("Loading shop from prosperity")
 
     local shopDeck = Component.shopDeck()
@@ -28,7 +26,7 @@ function Shop.load()
         shopDeck.putObject(--[[---@not nil]] itemDeck.unwrap())
     end
 
-    EventManager.triggerEvent(EventType.Loaded.Shop)
+    Task.completeLoad(Task.Event.Loaded.Shop, savefile)
 end
 
 ---@param savefile gh_Savefile
@@ -61,7 +59,7 @@ function Shop.doSave(savefile)
         table.sort(items)
     end
 
-    EventManager.triggerEvent(EventType.Saved.Items, savefile)
+    Task.completeSave(Task.Event.Saved.Items, savefile)
 end
 
 ---@param objects seb_Object_Array
@@ -142,5 +140,7 @@ end
 function Shop.takeRewardItem(name, callback)
     return Shop.takeItem2(name, callback, 2)
 end
+
+setupHandler()
 
 return Shop

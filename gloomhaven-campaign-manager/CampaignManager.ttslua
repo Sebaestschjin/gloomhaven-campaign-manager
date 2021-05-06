@@ -3,23 +3,18 @@ local Json = require('ge_tts.Json')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
 local Savefile = require("gloomhaven-campaign-manager.Savefile")
-local Cleanup = require('gloomhaven-campaign-manager.Cleanup')
+local Task = require('gloomhaven-campaign-manager.Task')
 local Component = require('gloomhaven-campaign-manager.Component')
 local Achievement = require('gloomhaven-campaign-manager.Achievement')
 local Character = require('gloomhaven-campaign-manager.Character')
 local Enhancement = require('gloomhaven-campaign-manager.Enhancement')
 local Event = require('gloomhaven-campaign-manager.Event')
-local EventType = require('gloomhaven-campaign-manager.EventType')
-local Expansion = require('gloomhaven-campaign-manager.Expansion')
 local Options = require('gloomhaven-campaign-manager.Options')
 local Party = require('gloomhaven-campaign-manager.Party')
 local Player = require('gloomhaven-campaign-manager.Player')
 local Preparation = require('gloomhaven-campaign-manager.Preparation')
 local Prosperity = require('gloomhaven-campaign-manager.Prosperity')
-local Retirement = require('gloomhaven-campaign-manager.Retirement')
-local Sanctuary = require('gloomhaven-campaign-manager.Sanctuary')
 local Scenario = require('gloomhaven-campaign-manager.Scenario')
-local Shop = require('gloomhaven-campaign-manager.Shop')
 local Unlocked = require('gloomhaven-campaign-manager.Unlocked')
 
 -- 2163619993
@@ -33,38 +28,20 @@ function CampaignManager.replaceComponents()
 end
 
 function CampaignManager.loadAll()
-    local content = Savefile.load()
-    if content then
-        CampaignManager.setupEventHandlers(--[[---@type gh_Savefile]] content)
-        EventManager.triggerEvent(EventType.Loaded.Start)
+    local savefile = Savefile.load()
+    if savefile then
+        Task.completeLoad(Task.Event.Loaded.Start, --[[---@not nil]] savefile)
     end
-end
-
----@param savefile gh_Savefile
-function CampaignManager.setupEventHandlers(savefile)
-    Preparation.setup()
-    Cleanup.setup()
-
-    Achievement.setup(savefile)
-    Enhancement.setup(savefile)
-    Event.setup(savefile)
-    Expansion.setup()
-    Options.setup(savefile)
-    Party.setup(savefile)
-    Player.setup(savefile)
-    Prosperity.setup(savefile)
-    Retirement.setup(savefile)
-    Sanctuary.setup(savefile)
-    Scenario.setup(savefile)
-    Shop.setup()
-    Unlocked.setup(savefile)
 end
 
 ---@type string[]
 local requiredForSave = {}
 
 function CampaignManager.saveAll()
-    requiredForSave = { EventType.Saved.Achievements, EventType.Saved.Items, EventType.Saved.Options }
+    requiredForSave = { Task.Event.Saved.Achievements,
+                        Task.Event.Saved.Items,
+                        Task.Event.Saved.Options,
+                        Task.Event.Saved.Extensions }
 
     for _, required in ipairs(requiredForSave) do
         EventManager.addHandler(required, function(savefile)

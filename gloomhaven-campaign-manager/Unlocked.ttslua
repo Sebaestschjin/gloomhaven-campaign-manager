@@ -1,14 +1,13 @@
 local Chain = require('sebaestschjin-tts.Chain')
-local EventManager = require('ge_tts.EventManager')
 local Logger = require('sebaestschjin-tts.Logger')
 local Search = require("sebaestschjin-tts.Search")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Sanctuary = require("gloomhaven-campaign-manager.Sanctuary")
 local Shop = require("gloomhaven-campaign-manager.Shop")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Unlocked = {}
 
@@ -16,34 +15,27 @@ local shopLoaded = false
 local expansionLoaded = false
 
 ---@param savefile gh_Savefile
-function Unlocked.setup(savefile)
-    shopLoaded = false
-    expansionLoaded = false
+local function mayPlaceOpeningConditions(savefile)
+    if TableUtil.isNotEmpty(savefile.unlocked.specialConditions) then
+        Component.placeOpeningConditions(savefile)
+    end
+end
 
-    EventManager.addHandler(EventType.Placed.OpeningConditions, function()
-        Unlocked.loadOpeningConditions(savefile.unlocked.specialConditions)
-    end)
-    EventManager.addHandler(EventType.Placed.Treasure, function()
-        Unlocked.loadTreasures(savefile.unlocked.treasures)
-    end)
+local function setupHandler()
+    Task.registerLoad(Unlocked.loadOpeningConditions, Task.Event.Placed.OpeningConditions)
+    Task.registerLoad(Unlocked.loadTreasures, Task.Event.Placed.Treasure)
 
-    EventManager.addHandler(EventType.Loaded.Start, function()
-        if TableUtil.isNotEmpty(savefile.unlocked.specialConditions) then
-            Component.placeOpeningConditions()
-        end
-    end)
+    Task.registerLoad(mayPlaceOpeningConditions, Task.Event.Loaded.Start)
 
-    EventManager.addHandler(EventType.Loaded.Shop, function()
+    Task.registerLoad(function(savefile)
         shopLoaded = true
         Unlocked.loadItems(savefile)
-    end)
-    EventManager.addHandler(EventType.Loaded.Expansion, function()
+    end, Task.Event.Loaded.Shop)
+    Task.registerLoad(function(savefile)
         expansionLoaded = true
         Unlocked.loadItems(savefile)
-    end)
-    EventManager.addHandler(EventType.Loaded.Class.Start, function(className)
-        Unlocked.mayLoadClass(savefile, className)
-    end)
+    end, Task.Event.Loaded.Expansion)
+    Task.registerForCharacter(Unlocked.mayLoadClass, Task.Event.Loaded.Class.Start)
 end
 
 ---@param savefile gh_Savefile
@@ -51,16 +43,17 @@ end
 function Unlocked.mayLoadClass(savefile, className)
     for i, unlockedClass in ipairs(savefile.unlocked.classes) do
         if unlockedClass == className then
-            Unlocked.loadClass(i, className)
+            Unlocked.loadClass(savefile, i, className)
             return
         end
     end
-    EventManager.triggerEvent(EventType.Loaded.Class.Unlocked, className)
+    Task.completeForCharacter(Task.Event.Loaded.Class.Unlocked, savefile, className)
 end
 
+---@param savefile gh_Savefile
 ---@param number number
 ---@param className string
-function Unlocked.loadClass(number, className)
+function Unlocked.loadClass(savefile, number, className)
     Logger.info('Unlocking class %s', className)
 
     local lastBox = Component.lastCharacterBox()
@@ -74,7 +67,7 @@ function Unlocked.loadClass(number, className)
         guid = Game.class(className).boxGuid,
         callback_function = function(obj)
             obj.setLock(true)
-            EventManager.triggerEvent(EventType.Loaded.Class.Unlocked, className)
+            Task.completeForCharacter(Task.Event.Loaded.Class.Unlocked, savefile, className)
         end
     })
 end
@@ -100,15 +93,16 @@ function Unlocked.loadItems(savefile)
     end
 
     chain.add(function()
-        EventManager.triggerEvent(EventType.Loaded.Items)
+        Task.completeLoad(Task.Event.Loaded.Items, savefile)
     end)
 
     chain.proceed()
 end
 
----@param openingConditions gh_Save_Unlocked_Conditions
-function Unlocked.loadOpeningConditions(openingConditions)
+---@param savefile gh_Savefile
+function Unlocked.loadOpeningConditions(savefile)
     Logger.info("Loading opening conditions")
+    local openingConditions = savefile.unlocked.specialConditions
 
     local sheet = --[[---@not nil]] Component.openingConditions()
 
@@ -141,8 +135,9 @@ function Unlocked.setOpeningCondition(sheet, done, conditionName)
     end
 end
 
----@param treasures number[]
-function Unlocked.loadTreasures(treasures)
+---@param savefile gh_Savefile
+function Unlocked.loadTreasures(savefile)
+    local treasures = savefile.unlocked.treasures
     local treasureDeck = --[[---@not nil]] Component.treasureDeck()
 
     for _, treasure in ipairs(treasures) do
@@ -160,7 +155,7 @@ function Unlocked.loadTreasures(treasures)
         end
     end
 
-    EventManager.triggerEvent(EventType.Loaded.Treasure)
+    Task.completeLoad(Task.Event.Loaded.Treasure, savefile)
 end
 
 ---@param savefile gh_Savefile
@@ -233,5 +228,7 @@ function Unlocked.saveTreasures(treasures)
         end
     end
 end
+
+setupHandler()
 
 return Unlocked

@@ -1,24 +1,25 @@
-local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Prosperity = {}
 
----@param savefile gh_Savefile
-function Prosperity.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Prosperity.load(savefile.global.prosperity) end)
+local function setupHandler()
+    Task.registerLoad(Prosperity.load, Task.Event.Loaded.Start)
 end
 
----@param value number
-function Prosperity.load(value)
+---@param savefile gh_Savefile
+function Prosperity.load(savefile)
+    local value = savefile.global.prosperity
+
     Logger.info("Loading prosperity")
     local map = Component.map()
     for i = 1, value do
         map.call("clickedPros", i)
     end
-    EventManager.triggerEvent(EventType.Loaded.Prosperity)
+
+    Task.completeLoad(Task.Event.Loaded.Prosperity, savefile)
 end
 
 ---@param savefile gh_Savefile
@@ -38,5 +39,7 @@ end
 function Prosperity.getLevel()
     return Component.map().call("getProsLevel", {})
 end
+
+setupHandler()
 
 return Prosperity

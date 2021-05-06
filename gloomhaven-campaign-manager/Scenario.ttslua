@@ -1,18 +1,15 @@
-local EventManager = require("ge_tts.EventManager")
-
 local Logger = require("sebaestschjin-tts.Logger")
 local Search = require("sebaestschjin-tts.Search")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Scenario = {}
 
----@param savefile gh_Savefile
-function Scenario.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Scenario.loadAll(savefile.global.scenarios) end)
+local function setupHandler()
+    Task.registerLoad(Scenario.loadAll, Task.Event.Loaded.Start)
 end
 
 ---@type table<string, gh_Scenario_State>
@@ -22,8 +19,9 @@ local State = {
     Locked = "Locked",
 }
 
----@param scenarios gh_Save_Scenarios
-function Scenario.loadAll(scenarios)
+---@param savefile gh_Savefile
+function Scenario.loadAll(savefile)
+    local scenarios = savefile.global.scenarios
     local scenarioStickers = --[[---@type fantasySetup_Scenario_Stickers]] Component.map().getTable("tableML")
 
     local randomScenarioDeck = Component.randomScenarioDeck()
@@ -154,5 +152,7 @@ function Scenario.saveScenarioTree(savefile)
 
     return scenarioTree
 end
+
+setupHandler()
 
 return Scenario

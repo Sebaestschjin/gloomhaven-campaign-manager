@@ -1,4 +1,3 @@
-local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
@@ -8,19 +7,18 @@ local Search = require("sebaestschjin-tts.Search")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Options = require("gloomhaven-campaign-manager.Options")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 ---
 --- Handles everything about the Forgotten Circles expansion
 ---
 local Expansion = {}
 
-function Expansion.setup()
-    EventManager.addHandler(EventType.Placed.LockedCharacters, function() Expansion.unpack() end)
-
-    EventManager.addHandler(EventType.Loaded.Options, function() Expansion.mayLoadBattleGoals() end)
+local function setupHandler()
+    Task.registerLoad(Expansion.unpack, Task.Event.Placed.LockedCharacters)
+    Task.registerLoad(Expansion.mayLoadBattleGoals, Task.Event.Loaded.Options)
 end
 
 local StartEvent = 82
@@ -28,7 +26,8 @@ local NewItemsDeck = "Forgotten Circles Items"
 local RevisedAbilityCards = "Revised Cards"
 
 --- Unpacks the expansion box.
-function Expansion.unpack()
+---@param savefile gh_Savefile
+function Expansion.unpack(savefile)
     Logger.info("Unpacking Forgotten Circles expansion")
 
     local chain = Chain("Unpack Expansion")
@@ -47,13 +46,9 @@ function Expansion.unpack()
 
     chain.add(Expansion.unpackItems)
     chain.add(Expansion.reviseAbilityCards)
-    chain.add(Expansion.finishUnpack)
+    chain.add(function() Task.completeLoad(Task.Event.Loaded.Expansion, savefile) end)
 
     chain.proceed()
-end
-
-function Expansion.finishUnpack()
-    EventManager.triggerEvent(EventType.Loaded.Expansion)
 end
 
 ---@param chain seb_Chain
@@ -192,5 +187,7 @@ function Expansion.mayLoadBattleGoals()
         })
     end
 end
+
+setupHandler()
 
 return Expansion

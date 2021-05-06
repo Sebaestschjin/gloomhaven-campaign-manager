@@ -1,4 +1,3 @@
-local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
@@ -6,16 +5,13 @@ local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Enhancement = {}
 
----@param savefile gh_Savefile
-function Enhancement.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Class.Unlocked, function(className)
-        Enhancement.mayLoadForClass(savefile, className)
-    end)
+local function setupHandler()
+    Task.registerForCharacter(Enhancement.mayLoadForClass, Task.Event.Loaded.Class.Unlocked)
 end
 
 ---@type table<string, URL>
@@ -57,11 +53,10 @@ local DecalScale = { 0.16, 0.16, 3.07 }
 function Enhancement.mayLoadForClass(savefile, className)
     local classEnhancements = savefile.enhancements[className]
     if classEnhancements then
-        Enhancement.loadClass(className, classEnhancements, Enhancement.finishLoadClass)
-        return
+        Enhancement.loadClass(className, classEnhancements, function() Enhancement.finishLoadClass(savefile, className) end)
     end
 
-    Enhancement.finishLoadClass(className)
+    Enhancement.finishLoadClass(savefile, className)
 end
 
 ---@overload fun(className: string, abilities: gh_Save_EnhancedClass): void
@@ -88,9 +83,10 @@ function Enhancement.loadClass(className, abilities, callback)
     end)
 end
 
+---@param savefile gh_Savefile
 ---@param className string
-function Enhancement.finishLoadClass(className)
-    EventManager.triggerEvent(EventType.Loaded.Class.Enhanced, className)
+function Enhancement.finishLoadClass(savefile, className)
+    Task.completeForCharacter(Task.Event.Loaded.Class.Enhanced, savefile, className)
 end
 
 ---@param deck tts__DeckState
@@ -300,5 +296,7 @@ function Enhancement.findNearestIndex(decalPosition, enhancementInfo)
 
     return nearestIndex, nearestDistance
 end
+
+setupHandler()
 
 return Enhancement

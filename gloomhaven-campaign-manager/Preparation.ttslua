@@ -1,25 +1,24 @@
-local EventManager = require("ge_tts.EventManager")
-
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Preparation = {}
 
-function Preparation.setup()
-    EventManager.addHandler(EventType.Loaded.Start, function() Preparation.prepareLoad() end)
+local function setupHandler()
+    Task.registerLoad(Preparation.prepareLoad, Task.Event.Loaded.Start)
 end
 
 function Preparation.replaceComponents()
     Component.replacePlayerButtons()
 end
 
-function Preparation.prepareLoad()
+---@param savefile gh_Savefile
+function Preparation.prepareLoad(savefile)
     Component.verifyLoad()
 
     Component.placeScenarioBook()
     Component.placeRuleBook()
-    Component.placeTreasureDeck()
-    Component.placeLockedCharacter()
+    Component.placeTreasureDeck(savefile)
+    Component.placeLockedCharacter(savefile)
 end
 
 function Preparation.prepareSave()
@@ -30,5 +29,7 @@ function Preparation.prepareSave()
         zone.setPosition(zonePosition)
     end
 end
+
+setupHandler()
 
 return Preparation

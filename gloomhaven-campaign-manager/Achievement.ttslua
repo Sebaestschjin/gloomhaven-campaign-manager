@@ -1,18 +1,17 @@
-local EventManager = require("ge_tts.EventManager")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Achievement = {}
 
----@param savefile gh_Savefile
-function Achievement.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Achievement.loadAll(savefile.global.achievements) end)
+local function setupHandler()
+    Task.registerLoad(Achievement.loadAll, Task.Event.Loaded.Start)
 end
 
----@param achievements gh_Save_Achievements
-function Achievement.loadAll(achievements)
+---@param savefile gh_Savefile
+function Achievement.loadAll(savefile)
+    local achievements = savefile.global.achievements
     ---@type boolean[]
     local readyGroups = { true }
 
@@ -88,7 +87,7 @@ function Achievement.doSave(savefile, achievementBoard)
         end
     end
     (--[[---@not nil]] savefile.global).achievements = result
-    EventManager.triggerEvent(EventType.Saved.Achievements, savefile)
+    Task.completeSave(Task.Event.Saved.Achievements, savefile)
 end
 
 ---@param achievementBoard tts__Object
@@ -104,5 +103,7 @@ function Achievement.findIndex(achievementBoard, achievement)
     end
     return nil
 end
+
+setupHandler()
 
 return Achievement

@@ -1,4 +1,3 @@
-local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local ObjectState = require("sebaestschjin-tts.ObjectState")
@@ -8,9 +7,9 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Utils = require("sebaestschjin-tts.Utils")
 local WrappedDeck = require("sebaestschjin-tts.WrappedDeck")
 
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Options = require("gloomhaven-campaign-manager.Options")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 ---
 --- Handles everything about the different game components required to load and save a Gloomhaven-Campaign. Has methods
@@ -228,7 +227,7 @@ Component.PlayerComponent = {
         class = true,
         position = Positions.Figurine,
         rotation = { 0, 0, 0 },
-        event = EventType.Character.Figurine,
+        event = Task.Event.Character.Figurine,
     },
     Summons = {
         name = Names.Summons,
@@ -242,7 +241,7 @@ Component.PlayerComponent = {
         name = Names.AttackModifierDeck,
         position = Positions.AttackModifierDeck,
         rotation = { 0, 180, 0 },
-        event = EventType.Character.AttackModifiers,
+        event = Task.Event.Character.AttackModifiers,
     },
 }
 
@@ -252,7 +251,7 @@ Component.ExtraPlayerComponent = {
         snapPoint = 10,
         rotation = { 0, 180, 0 },
         bag = Guid.HpTrackerBag,
-        event = EventType.Character.HpTrack,
+        event = Task.Event.Character.HpTrack,
     },
     Xp = {
         snapPoint = 11,
@@ -263,7 +262,7 @@ Component.ExtraPlayerComponent = {
         snapPoint = 4,
         rotation = { 0, 180, 180 },
         playerBag = Guids.ModifierDecks,
-        event = EventType.Character.AttackModifiersPlayer,
+        event = Task.Event.Character.AttackModifiersPlayer,
     },
 }
 
@@ -377,8 +376,9 @@ end
 ---@overload fun(guid: GUID, position: tts__VectorShape)
 ---@param guid GUID
 ---@param position tts__VectorShape
+---@param savefile gh_Savefile
 ---@param event nil | string
-local function takeFromGamebox(guid, position, event)
+local function takeFromGamebox(guid, position, savefile, event)
     local object = getObjectFromGUID(guid)
     if object == nil then
         Component.gamebox().takeObject({
@@ -389,13 +389,13 @@ local function takeFromGamebox(guid, position, event)
             callback_function = function()
                 if event then
                     Wait.frames(function()
-                        EventManager.triggerEvent(--[[---@not nil]] event)
+                        Task.completeLoad(--[[---@not nil]] event, savefile)
                     end, 1)
                 end
             end,
         })
     elseif event then
-        EventManager.triggerEvent(--[[---@not nil]] event)
+        Task.completeLoad(--[[---@not nil]] event, savefile)
     end
 end
 
@@ -449,20 +449,24 @@ function Component.placeRuleBook()
     takeFromGamebox(Guid.RuleBook, Positions.RuleBook)
 end
 
-function Component.placeTreasureDeck()
-    takeFromGamebox(Guid.TreasureDeck, Positions.TreasureDeck, EventType.Placed.Treasure)
+---@param savefile gh_Savefile
+function Component.placeTreasureDeck(savefile)
+    takeFromGamebox(Guid.TreasureDeck, Positions.TreasureDeck, savefile, Task.Event.Placed.Treasure)
 end
 
-function Component.placeLockedCharacter()
-    takeFromGamebox(Guid.LockedClasses, Component.safePosition(), EventType.Placed.LockedCharacters)
+---@param savefile gh_Savefile
+function Component.placeLockedCharacter(savefile)
+    takeFromGamebox(Guid.LockedClasses, Component.safePosition(), savefile, Task.Event.Placed.LockedCharacters)
 end
 
-function Component.placeOpeningConditions()
-    takeFromGamebox(Guid.OpeningConditions, Positions.OpeningConditions, EventType.Placed.OpeningConditions)
+---@param savefile gh_Savefile
+function Component.placeOpeningConditions(savefile)
+    takeFromGamebox(Guid.OpeningConditions, Positions.OpeningConditions, savefile, Task.Event.Placed.OpeningConditions)
 end
 
-function Component.placeRetirementSheet()
-    takeFromGamebox(Guid.RetirementSheet, Positions.RetirementSheet, EventType.Placed.RetirementSheet)
+---@param savefile gh_Savefile
+function Component.placeRetirementSheet(savefile)
+    takeFromGamebox(Guid.RetirementSheet, Positions.RetirementSheet, savefile, Task.Event.Placed.RetirementSheet)
 end
 
 function Component.placeTownRecords()
@@ -474,10 +478,11 @@ function Component.placeTownRecords()
     })
 end
 
-function Component.placeSanctuarySticker()
+---@param savefile gh_Savefile
+function Component.placeSanctuarySticker(savefile)
     Component.map().call('unseal')
     Utils.waitForObject(Guid.SanctuarySticker, function()
-        EventManager.triggerEvent(EventType.Placed.SanctuarySticker)
+        Task.completeLoad(Task.Event.Placed.SanctuarySticker, savefile)
     end)
 end
 
@@ -1004,7 +1009,7 @@ function Component.placePlayerComponent(player, character, object, component)
             end
             if component.event then
                 Wait.time(function()
-                    EventManager.triggerEvent(--[[---@not nil]] component.event, obj, player, character)
+                    Task.completeForPlayer(--[[---@not nil]] component.event, obj, player, character)
                 end, 1)
             end
         end,
@@ -1019,7 +1024,7 @@ function Component.placeExtraPlayerComponent(player, character, contained, compo
     if component.type == "Figurine" then
         Component.placePlayerComponent(player, character, contained, {
             position = Vector(--[[---@not nil]] Component.PlayerComponent.Figurine.position) + Vector(2, 0, 0),
-            event = EventType.Character.Figurine,
+            event = Task.Event.Character.Figurine,
         })
     elseif component.type == "Card" then
         Component.placePlayerComponent(player, character, contained, {

@@ -1,26 +1,25 @@
-local EventManager = require("ge_tts.EventManager")
-
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Sanctuary = {}
 
----@param savefile gh_Savefile
-function Sanctuary.setup(savefile)
-    local value = savefile.unlocked.sanctuary
-    EventManager.addHandler(EventType.Loaded.Start, function() Sanctuary.load(value) end)
-    EventManager.addHandler(EventType.Placed.SanctuarySticker, function() Sanctuary.setLevel(--[[---@not nil]] value) end)
+local function setupHandler()
+    Task.registerLoad(Sanctuary.load, Task.Event.Loaded.Start)
+    Task.registerLoad(Sanctuary.setLevel, Task.Event.Placed.SanctuarySticker)
 end
 
----@param value nil | number
-function Sanctuary.load(value)
+---@param savefile gh_Savefile
+function Sanctuary.load(savefile)
+    local value = savefile.unlocked.sanctuary
+
     if value and value >= 0 then
-        Component.placeSanctuarySticker()
+        Component.placeSanctuarySticker(savefile)
     end
 end
 
----@param value number
-function Sanctuary.setLevel(value)
+---@param savefile gh_Savefile
+function Sanctuary.setLevel(savefile)
+    local value = savefile.unlocked.sanctuary
     local sanctuarySticker = --[[---@not nil ]] Component.sanctuarySticker()
     for i = 0, value - 1 do
         sanctuarySticker.call("clickedPros", i)
@@ -44,5 +43,7 @@ function Sanctuary.save()
 
     return maxValue + 1
 end
+
+setupHandler()
 
 return Sanctuary

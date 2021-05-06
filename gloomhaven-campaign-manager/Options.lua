@@ -1,4 +1,3 @@
-local EventManager = require('ge_tts.EventManager')
 local Notebook = require("sebaestschjin-tts.Notebook")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 
@@ -15,11 +14,8 @@ Options.loadExtendedBattleGoals = false
 ---@type gh_Game_Difficulty
 Options.difficulty = "Normal"
 
----@param savefile gh_Savefile
-function Options.setup(savefile)
-    EventManager.addHandler(Task.Event.Loaded.Start, function()
-        Options.loadAll(savefile)
-    end)
+local function setupHandler()
+    Task.registerLoad(Options.loadAll, Task.Event.Loaded.Start)
 end
 
 ---@param savefile gh_Savefile
@@ -41,7 +37,7 @@ function Options.loadAll(savefile)
 
     Options.difficulty = savefile.options.difficulty or "Normal"
 
-    EventManager.triggerEvent(Task.Event.Loaded.Options)
+    Task.completeLoad(Task.Event.Loaded.Options, savefile)
 end
 
 ---@param savefile gh_Savefile
@@ -59,5 +55,7 @@ function Options.saveAll(savefile)
 
     Task.completeSave(Task.Event.Saved.Options, savefile)
 end
+
+setupHandler()
 
 return Options

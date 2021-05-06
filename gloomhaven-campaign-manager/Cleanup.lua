@@ -2,20 +2,13 @@ local EventManager = require("ge_tts.EventManager")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Cleanup = {}
 
 --- total number of unlocked class events
 local unlocked = 0
-
-function Cleanup.setup()
-    unlocked = 0
-    EventManager.addHandler(EventType.Loaded.Class.Unlocked, Cleanup.onClassUnlocked)
-    EventManager.addHandler(EventType.Loaded.Treasure, Cleanup.onTreasureLoaded)
-end
-
 
 ---@param object nil | tts__Object
 local function placeIntoGamebox(object)
@@ -24,15 +17,23 @@ local function placeIntoGamebox(object)
     end
 end
 
-function Cleanup.onClassUnlocked()
+local function onClassUnlocked()
     unlocked = unlocked + 1
     if unlocked == TableUtil.length(Game.Classes) then
         placeIntoGamebox(Component.lockedClasses())
+        unlocked = 0
     end
 end
 
-function Cleanup.onTreasureLoaded()
+local function onTreasureLoaded()
     placeIntoGamebox(Component.treasureDeck())
 end
+
+local function setupHandler()
+    Task.registerForCharacter(onClassUnlocked, Task.Event.Loaded.Class.Unlocked)
+    Task.registerLoad(onTreasureLoaded, Task.Event.Loaded.Treasure)
+end
+
+setupHandler()
 
 return Cleanup

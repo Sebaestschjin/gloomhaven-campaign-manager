@@ -1,26 +1,23 @@
-local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local Object = require("sebaestschjin-tts.Object")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 local Search = require("sebaestschjin-tts.Search")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Event = {}
 
----@param savefile gh_Savefile
-function Event.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Expansion, function()
-        Event.loadAll(savefile.events)
-    end)
+local function setupHandler()
+    Task.registerLoad(Event.loadAll, Task.Event.Loaded.Expansion)
 end
 
 local StartingEvents = 30
 local ExpansionStartingEvent = 82
 
----@param eventDecks gh_Save_EventDecks
-function Event.loadAll(eventDecks)
+---@param savefile gh_Savefile
+function Event.loadAll(savefile)
+    local eventDecks = savefile.events
     for deckType, _ in pairs(Component.EventDecks) do
         Event.load(deckType, eventDecks[deckType])
     end
@@ -237,5 +234,7 @@ function Event.getNumber(card)
     end
     return cardIndex + 82
 end
+
+setupHandler()
 
 return Event

@@ -1,10 +1,9 @@
-local EventManager = require('ge_tts.EventManager')
 local Notebook = require("sebaestschjin-tts.Notebook")
 local StringUtil = require("sebaestschjin-tts.StringUtil")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
+local Task = require("gloomhaven-campaign-manager.Task")
 
 local Player = {}
 
@@ -22,9 +21,8 @@ local function isGlobalNotebook(notes)
     return not TableUtil.contains(IgnoredNotebooks, notes.title) and notes.color == "Grey"
 end
 
----@param savefile gh_Savefile
-function Player.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Player.loadAll(savefile) end)
+local function setupHandler()
+    Task.registerLoad(Player.loadAll, Task.Event.Loaded.Start)
 end
 
 ---@param savefile gh_Savefile
@@ -72,5 +70,7 @@ function Player.saveNotes(savefile)
         end
     end
 end
+
+setupHandler()
 
 return Player

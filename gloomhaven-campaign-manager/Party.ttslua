@@ -1,4 +1,3 @@
-local EventManager = require("ge_tts.EventManager")
 local Json = require("ge_tts.Json")
 
 local Logger = require("sebaestschjin-tts.Logger")
@@ -7,28 +6,28 @@ local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Character = require("gloomhaven-campaign-manager.Character")
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Options = require("gloomhaven-campaign-manager.Options")
 local Task = require("gloomhaven-campaign-manager.Task")
 
 local Party = {}
 
-local function fireClassesReady()
-    for name, _ in pairs(Game.Classes) do
-        EventManager.triggerEvent(EventType.Loaded.Class.Start, name)
+---@param savefile gh_Savefile
+local function fireClassesReady(savefile)
+    for className, _ in pairs(Game.Classes) do
+        Task.completeForCharacter(Task.Event.Loaded.Class.Start, savefile, className)
     end
 end
 
----@param savefile gh_Savefile
-function Party.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Party.load(savefile.party) end)
-    EventManager.addHandler(EventType.Loaded.Items, fireClassesReady)
-    EventManager.addHandler(EventType.Loaded.Class.Enhanced, function(className) Party.mayLoadCharacter(savefile, className) end)
+local function setupHandler()
+    Task.registerLoad(Party.load, Task.Event.Loaded.Start)
+    Task.registerLoad(fireClassesReady, Task.Event.Loaded.Items)
+    Task.registerForCharacter(Party.mayLoadCharacter, Task.Event.Loaded.Class.Enhanced)
 end
 
----@param party gh_Save_Party
-function Party.load(party)
+---@param savefile gh_Savefile
+function Party.load(savefile)
+    local party = savefile.party
     local partySheet = Component.partySheet()
 
     partySheet.setName(party.name)
@@ -140,5 +139,7 @@ function Party.saveAll(savefile)
 
     Task.completeSave(Task.Event.Saved.Party, savefile)
 end
+
+setupHandler()
 
 return Party

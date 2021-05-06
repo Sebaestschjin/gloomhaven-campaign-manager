@@ -1,4 +1,3 @@
-local EventManager = require("ge_tts.EventManager")
 local Logger = require("sebaestschjin-tts.Logger")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
@@ -10,29 +9,27 @@ local Task = require("gloomhaven-campaign-manager.Task")
 
 local Retirement = {}
 
-local function setupHandlers()
+local RetirementSheetColumns = 5
+
+local function setupHandler()
+    Task.registerLoad(Retirement.unpackRetirementSheet, EventType.Loaded.Start)
+    Task.registerLoad(Retirement.startLoading, EventType.Placed.RetirementSheet)
+
     Task.registerSave(Retirement.saveAll, Task.Event.Saved.Party)
 end
 
 ---@param savefile gh_Savefile
-function Retirement.setup(savefile)
-    EventManager.addHandler(EventType.Loaded.Start, function() Retirement.unpackRetirementSheet(savefile.retired) end)
-    EventManager.addHandler(EventType.Placed.RetirementSheet, function() Retirement.startLoading(savefile.retired) end)
-end
-
-local RetirementSheetColumns = 5
-
----@param retired gh_Save_Retired[]
-function Retirement.unpackRetirementSheet(retired)
-    if TableUtil.isNotEmpty(retired) then
-        Component.placeRetirementSheet()
+function Retirement.unpackRetirementSheet(savefile)
+    if TableUtil.isNotEmpty(savefile.retired) then
+        Component.placeRetirementSheet(savefile)
     end
 end
 
----@param retired gh_Save_Retired[]
-function Retirement.startLoading(retired)
+---@param savefile gh_Savefile
+function Retirement.startLoading(savefile)
     Logger.info("Loading retired characters")
 
+    local retired = savefile.retired
     local retirementSheet = --[[---@not nil]] Component.retirementSheet()
 
     for i, retirement in ipairs(retired) do
@@ -127,6 +124,6 @@ function Retirement.saveCompletedQuests(savefile)
     end
 end
 
-setupHandlers()
+setupHandler()
 
 return Retirement
