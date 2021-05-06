@@ -1,0 +1,31 @@
+local Component = require("gloomhaven-campaign-manager.Component")
+local Task = require("gloomhaven-campaign-manager.Task")
+
+--- Contains code for user extensions of the campaign manager.
+local Extension = {}
+
+---@param savefile gh_Savefile
+function Extension.saveAll(savefile)
+    for _, obj in ipairs(getObjectsWithTag(Component.Tag.ExtensionObject)) do
+        local state = obj.getJSON()
+        table.insert(savefile.extensions.objects, state)
+    end
+end
+
+---@param savefile gh_Savefile
+function Extension.loadAll(savefile)
+    for _, obj in ipairs(savefile.extensions.objects) do
+        spawnObjectJSON({ json = obj })
+    end
+end
+
+--- Setup the event handlers for this module
+local function setupHandler()
+    Task.registerSave(Extension.saveAll, Task.Event.Saved.Start)
+
+    Task.registerLoad(Extension.loadAll, Task.Event.Loaded.Start)
+end
+
+setupHandler()
+
+return Extension
