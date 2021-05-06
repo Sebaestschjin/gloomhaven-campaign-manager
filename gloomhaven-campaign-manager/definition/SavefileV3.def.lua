@@ -88,7 +88,6 @@
 
 ---@shape gh_Save_EventDeck
 ---@field bottomUp number[]
----@field add number[]
 ---@field remove number[]
 
 ---@shape gh_Save_Metadata

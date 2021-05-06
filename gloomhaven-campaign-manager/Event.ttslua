@@ -74,7 +74,7 @@ function Event.findAddedCards(events, deck, alreadyAdded)
     for _, eventCard in ipairs(deck.getObjects()) do
         local eventNumber = --[[---@not nil]] tonumber(Object.name(eventCard))
         if not TableUtil.contains(alreadyAdded, Object.guid(eventCard))
-                and Event.isAdded(events, eventNumber)
+                and eventNumber <= StartingEvents
                 and not Event.isRemoved(events, eventNumber)
         then
             table.insert(eventsToAdd, Object.guid(eventCard))
@@ -111,14 +111,6 @@ end
 ---@return boolean
 function Event.isRemoved(events, eventNumber)
     return events and events.remove and TableUtil.contains(events.remove, eventNumber)
-end
-
----@param events gh_Save_EventDeck
----@param eventNumber number
----@return boolean
-function Event.isAdded(events, eventNumber)
-    return eventNumber <= 30
-            or (events and events.add and TableUtil.contains(events.add, eventNumber))
 end
 
 ---@param deck seb_WrappedDeck
@@ -173,7 +165,7 @@ end
 function Event.saveEventsFromDeck(info)
     local activeEventsDeck = Component.eventMatDeck(info)
     local availableEventsDeck = Component.eventDeck(info)
-    local savedDeckInfo = --[[---@type gh_Save_EventDeck]] { bottomUp = {}, remove = {}, add = {} }
+    local savedDeckInfo = --[[---@type gh_Save_EventDeck]] { bottomUp = {}, remove = {} }
 
     ---@param eventNumber number
     ---@return boolean
@@ -187,18 +179,11 @@ function Event.saveEventsFromDeck(info)
         if not TableUtil.contains(savedDeckInfo.bottomUp, eventNumber) then
             table.insert(savedDeckInfo.bottomUp, eventNumber)
         end
-
-        if eventNumber > StartingEvents and not TableUtil.contains(savedDeckInfo.add, eventNumber) then
-            table.insert(savedDeckInfo.add, eventNumber)
-        end
     end
 
     for eventNumber = 1, info.count do
         if isRemoved(eventNumber) then
             table.insert(savedDeckInfo.remove, eventNumber)
-            if eventNumber > StartingEvents then
-                table.insert(savedDeckInfo.add, eventNumber)
-            end
         end
     end
 
@@ -209,13 +194,11 @@ function Event.saveEventsFromDeck(info)
             for eventNumber = ExpansionStartingEvent, ExpansionStartingEvent + info.expansionCount - 1 do
                 if isRemoved(eventNumber) then
                     table.insert(savedDeckInfo.remove, eventNumber)
-                    table.insert(savedDeckInfo.add, eventNumber)
                 end
             end
         end
     end
 
-    table.sort(savedDeckInfo.add)
     table.sort(savedDeckInfo.remove)
 
     return savedDeckInfo
