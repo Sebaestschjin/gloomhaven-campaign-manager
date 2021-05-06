@@ -1,4 +1,6 @@
 local ChatCommands = require("ge_tts.ChatCommands")
+local Logger = require("sebaestschjin-tts.Logger")
+Logger.setLevel(Logger.INFO)
 
 local CampaignManager = require("gloomhaven-campaign-manager.CampaignManager")
 local Component = require("gloomhaven-campaign-manager.Component")

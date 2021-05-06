@@ -2,11 +2,26 @@ local EventManager = require('ge_tts.EventManager')
 local Json = require('ge_tts.Json')
 local TableUtil = require('sebaestschjin-tts.TableUtil')
 
+local Preparation = require('gloomhaven-campaign-manager.Preparation')
 local Savefile = require("gloomhaven-campaign-manager.Savefile")
 local Task = require('gloomhaven-campaign-manager.Task')
+
+require('gloomhaven-campaign-manager.Achievement')
 local Character = require('gloomhaven-campaign-manager.Character')
-local Preparation = require('gloomhaven-campaign-manager.Preparation')
+require('gloomhaven-campaign-manager.Cleanup')
+require('gloomhaven-campaign-manager.Enhancement')
+require('gloomhaven-campaign-manager.Event')
+require('gloomhaven-campaign-manager.Expansion')
+require('gloomhaven-campaign-manager.Extension')
+require('gloomhaven-campaign-manager.Options')
+require('gloomhaven-campaign-manager.Party')
+require('gloomhaven-campaign-manager.Player')
+require('gloomhaven-campaign-manager.Prosperity')
+require('gloomhaven-campaign-manager.Retirement')
+require('gloomhaven-campaign-manager.Sanctuary')
 local Scenario = require('gloomhaven-campaign-manager.Scenario')
+require('gloomhaven-campaign-manager.Shop')
+require('gloomhaven-campaign-manager.Unlocked')
 
 -- 2163619993
 local CampaignManager = {}
@@ -31,8 +46,7 @@ local requiredForSave = {}
 function CampaignManager.saveAll()
     requiredForSave = { Task.Event.Saved.Achievements,
                         Task.Event.Saved.Items,
-                        Task.Event.Saved.Options,
-                        Task.Event.Saved.Extensions }
+                        Task.Event.Saved.Options, }
 
     for _, required in ipairs(requiredForSave) do
         EventManager.addHandler(required, function(savefile)

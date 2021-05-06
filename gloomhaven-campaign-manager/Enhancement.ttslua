@@ -56,9 +56,9 @@ function Enhancement.mayLoadForClass(savefile, className)
     local classEnhancements = savefile.enhancements[className]
     if classEnhancements then
         Enhancement.loadClass(className, classEnhancements, function() Enhancement.finishLoadClass(savefile, className) end)
+    else
+        Enhancement.finishLoadClass(savefile, className)
     end
-
-    Enhancement.finishLoadClass(savefile, className)
 end
 
 ---@overload fun(className: string, abilities: gh_Save_EnhancedClass): void

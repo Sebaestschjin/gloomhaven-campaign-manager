@@ -1,4 +1,5 @@
 local EventManager = require("ge_tts.EventManager")
+local Logger = require("sebaestschjin-tts.Logger")
 
 local Task = {}
 
@@ -42,37 +43,38 @@ Task.Event = {
     }
 }
 
-function Task.complete(event, ...)
-    EventManager.triggerEvent(event, ...)
-end
-
 ---@param handler fun(savefile: gh_Savefile): void
 ---@param event string
 function Task.registerLoad(handler, event)
+    Logger.debug("Registering handler for load event %s", event)
     EventManager.addHandler(event, handler)
 end
 
 ---@param handler fun(savefile: gh_Savefile): void
 ---@param event string
 function Task.registerSave(handler, event)
+    Logger.debug("Registering handler for save event %s", event)
     EventManager.addHandler(event, handler)
 end
 
 ---@param handler fun(savefile: gh_Savefile, class: string): void
 ---@param event string
 function Task.registerForCharacter(handler, event)
+    Logger.debug("Registering handler for character event %s", event)
     EventManager.addHandler(event, handler)
 end
 
 ---@param event string
 ---@param savefile gh_Savefile
 function Task.completeSave(event, savefile)
+    Logger.debug("Completing save event %s", event)
     EventManager.triggerEvent(event, savefile)
 end
 
 ---@param event string
 ---@param savefile gh_Savefile
 function Task.completeLoad(event, savefile)
+    Logger.debug("Completing load event %s", event)
     EventManager.triggerEvent(event, savefile)
 end
 
@@ -80,6 +82,7 @@ end
 ---@param savefile gh_Savefile
 ---@param class string
 function Task.completeForCharacter(event, savefile, class)
+    Logger.debug("Completing character event %s for class %s", event, class)
     EventManager.triggerEvent(event, savefile, class)
 end
 
@@ -115,6 +118,7 @@ end
 ---@param player number
 ---@param character gh_Save_Character
 function Task.completeForPlayer(event, object, player, character)
+    Logger.debug("Completing player event %s for player %s", event, player)
     EventManager.triggerEvent(event, object, player, character)
 end
 

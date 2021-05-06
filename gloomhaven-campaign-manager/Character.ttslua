@@ -278,7 +278,7 @@ function Character.placePlayerMat(playerMat, player, character)
                 effectivePlayerMat = obj.setState(--[[---@not nil]] class.playerMat)
             end
             effectivePlayerMat.setLock(true)
-            Task.complete(Task.Event.Character.Mat, effectivePlayerMat, player, character)
+            Task.completeForPlayer(Task.Event.Character.Mat, effectivePlayerMat, player, character)
         end
     })
 end

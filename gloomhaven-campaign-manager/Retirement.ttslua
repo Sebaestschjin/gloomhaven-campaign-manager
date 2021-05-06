@@ -2,7 +2,6 @@ local Logger = require("sebaestschjin-tts.Logger")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")
-local EventType = require("gloomhaven-campaign-manager.EventType")
 local Game = require("gloomhaven-campaign-manager.Game")
 local Quest = require("gloomhaven-campaign-manager.Quest")
 local Task = require("gloomhaven-campaign-manager.Task")
@@ -12,8 +11,8 @@ local Retirement = {}
 local RetirementSheetColumns = 5
 
 local function setupHandler()
-    Task.registerLoad(Retirement.unpackRetirementSheet, EventType.Loaded.Start)
-    Task.registerLoad(Retirement.startLoading, EventType.Placed.RetirementSheet)
+    Task.registerLoad(Retirement.unpackRetirementSheet, Task.Event.Loaded.Start)
+    Task.registerLoad(Retirement.startLoading, Task.Event.Placed.RetirementSheet)
 
     Task.registerSave(Retirement.saveAll, Task.Event.Saved.Party)
 end
