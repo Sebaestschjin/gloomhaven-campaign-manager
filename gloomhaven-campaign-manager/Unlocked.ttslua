@@ -36,6 +36,8 @@ local function setupHandler()
         Unlocked.loadItems(savefile)
     end, Task.Event.Loaded.Expansion)
     Task.registerForCharacter(Unlocked.mayLoadClass, Task.Event.Loaded.Class.Start)
+
+    Task.registerSave(Unlocked.saveAll, Task.Event.Saved.Start)
 end
 
 ---@param savefile gh_Savefile

@@ -12,6 +12,8 @@ local Enhancement = {}
 
 local function setupHandler()
     Task.registerForCharacter(Enhancement.mayLoadForClass, Task.Event.Loaded.Class.Unlocked)
+
+    Task.registerSave(Enhancement.saveAll, Task.Event.Saved.Start)
 end
 
 ---@type table<string, URL>

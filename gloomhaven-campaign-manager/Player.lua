@@ -23,6 +23,8 @@ end
 
 local function setupHandler()
     Task.registerLoad(Player.loadAll, Task.Event.Loaded.Start)
+
+    Task.registerSave(Player.saveAll, Task.Event.Saved.Start)
 end
 
 ---@param savefile gh_Savefile

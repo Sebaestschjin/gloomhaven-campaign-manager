@@ -10,6 +10,8 @@ local Event = {}
 
 local function setupHandler()
     Task.registerLoad(Event.loadAll, Task.Event.Loaded.Expansion)
+
+    Task.registerSave(Event.saveAll, Task.Event.Saved.Start)
 end
 
 local StartingEvents = 30

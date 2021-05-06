@@ -23,6 +23,8 @@ local function setupHandler()
     Task.registerLoad(Party.load, Task.Event.Loaded.Start)
     Task.registerLoad(fireClassesReady, Task.Event.Loaded.Items)
     Task.registerForCharacter(Party.mayLoadCharacter, Task.Event.Loaded.Class.Enhanced)
+
+    Task.registerSave(Party.saveAll, Task.Event.Saved.Start)
 end
 
 ---@param savefile gh_Savefile
@@ -136,6 +138,9 @@ function Party.saveAll(savefile)
         local id = "inactive" .. tostring(i)
         party.characters[id] = Json.decode(inactiveCharacterBox.script_state)
     end
+
+    local battleGoals = Component.battleGoalsDeck().getObjects()
+    Options.loadExtendedBattleGoals = TableUtil.length(battleGoals) > 24
 
     Task.completeSave(Task.Event.Saved.Party, savefile)
 end

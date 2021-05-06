@@ -7,6 +7,8 @@ local Prosperity = {}
 
 local function setupHandler()
     Task.registerLoad(Prosperity.load, Task.Event.Loaded.Start)
+
+    Task.registerSave(Prosperity.saveAll, Task.Event.Saved.Start)
 end
 
 ---@param savefile gh_Savefile

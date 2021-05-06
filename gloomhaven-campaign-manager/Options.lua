@@ -16,6 +16,8 @@ Options.difficulty = "Normal"
 
 local function setupHandler()
     Task.registerLoad(Options.loadAll, Task.Event.Loaded.Start)
+
+    Task.registerSave(Options.saveAll, Task.Event.Saved.Party)
 end
 
 ---@param savefile gh_Savefile

@@ -1,4 +1,3 @@
-local EventManager = require("ge_tts.EventManager")
 local TableUtil = require("sebaestschjin-tts.TableUtil")
 
 local Component = require("gloomhaven-campaign-manager.Component")

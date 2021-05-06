@@ -10,6 +10,8 @@ local Scenario = {}
 
 local function setupHandler()
     Task.registerLoad(Scenario.loadAll, Task.Event.Loaded.Start)
+
+    Task.registerSave(Scenario.saveAll, Task.Event.Saved.Start)
 end
 
 ---@type table<string, gh_Scenario_State>

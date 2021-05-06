@@ -3,10 +3,6 @@ local Task = require("gloomhaven-campaign-manager.Task")
 
 local Preparation = {}
 
-local function setupHandler()
-    Task.registerLoad(Preparation.prepareLoad, Task.Event.Loaded.Start)
-end
-
 function Preparation.replaceComponents()
     Component.replacePlayerButtons()
 end
@@ -19,17 +15,20 @@ function Preparation.prepareLoad(savefile)
     Component.placeRuleBook()
     Component.placeTreasureDeck(savefile)
     Component.placeLockedCharacter(savefile)
+
+    Task.completeSave(Task.Event.Loaded.Start, savefile)
 end
 
-function Preparation.prepareSave()
+---@param savefile gh_Savefile
+function Preparation.prepareSave(savefile)
     for _, playerZone in pairs(Component.playerZones()) do
         local zone = --[[---@not nil]] getObjectFromGUID(playerZone)
         local zonePosition = zone.getPosition()
         zonePosition:setAt("y", 4.22)
         zone.setPosition(zonePosition)
     end
-end
 
-setupHandler()
+    Wait.time(function() Task.completeSave(Task.Event.Saved.Start, savefile) end, 1)
+end
 
 return Preparation

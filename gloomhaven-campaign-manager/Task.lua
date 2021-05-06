@@ -32,6 +32,7 @@ Task.Event = {
         Treasure = "treasure_loaded",
     },
     Saved = {
+        Start = "start_saving",
         Achievements = "achievements_saved",
         Events = "events_saved",
         Items = "items_saved",

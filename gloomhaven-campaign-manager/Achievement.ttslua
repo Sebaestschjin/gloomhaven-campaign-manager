@@ -7,6 +7,8 @@ local Achievement = {}
 
 local function setupHandler()
     Task.registerLoad(Achievement.loadAll, Task.Event.Loaded.Start)
+
+    Task.registerSave(Achievement.saveAll, Task.Event.Saved.Start)
 end
 
 ---@param savefile gh_Savefile
