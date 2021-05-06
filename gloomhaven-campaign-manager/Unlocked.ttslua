@@ -61,17 +61,31 @@ function Unlocked.loadClass(savefile, number, className)
     local lastBox = Component.lastCharacterBox()
     local beforeLastBox = Component.beforeLastCharacterBox()
     local delta = (lastBox.getPosition() - beforeLastBox.getPosition()) * number
+    local class = Game.class(className)
 
-    Component.lockedClasses().takeObject({
-        position = lastBox.getPosition() + delta,
-        rotation = lastBox.getRotation(),
-        smooth = false,
-        guid = Game.class(className).boxGuid,
-        callback_function = function(obj)
-            obj.setLock(true)
-            Task.completeForCharacter(Task.Event.Loaded.Class.Unlocked, savefile, className)
-        end
-    })
+    ---@param classBox tts__Object
+    local function finishUnlockClass(classBox)
+        classBox.setLock(true)
+        Task.completeForCharacter(Task.Event.Loaded.Class.Unlocked, savefile, className)
+    end
+
+    if class.isHidden then
+        local envelopeXReward = Component.envelopeXReward()
+        spawnObjectData({
+            data = envelopeXReward,
+            position = lastBox.getPosition() + delta,
+            rotation = lastBox.getRotation(),
+            callback_function = finishUnlockClass,
+        })
+    else
+        Component.lockedClasses().takeObject({
+            position = lastBox.getPosition() + delta,
+            rotation = lastBox.getRotation(),
+            smooth = false,
+            guid = class.boxGuid,
+            callback_function = finishUnlockClass,
+        })
+    end
 end
 
 ---@param savefile gh_Savefile
@@ -177,6 +191,7 @@ function Unlocked.saveClasses(classes)
             table.insert(classes, className)
         end
     end
+    table.sort(classes)
 end
 
 ---@param openingConditions gh_Save_Unlocked_Conditions

@@ -3,6 +3,7 @@
 ---@shape gh_Game_Class
 ---@field isStartingClass boolean
 ---@field isCustomClass nil | boolean
+---@field isHidden nil | boolean
 ---@field boxGuid GUID
 ---@field hp gh_Game_HpProgression
 ---@field perks gh_Game_Perk[]

@@ -6,7 +6,7 @@
     "prosperity": 0
   },
   "unlocked": {
-    "classes": ["Elementalist", "Sawbones"]
+    "classes": ["Bladeswarm", "Elementalist", "Sawbones"]
   },
   "events": {
     "city": {
@@ -45,6 +45,18 @@
           "Ethereal Manifestation", "Eye of the Hurricane", "Gravel Vortex", "Obsidian Shards",
           "Pragmatic Reinforcement", "Primal Duality", "Simulacrum", "Vengeance", "Volatile Consumption",
           "Winter's Edge"
+        ],
+        "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+      },
+      "3": {
+        "class": "Bladeswarm",
+        "xp": 0,
+        "gold": 0,
+        "checkmarks": 0,
+        "abilities": [
+          "Bioluminescence", "Blood Drain", "Bone Daggers", "Erosion", "Focused Scourge", "Incubation", "Infest",
+          "Oasis", "Prismatic Cyclone", "Putrid Grubs", "Sand Scythe", "Solitary Horde", "Sunstroke",
+          "Sword of Tenacity", "Vampiric Tempest", "Wasteland"
         ],
         "perks": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
       }

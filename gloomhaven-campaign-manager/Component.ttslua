@@ -421,6 +421,38 @@ function Component.lockedClasses()
     return --[[---@type tts__Bag]] getObjectFromGUID(Guid.LockedClasses)
 end
 
+---@return tts__BagState[]
+function Component.envelopes()
+    local envelopes, _ = Search.inContainedObjects(Component.gamebox(), { name = "Sealed Envelopes", isPattern = true })
+    return --[[---@type tts__BagState[] ]] (--[[---@type tts__BagState]] envelopes).ContainedObjects
+end
+
+---@return tts__BagState
+function Component.envelopeXReward()
+    ---@param obj tts__BagState
+    ---@return nil | tts__BagState
+    local function searchForReward(obj)
+        if Object.name(obj) == "3 Swords" then
+            return obj
+        end
+
+        for _, sub in TableUtil.ipairs(obj.ContainedObjects) do
+            local subFound = searchForReward(--[[---@type tts__BagState]] sub)
+            if subFound then
+                return subFound
+            end
+        end
+
+        return nil
+    end
+
+    for _, envelope in ipairs(Component.envelopes()) do
+        if Object.name(envelope):find("Envelope X") then
+            return --[[---@not nil]] searchForReward(envelope)
+        end
+    end
+end
+
 ---@return nil | tts__Deck
 function Component.treasureDeck()
     return --[[---@type nil | tts__Deck]] getObjectFromGUID(Guid.TreasureDeck)
