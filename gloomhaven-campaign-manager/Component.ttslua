@@ -20,7 +20,7 @@ local Component = {}
 Component.Tag = {
     CampaignManager = "Gloomhaven - Campaign Manager",
     InactiveCharacter = "Gloomhaven - Inactive Character",
-    ExtensionObject = "Gloomhaven - Extension Object",
+    ExtensionObject = "Gloom Extension Object",
 }
 
 --- A list of GUIDs of relevant components.
