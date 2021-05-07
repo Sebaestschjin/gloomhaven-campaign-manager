@@ -28,8 +28,8 @@
   "unlocked": {
     "sanctuary": 65,
     "classes": [
-      "Berserker", "Elementalist", "Quartermaster", "Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud",
-      "Sawbones", "Sunkeeper", "Summoner", "Doomstalker", "Diviner"
+      "Beast Tyrant", "Berserker", "Diviner", "Doomstalker", "Elementalist", "Nightshroud",
+      "Plagueherald", "Quartermaster", "Sawbones", "Soothsinger", "Summoner", "Sunkeeper"
     ],
     "items": [
       "Ancient Drill", "Ancient Drill", "Black Censer", "Bloody Axe", "Boots of Levitation", "Boots of Levitation",

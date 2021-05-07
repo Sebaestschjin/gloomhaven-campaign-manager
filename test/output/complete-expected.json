@@ -85,7 +85,7 @@
         "gold": 42,
         "checkmarks": 4,
         "abilities": ["Hook and Chain", "Juggernaut"],
-        "perks": [1, 3, 6, 11, 10],
+        "perks": [1, 3, 6, 10, 11],
         "items": {
           "Head": ["Iron Helmet"],
           "Armor": ["Hide Armor"],

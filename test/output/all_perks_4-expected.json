@@ -6,7 +6,7 @@
     "prosperity": 0
   },
   "unlocked": {
-    "classes": ["Beast Tyrant", "Soothsinger", "Plagueherald", "Nightshroud"]
+    "classes": ["Beast Tyrant", "Nightshroud", "Plagueherald", "Soothsinger"]
   },
   "events": {
     "city": {

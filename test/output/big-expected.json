@@ -310,8 +310,8 @@
   ],
   "unlocked": {
     "classes": [
-      "Berserker", "Elementalist", "Quartermaster", "Beast Tyrant", "Soothsinger", "Nightshroud", "Sawbones",
-      "Sunkeeper", "Summoner", "Doomstalker", "Diviner"
+      "Beast Tyrant", "Berserker", "Diviner", "Doomstalker", "Elementalist", "Nightshroud",
+      "Quartermaster", "Sawbones", "Soothsinger", "Summoner", "Sunkeeper"
     ],
     "items": [
       "Circlet of Elements", "Circlet of Elements", "Curious Gear", "Doctor's Coat", "Doomed Compass",

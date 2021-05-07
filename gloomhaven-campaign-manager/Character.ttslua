@@ -665,6 +665,7 @@ function Character.save(player, characters)
             table.insert(character.perks, perkIndex)
         end
     end
+    table.sort(character.perks)
 
     character.items = Character.saveItems(player)
     character.abilities = Character.saveAbilities(character.class, player)

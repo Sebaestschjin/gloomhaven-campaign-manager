@@ -113,12 +113,12 @@ def load_file(filename, parent='input'):
 
 def load_latest_mod():
     tts.create_singleplayer()
-    tts.load_workshop("gloomhaven", folders=["coop"])
+    tts.load_workshop("gloomhaven", folders=["gloomhaven"])
     tts.load_saved_object("campaign_manager", folders=["gloomhaven"])
 
 
 def load_custom_class(name):
-    tts.load_workshop(f"custom_class_{name}", folders=["coop"], additive=True)
+    tts.load_workshop(f"custom_class_{name}", folders=["gloomhaven"], additive=True)
 
 
 def load_from_savegame(name):
